@@ -67,7 +67,7 @@ class AssetAddedAction(Action):
         Action.__init__(self)
         self.asset = asset
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("add-asset")
         st.set_value("id", self.asset.get_id())
         type_string = GObject.type_name(self.asset.get_extractable_type())
@@ -89,7 +89,7 @@ class AssetRemovedAction(UndoableAction):
     def do(self):
         self.project.remove_asset(self.asset)
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("remove-asset")
         st.set_value("id", self.asset.get_id())
         type_string = GObject.type_name(self.asset.get_extractable_type())
@@ -133,18 +133,18 @@ class ProjectObserver(MetaContainerObserver):
 
     def __init__(self, project, action_log):
         MetaContainerObserver.__init__(self, project, action_log)
-        project.connect("asset-added", self._assetAddedCb)
-        project.connect("asset-removed", self._assetRemovedCb)
+        project.connect("asset-added", self._asset_added_cb)
+        project.connect("asset-removed", self._asset_removed_cb)
         self.timeline_observer = TimelineObserver(project.ges_timeline,
                                                   action_log)
 
-    def _assetAddedCb(self, unused_project, asset):
+    def _asset_added_cb(self, unused_project, asset):
         if not isinstance(asset, GES.UriClipAsset):
             return
         action = AssetAddedAction(asset)
         self.action_log.push(action)
 
-    def _assetRemovedCb(self, project, asset):
+    def _asset_removed_cb(self, project, asset):
         if not isinstance(asset, GES.UriClipAsset):
             return
         action = AssetRemovedAction(project, asset)

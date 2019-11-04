@@ -34,18 +34,18 @@ from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import gdk_rgba_to_argb
 from pitivi.utils.widgets import ColorPickerButton
 
-GlobalSettings.addConfigOption('titleClipLength',
-                               section="user-interface",
-                               key="title-clip-length",
-                               default=5000,
-                               notify=True)
+GlobalSettings.add_config_option('titleClipLength',
+                                 section="user-interface",
+                                 key="title-clip-length",
+                                 default=5000,
+                                 notify=True)
 
-PreferencesDialog.addNumericPreference('titleClipLength',
-                                       section="timeline",
-                                       label=_("Title clip duration"),
-                                       description=_(
-                                           "Default clip length (in milliseconds) of titles when inserting on the timeline."),
-                                       lower=1)
+PreferencesDialog.add_numeric_preference('titleClipLength',
+                                         section="timeline",
+                                         label=_("Title clip duration"),
+                                         description=_(
+                                             "Default clip length (in milliseconds) of titles when inserting on the timeline."),
+                                         lower=1)
 
 FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White
 BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
@@ -73,14 +73,14 @@ class TitleEditor(Loggable):
         self._setting_props = False
         self._children_props_handler = None
 
-        self._createUI()
+        self._create_ui()
         # Updates the UI.
         self.set_source(None)
 
         self.app.project_manager.connect_after(
-            "new-project-loaded", self._newProjectLoadedCb)
+            "new-project-loaded", self._new_project_loaded_cb)
 
-    def _createUI(self):
+    def _create_ui(self):
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "titleeditor.ui"))
         builder.connect_signals(self)
@@ -92,7 +92,7 @@ class TitleEditor(Loggable):
         self.textarea = builder.get_object("textview")
 
         self.textbuffer = self.textarea.props.buffer
-        self.textbuffer.connect("changed", self._textChangedCb)
+        self.textbuffer.connect("changed", self._text_changed_cb)
 
         self.font_button = builder.get_object("fontbutton1")
         self.foreground_color_button = builder.get_object("fore_text_color")
@@ -126,7 +126,7 @@ class TitleEditor(Loggable):
                                ("right", _("Right"))):
             self.settings["halignment"].append(value_id, text)
 
-    def _setChildProperty(self, name, value):
+    def _set_child_property(self, name, value):
         with self.app.action_log.started("Title change property",
                                          toplevel=True):
             self._setting_props = True
@@ -143,28 +143,28 @@ class TitleEditor(Loggable):
         argb += float(widget.color_g) * 256 ** 1
         argb += float(widget.color_b) * 256 ** 0
         self.debug("Setting text %s to %x", color_layer, argb)
-        self._setChildProperty(color_layer, argb)
+        self._set_child_property(color_layer, argb)
         rgba = argb_to_gdk_rgba(argb)
         color_button.set_rgba(rgba)
 
-    def _backgroundColorButtonCb(self, widget):
+    def _background_color_button_cb(self, widget):
         color = gdk_rgba_to_argb(widget.get_rgba())
         self.debug("Setting title background color to %x", color)
-        self._setChildProperty("foreground-color", color)
+        self._set_child_property("foreground-color", color)
 
-    def _frontTextColorButtonCb(self, widget):
+    def _front_text_color_button_cb(self, widget):
         color = gdk_rgba_to_argb(widget.get_rgba())
         self.debug("Setting title foreground color to %x", color)
         # TODO: Use set_text_color when we work with TitleSources instead of
         # TitleClips
-        self._setChildProperty("color", color)
+        self._set_child_property("color", color)
 
-    def _fontButtonCb(self, widget):
+    def _font_button_cb(self, widget):
         font_desc = widget.get_font_desc().to_string()
         self.debug("Setting font desc to %s", font_desc)
-        self._setChildProperty("font-desc", font_desc)
+        self._set_child_property("font-desc", font_desc)
 
-    def _updateFromSource(self, source):
+    def _update_from_source(self, source):
         self.textbuffer.set_text(source.get_child_property("text")[1] or "")
         self.settings['x-absolute'].set_value(source.get_child_property("x-absolute")[1])
         self.settings['y-absolute'].set_value(source.get_child_property("y-absolute")[1])
@@ -172,7 +172,7 @@ class TitleEditor(Loggable):
             source.get_child_property("valignment")[1].value_name)
         self.settings['halignment'].set_active_id(
             source.get_child_property("halignment")[1].value_name)
-        self._updateWidgetsVisibility()
+        self._update_widgets_visibility()
 
         font_desc = Pango.FontDescription.from_string(
             source.get_child_property("font-desc")[1])
@@ -184,14 +184,14 @@ class TitleEditor(Loggable):
         color = argb_to_gdk_rgba(source.get_child_property("foreground-color")[1])
         self.background_color_button.set_rgba(color)
 
-    def _textChangedCb(self, unused_updated_obj):
+    def _text_changed_cb(self, unused_updated_obj):
         if not self.source:
             # Nothing to update.
             return
 
         text = self.textbuffer.props.text
         self.log("Source text updated to %s", text)
-        self._setChildProperty("text", text)
+        self._set_child_property("text", text)
 
     def _update_source_cb(self, updated_obj):
         """Handles changes in the advanced property widgets at the bottom."""
@@ -203,16 +203,16 @@ class TitleEditor(Loggable):
             if obj == updated_obj:
                 if name == "valignment":
                     value = obj.get_active_id()
-                    self._updateWidgetsVisibility()
+                    self._update_widgets_visibility()
                 elif name == "halignment":
                     value = obj.get_active_id()
-                    self._updateWidgetsVisibility()
+                    self._update_widgets_visibility()
                 else:
                     value = obj.get_value()
-                self._setChildProperty(name, value)
+                self._set_child_property(name, value)
                 return
 
-    def _updateWidgetsVisibility(self):
+    def _update_widgets_visibility(self):
         visible = self.settings["valignment"].get_active_id() == "absolute"
         self.settings["y-absolute"].set_visible(visible)
         visible = self.settings["halignment"].get_active_id() == "absolute"
@@ -231,7 +231,7 @@ class TitleEditor(Loggable):
         self.source = None
         if source:
             assert isinstance(source, (GES.TextOverlay, GES.TitleSource))
-            self._updateFromSource(source)
+            self._update_from_source(source)
             self.source = source
             self.infobar.hide()
             self.editing_box.show()
@@ -241,7 +241,7 @@ class TitleEditor(Loggable):
             self.infobar.show()
             self.editing_box.hide()
 
-    def _createCb(self, unused_button):
+    def _create_cb(self, unused_button):
         title_clip = GES.TitleClip()
         duration = self.app.settings.titleClipLength * Gst.MSECOND
         title_clip.set_duration(duration)
@@ -259,7 +259,7 @@ class TitleEditor(Loggable):
             for prop, value in properties.items():
                 res = source.set_child_property(prop, value)
                 assert res, prop
-        self._selection.setSelection([title_clip], SELECT)
+        self._selection.set_selection([title_clip], SELECT)
 
     def _source_deep_notify_cb(self, source, unused_gstelement, pspec):
         """Handles updates in the TitleSource backing the current TitleClip."""
@@ -316,17 +316,17 @@ class TitleEditor(Loggable):
 
         self._project.pipeline.commit_timeline()
 
-    def _newProjectLoadedCb(self, unused_project_manager, project):
+    def _new_project_loaded_cb(self, unused_project_manager, project):
         if self._selection is not None:
-            self._selection.disconnect_by_func(self._selectionChangedCb)
+            self._selection.disconnect_by_func(self._selection_changed_cb)
             self._selection = None
         if project:
             self._selection = project.ges_timeline.ui.selection
-            self._selection.connect('selection-changed', self._selectionChangedCb)
+            self._selection.connect('selection-changed', self._selection_changed_cb)
         self._project = project
 
-    def _selectionChangedCb(self, selection):
-        selected_clip = selection.getSingleClip(GES.TitleClip)
+    def _selection_changed_cb(self, selection):
+        selected_clip = selection.get_single_clip(GES.TitleClip)
         source = None
         if selected_clip:
             for child in selected_clip.get_children(False):

@@ -46,7 +46,7 @@ class BaseTestTimeline(common.TestCase):
 
         return clip
 
-    def addClipsSimple(self, timeline, num_clips):
+    def add_clips_simple(self, timeline, num_clips):
         """Creates a number of clips on a new layer."""
         layer = timeline.ges_timeline.append_layer()
         clips = [self.add_clip(layer, i * 10) for i in range(num_clips)]
@@ -57,37 +57,37 @@ class BaseTestTimeline(common.TestCase):
 class TestLayers(BaseTestTimeline):
     """Tests for the layers."""
 
-    def testDraggingLayer(self):
-        self.checkGetLayerAt([THIN, THIN, THIN], 1, True,
-                             [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
-        self.checkGetLayerAt([THICK, THICK, THICK], 1, True,
-                             [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
-        self.checkGetLayerAt([THIN, THICK, THIN], 1, True,
-                             [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
-        self.checkGetLayerAt([THICK, THIN, THICK], 1, True,
-                             [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2])
+    def test_dragging_layer(self):
+        self.check_get_layer_at([THIN, THIN, THIN], 1, True,
+                                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
+        self.check_get_layer_at([THICK, THICK, THICK], 1, True,
+                                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
+        self.check_get_layer_at([THIN, THICK, THIN], 1, True,
+                                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
+        self.check_get_layer_at([THICK, THIN, THICK], 1, True,
+                                [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2])
 
-    def testDraggingClipFromLayer(self):
-        self.checkGetLayerAt([THIN, THIN, THIN], 1, False,
-                             [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
-        self.checkGetLayerAt([THICK, THICK, THICK], 1, False,
-                             [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
-        self.checkGetLayerAt([THIN, THICK, THIN], 1, False,
-                             [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
-        self.checkGetLayerAt([THICK, THIN, THICK], 1, False,
-                             [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
+    def test_dragging_clip_from_layer(self):
+        self.check_get_layer_at([THIN, THIN, THIN], 1, False,
+                                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
+        self.check_get_layer_at([THICK, THICK, THICK], 1, False,
+                                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
+        self.check_get_layer_at([THIN, THICK, THIN], 1, False,
+                                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
+        self.check_get_layer_at([THICK, THIN, THICK], 1, False,
+                                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
 
-    def testDraggingClipFromOuterSpace(self):
-        self.checkGetLayerAt([THIN, THIN, THIN], None, False,
-                             [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
-        self.checkGetLayerAt([THICK, THICK, THICK], None, False,
-                             [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
-        self.checkGetLayerAt([THIN, THICK, THIN], None, False,
-                             [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
-        self.checkGetLayerAt([THICK, THIN, THICK], None, False,
-                             [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
+    def test_dragging_clip_from_outer_space(self):
+        self.check_get_layer_at([THIN, THIN, THIN], None, False,
+                                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
+        self.check_get_layer_at([THICK, THICK, THICK], None, False,
+                                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
+        self.check_get_layer_at([THIN, THICK, THIN], None, False,
+                                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
+        self.check_get_layer_at([THICK, THIN, THICK], None, False,
+                                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
 
-    def checkGetLayerAt(self, heights, preferred, past_middle_when_adjacent, expectations):
+    def check_get_layer_at(self, heights, preferred, past_middle_when_adjacent, expectations):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
 
@@ -145,13 +145,13 @@ class TestLayers(BaseTestTimeline):
         assert_layer_at(ges_layers[expectations[14]], h[0] + SEPARATOR_HEIGHT + h[1] + SEPARATOR_HEIGHT + h[2] / 2)
         assert_layer_at(ges_layers[expectations[15]], h[0] + SEPARATOR_HEIGHT + h[1] + SEPARATOR_HEIGHT + h[2] - 1)
 
-    def testSetSeparatorsPrelight(self):
+    def test_set_separators_prelight(self):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         timeline.__on_separators = [mock.Mock()]
-        timeline._setSeparatorsPrelight(False)
+        timeline._set_separators_prelight(False)
         self.assertEqual(len(timeline.__on_separators), 1,
-                         "The separators must be forgotten only in dragEnd()")
+                         "The separators must be forgotten only in drag_end()")
 
     def test_media_types(self):
         timeline_container = common.create_timeline_container()
@@ -284,7 +284,7 @@ class TestLayers(BaseTestTimeline):
             ges_layer = timeline.create_layer(priority)
             ges_layers.append(ges_layer)
 
-        timeline.moveLayer(ges_layers[from_priority], to_priority)
+        timeline.move_layer(ges_layers[from_priority], to_priority)
         self.check_priorities_and_positions(timeline, ges_layers, expected_priorities)
 
 
@@ -298,7 +298,7 @@ class TestGrouping(BaseTestTimeline):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         self.__check_can_group_ungroup(timeline_container, False, False)
-        ges_clip, = self.addClipsSimple(timeline, 1)
+        ges_clip, = self.add_clips_simple(timeline, 1)
         self.toggle_clip_selection(ges_clip, expect_selected=True)
         self.__check_can_group_ungroup(timeline_container, False, True)
 
@@ -353,17 +353,17 @@ class TestGrouping(BaseTestTimeline):
         group = clips[0].get_parent()
         self.assertEqual(len(group.get_children(False)), len(clips))
 
-    def testGroup(self):
+    def test_group(self):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
-        clips = self.addClipsSimple(timeline, 2)
+        clips = self.add_clips_simple(timeline, 2)
         self.group_clips(timeline_container, clips)
 
-    def testGroupSelection(self):
+    def test_group_selection(self):
         num_clips = 2
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
-        clips = self.addClipsSimple(timeline, num_clips)
+        clips = self.add_clips_simple(timeline, num_clips)
         self.group_clips(timeline_container, clips)
         layer = timeline.ges_timeline.get_layers()[0]
         clips = layer.get_clips()
@@ -377,11 +377,11 @@ class TestGrouping(BaseTestTimeline):
             self.assertFalse(bool(clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED))
             self.assertFalse(clip.selected.selected)
 
-    def testGroupUngroup(self):
+    def test_group_ungroup(self):
         num_clips = 2
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
-        clips = self.addClipsSimple(timeline, num_clips)
+        clips = self.add_clips_simple(timeline, num_clips)
         self.group_clips(timeline_container, clips)
 
         self.assertEqual(len(timeline.selection.selected), num_clips)
@@ -394,15 +394,15 @@ class TestGrouping(BaseTestTimeline):
         for clip in clips:
             self.assertIsNone(clip.get_parent())
 
-    def testGroupSplittedClipAndSelectGroup(self):
+    def test_group_splitted_clip_and_select_group(self):
         position = 5
 
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
-        clips = self.addClipsSimple(timeline, 1)
+        clips = self.add_clips_simple(timeline, 1)
         self.toggle_clip_selection(clips[0], expect_selected=True)
 
-        timeline.ges_timeline.get_asset().pipeline.getPosition = mock.Mock(return_value=position)
+        timeline.ges_timeline.get_asset().pipeline.get_position = mock.Mock(return_value=position)
         layer = timeline.ges_timeline.get_layers()[0]
 
         # Split
@@ -431,10 +431,10 @@ class TestGrouping(BaseTestTimeline):
 
         self.toggle_clip_selection(clips[1], expect_selected=True)
 
-    def testUngroupClip(self):
+    def test_ungroup_clip(self):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
-        ges_clip, = self.addClipsSimple(timeline, 1)
+        ges_clip, = self.add_clips_simple(timeline, 1)
 
         self.toggle_clip_selection(ges_clip, expect_selected=True)
 
@@ -467,11 +467,11 @@ class TestGrouping(BaseTestTimeline):
         # Create two clips on different layers and group them.
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
-        clip1, = self.addClipsSimple(timeline, 1)
+        clip1, = self.add_clips_simple(timeline, 1)
         layer1 = clip1.get_layer()
 
         # Add another clip on a new layer.
-        clip2, = self.addClipsSimple(timeline, 1)
+        clip2, = self.add_clips_simple(timeline, 1)
         self.assertEqual(len(timeline.ges_timeline.get_layers()), 2)
 
         self.group_clips(timeline_container, [clip1, clip2])
@@ -506,11 +506,11 @@ class TestGrouping(BaseTestTimeline):
 
 class TestCopyPaste(BaseTestTimeline):
 
-    def copyClips(self, num_clips):
+    def copy_clips(self, num_clips):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
 
-        clips = self.addClipsSimple(timeline, num_clips)
+        clips = self.add_clips_simple(timeline, num_clips)
 
         # Press <ctrl> so selecting in ADD mode
         event = mock.Mock()
@@ -530,8 +530,8 @@ class TestCopyPaste(BaseTestTimeline):
 
         return timeline_container
 
-    def testCopyPaste(self):
-        timeline_container = self.copyClips(2)
+    def test_copy_paste(self):
+        timeline_container = self.copy_clips(2)
         timeline = timeline_container.timeline
         layer = timeline.ges_timeline.get_layers()[0]
         project = timeline.ges_timeline.get_asset()
@@ -541,7 +541,7 @@ class TestCopyPaste(BaseTestTimeline):
 
         # Pasting clips for the first time.
         position = 20
-        project.pipeline.getPosition = mock.Mock(return_value=position)
+        project.pipeline.get_position = mock.Mock(return_value=position)
         timeline_container.paste_action.emit("activate", None)
 
         n_clips = layer.get_clips()
@@ -554,7 +554,7 @@ class TestCopyPaste(BaseTestTimeline):
 
         # Pasting same clips second time.
         position = 40
-        project.pipeline.getPosition = mock.Mock(return_value=position)
+        project.pipeline.get_position = mock.Mock(return_value=position)
         timeline_container.paste_action.emit("activate", None)
 
         n_clips = layer.get_clips()
@@ -566,14 +566,14 @@ class TestCopyPaste(BaseTestTimeline):
         self.assertEqual(copied_clips[3].props.start, position + 10)
 
     def test_paste_not_possible(self):
-        timeline_container = self.copyClips(1)
+        timeline_container = self.copy_clips(1)
         timeline = timeline_container.timeline
         layer = timeline.ges_timeline.get_layers()[0]
         project = timeline.ges_timeline.get_asset()
         self.assertEqual(len(layer.get_clips()), 1)
 
         position = 0
-        project.pipeline.getPosition = mock.Mock(return_value=position)
+        project.pipeline.get_position = mock.Mock(return_value=position)
         timeline_container.paste_action.emit("activate", None)
         self.assertEqual(len(layer.get_clips()), 1)
 
@@ -584,7 +584,7 @@ class TestEditing(BaseTestTimeline):
         # Create a clip
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
-        clip, = self.addClipsSimple(timeline, 1)
+        clip, = self.add_clips_simple(timeline, 1)
         layer = clip.get_layer()
 
         # Click the right trim handle of the clip.
@@ -622,7 +622,7 @@ class TestShiftSelection(BaseTestTimeline):
         layers = timeline.ges_timeline.get_layers()
         for layer in layers:
             clips = layer.get_clips()
-            timeline.selection.setSelection(clips, UNSELECT)
+            timeline.selection.set_selection(clips, UNSELECT)
             timeline.set_selection_meta_info(layer, 0, UNSELECT)
 
     def __check_selected(self, selected_clips, not_selected_clips):
@@ -807,7 +807,7 @@ class TestClipsEdges(BaseTestTimeline):
         """Test function for function clips_edges."""
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
-        clips = self.addClipsSimple(timeline, 5)
+        clips = self.add_clips_simple(timeline, 5)
         timeline.ges_timeline.layers[0].remove_clip(clips[0])
         self.add_clip(timeline.ges_timeline.layers[0], 5, 0, 10)
 

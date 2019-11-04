@@ -51,7 +51,7 @@ class BaseTestMediaLibrary(common.TestCase):
             self.medialibrary.finalize()
             self.medialibrary = None
 
-    def _customSetUp(self, project_uri=None, **settings):
+    def _custom_set_up(self, project_uri=None, **settings):
         # Always make sure we start with a clean medialibrary, and no other
         # is connected to some assets.
         self.clean()
@@ -68,13 +68,13 @@ class BaseTestMediaLibrary(common.TestCase):
             self.app.project_manager.new_blank_project()
 
         self.app.project_manager.current_project.connect(
-            "loaded", self.projectLoadedCb)
+            "loaded", self.project_loaded_cb)
         self.mainloop.run()
 
-    def projectLoadedCb(self, unused_project, unused_timeline):
+    def project_loaded_cb(self, unused_project, unused_timeline):
         self.mainloop.quit()
 
-    def _progressBarCb(self, progressbar, unused_pspec):
+    def _progress_bar_cb(self, progressbar, unused_pspec):
         if self.check_no_transcoding:
             self.assertTrue(progressbar.props.fraction == 1.0 or
                             progressbar.props.fraction == 0.0,
@@ -94,13 +94,13 @@ class BaseTestMediaLibrary(common.TestCase):
 
     def check_import(self, samples, proxying_strategy=ProxyingStrategy.ALL,
                      check_no_transcoding=False):
-        self._customSetUp(proxying_strategy=proxying_strategy,
-                          num_transcoding_jobs=4,
-                          last_clip_view=medialibrary.SHOW_TREEVIEW)
+        self._custom_set_up(proxying_strategy=proxying_strategy,
+                            num_transcoding_jobs=4,
+                            last_clip_view=medialibrary.SHOW_TREEVIEW)
         self.check_no_transcoding = check_no_transcoding
 
         self.medialibrary._progressbar.connect(
-            "notify::fraction", self._progressBarCb)
+            "notify::fraction", self._progress_bar_cb)
 
         self._create_assets(samples)
         self.mainloop.run()
@@ -188,7 +188,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         mock_filter = mock.Mock()
         mock_filter.mime_type = "video/mp4"
 
-        self._customSetUp()
+        self._custom_set_up()
         mlib = self.medialibrary
 
         # Test HQ Proxies are filtered
@@ -228,14 +228,14 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.check_import([sample_name],
                               check_no_transcoding=True)
 
-    def testDisableProxies(self):
+    def test_disable_proxies(self):
         sample_name = "30fps_numeroted_frames_red.mkv"
         with common.cloned_sample(sample_name):
             self.check_import([sample_name],
                               proxying_strategy=ProxyingStrategy.NOTHING,
                               check_no_transcoding=True)
 
-    def testSaveProjectWithRemovedProxy(self):
+    def test_save_project_with_removed_proxy(self):
         sample_name = "30fps_numeroted_frames_red.mkv"
         with common.cloned_sample(sample_name):
             self.check_import([sample_name])
@@ -256,7 +256,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             project_uri = Gst.filename_to_uri(tempfile.NamedTemporaryFile().name)
             project.save(project.ges_timeline, project_uri, None, True)
 
-            self._customSetUp(project_uri)
+            self._custom_set_up(project_uri)
             self.assertNotEqual(project, self.app.project_manager.current_project)
             project = self.app.project_manager.current_project
             self.assertEqual(project.list_assets(GES.Extractable), [])
@@ -266,7 +266,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
                    "30fps_numeroted_frames_blue.webm"]
         with common.cloned_sample(*samples):
             self.check_import(samples, **kwargs)
-        self.assertEqual(len(list(self.medialibrary.getSelectedPaths())),
+        self.assertEqual(len(list(self.medialibrary.get_selected_paths())),
                          len(self.samples))
 
     def test_newly_imported_asset_selected_optimize_all(self):
@@ -289,7 +289,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.stop_using_proxies(delete_proxies=True)
 
             asset = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
-            proxy_uri = self.app.proxy_manager.getProxyUri(asset)
+            proxy_uri = self.app.proxy_manager.get_proxy_uri(asset)
 
             # Requesting UriClip sync will return None if the asset is not in cache
             # this way we make sure that this asset used to exist
@@ -307,7 +307,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.assertTrue("Proxy creation progress:" in
                             self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
 
-            # Run the mainloop and let _progressBarCb stop it when the proxy is
+            # Run the mainloop and let _progress_bar_cb stop it when the proxy is
             # ready
             self.mainloop.run()
 
@@ -334,12 +334,12 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
             # Create and disable scaled proxy
             proxy = self.check_add_proxy(asset, scaled=True)
-            scaled_uri = self.app.proxy_manager.getProxyUri(asset, scaled=True)
+            scaled_uri = self.app.proxy_manager.get_proxy_uri(asset, scaled=True)
             self.check_disable_proxy(proxy, asset)
 
             # Create and disable HQ proxy
             proxy = self.check_add_proxy(asset)
-            hq_uri = self.app.proxy_manager.getProxyUri(asset)
+            hq_uri = self.app.proxy_manager.get_proxy_uri(asset)
             self.check_disable_proxy(proxy, asset)
 
             # Check both files exist
@@ -368,7 +368,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
             # Create scaled proxy
             proxy = self.check_add_proxy(asset, scaled=True)
-            proxy_uri = self.app.proxy_manager.getProxyUri(asset, scaled=True)
+            proxy_uri = self.app.proxy_manager.get_proxy_uri(asset, scaled=True)
 
             # Change target resolution and trigger regeneration (1/4 Asset width)
             self.app.project_manager.current_project.scaled_proxy_width = 80
@@ -399,15 +399,15 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
             # Mark all formats as unsupported
             with mock.patch.object(self.app.proxy_manager,
-                                   "isAssetFormatWellSupported",
+                                   "is_asset_format_well_supported",
                                    return_value=False):
                 # Create scaled proxy
                 proxy = self.check_add_proxy(asset, scaled=True, w=80, h=34)
-                proxy_uri = self.app.proxy_manager.getProxyUri(asset, scaled=True)
+                proxy_uri = self.app.proxy_manager.get_proxy_uri(asset, scaled=True)
                 self.mainloop.run(until_empty=True)
 
                 # Check that HQ proxy was created
-                hq_uri = self.app.proxy_manager.getProxyUri(asset)
+                hq_uri = self.app.proxy_manager.get_proxy_uri(asset)
                 self.assertTrue(os.path.exists(Gst.uri_get_location(hq_uri)))
 
                 # Delete scaled proxy
@@ -416,7 +416,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
                 # Check that we revert to HQ proxy
                 proxy = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
-                proxy_uri = self.app.proxy_manager.getProxyUri(asset, scaled=False)
+                proxy_uri = self.app.proxy_manager.get_proxy_uri(asset, scaled=False)
                 self.assertEqual(proxy.props.id, proxy_uri)
 
                 # Delete HQ Proxy
@@ -427,7 +427,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         with common.cloned_sample(audio_sample):
             asset_uri = common.get_sample_uri(audio_sample)
             with common.created_project_file(asset_uri) as uri:
-                self._customSetUp(project_uri=uri)
+                self._custom_set_up(project_uri=uri)
 
     def test_scale_proxy_audio_post_import(self):
         sample = "mp3_sample.mp3"
@@ -447,5 +447,5 @@ class TestMediaLibrary(BaseTestMediaLibrary):
     def test_missing_uri_displayed(self):
         asset_uri = common.get_sample_uri("image-which-does-not-exist.png")
         with common.created_project_file(asset_uri) as uri:
-            self._customSetUp(project_uri=uri)
+            self._custom_set_up(project_uri=uri)
         self.assertTrue(self.medialibrary._import_warning_infobar.props.visible)

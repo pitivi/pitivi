@@ -154,23 +154,23 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         self.__hovered = False
 
-        self.connect("motion-notify-event", self.__gtkMotionEventCb)
-        self.connect("event", self._eventCb)
-        self.connect("notify::height-request", self.__heightRequestCb)
+        self.connect("motion-notify-event", self.__gtk_motion_event_cb)
+        self.connect("event", self._event_cb)
+        self.connect("notify::height-request", self.__height_request_cb)
 
         self.mpl_connect('button_press_event', self._mpl_button_press_event_cb)
         self.mpl_connect('button_release_event', self._mpl_button_release_event_cb)
         self.mpl_connect('motion_notify_event', self._mpl_motion_event_cb)
 
     def release(self):
-        disconnect_all_by_func(self, self.__heightRequestCb)
-        disconnect_all_by_func(self, self.__gtkMotionEventCb)
-        disconnect_all_by_func(self, self._controlSourceChangedCb)
+        disconnect_all_by_func(self, self.__height_request_cb)
+        disconnect_all_by_func(self, self.__gtk_motion_event_cb)
+        disconnect_all_by_func(self, self._control_source_changed_cb)
 
     def _connect_sources(self):
-        self.__source.connect("value-added", self._controlSourceChangedCb)
-        self.__source.connect("value-removed", self._controlSourceChangedCb)
-        self.__source.connect("value-changed", self._controlSourceChangedCb)
+        self.__source.connect("value-added", self._control_source_changed_cb)
+        self.__source.connect("value-removed", self._control_source_changed_cb)
+        self.__source.connect("value-changed", self._control_source_changed_cb)
 
     def _update_plots(self):
         values = self.__source.get_all()
@@ -188,7 +188,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
     def _populate_lines(self):
         self._ax.set_xlim(self._line_xs[0], self._line_xs[-1])
-        self.__computeYlim()
+        self.__compute_ylim()
 
         arr = numpy.array((self._line_xs, self._line_ys))
         arr = arr.transpose()
@@ -198,7 +198,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.queue_draw()
 
     # Private methods
-    def __computeYlim(self):
+    def __compute_ylim(self):
         height = self.props.height_request
 
         if height <= 0:
@@ -208,10 +208,10 @@ class KeyframeCurve(FigureCanvas, Loggable):
         ylim_max = (self.__ylim_max * height) / (height - KEYFRAME_LINE_HEIGHT)
         self._ax.set_ylim(ylim_min, ylim_max)
 
-    def __heightRequestCb(self, unused_self, unused_pspec):
-        self.__computeYlim()
+    def __height_request_cb(self, unused_self, unused_pspec):
+        self.__compute_ylim()
 
-    def __maybeCreateKeyframe(self, event):
+    def __maybe_create_keyframe(self, event):
         line_contains = self.__line.contains(event)[0]
         keyframe_existed = self._keyframes.contains(event)[0]
         if line_contains and not keyframe_existed:
@@ -255,18 +255,18 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.__source.set(offset, value)
 
     # Callbacks
-    def _controlSourceChangedCb(self, unused_control_source, unused_timed_value):
+    def _control_source_changed_cb(self, unused_control_source, unused_timed_value):
         self._update_plots()
         self._timeline.ges_timeline.get_parent().commit_timeline()
 
-    def __gtkMotionEventCb(self, unused_widget, unused_event):
+    def __gtk_motion_event_cb(self, unused_widget, unused_event):
         # We need to do this here, because Matplotlib's callbacks can't stop
         # signal propagation.
         if self.handling_motion:
             return True
         return False
 
-    def _eventCb(self, unused_element, event):
+    def _event_cb(self, unused_element, event):
         if event.type == Gdk.EventType.LEAVE_NOTIFY:
             cursor = NORMAL_CURSOR
             self._timeline.get_window().set_cursor(cursor)
@@ -327,7 +327,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
             # The mouse event is in the figure boundaries.
             if self._offset is not None:
                 self._dragged = True
-                keyframe_ts = self.__computeKeyframeNewTimestamp(event)
+                keyframe_ts = self.__compute_keyframe_new_timestamp(event)
                 ydata = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
 
                 self._move_keyframe(int(self._offset), keyframe_ts, ydata)
@@ -369,8 +369,8 @@ class KeyframeCurve(FigureCanvas, Loggable):
         event_widget = Gtk.get_event_widget(event.guiEvent)
         x, unused_y = event_widget.translate_coordinates(self._timeline.layout.layers_vbox,
                                                          event.x, event.y)
-        ges_clip = self._timeline.selection.getSingleClip(GES.Clip)
-        event.xdata = Zoomable.pixelToNs(x) - ges_clip.props.start + ges_clip.props.in_point
+        ges_clip = self._timeline.selection.get_single_clip(GES.Clip)
+        event.xdata = Zoomable.pixel_to_ns(x) - ges_clip.props.start + ges_clip.props.in_point
 
         if self._offset is not None:
             # If dragging a keyframe, make sure the keyframe ends up exactly
@@ -378,7 +378,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
             # seek exactly on the keyframe.
             if self._dragged:
                 if event.ydata is not None:
-                    keyframe_ts = self.__computeKeyframeNewTimestamp(event)
+                    keyframe_ts = self.__compute_keyframe_new_timestamp(event)
                     ydata = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
                     self._move_keyframe(int(self._offset), keyframe_ts, ydata)
             self.debug("Keyframe released")
@@ -390,7 +390,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
             if not self._dragged:
                 # The keyframe line was clicked, but not dragged
                 assert event.guiEvent.type == Gdk.EventType.BUTTON_RELEASE
-                self.__maybeCreateKeyframe(event)
+                self.__maybe_create_keyframe(event)
 
         self.handling_motion = False
         self._offset = None
@@ -421,7 +421,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 "{:.3f}".format(value))
         self.set_tooltip_markup(markup)
 
-    def __computeKeyframeNewTimestamp(self, event):
+    def __compute_keyframe_new_timestamp(self, event):
         # The user can not change the timestamp of the first
         # and last keyframes.
         values = self.__source.get_all()
@@ -471,9 +471,9 @@ class MultipleKeyframeCurve(KeyframeCurve):
     def _connect_sources(self):
         for binding in self.__bindings:
             source = binding.props.control_source
-            source.connect("value-added", self._controlSourceChangedCb)
-            source.connect("value-removed", self._controlSourceChangedCb)
-            source.connect("value-changed", self._controlSourceChangedCb)
+            source.connect("value-added", self._control_source_changed_cb)
+            source.connect("value-removed", self._control_source_changed_cb)
+            source.connect("value-changed", self._control_source_changed_cb)
 
     def _update_plots(self):
         timestamps = []
@@ -523,7 +523,7 @@ class MultipleKeyframeCurve(KeyframeCurve):
             if self._offset is not None and not self._dragged:
                 # A keyframe was clicked but not dragged, so we
                 # should select it by seeking to its position.
-                source = self._timeline.selection.getSingleClip()
+                source = self._timeline.selection.get_single_clip()
                 assert source
                 position = int(self._offset) - source.props.in_point + source.props.start
 
@@ -556,8 +556,8 @@ class MultipleKeyframeCurve(KeyframeCurve):
         keyframe.set_visible(False)
         self.queue_draw()
 
-    def _controlSourceChangedCb(self, control_source, timed_value):
-        super()._controlSourceChangedCb(control_source, timed_value)
+    def _control_source_changed_cb(self, control_source, timed_value):
+        super()._control_source_changed_cb(control_source, timed_value)
         self.__update_selected_keyframe()
         self.__hide_special_keyframe(self.__hovered_keyframe)
 
@@ -566,12 +566,12 @@ class MultipleKeyframeCurve(KeyframeCurve):
 
     def __update_selected_keyframe(self):
         try:
-            position = self._project.pipeline.getPosition()
+            position = self._project.pipeline.get_position()
         except PipelineError:
             self.warning("Could not get pipeline position")
             return
 
-        source = self._timeline.selection.getSingleClip()
+        source = self._timeline.selection.get_single_clip()
         if source is None:
             return
         source_position = position - source.props.start + source.props.in_point
@@ -613,7 +613,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         self._ges_elem = element
         self._ges_elem.selected = Selected()
         self._ges_elem.selected.connect(
-            "selected-changed", self.__selectedChangedCb)
+            "selected-changed", self.__selected_changed_cb)
 
         self.__width = 0
         self.__height = 0
@@ -623,11 +623,11 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
         self.props.vexpand = True
 
-        self.__previewer = self._getPreviewer()
+        self.__previewer = self._get_previewer()
         if self.__previewer:
             self.add(self.__previewer)
 
-        self.__background = self._getBackground()
+        self.__background = self._get_background()
         if self.__background:
             self.add(self.__background)
 
@@ -638,7 +638,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         # We set up the default mixing property right here, if a binding was
         # already set (when loading a project), it will be added later
         # and override that one.
-        self.showDefaultKeyframes(lazy_render=True)
+        self.show_default_keyframes(lazy_render=True)
 
     def update_previewer(self):
         """Refreshes the previewer widget."""
@@ -650,7 +650,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             self.__previewer.release()
 
     # Public API
-    def setSize(self, width, height):
+    def set_size(self, width, height):
         width = max(0, width)
         self.set_size_request(width, height)
 
@@ -666,39 +666,39 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         self.__width = width
         self.__height = height
 
-    def showKeyframes(self, ges_elem, prop):
-        self.__setKeyframes(ges_elem, prop)
+    def show_keyframes(self, ges_elem, prop):
+        self.__set_keyframes(ges_elem, prop)
         binding = ges_elem.get_control_binding(prop.name)
         self.__create_keyframe_curve([binding])
 
-    def showDefaultKeyframes(self, lazy_render=False):
-        self.__setKeyframes(self._ges_elem, self._getDefaultMixingProperty())
+    def show_default_keyframes(self, lazy_render=False):
+        self.__set_keyframes(self._ges_elem, self._get_default_mixing_property())
         if not lazy_render:
             self.__create_keyframe_curve()
 
-    def showMultipleKeyframes(self, bindings):
+    def show_multiple_keyframes(self, bindings):
         self.__controlled_property = None
         self.__create_keyframe_curve(bindings)
 
-    def __setKeyframes(self, ges_elem, prop):
-        self.__removeKeyframes()
+    def __set_keyframes(self, ges_elem, prop):
+        self.__remove_keyframes()
         self.__controlled_property = prop
         if self.__controlled_property:
-            self.__createControlBinding(ges_elem)
+            self.__create_control_binding(ges_elem)
 
-    def __curveEnterCb(self, unused_keyframe_curve):
+    def __curve_enter_cb(self, unused_keyframe_curve):
         self.emit("curve-enter")
 
-    def __curveLeaveCb(self, unused_keyframe_curve):
+    def __curve_leave_cb(self, unused_keyframe_curve):
         self.emit("curve-leave")
 
-    def __removeKeyframes(self):
+    def __remove_keyframes(self):
         if not self.keyframe_curve:
             # Nothing to remove.
             return
 
-        self.keyframe_curve.disconnect_by_func(self.__curveEnterCb)
-        self.keyframe_curve.disconnect_by_func(self.__curveLeaveCb)
+        self.keyframe_curve.disconnect_by_func(self.__curve_enter_cb)
+        self.keyframe_curve.disconnect_by_func(self.__curve_leave_cb)
         self.remove(self.keyframe_curve)
 
         self.keyframe_curve.release()
@@ -723,7 +723,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
     def __create_keyframe_curve(self, bindings=None):
         """Creates required keyframe curve."""
-        self.__removeKeyframes()
+        self.__remove_keyframes()
         if not bindings:
             bindings = [self._ges_elem.get_control_binding(self.__controlled_property.name)]
 
@@ -732,17 +732,17 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         else:
             self.keyframe_curve = MultipleKeyframeCurve(self.timeline, bindings)
 
-        self.keyframe_curve.connect("enter", self.__curveEnterCb)
-        self.keyframe_curve.connect("leave", self.__curveLeaveCb)
+        self.keyframe_curve.connect("enter", self.__curve_enter_cb)
+        self.keyframe_curve.connect("leave", self.__curve_leave_cb)
         self.keyframe_curve.set_size_request(self.__width, self.__height)
         self.keyframe_curve.show()
         self.__update_keyframe_curve_visibility()
 
-    def __createControlBinding(self, element):
+    def __create_control_binding(self, element):
         """Creates the required ControlBinding and keyframes."""
         if self.__controlled_property:
             element.connect("control-binding-added",
-                            self.__controlBindingAddedCb)
+                            self.__control_binding_added_cb)
             binding = \
                 element.get_control_binding(self.__controlled_property.name)
 
@@ -756,7 +756,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             element.set_control_source(source,
                                        self.__controlled_property.name, "direct")
 
-    def __controlBindingAddedCb(self, unused_ges_elem, binding):
+    def __control_binding_added_cb(self, unused_ges_elem, binding):
         if binding.props.name == self.__controlled_property.name:
             self.__ensure_keyframes(binding)
 
@@ -772,7 +772,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
                 self.propagate_draw(self.keyframe_curve, cr)
 
     # Callbacks
-    def __selectedChangedCb(self, unused_selected, selected):
+    def __selected_changed_cb(self, unused_selected, selected):
         if not self.keyframe_curve and self.__controlled_property and \
                 selected and len(self.timeline.selection) == 1:
             self.__create_keyframe_curve()
@@ -792,7 +792,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             self.remove(self.keyframe_curve)
 
     # Virtual methods
-    def _getPreviewer(self):
+    def _get_previewer(self):
         """Gets a Gtk.Widget to be used as previewer.
 
         This previewer will be automatically scaled to the width and
@@ -803,7 +803,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         """
         return None
 
-    def _getBackground(self):
+    def _get_background(self):
         """Gets a Gtk.Widget to be used as background.
 
         Returns:
@@ -811,7 +811,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         """
         return None
 
-    def _getDefaultMixingProperty(self):
+    def _get_default_mixing_property(self):
         """Gets the property controlled by default by the keyframes.
 
         Returns:
@@ -953,7 +953,7 @@ class VideoSource(TimelineElement):
                                          unused_pspec):
         self.__apply_new_size_if_needed()
 
-    def _getBackground(self):
+    def _get_background(self):
         return VideoBackground()
 
 
@@ -961,7 +961,7 @@ class TitleSource(VideoSource):
 
     __gtype_name__ = "PitiviTitleSource"
 
-    def _getDefaultMixingProperty(self):
+    def _get_default_mixing_property(self):
         for spec in self._ges_elem.list_children_properties():
             if spec.name == "alpha":
                 return spec
@@ -982,7 +982,7 @@ class VideoUriSource(VideoSource):
         VideoSource.__init__(self, element, timeline)
         self.get_style_context().add_class("VideoUriSource")
 
-    def _getPreviewer(self):
+    def _get_previewer(self):
         if isinstance(self._ges_elem, GES.ImageSource):
             previewer = ImagePreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
         else:
@@ -991,7 +991,7 @@ class VideoUriSource(VideoSource):
 
         return previewer
 
-    def _getDefaultMixingProperty(self):
+    def _get_default_mixing_property(self):
         for spec in self._ges_elem.list_children_properties():
             if spec.name == "alpha":
                 return spec
@@ -1012,16 +1012,16 @@ class AudioUriSource(TimelineElement):
         TimelineElement.__init__(self, element, timeline)
         self.get_style_context().add_class("AudioUriSource")
 
-    def _getPreviewer(self):
+    def _get_previewer(self):
         previewer = AudioPreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
         previewer.get_style_context().add_class("AudioUriSource")
 
         return previewer
 
-    def _getBackground(self):
+    def _get_background(self):
         return AudioBackground()
 
-    def _getDefaultMixingProperty(self):
+    def _get_default_mixing_property(self):
         for spec in self._ges_elem.list_children_properties():
             if spec.name == "volume":
                 return spec
@@ -1103,7 +1103,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.audio_widget = None
         self.video_widget = None
 
-        self._setupWidget()
+        self._setup_widget()
         self.__force_position_update = True
 
         for ges_timeline_element in self.ges_clip.get_children(False):
@@ -1141,16 +1141,16 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
         if target.name() == EFFECT_TARGET_ENTRY.target:
             self.info("Adding effect %s", self.timeline.drop_data)
-            self.timeline.selection.setSelection([self.ges_clip], SELECT)
-            self.app.gui.editor.switchContextTab(self.ges_clip)
+            self.timeline.selection.set_selection([self.ges_clip], SELECT)
+            self.app.gui.editor.switch_context_tab(self.ges_clip)
 
-            effect_info = self.app.effects.getInfo(self.timeline.drop_data)
+            effect_info = self.app.effects.get_info(self.timeline.drop_data)
             pipeline = self.timeline.ges_timeline.get_parent()
             with self.app.action_log.started("add effect",
                                              finalizing_action=CommitTimelineFinalizingAction(pipeline),
                                              toplevel=True):
                 self.add_effect(effect_info)
-            self.timeline.cleanDropData()
+            self.timeline.clean_drop_data()
             success = True
 
         Gtk.drag_finish(context, success, False, timestamp)
@@ -1182,7 +1182,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
                 return effect
         return None
 
-    def updatePosition(self):
+    def update_position(self):
         layer = self.layer
         if not layer or layer != self.get_parent():
             # Things are not settled yet.
@@ -1190,11 +1190,11 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
         start = self.ges_clip.props.start
         duration = self.ges_clip.props.duration
-        x = self.nsToPixel(start)
+        x = self.ns_to_pixel(start)
         # The calculation of the width assumes that the start is always
         # int(pixels_float). In that case, the rounding can add up and a pixel
         # might be lost if we ignore the start of the clip.
-        width = self.nsToPixel(start + duration) - x
+        width = self.ns_to_pixel(start + duration) - x
 
         parent_height = layer.props.height_request
         y = 0
@@ -1219,7 +1219,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
             elements = self._elements_container.get_children()
             for child in elements:
-                child.setSize(width, height / len(elements))
+                child.set_size(width, height / len(elements))
 
             self.__force_position_update = False
             # pylint: disable=attribute-defined-outside-init
@@ -1229,10 +1229,10 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             self._current_parent_height = parent_height
             self._current_parent = layer
 
-    def _setupWidget(self):
+    def _setup_widget(self):
         pass
 
-    def _addTrimHandles(self):
+    def _add_trim_handles(self):
         overlay = Gtk.Overlay()
         self.add(overlay)
 
@@ -1248,13 +1248,13 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.handles.append(self.left_handle)
         self.handles.append(self.right_handle)
 
-    def shrinkTrimHandles(self):
+    def shrink_trim_handles(self):
         for handle in self.handles:
             handle.shrink()
 
     def do_map(self):
         Gtk.EventBox.do_map(self)
-        self.updatePosition()
+        self.update_position()
 
     def _button_release_event_cb(self, unused_widget, event):
         if self.timeline.got_dragged:
@@ -1277,7 +1277,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             clicked_layer, click_pos = self.timeline.get_clicked_layer_and_pos(event)
             self.timeline.set_selection_meta_info(clicked_layer, click_pos, mode)
         else:
-            self.app.gui.editor.switchContextTab(self.ges_clip)
+            self.app.gui.editor.switch_context_tab(self.ges_clip)
 
         parent = self.ges_clip.get_toplevel_parent()
         if parent is self.ges_clip:
@@ -1285,13 +1285,13 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         else:
             selection = [elem for elem in parent.get_children(True)
                          if isinstance(elem, (GES.SourceClip, GES.TransitionClip))]
-        self.timeline.selection.setSelection(selection, mode)
+        self.timeline.selection.set_selection(selection, mode)
 
         return False
 
     def release(self):
         for child in self.ges_clip.get_children(True):
-            self.__disconnectFromChild(child)
+            self.__disconnect_from_child(child)
 
         disconnect_all_by_func(self.ges_clip, self._start_changed_cb)
         disconnect_all_by_func(self.ges_clip, self._duration_changed_cb)
@@ -1299,11 +1299,11 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         disconnect_all_by_func(self.ges_clip, self._child_added_cb)
         disconnect_all_by_func(self.ges_clip, self._child_removed_cb)
 
-    def __showHandles(self):
+    def __show_handles(self):
         for handle in self.handles:
             handle.show()
 
-    def __hideHandles(self):
+    def __hide_handles(self):
         for handle in self.handles:
             handle.hide()
 
@@ -1323,28 +1323,28 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         return False
 
     def _start_changed_cb(self, clip, pspec):
-        self.updatePosition()
+        self.update_position()
 
     def _duration_changed_cb(self, clip, pspec):
-        self.updatePosition()
+        self.update_position()
 
     def _layer_changed_cb(self, ges_clip, pspec):
-        self.updatePosition()
+        self.update_position()
 
-    def __disconnectFromChild(self, child):
+    def __disconnect_from_child(self, child):
         if child.ui:
             child.ui.release()
 
     def __connect_to_child(self, child):
         if child.ui:
-            child.ui.connect("curve-enter", self.__curveEnterCb)
-            child.ui.connect("curve-leave", self.__curveLeaveCb)
+            child.ui.connect("curve-enter", self.__curve_enter_cb)
+            child.ui.connect("curve-leave", self.__curve_leave_cb)
 
-    def __curveEnterCb(self, unused_keyframe_curve):
-        self.__hideHandles()
+    def __curve_enter_cb(self, unused_keyframe_curve):
+        self.__hide_handles()
 
-    def __curveLeaveCb(self, unused_keyframe_curve):
-        self.__showHandles()
+    def __curve_leave_cb(self, unused_keyframe_curve):
+        self.__show_handles()
 
     def _add_child(self, ges_timeline_element):
         ges_timeline_element.selected = Selected()
@@ -1354,16 +1354,16 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.__force_position_update = True
         self._add_child(ges_timeline_element)
         self.__connect_to_child(ges_timeline_element)
-        self.updatePosition()
+        self.update_position()
 
     def _remove_child(self, ges_timeline_element):
         pass
 
     def _child_removed_cb(self, unused_ges_clip, ges_timeline_element):
         self.__force_position_update = True
-        self.__disconnectFromChild(ges_timeline_element)
+        self.__disconnect_from_child(ges_timeline_element)
         self._remove_child(ges_timeline_element)
-        self.updatePosition()
+        self.update_position()
 
 
 class SourceClip(Clip):
@@ -1372,8 +1372,8 @@ class SourceClip(Clip):
     def __init__(self, layer, ges_clip):
         Clip.__init__(self, layer, ges_clip)
 
-    def _setupWidget(self):
-        self._addTrimHandles()
+    def _setup_widget(self):
+        self._add_trim_handles()
 
         self.get_style_context().add_class("Clip")
 
@@ -1447,7 +1447,7 @@ class TransitionClip(Clip):
         self.get_style_context().add_class("TransitionClip")
 
         # In the case of TransitionClips, we are the only container
-        self._addTrimHandles()
+        self._add_trim_handles()
 
         self.props.has_tooltip = True
 
@@ -1469,9 +1469,9 @@ class TransitionClip(Clip):
         self.z_order = 1
         self.set_sensitive(True)
         self.__has_video = True
-        ges_timeline_element.selected.connect("selected-changed", self._selectedChangedCb, ges_timeline_element)
+        ges_timeline_element.selected.connect("selected-changed", self._selected_changed_cb, ges_timeline_element)
 
-    def _selectedChangedCb(self, unused_selected, selected, ges_timeline_element):
+    def _selected_changed_cb(self, unused_selected, selected, ges_timeline_element):
         if selected:
             self.app.gui.editor.trans_list.activate(ges_timeline_element)
         else:

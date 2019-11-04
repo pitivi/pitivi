@@ -55,7 +55,7 @@ class Overlay(Gtk.DrawingArea, Loggable):
 
     def _select(self):
         self.stack.selected_overlay = self
-        self.stack.app.gui.editor.timeline_ui.timeline.selection.setSelection([self._source], SELECT)
+        self.stack.app.gui.editor.timeline_ui.timeline.selection.set_selection([self._source], SELECT)
         if isinstance(self._source, GES.TitleSource):
             page = 2
         elif isinstance(self._source, GES.VideoUriSource):

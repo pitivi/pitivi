@@ -363,7 +363,7 @@ class MoveScaleOverlay(Overlay):
         if project:
             pipeline = project.pipeline
             try:
-                position = pipeline.getPosition()
+                position = pipeline.get_position()
                 return True, position
             except PipelineError:
                 pass

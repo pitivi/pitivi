@@ -195,15 +195,15 @@ class TestMarkers(BaseTestUndoTimeline):
         self.assert_markers(markers, [(10, None), (20, None)])
 
         project_uri = Gst.filename_to_uri(tempfile.NamedTemporaryFile().name)
-        self.app.project_manager.saveProject(project_uri)
+        self.app.project_manager.save_project(project_uri)
         self.app.project_manager.connect("closing-project", closing)
 
-        self.app.project_manager.closeRunningProject()
+        self.app.project_manager.close_running_project()
         project = self.app.project_manager.new_blank_project()
         markers = project.ges_timeline.get_marker_list("markers")
         self.assert_markers(markers, [])
 
-        self.app.project_manager.closeRunningProject()
+        self.app.project_manager.close_running_project()
         project = self.app.project_manager.load_project(project_uri)
         project.connect("loaded", loaded_cb)
         mainloop = common.create_main_loop()

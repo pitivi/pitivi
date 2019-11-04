@@ -38,7 +38,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="_createCb" swapped="no"/>
+                <signal name="clicked" handler="_create_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -137,7 +137,7 @@
                     <property name="preview_text"/>
                     <property name="show_preview_entry">False</property>
                     <property name="title" translatable="yes">Choose a font</property>
-                    <signal name="font-set" handler="_fontButtonCb" swapped="no"/>
+                    <signal name="font-set" handler="_font_button_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -155,7 +155,7 @@
                     <property name="use_alpha">True</property>
                     <property name="title" translatable="yes">Pick a text color</property>
                     <property name="rgba">rgb(239,41,41)</property>
-                    <signal name="color-set" handler="_frontTextColorButtonCb" swapped="no"/>
+                    <signal name="color-set" handler="_front_text_color_button_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -190,7 +190,7 @@
                     <property name="use_alpha">True</property>
                     <property name="title" translatable="yes">Pick a background color</property>
                     <property name="rgba">rgb(255,255,255)</property>
-                    <signal name="color-set" handler="_backgroundColorButtonCb" swapped="no"/>
+                    <signal name="color-set" handler="_background_color_button_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>

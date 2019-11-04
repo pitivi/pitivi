@@ -25,12 +25,12 @@ from pitivi.utils.system import System
 
 class TestSystem(TestCase):
 
-    def testGetUniqueFilename(self):
+    def test_get_unique_filename(self):
         system = System()
-        self.assertNotEqual(system.getUniqueFilename("a/b"),
-                            system.getUniqueFilename("a%47b"))
-        self.assertNotEqual(system.getUniqueFilename("a%b"),
-                            system.getUniqueFilename("a%37b"))
-        self.assertNotEqual(system.getUniqueFilename("a%/b"),
-                            system.getUniqueFilename("a%37%3747b"))
-        self.assertEqual("a b", system.getUniqueFilename("a b"))
+        self.assertNotEqual(system.get_unique_filename("a/b"),
+                            system.get_unique_filename("a%47b"))
+        self.assertNotEqual(system.get_unique_filename("a%b"),
+                            system.get_unique_filename("a%37b"))
+        self.assertNotEqual(system.get_unique_filename("a%/b"),
+                            system.get_unique_filename("a%37%3747b"))
+        self.assertEqual("a b", system.get_unique_filename("a b"))

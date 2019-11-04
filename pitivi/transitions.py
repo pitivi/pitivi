@@ -98,7 +98,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.props_widgets.attach(self.invert_checkbox, 1, 2, 1, 1)
 
         # Set the default values
-        self.__updateBorderScale()
+        self.__update_border_scale()
 
         self.infobar = Gtk.InfoBar()
         fix_infobar(self.infobar)
@@ -163,12 +163,12 @@ class TransitionsListWidget(Gtk.Box, Loggable):
                 self.container_focused = False
                 action_log.commit("Change transaction")
 
-    def __connectUi(self):
-        self.iconview.connect("selection-changed", self._transitionSelectedCb)
-        self.border_scale.connect("value-changed", self._borderScaleCb)
-        self.invert_checkbox.connect("toggled", self._invertCheckboxCb)
-        self.border_mode_normal.connect("released", self._borderTypeChangedCb)
-        self.border_mode_loop.connect("released", self._borderTypeChangedCb)
+    def __connect_ui(self):
+        self.iconview.connect("selection-changed", self._transition_selected_cb)
+        self.border_scale.connect("value-changed", self._border_scale_cb)
+        self.invert_checkbox.connect("toggled", self._invert_checkbox_cb)
+        self.border_mode_normal.connect("released", self._border_type_changed_cb)
+        self.border_mode_loop.connect("released", self._border_type_changed_cb)
         self.element.connect("notify::border", self.__updated_cb)
         self.element.connect("notify::invert", self.__updated_cb)
         self.element.connect("notify::transition-type", self.__updated_cb)
@@ -176,18 +176,18 @@ class TransitionsListWidget(Gtk.Box, Loggable):
     def __updated_cb(self, element, unused_param):
         self._update_ui()
 
-    def __disconnectUi(self):
-        self.iconview.disconnect_by_func(self._transitionSelectedCb)
-        self.border_scale.disconnect_by_func(self._borderScaleCb)
-        self.invert_checkbox.disconnect_by_func(self._invertCheckboxCb)
-        self.border_mode_normal.disconnect_by_func(self._borderTypeChangedCb)
-        self.border_mode_loop.disconnect_by_func(self._borderTypeChangedCb)
+    def __disconnect_ui(self):
+        self.iconview.disconnect_by_func(self._transition_selected_cb)
+        self.border_scale.disconnect_by_func(self._border_scale_cb)
+        self.invert_checkbox.disconnect_by_func(self._invert_checkbox_cb)
+        self.border_mode_normal.disconnect_by_func(self._border_type_changed_cb)
+        self.border_mode_loop.disconnect_by_func(self._border_type_changed_cb)
         disconnect_all_by_func(self.element, self.__updated_cb)
 
 # UI callbacks
 
-    def _transitionSelectedCb(self, unused_widget):
-        transition_asset = self.getSelectedItem()
+    def _transition_selected_cb(self, unused_widget):
+        transition_asset = self.get_selected_item()
         if not transition_asset:
             # The user clicked between icons
             return False
@@ -203,26 +203,26 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.app.write_action("element-set-asset",
                               asset_id=transition_asset.get_id(),
                               element_name=self.element.get_name())
-        self.app.project_manager.current_project.pipeline.flushSeek()
+        self.app.project_manager.current_project.pipeline.flush_seek()
 
         return True
 
-    def _borderScaleCb(self, widget):
+    def _border_scale_cb(self, widget):
         value = widget.get_value()
         self.debug("User changed the border property to %s", value)
         self.element.set_border(int(value))
-        self.app.project_manager.current_project.pipeline.flushSeek()
+        self.app.project_manager.current_project.pipeline.flush_seek()
 
-    def _invertCheckboxCb(self, widget):
+    def _invert_checkbox_cb(self, widget):
         value = widget.get_active()
         self.debug("User changed the invert property to %s", value)
         self.element.set_inverted(value)
-        self.app.project_manager.current_project.pipeline.flushSeek()
+        self.app.project_manager.current_project.pipeline.flush_seek()
 
-    def _borderTypeChangedCb(self, widget):
-        self.__updateBorderScale(widget == self.border_mode_loop)
+    def _border_type_changed_cb(self, widget):
+        self.__update_border_scale(widget == self.border_mode_loop)
 
-    def __updateBorderScale(self, loop=False, border=None):
+    def __update_border_scale(self, loop=False, border=None):
         # The "border" property in gstreamer is unlimited, but if you go over
         # 25 thousand it "loops" the transition instead of smoothing it.
         if border is not None:
@@ -254,7 +254,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
     def _load_available_transitions_cb(self):
         """Loads the transitions types and icons into the storemodel."""
         for trans_asset in GES.list_assets(GES.TransitionClip):
-            trans_asset.icon = self._getIcon(trans_asset.get_id())
+            trans_asset.icon = self._get_icon(trans_asset.get_id())
             self.storemodel.append([trans_asset,
                                     str(trans_asset.get_id()),
                                     str(trans_asset.get_meta(
@@ -276,7 +276,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.iconview.show_all()
         self.props_widgets.show_all()
         self.searchbar.show_all()
-        self.__connectUi()
+        self.__connect_ui()
         # We REALLY want the infobar to be hidden as space is really constrained
         # and yet GTK 3.10 seems to be racy in showing/hiding infobars, so
         # this must happen *after* the tab has been made visible/switched to:
@@ -288,7 +288,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
             transition_type != GES.VideoStandardTransitionType.CROSSFADE)
         self.__select_transition(transition_type)
         border = self.element.get_border()
-        self.__updateBorderScale(border=border)
+        self.__update_border_scale(border=border)
         self.border_scale.set_value(border)
         self.invert_checkbox.set_active(self.element.is_inverted())
         loop = border >= BORDER_LOOP_THRESHOLD
@@ -309,14 +309,14 @@ class TransitionsListWidget(Gtk.Box, Loggable):
 
     def deactivate(self):
         """Shows the infobar and hides the transitions UI."""
-        self.__disconnectUi()
+        self.__disconnect_ui()
         self.iconview.unselect_all()
         self.iconview.hide()
         self.props_widgets.hide()
         self.searchbar.hide()
         self.infobar.show()
 
-    def _getIcon(self, transition_nick):
+    def _get_icon(self, transition_nick):
         """Gets an icon pixbuf for the specified transition nickname."""
         name = transition_nick + ".png"
         try:
@@ -347,7 +347,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         tooltip.set_markup(txt)
         return True
 
-    def getSelectedItem(self):
+    def get_selected_item(self):
         path = self.iconview.get_selected_items()
         if path == []:
             return None

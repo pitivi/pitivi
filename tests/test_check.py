@@ -24,7 +24,7 @@ from tests import common
 
 class TestDependency(common.TestCase):
 
-    def testBoolEvaluation(self):
+    def test_bool_evaluation(self):
         dependency = Dependency(
             modulename="module1", version_required=None)
         self.assertFalse(dependency)

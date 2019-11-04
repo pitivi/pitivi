@@ -110,7 +110,7 @@ class GreeterPerspective(Perspective):
         # Projects selected for removal.
         self.__selected_projects = []
 
-        if app.getLatest():
+        if app.get_latest():
             self.__show_newer_available_version()
         else:
             app.connect("version-info-received", self.__app_version_info_received_cb)
@@ -332,13 +332,13 @@ class GreeterPerspective(Perspective):
 
     def __app_version_info_received_cb(self, app, unused_version_information):
         """Handles new version info."""
-        if app.isLatest():
+        if app.is_latest():
             # current version, don't show message
             return
         self.__show_newer_available_version()
 
     def __show_newer_available_version(self):
-        latest_version = self.app.getLatest()
+        latest_version = self.app.get_latest()
 
         if self.app.settings.lastCurrentVersion != latest_version:
             # new latest version, reset counter

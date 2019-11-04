@@ -127,7 +127,7 @@ class ClipMediaPropsDialog:
             self.framerate_checkbutton.hide()
             self.video_header_label.set_markup("<b>" + _("Image:") + "</b>")
 
-        self.dialog.connect("key-press-event", self._keyPressCb)
+        self.dialog.connect("key-press-event", self._key_press_cb)
         self.dialog.connect("response", self.__response_cb)
         self.dialog.run()
 
@@ -155,7 +155,7 @@ class ClipMediaPropsDialog:
             self._apply()
         self.dialog.destroy()
 
-    def _keyPressCb(self, unused_widget, event):
+    def _key_press_cb(self, unused_widget, event):
         if event.keyval in (Gdk.KEY_Escape, Gdk.KEY_Q, Gdk.KEY_q):
             self.dialog.destroy()
         return True
