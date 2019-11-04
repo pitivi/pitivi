@@ -26,10 +26,10 @@ from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import Pango
 from gi.repository import Peas
-from utils import Namespace
-from widgets import ConsoleWidget
 
 from pitivi.dialogs.prefs import PreferencesDialog
+from plugins.console.utils import Namespace
+from plugins.console.widgets import ConsoleWidget
 
 
 class PitiviNamespace(Namespace):

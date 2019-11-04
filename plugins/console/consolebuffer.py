@@ -27,9 +27,10 @@ import sys
 
 from gi.repository import GObject
 from gi.repository import Gtk
-from utils import display_autocompletion
-from utils import FakeOut
-from utils import swap_std
+
+from plugins.console.utils import display_autocompletion
+from plugins.console.utils import FakeOut
+from plugins.console.utils import swap_std
 
 
 class ConsoleHistory(GObject.Object):
