@@ -427,7 +427,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.project:
             self.overlay_stack.enable_resize_status(False)
             position = self.project.pipeline.getPosition()
-            self.project.pipeline.setState(Gst.State.NULL)
+            self.project.pipeline.set_simple_state(Gst.State.NULL)
             self.remove(self.target)
             self.__createNewViewer()
         self.buttons_container.set_margin_bottom(SPACING)
@@ -471,7 +471,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.project:
             self.overlay_stack.enable_resize_status(False)
             position = self.project.pipeline.getPosition()
-            self.project.pipeline.setState(Gst.State.NULL)
+            self.project.pipeline.set_simple_state(Gst.State.NULL)
             self.external_vbox.remove(self.target)
             self.__createNewViewer()
 
@@ -516,8 +516,8 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.log("Not previewing trim for image or title clip: %s", clip)
             return
 
-        if self.project.pipeline.getState() == Gst.State.PLAYING:
-            self.project.pipeline.setState(Gst.State.PAUSED)
+        if self.project.pipeline.get_simple_state() == Gst.State.PLAYING:
+            self.project.pipeline.set_simple_state(Gst.State.PAUSED)
 
         uri = clip.props.uri
         if self.trim_pipeline and uri != self.trim_pipeline.uri:
@@ -540,7 +540,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.hidden_chest.add(sink_widget)
             sink_widget.show()
             self.trim_pipeline.connect("state-change", self._state_change_cb)
-            self.trim_pipeline.setState(Gst.State.PAUSED)
+            self.trim_pipeline.set_simple_state(Gst.State.PAUSED)
 
         self.trim_pipeline.simple_seek(position)
 
