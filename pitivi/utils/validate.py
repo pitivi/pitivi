@@ -89,7 +89,7 @@ if GstValidate:
                                       "New window created by the sink,"
                                       " that should not happen")
 
-        def checkWrongWindow(self):
+        def check_wrong_window(self):
             try:
                 windows = subprocess.check_output(["xwininfo", "-tree", "-root"]).decode(locale.getdefaultlocale()[1])
                 for w in windows.split('\n'):
@@ -116,7 +116,7 @@ def stop_func(scenario, action):
     global monitor
 
     if monitor:
-        monitor.checkWrongWindow()
+        monitor.check_wrong_window()
 
     if action.structure.get_boolean("force")[0]:
         GstValidate.execute_action(GstValidate.get_action_type(action.type).overriden_type,
@@ -126,7 +126,7 @@ def stop_func(scenario, action):
         project = timeline.get_asset()
 
         if project:
-            project.setModificationState(False)
+            project.set_modification_state(False)
             GstValidate.print_action(action, "Force quitting, ignoring any"
 
                                      " changes in the project\n")
@@ -221,7 +221,7 @@ def _release_button_if_needed(scenario, timeline, container, layer_prio,
 
     if next_action is None or need_release:
         scenario.dragging = False
-        x = Zoomable.nsToPixelAccurate(position)
+        x = Zoomable.ns_to_pixel_accurate(position)
         event = create_event(Gdk.EventType.BUTTON_RELEASE, button=1, x=x, y=y)
         with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
             get_event_widget.return_value = container.ui
@@ -345,7 +345,7 @@ def edit_container_func(scenario, action):
             get_event_widget.return_value = event_widget
             timeline.ui._button_press_event_cb(event_widget, event)
 
-    x = Zoomable.nsToPixelAccurate(position) - container_ui.translate_coordinates(timeline.ui.layout.layers_vbox, 0, 0)[0]
+    x = Zoomable.ns_to_pixel_accurate(position) - container_ui.translate_coordinates(timeline.ui.layout.layers_vbox, 0, 0)[0]
     event = create_event(Gdk.EventType.MOTION_NOTIFY, button=1,
                          x=x, y=y, state=Gdk.ModifierType.BUTTON1_MASK)
     with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
@@ -369,7 +369,7 @@ def edit_container_func(scenario, action):
 
 def split_clip_func(scenario, action):
     timeline = scenario.get_pipeline().props.timeline.ui
-    timeline.get_parent()._splitCb(None, None)
+    timeline.get_parent()._split_cb(None, None)
 
     return True
 
@@ -380,14 +380,14 @@ def zoom_func(scenario, action):
     GstValidate.print_action(action, action.type.replace('-', ' ') + "\n")
 
     {"zoom-fit": timeline.ui.set_best_zoom_ratio,
-     "zoom-out": Zoomable.zoomOut,
-     "zoom-in": Zoomable.zoomIn}[action.type]()
+     "zoom-out": Zoomable.zoom_out,
+     "zoom-in": Zoomable.zoom_in}[action.type]()
 
     return True
 
 
 def set_zoom_level_func(scenario, action):
-    Zoomable.setZoomLevel(action.structure["level"])
+    Zoomable.set_zoom_level(action.structure["level"])
 
     return True
 

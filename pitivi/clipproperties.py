@@ -86,7 +86,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.effect_expander.set_vexpand(False)
         vbox.pack_start(self.effect_expander, False, False, 0)
 
-    def createInfoBar(self, text):
+    def create_info_bar(self, text):
         """Creates an infobar to be displayed at the top."""
         label = Gtk.Label(label=text)
         label.set_line_wrap(True)
@@ -176,7 +176,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         activated_cell = Gtk.CellRendererToggle()
         activated_cell.props.xalign = 0
         activated_cell.props.xpad = 0
-        activated_cell.connect("toggled", self._effectActiveToggleCb)
+        activated_cell.connect("toggled", self._effect_active_toggle_cb)
         self.treeview.insert_column_with_attributes(-1,
                                                     _("Active"), activated_cell,
                                                     active=COL_ACTIVATED)
@@ -217,7 +217,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview_selection = self.treeview.get_selection()
         self.treeview_selection.set_mode(Gtk.SelectionMode.SINGLE)
 
-        self._infobar = clip_properties.createInfoBar(
+        self._infobar = clip_properties.create_info_bar(
             _("Select a clip on the timeline to configure its associated effects"))
         self._infobar.show_all()
 
@@ -244,7 +244,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.app.shortcuts.register_group("clipproperties-effects", _("Clip Effects"), position=60)
 
         self.remove_effect_action = Gio.SimpleAction.new("remove-effect", None)
-        self.remove_effect_action.connect("activate", self._removeEffectCb)
+        self.remove_effect_action.connect("activate", self._remove_effect_cb)
         effects_actions_group.add_action(self.remove_effect_action)
         self.app.shortcuts.add("clipproperties-effects.remove-effect", ["Delete"],
                                _("Remove the selected effect"))
@@ -252,32 +252,32 @@ class EffectProperties(Gtk.Expander, Loggable):
         remove_effect_button.set_action_name("clipproperties-effects.remove-effect")
 
         # Connect all the widget signals
-        self.treeview_selection.connect("changed", self._treeviewSelectionChangedCb)
+        self.treeview_selection.connect("changed", self._treeview_selection_changed_cb)
         self.connect("drag-motion", self._drag_motion_cb)
         self.connect("drag-leave", self._drag_leave_cb)
         self.connect("drag-data-received", self._drag_data_received_cb)
         self.treeview.connect("drag-motion", self._drag_motion_cb)
         self.treeview.connect("drag-leave", self._drag_leave_cb)
         self.treeview.connect("drag-data-received", self._drag_data_received_cb)
-        self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
+        self.treeview.connect("query-tooltip", self._tree_view_query_tooltip_cb)
         self.app.project_manager.connect_after(
-            "new-project-loaded", self._newProjectLoadedCb)
-        self.connect('notify::expanded', self._expandedCb)
+            "new-project-loaded", self._new_project_loaded_cb)
+        self.connect('notify::expanded', self._expanded_cb)
 
-    def _newProjectLoadedCb(self, unused_app, project):
+    def _new_project_loaded_cb(self, unused_app, project):
         if self._selection is not None:
-            self._selection.disconnect_by_func(self._selectionChangedCb)
+            self._selection.disconnect_by_func(self._selection_changed_cb)
             self._selection = None
         self._project = project
         if project:
             self._selection = project.ges_timeline.ui.selection
-            self._selection.connect('selection-changed', self._selectionChangedCb)
-        self.__updateAll()
+            self._selection.connect('selection-changed', self._selection_changed_cb)
+        self.__update_all()
 
-    def _selectionChangedCb(self, selection):
+    def _selection_changed_cb(self, selection):
         if self.clip:
-            self.clip.disconnect_by_func(self._trackElementAddedCb)
-            self.clip.disconnect_by_func(self._trackElementRemovedCb)
+            self.clip.disconnect_by_func(self._track_element_added_cb)
+            self.clip.disconnect_by_func(self._track_element_removed_cb)
             for track_element in self.clip.get_children(recursive=True):
                 if isinstance(track_element, GES.BaseEffect):
                     self._disconnect_from_track_element(track_element)
@@ -285,17 +285,17 @@ class EffectProperties(Gtk.Expander, Loggable):
         clips = list(selection.selected)
         self.clip = clips[0] if len(clips) == 1 else None
         if self.clip:
-            self.clip.connect("child-added", self._trackElementAddedCb)
-            self.clip.connect("child-removed", self._trackElementRemovedCb)
+            self.clip.connect("child-added", self._track_element_added_cb)
+            self.clip.connect("child-removed", self._track_element_removed_cb)
             for track_element in self.clip.get_children(recursive=True):
                 if isinstance(track_element, GES.BaseEffect):
                     self._connect_to_track_element(track_element)
-        self.__updateAll()
+        self.__update_all()
 
-    def _trackElementAddedCb(self, unused_clip, track_element):
+    def _track_element_added_cb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
             self._connect_to_track_element(track_element)
-            self.__updateAll()
+            self.__update_all()
             for path, row in enumerate(self.storemodel):
                 if row[COL_TRACK_EFFECT] == track_element:
                     self.treeview_selection.select_path(path)
@@ -310,17 +310,17 @@ class EffectProperties(Gtk.Expander, Loggable):
         track_element.disconnect_by_func(self._notify_priority_cb)
 
     def _notify_active_cb(self, unused_track_element, unused_param_spec):
-        self._updateTreeview()
+        self._update_treeview()
 
     def _notify_priority_cb(self, unused_track_element, unused_param_spec):
-        self._updateTreeview()
+        self._update_treeview()
 
-    def _trackElementRemovedCb(self, unused_clip, track_element):
+    def _track_element_removed_cb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
             self._disconnect_from_track_element(track_element)
-            self.__updateAll()
+            self.__update_all()
 
-    def _removeEffectCb(self, unused_action, unused_param):
+    def _remove_effect_cb(self, unused_action, unused_param):
         selected = self.treeview_selection.get_selected()
         if not selected[1]:
             # Cannot remove nothing,
@@ -332,17 +332,17 @@ class EffectProperties(Gtk.Expander, Loggable):
         effect_count = self.storemodel.iter_n_children()
         if effect_count - 1 == next_selection_index:
             next_selection_index -= 1
-        self._removeEffect(effect)
+        self._remove_effect(effect)
         if next_selection_index >= 0:
             self.treeview_selection.select_path(next_selection_index)
 
-    def _removeEffect(self, effect):
+    def _remove_effect(self, effect):
         pipeline = self._project.pipeline
         with self.app.action_log.started("remove effect",
                                          finalizing_action=CommitTimelineFinalizingAction(pipeline),
                                          toplevel=True):
             self.__remove_configuration_widget()
-            self.effects_properties_manager.cleanCache(effect)
+            self.effects_properties_manager.clean_cache(effect)
             effect.get_parent().remove(effect)
 
     def _drag_motion_cb(self, unused_widget, unused_drag_context, unused_x, unused_y, unused_timestamp):
@@ -376,7 +376,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             else:
                 drop_index = len(self.storemodel)
             self.debug("Effect dragged at position %s", drop_index)
-            effect_info = self.app.effects.getInfo(factory_name)
+            effect_info = self.app.effects.get_info(factory_name)
             pipeline = self._project.pipeline
             with self.app.action_log.started("add effect",
                                              finalizing_action=CommitTimelineFinalizingAction(pipeline),
@@ -415,7 +415,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         if dest_row:
             drop_path, drop_pos = dest_row
             drop_index = drop_path.get_indices()[0]
-            drop_index = self.calculateEffectPriority(
+            drop_index = self.calculate_effect_priority(
                 source_index, drop_index, drop_pos)
         else:
             # This should happen when dragging after the last row.
@@ -438,10 +438,10 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         new_path = Gtk.TreePath.new()
         new_path.append_index(drop_index)
-        self.__updateAll(path=new_path)
+        self.__update_all(path=new_path)
 
     @staticmethod
-    def calculateEffectPriority(source_index, drop_index, drop_pos):
+    def calculate_effect_priority(source_index, drop_index, drop_pos):
         """Calculates where the effect from source_index will end up."""
         if drop_pos in (Gtk.TreeViewDropPosition.INTO_OR_BEFORE, Gtk.TreeViewDropPosition.INTO_OR_AFTER):
             return drop_index
@@ -453,7 +453,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                 return drop_index + 1
         return drop_index
 
-    def _effectActiveToggleCb(self, cellrenderertoggle, path):
+    def _effect_active_toggle_cb(self, cellrenderertoggle, path):
         _iter = self.storemodel.get_iter(path)
         effect = self.storemodel.get_value(_iter, COL_TRACK_EFFECT)
         pipeline = self._project.ges_timeline.get_parent()
@@ -465,10 +465,10 @@ class EffectProperties(Gtk.Expander, Loggable):
         # the UI reflects the current status.
         cellrenderertoggle.set_active(effect.is_active())
 
-    def _expandedCb(self, unused_expander, unused_params):
-        self.__updateAll()
+    def _expanded_cb(self, unused_expander, unused_params):
+        self.__update_all()
 
-    def _treeViewQueryTooltipCb(self, view, x, y, keyboard_mode, tooltip):
+    def _tree_view_query_tooltip_cb(self, view, x, y, keyboard_mode, tooltip):
         is_row, x, y, unused_model, path, tree_iter = view.get_tooltip_context(
             x, y, keyboard_mode)
         if not is_row:
@@ -481,11 +481,11 @@ class EffectProperties(Gtk.Expander, Loggable):
         tooltip.set_text("%s\n%s" % (bin_description, description))
         return True
 
-    def __updateAll(self, path=None):
+    def __update_all(self, path=None):
         if self.clip:
             self.show()
             self._infobar.hide()
-            self._updateTreeview()
+            self._update_treeview()
             if path:
                 self.treeview_selection.select_path(path)
         else:
@@ -494,12 +494,12 @@ class EffectProperties(Gtk.Expander, Loggable):
             self.storemodel.clear()
             self._infobar.show()
 
-    def _updateTreeview(self):
+    def _update_treeview(self):
         self.storemodel.clear()
         for effect in self.clip.get_top_effects():
             if effect.props.bin_description in HIDDEN_EFFECTS:
                 continue
-            effect_info = self.app.effects.getInfo(effect.props.bin_description)
+            effect_info = self.app.effects.get_info(effect.props.bin_description)
             to_append = [effect.props.active]
             track_type = effect.get_track_type()
             if track_type == GES.TrackType.AUDIO:
@@ -515,17 +515,17 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.no_effect_infobar.set_visible(not has_effects)
         self._vbox.set_visible(has_effects)
 
-    def _treeviewSelectionChangedCb(self, unused_treeview):
+    def _treeview_selection_changed_cb(self, unused_treeview):
         selection_is_emtpy = self.treeview_selection.count_selected_rows() == 0
         self.remove_effect_action.set_enabled(not selection_is_emtpy)
 
-        self._updateEffectConfigUi()
+        self._update_effect_config_ui()
 
-    def _updateEffectConfigUi(self):
+    def _update_effect_config_ui(self):
         model, tree_iter = self.treeview_selection.get_selected()
         if tree_iter:
             effect = model.get_value(tree_iter, COL_TRACK_EFFECT)
-            self._showEffectConfigurationWidget(effect)
+            self._show_effect_configuration_widget(effect)
         else:
             self.__remove_configuration_widget()
 
@@ -538,9 +538,9 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._vbox.remove(self._effect_config_ui)
         self._effect_config_ui = None
 
-    def _showEffectConfigurationWidget(self, effect):
+    def _show_effect_configuration_widget(self, effect):
         self.__remove_configuration_widget()
-        self._effect_config_ui = self.effects_properties_manager.getEffectConfigurationUI(
+        self._effect_config_ui = self.effects_properties_manager.get_effect_configuration_ui(
             effect)
         if not self._effect_config_ui:
             return
@@ -575,18 +575,18 @@ class TransformationProperties(Gtk.Expander, Loggable):
         # when bindings are changed from this class
         self.__own_bindings_change = False
         self.add(self.builder.get_object("transform_box"))
-        self._initButtons()
+        self._init_buttons()
         self.show_all()
         self.hide()
 
         self.app.project_manager.connect_after(
-            "new-project-loaded", self._newProjectLoadedCb)
+            "new-project-loaded", self._new_project_loaded_cb)
         self.app.project_manager.connect_after(
             "project-closed", self.__project_closed_cb)
 
-    def _newProjectLoadedCb(self, unused_app, project):
+    def _new_project_loaded_cb(self, unused_app, project):
         if self._selection is not None:
-            self._selection.disconnect_by_func(self._selectionChangedCb)
+            self._selection.disconnect_by_func(self._selection_changed_cb)
             self._selection = None
         if self._project:
             self._project.pipeline.disconnect_by_func(self._position_cb)
@@ -594,15 +594,15 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self._project = project
         if project:
             self._selection = project.ges_timeline.ui.selection
-            self._selection.connect('selection-changed', self._selectionChangedCb)
+            self._selection.connect('selection-changed', self._selection_changed_cb)
             self._project.pipeline.connect("position", self._position_cb)
 
     def __project_closed_cb(self, unused_project_manager, unused_project):
         self._project = None
 
-    def _initButtons(self):
+    def _init_buttons(self):
         clear_button = self.builder.get_object("clear_button")
-        clear_button.connect("clicked", self._defaultValuesCb)
+        clear_button.connect("clicked", self._default_values_cb)
 
         self._activate_keyframes_btn = self.builder.get_object("activate_keyframes_button")
         self._activate_keyframes_btn.connect("toggled", self.__show_keyframes_toggled_cb)
@@ -634,7 +634,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         start = self.source.props.start
         in_point = self.source.props.in_point
         pipeline = self._project.pipeline
-        position = pipeline.getPosition() - start + in_point
+        position = pipeline.get_position() - start + in_point
         keyframes_ts = self.__get_keyframes_timestamps()
         if next_keyframe:
             i = bisect.bisect_right(keyframes_ts, position)
@@ -663,12 +663,12 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 self._activate_keyframes_btn.set_tooltip_text(_("Show keyframes"))
             else:
                 self._activate_keyframes_btn.set_tooltip_text(_("Activate keyframes"))
-            self.source.ui_element.showDefaultKeyframes()
+            self.source.ui_element.show_default_keyframes()
         else:
             self._prev_keyframe_btn.set_sensitive(True)
             self._next_keyframe_btn.set_sensitive(True)
             self._activate_keyframes_btn.set_tooltip_text(_("Hide keyframes"))
-            self.source.ui_element.showMultipleKeyframes(
+            self.source.ui_element.show_multiple_keyframes(
                 list(self.__control_bindings.values()))
 
     def __update_control_bindings(self):
@@ -731,7 +731,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         control_source.set(self.source.props.in_point, val)
         control_source.set(self.source.props.in_point + self.source.props.duration, val)
 
-    def _defaultValuesCb(self, unused_widget):
+    def _default_values_cb(self, unused_widget):
         with self.app.action_log.started("Transformation properties reset default",
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                          toplevel=True):
@@ -746,7 +746,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def __get_source_property(self, prop):
         if self.__source_uses_keyframes():
             try:
-                position = self._project.pipeline.getPosition()
+                position = self._project.pipeline.get_position()
                 start = self.source.props.start
                 in_point = self.source.props.in_point
                 duration = self.source.props.duration
@@ -785,7 +785,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         res, value = self.__get_source_property(prop)
         assert res
         if spin.get_value() != value:
-            # Make sure self._onValueChangedCb doesn't get called here. If that
+            # Make sure self._on_value_changed_cb doesn't get called here. If that
             # happens, we might have unintended keyframes added.
             with spin.handler_block(spin_handler_id):
                 spin.set_value(value)
@@ -803,7 +803,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
         if self.__source_uses_keyframes():
             try:
-                position = self._project.pipeline.getPosition()
+                position = self._project.pipeline.get_position()
                 start = self.source.props.start
                 in_point = self.source.props.in_point
                 duration = self.source.props.duration
@@ -828,12 +828,12 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def __setup_spin_button(self, widget_name, property_name):
         """Creates a SpinButton for editing a property value."""
         spinbtn = self.builder.get_object(widget_name)
-        handler_id = spinbtn.connect("value-changed", self._onValueChangedCb, property_name)
+        handler_id = spinbtn.connect("value-changed", self._on_value_changed_cb, property_name)
         disable_scroll(spinbtn)
         self.spin_buttons[property_name] = spinbtn
         self.spin_buttons_handler_ids[property_name] = handler_id
 
-    def _onValueChangedCb(self, spinbtn, prop):
+    def _on_value_changed_cb(self, spinbtn, prop):
         if not self.source:
             return
 
@@ -864,7 +864,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self.source.connect("control-binding-added", self._control_bindings_changed)
             self.source.connect("control-binding-removed", self._control_bindings_changed)
 
-    def _selectionChangedCb(self, unused_timeline):
+    def _selection_changed_cb(self, unused_timeline):
         if len(self._selection) == 1:
             clip = list(self._selection)[0]
             source = clip.find_track_element(None, GES.VideoSource)

@@ -47,7 +47,7 @@ class System(GObject.Object, Loggable):
     def has_x11(self):
         return self._x11
 
-    def desktopMessage(self, title, message, unused_icon=None):
+    def desktop_message(self, title, message, unused_icon=None):
         """Sends a message to the desktop to be displayed to the user.
 
         Args:
@@ -55,9 +55,9 @@ class System(GObject.Object, Loggable):
             message (str): The body of the message.
             icon (str): The icon to be shown with the message
         """
-        self.debug("desktopMessage(): %s, %s", title, message)
+        self.debug("desktop_message(): %s, %s", title, message)
 
-    def getUniqueFilename(self, string):
+    def get_unique_filename(self, string):
         """Gets a filename which can only be obtained from the specified string.
 
         Args:
@@ -78,9 +78,9 @@ class FreedesktopOrgSystem(System):
             from gi.repository import Notify
             Notify.init(APPNAME)
 
-    def desktopMessage(self, title, message, icon="pitivi"):
+    def desktop_message(self, title, message, icon="pitivi"):
         # call super method for consistent logging
-        System.desktopMessage(self, title, message, icon)
+        System.desktop_message(self, title, message, icon)
 
         if "Notify" not in MISSING_SOFT_DEPS:
             from gi.repository import Notify
@@ -92,7 +92,7 @@ class FreedesktopOrgSystem(System):
                 # See for example
                 # https://bugzilla.gnome.org/show_bug.cgi?id=719627.
                 self.error(
-                    "desktopMessage: Failed displaying notification: %s", e.message)
+                    "desktop_message: Failed displaying notification: %s", e.message)
                 return None
             return notification
         return None

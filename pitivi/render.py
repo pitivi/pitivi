@@ -334,12 +334,12 @@ class RenderingProgressDialog(GObject.Object):
         self.close_button.hide()
         self.show_in_file_manager_button.hide()
 
-    def updatePosition(self, fraction):
+    def update_position(self, fraction):
         self.progressbar.set_fraction(fraction)
         self.window.set_title(
             _("Rendering — %d%% complete") % int(100 * fraction))
 
-    def updateProgressbarETA(self, time_estimation):
+    def update_progressbar_eta(self, time_estimation):
         # Translators: this string indicates the estimated time
         # remaining until an action (such as rendering) completes.
         # The "%s" is an already-localized human-readable duration,
@@ -348,7 +348,7 @@ class RenderingProgressDialog(GObject.Object):
         # "There remains approximatively %s" (to handle gender and plurals).
         self.progressbar.set_text(_("About %s left") % time_estimation)
 
-    def setFilesizeEstimate(self, estimated_filesize=None):
+    def set_filesize_estimate(self, estimated_filesize=None):
         if not estimated_filesize:
             self._filesize_est_label.hide()
             self._filesize_est_value_label.hide()
@@ -357,24 +357,24 @@ class RenderingProgressDialog(GObject.Object):
             self._filesize_est_label.show()
             self._filesize_est_value_label.show()
 
-    def _deleteEventCb(self, unused_dialog_widget, unused_event):
+    def _delete_event_cb(self, unused_dialog_widget, unused_event):
         """Stops the rendering."""
         # The user closed the window by pressing Escape.
         self.emit("cancel")
 
-    def _cancelButtonClickedCb(self, unused_button):
+    def _cancel_button_clicked_cb(self, unused_button):
         self.emit("cancel")
 
-    def _pauseButtonClickedCb(self, unused_button):
+    def _pause_button_clicked_cb(self, unused_button):
         self.emit("pause")
 
-    def _closeButtonClickedCb(self, unused_button):
+    def _close_button_clicked_cb(self, unused_button):
         self.window.destroy()
         if self.main_render_dialog.notification is not None:
             self.main_render_dialog.notification.close()
         self.main_render_dialog.window.show()
 
-    def _playRenderedFileButtonClickedCb(self, unused_button):
+    def _play_rendered_file_button_clicked_cb(self, unused_button):
         Gio.AppInfo.launch_default_for_uri(self.main_render_dialog.outfile, None)
 
     def _show_in_file_manager_button_clicked_cb(self, unused_button):
@@ -435,9 +435,9 @@ class RenderDialog(Loggable):
         # Directory and Filename
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
         if not self.project.name:
-            self.updateFilename(_("Untitled"))
+            self.update_filename(_("Untitled"))
         else:
-            self.updateFilename(self.project.name)
+            self.update_filename(self.project.name)
 
         # Add a shortcut for the project folder (if saved)
         if self.project.uri:
@@ -457,31 +457,31 @@ class RenderDialog(Loggable):
         self.channels_combo.set_model(AUDIO_CHANNELS)
         self.sample_rate_combo.set_model(AUDIO_RATES)
         self.__initialize_muxers_model()
-        self._displaySettings()
-        self._displayRenderSettings()
+        self._display_settings()
+        self._display_render_settings()
 
-        self.window.connect("delete-event", self._deleteEventCb)
+        self.window.connect("delete-event", self._delete_event_cb)
         self.project.connect("rendering-settings-changed",
                              self._rendering_settings_changed_cb)
 
         # Monitor changes
 
         self.widgets_group = RippleUpdateGroup()
-        self.widgets_group.addVertex(self.frame_rate_combo, signal="changed")
-        self.widgets_group.addVertex(self.channels_combo, signal="changed")
-        self.widgets_group.addVertex(self.sample_rate_combo, signal="changed")
-        self.widgets_group.addVertex(self.muxer_combo, signal="changed")
-        self.widgets_group.addVertex(self.audio_encoder_combo, signal="changed")
-        self.widgets_group.addVertex(self.video_encoder_combo, signal="changed")
-        self.widgets_group.addVertex(self.preset_menubutton,
-                                     update_func=self._updatePresetMenuButton)
+        self.widgets_group.add_vertex(self.frame_rate_combo, signal="changed")
+        self.widgets_group.add_vertex(self.channels_combo, signal="changed")
+        self.widgets_group.add_vertex(self.sample_rate_combo, signal="changed")
+        self.widgets_group.add_vertex(self.muxer_combo, signal="changed")
+        self.widgets_group.add_vertex(self.audio_encoder_combo, signal="changed")
+        self.widgets_group.add_vertex(self.video_encoder_combo, signal="changed")
+        self.widgets_group.add_vertex(self.preset_menubutton,
+                                      update_func=self._update_preset_menu_button)
 
-        self.widgets_group.addEdge(self.frame_rate_combo, self.preset_menubutton)
-        self.widgets_group.addEdge(self.audio_encoder_combo, self.preset_menubutton)
-        self.widgets_group.addEdge(self.video_encoder_combo, self.preset_menubutton)
-        self.widgets_group.addEdge(self.muxer_combo, self.preset_menubutton)
-        self.widgets_group.addEdge(self.channels_combo, self.preset_menubutton)
-        self.widgets_group.addEdge(self.sample_rate_combo, self.preset_menubutton)
+        self.widgets_group.add_edge(self.frame_rate_combo, self.preset_menubutton)
+        self.widgets_group.add_edge(self.audio_encoder_combo, self.preset_menubutton)
+        self.widgets_group.add_edge(self.video_encoder_combo, self.preset_menubutton)
+        self.widgets_group.add_edge(self.muxer_combo, self.preset_menubutton)
+        self.widgets_group.add_edge(self.channels_combo, self.preset_menubutton)
+        self.widgets_group.add_edge(self.sample_rate_combo, self.preset_menubutton)
 
     def _encoding_profile_selected_cb(self, unused_target, encoding_profile):
         self._set_encoding_profile(encoding_profile)
@@ -505,7 +505,7 @@ class RenderDialog(Loggable):
             rollback()
             return
 
-        self.updateAvailableEncoders()
+        self.update_available_encoders()
         self._update_valid_audio_restrictions(Gst.ElementFactory.find(self.project.aencoder))
         self._update_valid_video_restrictions(Gst.ElementFactory.find(self.project.vencoder))
         for i, (combo, name, value) in enumerate([
@@ -526,23 +526,23 @@ class RenderDialog(Loggable):
                 rollback()
                 return
 
-        self.updateResolution()
+        self.update_resolution()
         self.project.add_encoding_profile(self.project.container_profile)
         self._setting_encoding_profile = False
 
-    def _updatePresetMenuButton(self, unused_source, unused_target):
-        self.render_presets.updateMenuActions()
+    def _update_preset_menu_button(self, unused_source, unused_target):
+        self.render_presets.update_menu_actions()
 
     def muxer_setter(self, widget, muxer_name):
         set_combo_value(widget, Encoders().factories_by_name.get(muxer_name))
-        self.project.setEncoders(muxer=muxer_name)
+        self.project.set_encoders(muxer=muxer_name)
 
         # Update the extension of the filename.
         basename = os.path.splitext(self.fileentry.get_text())[0]
-        self.updateFilename(basename)
+        self.update_filename(basename)
 
         # Update muxer-dependent widgets.
-        self.updateAvailableEncoders()
+        self.update_available_encoders()
 
     def acodec_setter(self, widget, aencoder_name):
         set_combo_value(widget, Encoders().factories_by_name.get(aencoder_name))
@@ -553,7 +553,7 @@ class RenderDialog(Loggable):
 
     def vcodec_setter(self, widget, vencoder_name):
         set_combo_value(widget, Encoders().factories_by_name.get(vencoder_name))
-        self.project.setEncoders(vencoder=vencoder_name)
+        self.project.set_encoders(vencoder=vencoder_name)
         if not self.muxer_combo_changing:
             # The user directly changed the video encoder combo.
             self.preferred_vencoder = vencoder_name
@@ -615,8 +615,8 @@ class RenderDialog(Loggable):
         self.__never_use_proxies = builder.get_object("never_use_proxies")
         self.__never_use_proxies.props.group = self.__automatically_use_proxies
 
-        self.render_presets.setupUi(self.presets_combo, self.preset_menubutton)
-        self.render_presets.loadAll()
+        self.render_presets.setup_ui(self.presets_combo, self.preset_menubutton)
+        self.render_presets.load_all()
 
         self.window.set_icon_name("system-run-symbolic")
         self.window.set_transient_for(self.app.gui)
@@ -631,7 +631,7 @@ class RenderDialog(Loggable):
 
     def _rendering_settings_changed_cb(self, unused_project, unused_item):
         """Handles Project metadata changes."""
-        self.updateResolution()
+        self.update_resolution()
 
     def __initialize_muxers_model(self):
         # By default show only supported muxers and encoders.
@@ -674,7 +674,7 @@ class RenderDialog(Loggable):
 
         return model
 
-    def _displaySettings(self):
+    def _display_settings(self):
         """Displays the settings also in the ProjectSettingsDialog."""
         # Video settings
         set_combo_value(self.frame_rate_combo, self.project.videorate)
@@ -689,7 +689,7 @@ class RenderDialog(Loggable):
         self.audio_encoder_combo.set_sensitive(active)
         self.audio_settings_button.set_sensitive(active)
         self.project.audio_profile.set_enabled(active)
-        self.__updateRenderButtonSensitivity()
+        self.__update_render_button_sensitivity()
 
     def _update_video_widgets_sensitivity(self):
         active = self.video_output_checkbutton.get_active()
@@ -698,9 +698,9 @@ class RenderDialog(Loggable):
         self.video_encoder_combo.set_sensitive(active)
         self.video_settings_button.set_sensitive(active)
         self.project.video_profile.set_enabled(active)
-        self.__updateRenderButtonSensitivity()
+        self.__update_render_button_sensitivity()
 
-    def _displayRenderSettings(self):
+    def _display_render_settings(self):
         """Displays the settings available only in the RenderDialog."""
         # Video settings
         # This will trigger an update of the video resolution label.
@@ -741,9 +741,9 @@ class RenderDialog(Loggable):
 
         self.fileentry.set_icon_from_icon_name(1, warning_icon)
         self.fileentry.set_icon_tooltip_text(1, tooltip_text)
-        self.__updateRenderButtonSensitivity()
+        self.__update_render_button_sensitivity()
 
-    def _getFilesizeEstimate(self):
+    def _get_filesize_estimate(self):
         """Estimates the final file size.
 
         Estimates in megabytes (over 30 MB) are rounded to the nearest 10 MB
@@ -771,7 +771,7 @@ class RenderDialog(Loggable):
                 megabytes = int(round(megabytes, -1))  # -1 means round to 10
             return _("%d MB") % megabytes
 
-    def updateFilename(self, basename):
+    def update_filename(self, basename):
         """Updates the filename UI element to show the specified file name."""
         extension = extension_for_muxer(self.project.muxer)
         if extension:
@@ -836,7 +836,7 @@ class RenderDialog(Loggable):
             self.project.videorate,
             caps_template_expander=fraction_expander_func)
 
-    def updateAvailableEncoders(self):
+    def update_available_encoders(self):
         """Updates the encoder comboboxes to show the available encoders."""
         self.muxer_combo_changing = True
         try:
@@ -877,7 +877,7 @@ class RenderDialog(Loggable):
                 second = encoder_combo.props.model.iter_nth_child(first, 0)
                 encoder_combo.set_active_iter(second)
 
-    def _elementSettingsDialog(self, factory, media_type):
+    def _element_settings_dialog(self, factory, media_type):
         """Opens a dialog to edit the properties for the specified factory.
 
         Args:
@@ -891,7 +891,7 @@ class RenderDialog(Loggable):
                                                caps=getattr(self.project, media_type + '_profile').get_format(),
                                                parent_window=self.window)
         self.dialog.ok_btn.connect(
-            "clicked", self._okButtonClickedCb, media_type)
+            "clicked", self._ok_button_clicked_cb, media_type)
 
     def __additional_debug_info(self):
         if self.project.vencoder == 'x264enc':
@@ -901,7 +901,7 @@ class RenderDialog(Loggable):
 
         return ""
 
-    def _showRenderErrorDialog(self, error, unused_details):
+    def _show_render_error_dialog(self, error, unused_details):
         primary_message = _("Sorry, something didn’t work right.")
         secondary_message = "".join([
             _("An error occurred while trying to render your project."),
@@ -919,7 +919,7 @@ class RenderDialog(Loggable):
         dialog.run()
         dialog.destroy()
 
-    def startAction(self):
+    def start_action(self):
         """Starts the render process."""
         self._pipeline.set_state(Gst.State.NULL)
         self._pipeline.set_mode(GES.PipelineFlags.RENDER)
@@ -932,12 +932,12 @@ class RenderDialog(Loggable):
         self._is_rendering = True
         self._time_started = time.time()
 
-    def _cancelRender(self, *unused_args):
+    def _cancel_render(self, *unused_args):
         self.debug("Aborting render")
-        self._shutDown()
-        self._destroyProgressWindow()
+        self._shut_down()
+        self._destroy_progress_window()
 
-    def _shutDown(self):
+    def _shut_down(self):
         """Shuts down the pipeline and disconnects from its signals."""
         self._is_rendering = False
         self._rendering_is_paused = False
@@ -945,11 +945,11 @@ class RenderDialog(Loggable):
         self._pipeline.set_state(Gst.State.NULL)
         self.project.set_rendering(False)
         self._use_proxy_assets()
-        self._disconnectFromGst()
+        self._disconnect_from_gst()
         self._pipeline.set_mode(GES.PipelineFlags.FULL_PREVIEW)
         self._pipeline.set_state(Gst.State.PAUSED)
 
-    def _pauseRender(self, unused_progress):
+    def _pause_render(self, unused_progress):
         self._rendering_is_paused = self.progress.play_pause_button.get_active()
         if self._rendering_is_paused:
             self._last_timestamp_when_pausing = time.time()
@@ -957,20 +957,20 @@ class RenderDialog(Loggable):
             self._time_spent_paused += time.time() - self._last_timestamp_when_pausing
             self.debug(
                 "Resuming render after %d seconds in pause", self._time_spent_paused)
-        self.project.pipeline.togglePlayback()
+        self.project.pipeline.toggle_playback()
 
-    def _destroyProgressWindow(self):
+    def _destroy_progress_window(self):
         """Handles the completion or the cancellation of the render process."""
         self.progress.window.destroy()
         self.progress = None
         self.window.show()  # Show the rendering dialog again
 
-    def _disconnectFromGst(self):
+    def _disconnect_from_gst(self):
         for obj, handler_id in self._gst_signal_handlers_ids.items():
             obj.disconnect(handler_id)
         self._gst_signal_handlers_ids = {}
         try:
-            self.project.pipeline.disconnect_by_func(self._updatePositionCb)
+            self.project.pipeline.disconnect_by_func(self._update_position_cb)
         except TypeError:
             # The render was successful, so this was already disconnected
             pass
@@ -1006,7 +1006,7 @@ class RenderDialog(Loggable):
 
         # Use HQ Proxy (or equivalent) only for unsupported assets
         if self.__automatically_use_proxies.get_active():
-            if self.app.proxy_manager.isAssetFormatWellSupported(
+            if self.app.proxy_manager.is_asset_format_well_supported(
                     asset_target):
                 return asset_target
             else:
@@ -1018,7 +1018,7 @@ class RenderDialog(Loggable):
                 return None
 
             if self.app.proxy_manager.is_scaled_proxy(asset):
-                width, height = self.project.getVideoWidthAndHeight(render=True)
+                width, height = self.project.get_video_width_and_height(render=True)
                 stream = asset.get_info().get_video_streams()[0]
                 asset_res = [stream.get_width(), stream.get_height()]
 
@@ -1029,7 +1029,7 @@ class RenderDialog(Loggable):
                     return None
 
                 hq_proxy = GES.Asset.request(GES.UriClip,
-                                             self.app.proxy_manager.getProxyUri(asset_target))
+                                             self.app.proxy_manager.get_proxy_uri(asset_target))
                 return hq_proxy
         return None
 
@@ -1050,16 +1050,16 @@ class RenderDialog(Loggable):
     # ------------------- Callbacks ------------------------------------------ #
 
     # -- UI callbacks
-    def _okButtonClickedCb(self, unused_button, media_type):
+    def _ok_button_clicked_cb(self, unused_button, media_type):
         assert media_type in ("audio", "video")
-        setattr(self.project, media_type[0] + 'codecsettings', self.dialog.getSettings())
+        setattr(self.project, media_type[0] + 'codecsettings', self.dialog.get_settings())
 
         caps = self.dialog.get_caps()
         if caps:
             getattr(self.project, media_type + '_profile').set_format(caps)
         self.dialog.window.destroy()
 
-    def _renderButtonClickedCb(self, unused_button):
+    def _render_button_clicked_cb(self, unused_button):
         """Starts the rendering process."""
         self.__replace_proxies()
         self.outfile = os.path.join(self.filebutton.get_uri(),
@@ -1072,30 +1072,30 @@ class RenderDialog(Loggable):
         self.project.set_rendering(True)
         self._pipeline.set_render_settings(
             self.outfile, self.project.container_profile)
-        self.startAction()
+        self.start_action()
         self.progress.window.show()
-        self.progress.connect("cancel", self._cancelRender)
-        self.progress.connect("pause", self._pauseRender)
+        self.progress.connect("cancel", self._cancel_render)
+        self.progress.connect("pause", self._pause_render)
         bus = self._pipeline.get_bus()
         bus.add_signal_watch()
-        self._gst_signal_handlers_ids[bus] = bus.connect('message', self._busMessageCb)
-        self.project.pipeline.connect("position", self._updatePositionCb)
+        self._gst_signal_handlers_ids[bus] = bus.connect('message', self._bus_message_cb)
+        self.project.pipeline.connect("position", self._update_position_cb)
         # Force writing the config now, or the path will be reset
         # if the user opens the rendering dialog again
         self.app.settings.lastExportFolder = self.filebutton.get_current_folder(
         )
-        self.app.settings.storeSettings()
+        self.app.settings.store_settings()
 
-    def _closeButtonClickedCb(self, unused_button):
+    def _close_button_clicked_cb(self, unused_button):
         self.debug("Render dialog's Close button clicked")
         self.project.disconnect_by_func(self._rendering_settings_changed_cb)
         self.destroy()
 
-    def _deleteEventCb(self, unused_window, unused_event):
+    def _delete_event_cb(self, unused_window, unused_event):
         self.debug("Render dialog is being deleted")
         self.destroy()
 
-    def _containerContextHelpClickedCb(self, unused_button):
+    def _container_context_help_clicked_cb(self, unused_button):
         show_user_manual("codecscontainers")
 
     def _current_folder_changed_cb(self, *unused_args):
@@ -1105,7 +1105,7 @@ class RenderDialog(Loggable):
         self._check_filename()
 
     # Periodic (timer) callbacks
-    def _updateTimeEstimateCb(self):
+    def _update_time_estimate_cb(self):
         if self._rendering_is_paused:
             # Do nothing until we resume rendering
             return True
@@ -1117,20 +1117,20 @@ class RenderDialog(Loggable):
                 remaining_time = estimated_time - timediff
                 estimate = beautify_eta(int(remaining_time * Gst.SECOND))
                 if estimate:
-                    self.progress.updateProgressbarETA(estimate)
+                    self.progress.update_progressbar_eta(estimate)
             return True
         else:
             self._time_estimate_timer = None
             self.debug("Stopping the ETA timer")
             return False
 
-    def _updateFilesizeEstimateCb(self):
+    def _update_filesize_estimate_cb(self):
         if self._rendering_is_paused:
             return True  # Do nothing until we resume rendering
         elif self._is_rendering:
-            est_filesize = self._getFilesizeEstimate()
+            est_filesize = self._get_filesize_estimate()
             if est_filesize:
-                self.progress.setFilesizeEstimate(est_filesize)
+                self.progress.set_filesize_estimate(est_filesize)
             return True
         else:
             self.debug("Stopping the filesize estimation timer")
@@ -1138,18 +1138,18 @@ class RenderDialog(Loggable):
             return False  # Stop the timer
 
     # GStreamer callbacks
-    def _busMessageCb(self, unused_bus, message):
+    def _bus_message_cb(self, unused_bus, message):
         if message.type == Gst.MessageType.EOS:  # Render complete
             self.debug("got EOS message, render complete")
-            self._shutDown()
+            self._shut_down()
             self.progress.progressbar.set_fraction(1.0)
             self.progress.progressbar.set_text(_("Render complete"))
             self.progress.window.set_title(_("Render complete"))
-            self.progress.setFilesizeEstimate(None)
+            self.progress.set_filesize_estimate(None)
             if not self.progress.window.is_active():
                 notification = _(
                     '"%s" has finished rendering.') % self.fileentry.get_text()
-                self.notification = self.app.system.desktopMessage(
+                self.notification = self.app.system.desktop_message(
                     _("Render complete"), notification, "pitivi")
             self._maybe_play_finished_sound()
             self.progress.play_rendered_file_button.show()
@@ -1162,8 +1162,8 @@ class RenderDialog(Loggable):
             # Errors in a GStreamer pipeline are fatal. If we encounter one,
             # we should abort and show the error instead of sitting around.
             error, details = message.parse_error()
-            self._cancelRender()
-            self._showRenderErrorDialog(error, details)
+            self._cancel_render()
+            self._show_render_error_dialog(error, details)
 
         elif message.type == Gst.MessageType.STATE_CHANGED and self.progress:
             if message.src == self._pipeline:
@@ -1177,7 +1177,7 @@ class RenderDialog(Loggable):
                     else:
                         self.app.simple_uninhibit(RenderDialog.INHIBIT_REASON)
 
-    def _updatePositionCb(self, unused_pipeline, position):
+    def _update_position_cb(self, unused_pipeline, position):
         """Updates the progress bar and triggers the update of the file size.
 
         This one occurs every time the pipeline emits a position changed signal,
@@ -1189,7 +1189,7 @@ class RenderDialog(Loggable):
 
         length = self.project.ges_timeline.props.duration
         fraction = float(min(position, length)) / float(length)
-        self.progress.updatePosition(fraction)
+        self.progress.update_position(fraction)
 
         # In order to have enough averaging, only display the ETA after 5s
         timediff = time.time() - self._time_started
@@ -1198,12 +1198,12 @@ class RenderDialog(Loggable):
                 self.progress.progressbar.set_text(_("Estimating..."))
             else:
                 self._time_estimate_timer = GLib.timeout_add_seconds(
-                    3, self._updateTimeEstimateCb)
+                    3, self._update_time_estimate_cb)
 
         # Filesize is trickier and needs more time to be meaningful.
         if not self._filesize_estimate_timer and (fraction > 0.33 or timediff > 180):
             self._filesize_estimate_timer = GLib.timeout_add_seconds(
-                5, self._updateFilesizeEstimateCb)
+                5, self._update_filesize_estimate_cb)
 
     def __element_added_cb(self, unused_bin, gst_element):
         self.__set_properties(gst_element)
@@ -1222,39 +1222,39 @@ class RenderDialog(Loggable):
             self.debug("Setting %s to %s", propname, value)
 
     # Settings changed callbacks
-    def _scaleSpinbuttonChangedCb(self, unused_button):
+    def _scale_spinbutton_changed_cb(self, unused_button):
         render_scale = self.scale_spinbutton.get_value()
         self.project.render_scale = render_scale
-        self.updateResolution()
+        self.update_resolution()
 
-    def updateResolution(self):
-        width, height = self.project.getVideoWidthAndHeight(render=True)
+    def update_resolution(self):
+        width, height = self.project.get_video_width_and_height(render=True)
         self.resolution_label.set_text("%d×%d" % (width, height))
 
-    def _projectSettingsButtonClickedCb(self, unused_button):
+    def _project_settings_button_clicked_cb(self, unused_button):
         from pitivi.project import ProjectSettingsDialog
         dialog = ProjectSettingsDialog(self.window, self.project, self.app)
         dialog.window.run()
 
-    def _audioOutputCheckbuttonToggledCb(self, unused_audio):
+    def _audio_output_checkbutton_toggled_cb(self, unused_audio):
         self._update_audio_widgets_sensitivity()
 
-    def _videoOutputCheckbuttonToggledCb(self, unused_video):
+    def _video_output_checkbutton_toggled_cb(self, unused_video):
         self._update_video_widgets_sensitivity()
 
-    def __updateRenderButtonSensitivity(self):
+    def __update_render_button_sensitivity(self):
         video_enabled = self.video_output_checkbutton.get_active()
         audio_enabled = self.audio_output_checkbutton.get_active()
         self.render_button.set_sensitive(self._is_filename_valid and
                                          (video_enabled or audio_enabled))
 
-    def _frameRateComboChangedCb(self, combo):
+    def _frame_rate_combo_changed_cb(self, combo):
         if self._setting_encoding_profile:
             return
         framerate = get_combo_value(combo)
         self.project.videorate = framerate
 
-    def _videoEncoderComboChangedCb(self, combo):
+    def _video_encoder_combo_changed_cb(self, combo):
         if self._setting_encoding_profile:
             return
         factory = get_combo_value(combo)
@@ -1266,23 +1266,23 @@ class RenderDialog(Loggable):
             self.preferred_vencoder = name
         self._update_valid_video_restrictions(factory)
 
-    def _videoSettingsButtonClickedCb(self, unused_button):
+    def _video_settings_button_clicked_cb(self, unused_button):
         if self._setting_encoding_profile:
             return
         factory = get_combo_value(self.video_encoder_combo)
-        self._elementSettingsDialog(factory, 'video')
+        self._element_settings_dialog(factory, 'video')
 
-    def _channelsComboChangedCb(self, combo):
+    def _channels_combo_changed_cb(self, combo):
         if self._setting_encoding_profile:
             return
         self.project.audiochannels = get_combo_value(combo)
 
-    def _sampleRateComboChangedCb(self, combo):
+    def _sample_rate_combo_changed_cb(self, combo):
         if self._setting_encoding_profile:
             return
         self.project.audiorate = get_combo_value(combo)
 
-    def _audioEncoderChangedComboCb(self, combo):
+    def _audio_encoder_changed_combo_cb(self, combo):
         if self._setting_encoding_profile:
             return
         factory = get_combo_value(combo)
@@ -1294,11 +1294,11 @@ class RenderDialog(Loggable):
             self.preferred_aencoder = name
         self._update_valid_audio_restrictions(factory)
 
-    def _audioSettingsButtonClickedCb(self, unused_button):
+    def _audio_settings_button_clicked_cb(self, unused_button):
         factory = get_combo_value(self.audio_encoder_combo)
-        self._elementSettingsDialog(factory, 'audio')
+        self._element_settings_dialog(factory, 'audio')
 
-    def _muxerComboChangedCb(self, combo):
+    def _muxer_combo_changed_cb(self, combo):
         """Handles the changing of the container format combobox."""
         if self._setting_encoding_profile:
             return
@@ -1307,7 +1307,7 @@ class RenderDialog(Loggable):
 
         # Update the extension of the filename.
         basename = os.path.splitext(self.fileentry.get_text())[0]
-        self.updateFilename(basename)
+        self.update_filename(basename)
 
         # Update muxer-dependent widgets.
-        self.updateAvailableEncoders()
+        self.update_available_encoders()

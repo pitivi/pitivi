@@ -41,12 +41,12 @@ class TestEditorPerspective(common.TestCase):
                 (2, GES.TitleClip()),
                 (0, GES.SourceClip()),
                 (1, GES.TransitionClip())]:
-            editorperspective.switchContextTab(b_element)
+            editorperspective.switch_context_tab(b_element)
             self.assertEqual(editorperspective.context_tabs.get_current_page(),
                              expected_tab,
                              b_element)
             # Make sure the tab does not change when using an invalid argument.
-            editorperspective.switchContextTab("invalid")
+            editorperspective.switch_context_tab("invalid")
             self.assertEqual(editorperspective.context_tabs.get_current_page(),
                              expected_tab)
 
@@ -77,10 +77,10 @@ class TestEditorPerspective(common.TestCase):
                 dialog.get_new_uri.return_value = None
 
                 # Call the actual callback
-                app.proxy_manager.checkProxyLoadingSucceeded =  \
+                app.proxy_manager.check_proxy_loading_succeeded =  \
                     mock.MagicMock(return_value=has_proxy)
 
-                editorperspective._projectManagerMissingUriCb(
+                editorperspective._project_manager_missing_uri_cb(
                     project_manager, project, error, asset)
 
                 self.assertTrue(constructor.called)
@@ -88,11 +88,11 @@ class TestEditorPerspective(common.TestCase):
                 self.assertEqual(failed_cb.called, not has_proxy)
 
             app.project_manager.connect("missing-uri",
-                                        editorperspective._projectManagerMissingUriCb)
+                                        editorperspective._project_manager_missing_uri_cb)
             mainloop.quit()
 
         disconnect_all_by_func(app.project_manager,
-                               editorperspective._projectManagerMissingUriCb)
+                               editorperspective._project_manager_missing_uri_cb)
 
         app.project_manager.connect("missing-uri", __pm_missing_uri_cb)
 

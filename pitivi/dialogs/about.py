@@ -47,10 +47,10 @@ class AboutDialog(Gtk.AboutDialog):
 
         if in_devel():
             version_str = _("Development version: %s") % GITVERSION
-        elif not app.isLatest():
+        elif not app.is_latest():
             version_str = _("Version %(cur_ver)s — %(new_ver)s is available") % \
                 {"cur_ver": GITVERSION,
-                 "new_ver": app.getLatest()}
+                 "new_ver": app.get_latest()}
         elif GITVERSION:
             version_str = _("Version %s") % GITVERSION
         else:

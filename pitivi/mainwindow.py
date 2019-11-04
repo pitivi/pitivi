@@ -35,35 +35,35 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import show_user_manual
 
 
-GlobalSettings.addConfigOption('mainWindowX',
-                               section="main-window",
-                               key="X", default=0, type_=int)
-GlobalSettings.addConfigOption('mainWindowY',
-                               section="main-window",
-                               key="Y", default=0, type_=int)
-GlobalSettings.addConfigOption('mainWindowWidth',
-                               section="main-window",
-                               key="width", default=-1, type_=int)
-GlobalSettings.addConfigOption('mainWindowHeight',
-                               section="main-window",
-                               key="height", default=-1, type_=int)
+GlobalSettings.add_config_option('mainWindowX',
+                                 section="main-window",
+                                 key="X", default=0, type_=int)
+GlobalSettings.add_config_option('mainWindowY',
+                                 section="main-window",
+                                 key="Y", default=0, type_=int)
+GlobalSettings.add_config_option('mainWindowWidth',
+                                 section="main-window",
+                                 key="width", default=-1, type_=int)
+GlobalSettings.add_config_option('mainWindowHeight',
+                                 section="main-window",
+                                 key="height", default=-1, type_=int)
 
-GlobalSettings.addConfigSection('export')
-GlobalSettings.addConfigOption('lastExportFolder',
-                               section='export',
-                               key="last-export-folder",
-                               environment="PITIVI_EXPORT_FOLDER",
-                               default=os.path.expanduser("~"))
+GlobalSettings.add_config_section('export')
+GlobalSettings.add_config_option('lastExportFolder',
+                                 section='export',
+                                 key="last-export-folder",
+                                 environment="PITIVI_EXPORT_FOLDER",
+                                 default=os.path.expanduser("~"))
 
-GlobalSettings.addConfigSection("version")
-GlobalSettings.addConfigOption('displayCounter',
-                               section='version',
-                               key='info-displayed-counter',
-                               default=0)
-GlobalSettings.addConfigOption('lastCurrentVersion',
-                               section='version',
-                               key='last-current-version',
-                               default='')
+GlobalSettings.add_config_section("version")
+GlobalSettings.add_config_option('displayCounter',
+                                 section='version',
+                                 key='info-displayed-counter',
+                                 default=0)
+GlobalSettings.add_config_option('lastCurrentVersion',
+                                 section='version',
+                                 key='last-current-version',
+                                 default='')
 
 
 class MainWindow(Gtk.ApplicationWindow, Loggable):

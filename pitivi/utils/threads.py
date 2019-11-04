@@ -71,18 +71,18 @@ class ThreadMaster(Loggable):
         Loggable.__init__(self)
         self.threads = []
 
-    def addThread(self, threadclass, *args):
+    def add_thread(self, threadclass, *args):
         """Instantiates the specified Thread class and starts it."""
         assert issubclass(threadclass, Thread)
         self.log("Adding thread of type %r", threadclass)
         thread = threadclass(*args)
-        thread.connect("done", self._threadDoneCb)
+        thread.connect("done", self._thread_done_cb)
         self.threads.append(thread)
         self.log("starting it...")
         thread.start()
         self.log("started !")
 
-    def _threadDoneCb(self, thread):
+    def _thread_done_cb(self, thread):
         self.log("thread %r is done", thread)
         self.threads.remove(thread)
 

@@ -127,16 +127,16 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
 # Zoomable interface override
 
-    def zoomChanged(self):
+    def zoom_changed(self):
         self.queue_draw()
 
 # Timeline position changed method
 
-    def setPipeline(self, pipeline):
+    def set_pipeline(self, pipeline):
         self._pipeline = pipeline
-        self._pipeline.connect('position', self.timelinePositionCb)
+        self._pipeline.connect('position', self.timeline_position_cb)
 
-    def timelinePositionCb(self, unused_pipeline, position):
+    def timeline_position_cb(self, unused_pipeline, position):
         self.position = position
         self.queue_draw()
 
@@ -186,9 +186,9 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         # Draw on a temporary context and then copy everything.
         drawing_context = cairo.Context(pixbuf)
-        self.drawBackground(drawing_context)
-        self.drawRuler(drawing_context)
-        self.drawPosition(drawing_context)
+        self.draw_background(drawing_context)
+        self.draw_ruler(drawing_context)
+        self.draw_position(drawing_context)
         pixbuf.flush()
 
         context.set_source_surface(self.pixbuf, 0.0, 0.0)
@@ -203,7 +203,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         button = event.button
         if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
             self.debug("button pressed at x:%d", event.x)
-            position = self.pixelToNs(event.x + self.pixbuf_offset)
+            position = self.pixel_to_ns(event.x + self.pixbuf_offset)
             self._pipeline.simple_seek(position)
             self.__set_tooltip_text(position, True)
         return False
@@ -212,8 +212,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         button = event.button
         if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
             self.debug("button released at x:%d", event.x)
-            self.app.gui.editor.focusTimeline()
-            position = self.pixelToNs(event.x + self.pixbuf_offset)
+            self.app.gui.editor.focus_timeline()
+            position = self.pixel_to_ns(event.x + self.pixbuf_offset)
             self.__set_tooltip_text(position)
         return False
 
@@ -221,7 +221,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         if not self._pipeline:
             return False
 
-        position = self.pixelToNs(event.x + self.pixbuf_offset)
+        position = self.pixel_to_ns(event.x + self.pixbuf_offset)
 
         seek_mask = Gdk.ModifierType.BUTTON3_MASK
         if self.app.settings.leftClickAlsoSeeks:
@@ -238,7 +238,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
     def do_scroll_event(self, event):
         self.timeline.timeline.do_scroll_event(event)
 
-    def setProjectFrameRate(self, rate):
+    def set_project_frame_rate(self, rate):
         """Sets the lowest scale based on the specified project framerate."""
         self.frame_rate = rate
         self.ns_per_frame = float(Gst.SECOND / self.frame_rate)
@@ -256,23 +256,23 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
 # Drawing methods
 
-    def drawBackground(self, context):
+    def draw_background(self, context):
         width = context.get_target().get_width()
         height = context.get_target().get_height()
         style_context = self.app.gui.get_style_context()
         Gtk.render_background(style_context, context, 0, 0, width, height)
 
-    def drawRuler(self, context):
+    def draw_ruler(self, context):
         context.set_font_face(NORMAL_FONT)
         context.set_font_size(NORMAL_FONT_SIZE)
 
-        spacing, interval_seconds, ticks = self._getSpacing(context)
+        spacing, interval_seconds, ticks = self._get_spacing(context)
         offset = self.pixbuf_offset % spacing
-        self.drawFrameBoundaries(context)
-        self.drawTicks(context, offset, spacing, interval_seconds, ticks)
-        self.drawTimes(context, offset, spacing, interval_seconds)
+        self.draw_frame_boundaries(context)
+        self.draw_ticks(context, offset, spacing, interval_seconds, ticks)
+        self.draw_times(context, offset, spacing, interval_seconds)
 
-    def _getSpacing(self, context):
+    def _get_spacing(self, context):
         # The longest timestamp we display is 0:00:00 because
         # when we display millis, they are displayed by themselves.
         min_interval_width = context.text_extents("0:00:00")[2] * 1.3
@@ -285,7 +285,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             "Failed to find an interval size for textwidth:%s, zoomratio:%s" %
             (min_interval_width, Zoomable.zoomratio))
 
-    def drawTicks(self, context, offset, spacing, interval_seconds, ticks):
+    def draw_ticks(self, context, offset, spacing, interval_seconds, ticks):
         for tick_interval, height_ratio in reversed(ticks):
             count_per_interval = interval_seconds / tick_interval
             space = spacing / count_per_interval
@@ -298,10 +298,10 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
             set_cairo_color(context, color)
             while paintpos < context.get_target().get_width():
-                self._drawTick(context, paintpos, height_ratio)
+                self._draw_tick(context, paintpos, height_ratio)
                 paintpos += space
 
-    def _drawTick(self, context, paintpos, height_ratio):
+    def _draw_tick(self, context, paintpos, height_ratio):
         # We need to use 0.5 pixel offsets to get a sharp 1 px line in cairo
         paintpos = int(paintpos - 0.5) + 0.5
         target_height = context.get_target().get_height()
@@ -312,10 +312,10 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         context.close_path()
         context.stroke()
 
-    def drawTimes(self, context, offset, spacing, interval_seconds):
+    def draw_times(self, context, offset, spacing, interval_seconds):
         # figure out what the optimal offset is
         interval = int(Gst.SECOND * interval_seconds)
-        current_time = self.pixelToNs(self.pixbuf_offset)
+        current_time = self.pixel_to_ns(self.pixbuf_offset)
         paintpos = TIMES_LEFT_MARGIN_PIXELS
         if offset > 0:
             current_time = current_time - (current_time % interval) + interval
@@ -336,12 +336,12 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             context.move_to(int(paintpos), 1 - y_bearing)
             current = split(time_to_string(int(current_time)))
             millis = current_time % Gst.SECOND > 0
-            self._drawTime(context, current, previous, millis)
+            self._draw_time(context, current, previous, millis)
             previous = current
             paintpos += spacing
             current_time += interval
 
-    def _drawTime(self, context, current, previous, millis):
+    def _draw_time(self, context, current, previous, millis):
         hour = int(current[0])
         for index, (element, previous_element) in enumerate(zip(current, previous)):
             if index <= 1 and not hour:
@@ -368,7 +368,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             if small:
                 context.set_font_size(NORMAL_FONT_SIZE)
 
-    def drawFrameBoundaries(self, context):
+    def draw_frame_boundaries(self, context):
         """Draws the alternating rectangles that represent the project frames.
 
         These are drawn only at high zoom levels.
@@ -376,7 +376,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         These are based on the project's framerate settings, not the actual
         frames on the assets.
         """
-        frame_width = self.nsToPixel(self.ns_per_frame)
+        frame_width = self.ns_to_pixel(self.ns_per_frame)
         if not frame_width >= FRAME_MIN_WIDTH_PIXELS:
             return
 
@@ -385,11 +385,11 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         y = int(height - FRAME_HEIGHT_PIXELS)
 
         frame_num = int(
-            self.pixelToNs(self.pixbuf_offset) * float(self.frame_rate) / Gst.SECOND)
+            self.pixel_to_ns(self.pixbuf_offset) * float(self.frame_rate) / Gst.SECOND)
         paintpos = self.pixbuf_offset - offset
         max_pos = context.get_target().get_width() + self.pixbuf_offset
         while paintpos < max_pos:
-            paintpos = self.nsToPixel(
+            paintpos = self.ns_to_pixel(
                 1 / float(self.frame_rate) * Gst.SECOND * frame_num)
             if frame_num % 2:
                 set_cairo_color(context, self._color_frame)
@@ -398,7 +398,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
                 context.fill()
             frame_num += 1
 
-    def drawPosition(self, context):
+    def draw_position(self, context):
         """Draws the top part of the playhead.
 
         This should be in sync with the playhead drawn by the timeline.
@@ -412,7 +412,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         # Add 0.5 so that the line center is at the middle of the pixel,
         # without this the line appears blurry.
-        xpos = self.nsToPixel(self.position) - self.pixbuf_offset + 0.5
+        xpos = self.ns_to_pixel(self.position) - self.pixbuf_offset + 0.5
         set_cairo_color(context, PLAYHEAD_COLOR)
 
         context.set_line_width(PLAYHEAD_WIDTH)

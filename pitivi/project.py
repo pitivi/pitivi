@@ -135,8 +135,8 @@ class ProjectManager(GObject.Object, Loggable):
         self.__start_loading_time = 0
         self.time_loaded = 0
 
-    def _tryUsingBackupFile(self, uri):
-        backup_path = self._makeBackupURI(path_from_uri(uri))
+    def _try_using_backup_file(self, uri):
+        backup_path = self._make_backup_uri(path_from_uri(uri))
         use_backup = False
         try:
             path = path_from_uri(uri)
@@ -149,10 +149,10 @@ class ProjectManager(GObject.Object, Loggable):
             unicode_error_dialog()
         else:
             if time_diff > 0:
-                use_backup = self._restoreFromBackupDialog(time_diff)
+                use_backup = self._restore_from_backup_dialog(time_diff)
 
                 if use_backup:
-                    uri = self._makeBackupURI(uri)
+                    uri = self._make_backup_uri(uri)
             self.debug('Loading project from backup: %s', uri)
 
         # For backup files and legacy formats, force the user to use "Save as"
@@ -164,7 +164,7 @@ class ProjectManager(GObject.Object, Loggable):
 
         return uri
 
-    def _isValidateScenario(self, uri):
+    def _is_validate_scenario(self, uri):
         if uri.endswith(".scenario") and has_validate is True:
             # Let's just normally fail if we do not have Validate
             # installed on the system
@@ -172,7 +172,7 @@ class ProjectManager(GObject.Object, Loggable):
 
         return False
 
-    def _projectPipelineDiedCb(self, unused_pipeline):
+    def _project_pipeline_died_cb(self, unused_pipeline):
         """Shows an dialog telling the user that everything went kaboom."""
         # GTK does not allow an empty string as the dialog title, so we use the
         # same translatable one as render.py's pipeline error message dialog:
@@ -232,9 +232,9 @@ class ProjectManager(GObject.Object, Loggable):
         dialog.destroy()
 
         if response == 1:
-            self.app.gui.editor.saveProjectAs()
+            self.app.gui.editor.save_project_as()
         elif response == 2:
-            self.app.gui.editor.saveProject()
+            self.app.gui.editor.save_project()
 
         self.app.shutdown()
 
@@ -246,9 +246,9 @@ class ProjectManager(GObject.Object, Loggable):
         """
         assert self.current_project is None
 
-        is_validate_scenario = self._isValidateScenario(uri)
+        is_validate_scenario = self._is_validate_scenario(uri)
         if not is_validate_scenario:
-            uri = self._tryUsingBackupFile(uri)
+            uri = self._try_using_backup_file(uri)
             scenario = None
         else:
             scenario = path_from_uri(uri)
@@ -259,10 +259,10 @@ class ProjectManager(GObject.Object, Loggable):
         project = Project(self.app, uri=uri, scenario=scenario)
         self.emit("new-project-loading", project)
 
-        project.connect_after("missing-uri", self._missingURICb)
-        project.connect("loaded", self._projectLoadedCb)
+        project.connect_after("missing-uri", self._missing_uri_cb)
+        project.connect("loaded", self._project_loaded_cb)
 
-        if not project.createTimeline():
+        if not project.create_timeline():
             self.emit("new-project-failed", uri,
                       _('This might be due to a bug or an unsupported project file format. '
                         'If you were trying to add a media file to your project, '
@@ -271,15 +271,15 @@ class ProjectManager(GObject.Object, Loggable):
 
         self.current_project = project
         self.emit("new-project-created", project)
-        self.current_project.connect("project-changed", self._projectChangedCb)
-        self.current_project.pipeline.connect("died", self._projectPipelineDiedCb)
+        self.current_project.connect("project-changed", self._project_changed_cb)
+        self.current_project.pipeline.connect("died", self._project_pipeline_died_cb)
 
         if is_validate_scenario:
-            self.current_project.setupValidateScenario()
+            self.current_project.setup_validate_scenario()
 
         return project
 
-    def _restoreFromBackupDialog(self, time_diff):
+    def _restore_from_backup_dialog(self, time_diff):
         """Asks if we need to load the autosaved project backup.
 
         Args:
@@ -333,7 +333,7 @@ class ProjectManager(GObject.Object, Loggable):
         dialog.destroy()
         return response == Gtk.ResponseType.YES
 
-    def saveProject(self, uri=None, formatter_type=None, backup=False):
+    def save_project(self, uri=None, formatter_type=None, backup=False):
         """Saves the current project.
 
         Args:
@@ -358,7 +358,7 @@ class ProjectManager(GObject.Object, Loggable):
         if backup:
             if self.current_project is not None and self.current_project.uri is not None:
                 # Ignore whatever URI that is passed on to us. It's a trap.
-                uri = self._makeBackupURI(self.current_project.uri)
+                uri = self._make_backup_uri(self.current_project.uri)
             else:
                 # Do not try to save backup files for blank projects.
                 # It is possible that self.current_project.uri == None when the backup
@@ -382,7 +382,7 @@ class ProjectManager(GObject.Object, Loggable):
         try:
             # "overwrite" is always True: our GTK filechooser save dialogs are
             # set to always ask the user on our behalf about overwriting, so
-            # if saveProject is actually called, that means overwriting is OK.
+            # if save_project is actually called, that means overwriting is OK.
             saved = self.current_project.save(
                 self.current_project.ges_timeline, uri,
                 formatter_type, overwrite=True)
@@ -393,7 +393,7 @@ class ProjectManager(GObject.Object, Loggable):
         if saved:
             if not backup:
                 # Do not emit the signal when autosaving a backup file
-                self.current_project.setModificationState(False)
+                self.current_project.set_modification_state(False)
                 self.debug('Saved project: %s', uri)
                 # Update the project instance's uri,
                 # otherwise, subsequent saves will be to the old uri.
@@ -406,7 +406,7 @@ class ProjectManager(GObject.Object, Loggable):
 
         return saved
 
-    def exportProject(self, project, uri):
+    def export_project(self, project, uri):
         """Exports a project and all its media files to a *.tar archive."""
         # Save the project to a temporary file.
         project_name = project.name if project.name else _("project")
@@ -416,9 +416,9 @@ class ProjectManager(GObject.Object, Loggable):
 
         directory = os.path.dirname(uri)
         tmp_uri = os.path.join(directory, tmp_name)
-        # saveProject updates the project URI... so we better back it up:
+        # save_project updates the project URI... so we better back it up:
         _old_uri = self.current_project.uri
-        self.saveProject(tmp_uri)
+        self.save_project(tmp_uri)
         self.current_project.uri = _old_uri
 
         # create tar file
@@ -430,8 +430,8 @@ class ProjectManager(GObject.Object, Loggable):
                 tar.add(path_from_uri(tmp_uri), os.path.join(top, tmp_name))
 
                 # get common path
-                sources = project.listSources()
-                if self._allSourcesInHomedir(sources):
+                sources = project.list_sources()
+                if self._all_sources_in_homedir(sources):
                     common = os.path.expanduser("~")
                 else:
                     common = "/"
@@ -466,7 +466,7 @@ class ProjectManager(GObject.Object, Loggable):
 
         return everything_ok
 
-    def _allSourcesInHomedir(self, sources):
+    def _all_sources_in_homedir(self, sources):
         """Checks if all sources are located in the user's home directory."""
         homedir = os.path.expanduser("~")
 
@@ -476,7 +476,7 @@ class ProjectManager(GObject.Object, Loggable):
 
         return True
 
-    def closeRunningProject(self):
+    def close_running_project(self):
         """Closes the current project."""
         if self.current_project is None:
             self.warning(
@@ -496,9 +496,9 @@ class ProjectManager(GObject.Object, Loggable):
             self.current_project = None
             project.create_thumb()
             self.emit("project-closed", project)
-            disconnect_all_by_func(project, self._projectChangedCb)
-            disconnect_all_by_func(project.pipeline, self._projectPipelineDiedCb)
-            self._cleanBackup(project.uri)
+            disconnect_all_by_func(project, self._project_changed_cb)
+            disconnect_all_by_func(project.pipeline, self._project_pipeline_died_cb)
+            self._clean_backup(project.uri)
             self.exitcode = project.release()
 
         return True
@@ -520,35 +520,35 @@ class ProjectManager(GObject.Object, Loggable):
         # setting default values for project metadata
         project.author = pwd.getpwuid(os.getuid()).pw_gecos.split(",")[0]
 
-        project.createTimeline()
-        project._ensureTracks()  # pylint: disable=protected-access
+        project.create_timeline()
+        project._ensure_tracks()  # pylint: disable=protected-access
         project.update_restriction_caps()
         self.current_project = project
         self.emit("new-project-created", project)
 
-        project.connect("project-changed", self._projectChangedCb)
-        project.pipeline.connect("died", self._projectPipelineDiedCb)
-        project.setModificationState(False)
+        project.connect("project-changed", self._project_changed_cb)
+        project.pipeline.connect("died", self._project_pipeline_died_cb)
+        project.set_modification_state(False)
         self.emit("new-project-loaded", self.current_project)
         project.loaded = True
         self.time_loaded = time.time()
 
         return project
 
-    def revertToSavedProject(self):
+    def revert_to_saved_project(self):
         """Discards all unsaved changes and reloads the current open project."""
-        if self.current_project.uri is None or not self.current_project.hasUnsavedModifications():
+        if self.current_project.uri is None or not self.current_project.has_unsaved_modifications():
             return True
         if not self.emit("reverting-to-saved", self.current_project):
             return False
 
         uri = self.current_project.uri
-        self.current_project.setModificationState(False)
-        self.closeRunningProject()
+        self.current_project.set_modification_state(False)
+        self.close_running_project()
         self.load_project(uri)
         return True
 
-    def _projectChangedCb(self, project):
+    def _project_changed_cb(self, project):
         # _backup_lock is a timer, when a change in the project is done it is
         # set to 10 seconds. If before those 10 secs pass another change occurs,
         # 5 secs are added to the timeout callback instead of saving the backup
@@ -560,29 +560,29 @@ class ProjectManager(GObject.Object, Loggable):
         if self._backup_lock == 0:
             self._backup_lock = 10
             GLib.timeout_add_seconds(
-                self._backup_lock, self._saveBackupCb, project, uri)
+                self._backup_lock, self._save_backup_cb, project, uri)
         else:
             if self._backup_lock < 60:
                 self._backup_lock += 5
 
-    def _saveBackupCb(self, unused_project, unused_uri):
+    def _save_backup_cb(self, unused_project, unused_uri):
         if self._backup_lock > 10:
             self._backup_lock -= 5
             return True
         else:
-            self.saveProject(backup=True)
+            self.save_project(backup=True)
             self._backup_lock = 0
         return False
 
-    def _cleanBackup(self, uri):
+    def _clean_backup(self, uri):
         if uri is None:
             return
-        path = path_from_uri(self._makeBackupURI(uri))
+        path = path_from_uri(self._make_backup_uri(uri))
         if os.path.exists(path):
             os.remove(path)
             self.debug('Removed backup file: %s', path)
 
-    def _makeBackupURI(self, uri):
+    def _make_backup_uri(self, uri):
         """Generates a corresponding backup URI or path.
 
         This does not guarantee that the backup file actually exists or that
@@ -597,16 +597,16 @@ class ProjectManager(GObject.Object, Loggable):
         name, ext = os.path.splitext(uri)
         return name + ext + "~"
 
-    def _missingURICb(self, project, error, asset):
+    def _missing_uri_cb(self, project, error, asset):
         new_uri = self.emit("missing-uri", project, error, asset)
         if not new_uri:
             project.at_least_one_asset_missing = True
         else:
             project.relocated_assets[asset.props.id] = new_uri
-        project.setModificationState(True)
+        project.set_modification_state(True)
         return new_uri
 
-    def _projectLoadedCb(self, project, unused_timeline):
+    def _project_loaded_cb(self, project, unused_timeline):
         self.debug("Project loaded %s", project.props.uri)
         if not self.current_project == project:
             self.debug("Project is obsolete %s", project.props.uri)
@@ -667,11 +667,11 @@ class Project(Loggable, GES.Project):
         self.relocated_assets = {}
         self.app.proxy_manager.connect("progress", self.__asset_transcoding_progress_cb)
         self.app.proxy_manager.connect("error-preparing-asset",
-                                       self.__proxyErrorCb)
+                                       self.__proxy_error_cb)
         self.app.proxy_manager.connect("asset-preparing-cancelled",
-                                       self.__assetTranscodingCancelledCb)
+                                       self.__asset_transcoding_cancelled_cb)
         self.app.proxy_manager.connect("proxy-ready",
-                                       self.__proxyReadyCb)
+                                       self.__proxy_ready_cb)
 
         # GstValidate
         self.scenario = scenario
@@ -723,8 +723,8 @@ class Project(Loggable, GES.Project):
         self.muxer = Encoders().default_muxer
         self.vencoder = Encoders().default_video_encoder
         self.aencoder = Encoders().default_audio_encoder
-        self._ensureAudioRestrictions()
-        self._ensureVideoRestrictions()
+        self._ensure_audio_restrictions()
+        self._ensure_video_restrictions()
         self._has_default_audio_settings = has_default_settings
         self._has_default_video_settings = has_default_settings
 
@@ -740,9 +740,9 @@ class Project(Loggable, GES.Project):
 
     def _scenario_done_cb(self, scenario):
         if self.pipeline is not None:
-            self.pipeline.setForcePositionListener(False)
+            self.pipeline.set_force_position_listener(False)
 
-    def setupValidateScenario(self):
+    def setup_validate_scenario(self):
         from gi.repository import GstValidate
 
         self.info("Setting up validate scenario")
@@ -752,7 +752,7 @@ class Project(Loggable, GES.Project):
             self.pipeline, self.runner, None)
         self._scenario = GstValidate.Scenario.factory_create(
             self.runner, self.pipeline, self.scenario)
-        self.pipeline.setForcePositionListener(True)
+        self.pipeline.set_force_position_listener(True)
         self._scenario.connect("done", self._scenario_done_cb)
         self._scenario.props.execute_on_idle = True
 
@@ -807,7 +807,7 @@ class Project(Loggable, GES.Project):
         if scaled_proxy_height == self.get_meta("scaled_proxy_height"):
             return
         self.set_meta("scaled_proxy_height", scaled_proxy_height)
-        self.setModificationState(True)
+        self.set_modification_state(True)
 
     @property
     def scaled_proxy_width(self):
@@ -818,7 +818,7 @@ class Project(Loggable, GES.Project):
         if scaled_proxy_width == self.get_meta("scaled_proxy_width"):
             return
         self.set_meta("scaled_proxy_width", scaled_proxy_width)
-        self.setModificationState(True)
+        self.set_modification_state(True)
 
     def has_scaled_proxy_size(self):
         """Returns whether the proxy size has been set."""
@@ -890,7 +890,7 @@ class Project(Loggable, GES.Project):
         # the assets in the current project, the one with maximum file size
         # will be our project thumbnail - http://bit.ly/thumbnail-generation
 
-        assets = self.listSources()
+        assets = self.list_sources()
         assets_uri = [asset.props.id for asset in assets]
 
         if not assets_uri:
@@ -948,8 +948,8 @@ class Project(Loggable, GES.Project):
 
     def set_rendering(self, rendering):
         """Sets the a/v restrictions for rendering or for editing."""
-        self._ensureAudioRestrictions()
-        self._ensureVideoRestrictions()
+        self._ensure_audio_restrictions()
+        self._ensure_video_restrictions()
 
         video_restrictions = self.video_profile.get_restriction().copy_nth(0)
 
@@ -1124,7 +1124,7 @@ class Project(Loggable, GES.Project):
     # ------------------------------#
     def __asset_transcoding_progress_cb(self, proxy_manager, asset,
                                         creation_progress, estimated_time):
-        self.__updateAssetLoadingProgress(estimated_time)
+        self.__update_asset_loading_progress(estimated_time)
 
     def __get_loading_project_progress(self):
         """Computes current advancement of asset loading during project loading.
@@ -1143,8 +1143,8 @@ class Project(Loggable, GES.Project):
                 all_ready = False
             else:
                 # Check that we are not recreating deleted proxy
-                proxy_uri = self.app.proxy_manager.getProxyUri(asset)
-                scaled_proxy_uri = self.app.proxy_manager.getProxyUri(asset, scaled=True)
+                proxy_uri = self.app.proxy_manager.get_proxy_uri(asset)
+                scaled_proxy_uri = self.app.proxy_manager.get_proxy_uri(asset, scaled=True)
 
                 no_hq_proxy = False
                 no_scaled_proxy = False
@@ -1190,7 +1190,7 @@ class Project(Loggable, GES.Project):
             if asset.creation_progress < 100:
                 all_ready = False
             elif not asset.ready:
-                self.setModificationState(True)
+                self.set_modification_state(True)
                 asset.ready = True
 
         if all_ready:
@@ -1198,7 +1198,7 @@ class Project(Loggable, GES.Project):
 
         return asset_loading_progress
 
-    def __updateAssetLoadingProgress(self, estimated_time=0):
+    def __update_asset_loading_progress(self, estimated_time=0):
         if not self.loading_assets:
             self.emit("asset-loading-progress", 100, estimated_time)
             return
@@ -1214,13 +1214,13 @@ class Project(Loggable, GES.Project):
             self.info("No more loading assets")
             self.loading_assets = set()
 
-    def __assetTranscodingCancelledCb(self, unused_proxy_manager, asset):
-        self.__setProxy(asset, None)
-        self.__updateAssetLoadingProgress()
+    def __asset_transcoding_cancelled_cb(self, unused_proxy_manager, asset):
+        self.__set_proxy(asset, None)
+        self.__update_asset_loading_progress()
 
-    def __proxyErrorCb(self, unused_proxy_manager, asset, proxy, error):
+    def __proxy_error_cb(self, unused_proxy_manager, asset, proxy, error):
         if asset is None:
-            asset_id = self.app.proxy_manager.getTargetUri(proxy)
+            asset_id = self.app.proxy_manager.get_target_uri(proxy)
             if asset_id:
                 asset = GES.Asset.request(proxy.get_extractable_type(),
                                           asset_id)
@@ -1244,17 +1244,17 @@ class Project(Loggable, GES.Project):
         asset.creation_progress = 100
 
         self.emit("proxying-error", asset)
-        self.__updateAssetLoadingProgress()
+        self.__update_asset_loading_progress()
 
-    def __proxyReadyCb(self, unused_proxy_manager, asset, proxy):
+    def __proxy_ready_cb(self, unused_proxy_manager, asset, proxy):
         if proxy and proxy.props.id in self.__deleted_proxy_files:
             self.info("Recreated proxy is now ready, stop having"
                       " its target as a proxy.")
             proxy.unproxy(asset)
 
-        self.__setProxy(asset, proxy)
+        self.__set_proxy(asset, proxy)
 
-    def __setProxy(self, asset, proxy):
+    def __set_proxy(self, asset, proxy):
         asset.creation_progress = 100
         asset.ready = True
         if proxy:
@@ -1270,7 +1270,7 @@ class Project(Loggable, GES.Project):
             self.add_asset(proxy)
             self.loading_assets.add(proxy)
 
-        self.__updateAssetLoadingProgress()
+        self.__update_asset_loading_progress()
 
     def finalize_proxy(self, proxy):
         proxy.ready = False
@@ -1293,12 +1293,12 @@ class Project(Loggable, GES.Project):
         self._prepare_asset_processing(asset)
         asset.force_proxying = True
         self.app.proxy_manager.add_job(asset, scaled=scaled)
-        self.__updateAssetLoadingProgress()
+        self.__update_asset_loading_progress()
 
     def do_missing_uri(self, error, asset):
         if self.app.proxy_manager.is_proxy_asset(asset):
             self.debug("Missing proxy file: %s", asset.props.id)
-            target_uri = self.app.proxy_manager.getTargetUri(asset)
+            target_uri = self.app.proxy_manager.get_target_uri(asset)
 
             # Take asset relocation into account.:
             target_uri = self.relocated_assets.get(target_uri, target_uri)
@@ -1341,7 +1341,7 @@ class Project(Loggable, GES.Project):
 
     def do_asset_added(self, asset):
         """Handles `GES.Project::asset-added` emitted by self."""
-        self._maybeInitSettingsFromAsset(asset)
+        self._maybe_init_settings_from_asset(asset)
         if asset and not GObject.type_is_a(asset.get_extractable_type(),
                                            GES.UriClip):
             # Ignore for example the assets producing GES.TitleClips.
@@ -1367,7 +1367,7 @@ class Project(Loggable, GES.Project):
             self.debug("Project still loading, not using proxies: %s",
                        asset.props.id)
             asset.creation_progress = 100
-            self.__updateAssetLoadingProgress()
+            self.__update_asset_loading_progress()
 
     def do_loading_error(self, error, asset_id, unused_type):
         """Handles `GES.Project::error-loading-asset` emitted by self."""
@@ -1381,16 +1381,16 @@ class Project(Loggable, GES.Project):
         asset.creation_progress = 100
         if self.loaded:
             self.loading_assets.remove(asset)
-        self.__updateAssetLoadingProgress()
+        self.__update_asset_loading_progress()
 
     def do_loaded(self, unused_timeline):
         """Handles `GES.Project::loaded` emitted by self."""
         if not self.ges_timeline:
             return
 
-        self._ensureTracks()
+        self._ensure_tracks()
         self.ges_timeline.props.auto_transition = True
-        self._ensureLayer()
+        self._ensure_layer()
 
         if self.uri:
             self.loading_assets = {asset for asset in self.loading_assets
@@ -1400,7 +1400,7 @@ class Project(Loggable, GES.Project):
                 self.debug("The following assets are still being transcoded: %s."
                            " (They must be proxied assets with missing/deleted"
                            " proxy files).", self.loading_assets)
-            self.__updateAssetLoadingProgress()
+            self.__update_asset_loading_progress()
 
         if self.scenario is not None:
             return
@@ -1421,7 +1421,7 @@ class Project(Loggable, GES.Project):
         if container_profile == self.container_profile:
             return False
 
-        muxer = self._getElementFactoryName(
+        muxer = self._get_element_factory_name(
             Encoders().muxers, container_profile)
         if muxer is None:
             muxer = Encoders().default_muxer
@@ -1434,8 +1434,8 @@ class Project(Loggable, GES.Project):
                 if profile.get_restriction() is None:
                     profile.set_restriction(Gst.Caps("video/x-raw"))
 
-                self._ensureVideoRestrictions(profile)
-                vencoder = self._getElementFactoryName(Encoders().vencoders, profile)
+                self._ensure_video_restrictions(profile)
+                vencoder = self._get_element_factory_name(Encoders().vencoders, profile)
                 if vencoder:
                     profile.set_preset_name(vencoder)
             elif isinstance(profile, GstPbutils.EncodingAudioProfile):
@@ -1443,8 +1443,8 @@ class Project(Loggable, GES.Project):
                 if profile.get_restriction() is None:
                     profile.set_restriction(Gst.Caps("audio/x-raw"))
 
-                self._ensureAudioRestrictions(profile)
-                aencoder = self._getElementFactoryName(Encoders().aencoders, profile)
+                self._ensure_audio_restrictions(profile)
+                aencoder = self._get_element_factory_name(Encoders().aencoders, profile)
                 if aencoder:
                     profile.set_preset_name(aencoder)
             else:
@@ -1510,9 +1510,9 @@ class Project(Loggable, GES.Project):
         if self._scenario:
             self._scenario.disconnect_by_func(self._scenario_done_cb)
         self.app.proxy_manager.disconnect_by_func(self.__asset_transcoding_progress_cb)
-        self.app.proxy_manager.disconnect_by_func(self.__proxyErrorCb)
-        self.app.proxy_manager.disconnect_by_func(self.__assetTranscodingCancelledCb)
-        self.app.proxy_manager.disconnect_by_func(self.__proxyReadyCb)
+        self.app.proxy_manager.disconnect_by_func(self.__proxy_error_cb)
+        self.app.proxy_manager.disconnect_by_func(self.__asset_transcoding_cancelled_cb)
+        self.app.proxy_manager.disconnect_by_func(self.__proxy_ready_cb)
 
     def save(self, ges_timeline, uri, formatter_asset, overwrite):
         for container_profile in self.list_encoding_profiles():
@@ -1558,7 +1558,7 @@ class Project(Loggable, GES.Project):
         for asset in assets:
             if proxy_manager.asset_can_be_proxied(asset, scaled):
                 target = asset.get_proxy_target()
-                uri = proxy_manager.getProxyUri(asset, scaled=scaled)
+                uri = proxy_manager.get_proxy_uri(asset, scaled=scaled)
                 if target and target.props.id == uri:
                     self.info("Missing proxy needs to be recreated after cancelling"
                               " its recreation")
@@ -1584,7 +1584,7 @@ class Project(Loggable, GES.Project):
                 self.debug("Stop proxying %s", proxy_target.props.id)
                 proxy_target.set_proxy(None)
                 if proxy_manager.is_scaled_proxy(asset) \
-                        and not proxy_manager.isAssetFormatWellSupported(proxy_target) \
+                        and not proxy_manager.is_asset_format_well_supported(proxy_target) \
                         and hq_proxy:
                     # The original asset is unsupported, and the user prefers
                     # to edit with HQ proxies instead of scaled proxies.
@@ -1620,7 +1620,7 @@ class Project(Loggable, GES.Project):
         self.app.write_action("commit")
         GES.Timeline.commit(self.ges_timeline)
 
-    def createTimeline(self):
+    def create_timeline(self):
         """Loads the project's timeline."""
         try:
             # The project is loaded from the file in this call.
@@ -1645,7 +1645,7 @@ class Project(Loggable, GES.Project):
 
     def update_restriction_caps(self):
         # Get the height/width without rendering settings applied
-        width, height = self.getVideoWidthAndHeight()
+        width, height = self.get_video_width_and_height()
         videocaps = Gst.Caps.new_empty_simple("video/x-raw")
 
         videocaps.set_value("width", width)
@@ -1676,7 +1676,7 @@ class Project(Loggable, GES.Project):
 
         self.pipeline.commit_timeline()
 
-    def addUris(self, uris):
+    def add_uris(self, uris):
         """Adds assets asynchronously.
 
         Args:
@@ -1689,7 +1689,7 @@ class Project(Loggable, GES.Project):
                     action = AssetAddedIntention(self, uri)
                     self.app.action_log.push(action)
 
-    def assetsForUris(self, uris):
+    def assets_for_uris(self, uris):
         assets = []
         for uri in uris:
             asset = self.get_asset(uri, GES.UriClip)
@@ -1698,7 +1698,7 @@ class Project(Loggable, GES.Project):
             assets.append(asset)
         return assets
 
-    def listSources(self):
+    def list_sources(self):
         return self.list_assets(GES.UriClip)
 
     def release(self):
@@ -1719,7 +1719,7 @@ class Project(Loggable, GES.Project):
 
         return res
 
-    def setModificationState(self, state):
+    def set_modification_state(self, state):
         if not self.loaded:
             return
 
@@ -1727,13 +1727,13 @@ class Project(Loggable, GES.Project):
         if state:
             self.emit('project-changed')
 
-    def hasUnsavedModifications(self):
+    def has_unsaved_modifications(self):
         return self._dirty
 
-    def getDAR(self):
+    def get_dar(self):
         return Gst.Fraction(self.videowidth, self.videoheight)
 
-    def getVideoWidthAndHeight(self, render=False):
+    def get_video_width_and_height(self, render=False):
         """Returns the video width and height as a tuple.
 
         Args:
@@ -1753,13 +1753,13 @@ class Project(Loggable, GES.Project):
 
         return self.videowidth, self.videoheight
 
-    def getVideoCaps(self, render=False):
+    def get_video_caps(self, render=False):
         """Gets the caps corresponding to the video settings.
 
         Returns:
             Gst.Caps: The video settings caps.
         """
-        videowidth, videoheight = self.getVideoWidthAndHeight(render=render)
+        videowidth, videoheight = self.get_video_width_and_height(render=render)
         vstr = "width=%d,height=%d,pixel-aspect-ratio=1/1,framerate=%d/%d" % (
             videowidth, videoheight,
             self.videorate.num, self.videorate.denom)
@@ -1767,7 +1767,7 @@ class Project(Loggable, GES.Project):
         video_caps = Gst.caps_from_string(caps_str)
         return video_caps
 
-    def getAudioCaps(self):
+    def get_audio_caps(self):
         """Gets the caps corresponding to the audio settings.
 
         Returns:
@@ -1778,7 +1778,7 @@ class Project(Loggable, GES.Project):
         audio_caps = Gst.caps_from_string(caps_str)
         return audio_caps
 
-    def setAudioProperties(self, nbchanns=-1, rate=-1):
+    def set_audio_properties(self, nbchanns=-1, rate=-1):
         """Sets the number of audio channels and the rate."""
         # pylint: disable=consider-using-in
         self.info("%d x %dHz %dbits", nbchanns, rate)
@@ -1787,7 +1787,7 @@ class Project(Loggable, GES.Project):
         if rate != -1 and rate != self.audiorate:
             self.audiorate = rate
 
-    def setEncoders(self, muxer="", vencoder="", aencoder=""):
+    def set_encoders(self, muxer="", vencoder="", aencoder=""):
         """Sets the video and audio encoders and the muxer."""
         # pylint: disable=consider-using-in
         if muxer != "" and muxer != self.muxer:
@@ -1831,7 +1831,7 @@ class Project(Loggable, GES.Project):
     # Private methods                            #
     # ------------------------------------------ #
 
-    def _ensureTracks(self):
+    def _ensure_tracks(self):
         if self.ges_timeline is None:
             self.warning("Can't ensure tracks if no timeline set")
             return
@@ -1844,15 +1844,15 @@ class Project(Loggable, GES.Project):
         if GES.TrackType.AUDIO not in track_types:
             self.ges_timeline.add_track(GES.AudioTrack.new())
 
-    def _ensureLayer(self):
+    def _ensure_layer(self):
         if self.ges_timeline is None:
             self.warning("Can't ensure tracks if no timeline set")
             return
         if not self.ges_timeline.get_layers():
             self.ges_timeline.append_layer()
 
-    def _ensureRestrictions(self, profile, defaults, ref_restrictions=None,
-                            prev_vals=None):
+    def _ensure_restrictions(self, profile, defaults, ref_restrictions=None,
+                             prev_vals=None):
         """Make sure restriction values defined in @defaults are set on @profile.
 
         Attributes:
@@ -1890,7 +1890,7 @@ class Project(Loggable, GES.Project):
 
         self.info("Fully set restriction: %s", profile.get_restriction().to_string())
 
-    def _ensureVideoRestrictions(self, profile=None):
+    def _ensure_video_restrictions(self, profile=None):
         defaults = {
             "width": 720,
             "height": 576,
@@ -1908,10 +1908,10 @@ class Project(Loggable, GES.Project):
         else:
             ref_restrictions = profile.get_restriction()
 
-        self._ensureRestrictions(profile, defaults, ref_restrictions,
-                                 prev_vals)
+        self._ensure_restrictions(profile, defaults, ref_restrictions,
+                                  prev_vals)
 
-    def _ensureAudioRestrictions(self, profile=None):
+    def _ensure_audio_restrictions(self, profile=None):
         ref_restrictions = None
         if not profile:
             profile = self.audio_profile
@@ -1924,10 +1924,10 @@ class Project(Loggable, GES.Project):
         if self.audio_profile:
             prev_vals = self.audio_profile.get_restriction().copy()
 
-        return self._ensureRestrictions(profile, defaults, ref_restrictions,
-                                        prev_vals)
+        return self._ensure_restrictions(profile, defaults, ref_restrictions,
+                                         prev_vals)
 
-    def _maybeInitSettingsFromAsset(self, asset):
+    def _maybe_init_settings_from_asset(self, asset):
         """Updates the project settings to match the specified asset.
 
         Args:
@@ -1967,9 +1967,9 @@ class Project(Loggable, GES.Project):
 
     def _emit_change(self, key):
         self.emit("rendering-settings-changed", key)
-        self.setModificationState(True)
+        self.set_modification_state(True)
 
-    def _getElementFactoryName(self, elements, profile):
+    def _get_element_factory_name(self, elements, profile):
         if profile.get_preset_name():
             return profile.get_preset_name()
 
@@ -2018,8 +2018,8 @@ class ProjectSettingsDialog:
 
         self._create_ui()
         self.window.set_transient_for(parent_window)
-        self._setupUiConstraints()
-        self.updateUI()
+        self._setup_ui_constraints()
+        self.update_ui()
 
     def _create_ui(self):
         """Initializes the static parts of the UI."""
@@ -2043,18 +2043,18 @@ class ProjectSettingsDialog:
         self.year_spinbutton = self.builder.get_object("year_spinbutton")
 
         self.video_preset_menubutton = self.builder.get_object("video_preset_menubutton")
-        self.video_presets.setupUi(self.video_presets_combo,
-                                   self.video_preset_menubutton)
-        self.video_presets.connect("preset-loaded", self.__videoPresetLoadedCb)
+        self.video_presets.setup_ui(self.video_presets_combo,
+                                    self.video_preset_menubutton)
+        self.video_presets.connect("preset-loaded", self.__video_preset_loaded_cb)
         self.audio_preset_menubutton = self.builder.get_object("audio_preset_menubutton")
-        self.audio_presets.setupUi(self.audio_presets_combo,
-                                   self.audio_preset_menubutton)
+        self.audio_presets.setup_ui(self.audio_presets_combo,
+                                    self.audio_preset_menubutton)
 
         self.scaled_proxy_width_spin = self.builder.get_object("scaled_proxy_width")
         self.scaled_proxy_height_spin = self.builder.get_object("scaled_proxy_height")
         self.proxy_res_linked_check = self.builder.get_object("proxy_res_linked")
 
-    def _setupUiConstraints(self):
+    def _setup_ui_constraints(self):
         """Creates the dynamic widgets and connects other widgets."""
         # Add custom framerate fraction widget.
         frame_rate_box = self.builder.get_object("frame_rate_box")
@@ -2069,119 +2069,119 @@ class ProjectSettingsDialog:
 
         # Behavior.
         self.widgets_group = RippleUpdateGroup()
-        self.widgets_group.addVertex(self.frame_rate_combo,
-                                     signal="changed",
-                                     update_func=self._update_combo_func,
-                                     update_func_args=(self.frame_rate_fraction_widget,))
-        self.widgets_group.addVertex(self.frame_rate_fraction_widget,
-                                     signal="value-changed",
-                                     update_func=self._update_fraction_func,
-                                     update_func_args=(self.frame_rate_combo,))
-        self.widgets_group.addVertex(self.width_spinbutton, signal="value-changed")
-        self.widgets_group.addVertex(self.height_spinbutton, signal="value-changed")
-        self.widgets_group.addVertex(self.audio_preset_menubutton,
-                                     update_func=self._update_preset_menu_button_func,
-                                     update_func_args=(self.audio_presets,))
-        self.widgets_group.addVertex(self.video_preset_menubutton,
-                                     update_func=self._update_preset_menu_button_func,
-                                     update_func_args=(self.video_presets,))
-        self.widgets_group.addVertex(self.channels_combo, signal="changed")
-        self.widgets_group.addVertex(self.sample_rate_combo, signal="changed")
-        self.widgets_group.addVertex(self.scaled_proxy_width_spin, signal="value-changed")
-        self.widgets_group.addVertex(self.scaled_proxy_height_spin, signal="value-changed")
+        self.widgets_group.add_vertex(self.frame_rate_combo,
+                                      signal="changed",
+                                      update_func=self._update_combo_func,
+                                      update_func_args=(self.frame_rate_fraction_widget,))
+        self.widgets_group.add_vertex(self.frame_rate_fraction_widget,
+                                      signal="value-changed",
+                                      update_func=self._update_fraction_func,
+                                      update_func_args=(self.frame_rate_combo,))
+        self.widgets_group.add_vertex(self.width_spinbutton, signal="value-changed")
+        self.widgets_group.add_vertex(self.height_spinbutton, signal="value-changed")
+        self.widgets_group.add_vertex(self.audio_preset_menubutton,
+                                      update_func=self._update_preset_menu_button_func,
+                                      update_func_args=(self.audio_presets,))
+        self.widgets_group.add_vertex(self.video_preset_menubutton,
+                                      update_func=self._update_preset_menu_button_func,
+                                      update_func_args=(self.video_presets,))
+        self.widgets_group.add_vertex(self.channels_combo, signal="changed")
+        self.widgets_group.add_vertex(self.sample_rate_combo, signal="changed")
+        self.widgets_group.add_vertex(self.scaled_proxy_width_spin, signal="value-changed")
+        self.widgets_group.add_vertex(self.scaled_proxy_height_spin, signal="value-changed")
 
         # Constrain width and height IFF the Constrain checkbox is checked.
         # Video
-        self.widgets_group.addEdge(self.width_spinbutton, self.height_spinbutton,
-                                   predicate=self.widthHeightLinked,
-                                   edge_func=self.updateHeight)
-        self.widgets_group.addEdge(self.height_spinbutton, self.width_spinbutton,
-                                   predicate=self.widthHeightLinked,
-                                   edge_func=self.updateWidth)
+        self.widgets_group.add_edge(self.width_spinbutton, self.height_spinbutton,
+                                    predicate=self.width_height_linked,
+                                    edge_func=self.update_height)
+        self.widgets_group.add_edge(self.height_spinbutton, self.width_spinbutton,
+                                    predicate=self.width_height_linked,
+                                    edge_func=self.update_width)
         # Proxy
-        self.widgets_group.addEdge(self.scaled_proxy_width_spin,
-                                   self.scaled_proxy_height_spin,
-                                   predicate=self.proxy_res_linked,
-                                   edge_func=self.update_scaled_proxy_height)
-        self.widgets_group.addEdge(self.scaled_proxy_height_spin,
-                                   self.scaled_proxy_width_spin,
-                                   predicate=self.proxy_res_linked,
-                                   edge_func=self.update_scaled_proxy_width)
+        self.widgets_group.add_edge(self.scaled_proxy_width_spin,
+                                    self.scaled_proxy_height_spin,
+                                    predicate=self.proxy_res_linked,
+                                    edge_func=self.update_scaled_proxy_height)
+        self.widgets_group.add_edge(self.scaled_proxy_height_spin,
+                                    self.scaled_proxy_width_spin,
+                                    predicate=self.proxy_res_linked,
+                                    edge_func=self.update_scaled_proxy_width)
 
         # Keep the framerate combo and fraction widgets in sync.
-        self.widgets_group.addBiEdge(
+        self.widgets_group.add_bi_edge(
             self.frame_rate_combo, self.frame_rate_fraction_widget)
 
         # Presets.
-        self.audio_presets.loadAll()
-        self.video_presets.loadAll()
+        self.audio_presets.load_all()
+        self.video_presets.load_all()
 
         # Bind the widgets in the Video tab to the Video Presets Manager.
-        self.bindSpinbutton(self.video_presets, "width", self.width_spinbutton)
-        self.bindSpinbutton(
+        self.bind_spinbutton(self.video_presets, "width", self.width_spinbutton)
+        self.bind_spinbutton(
             self.video_presets, "height", self.height_spinbutton)
-        self.bindFractionWidget(
+        self.bind_fraction_widget(
             self.video_presets, "frame-rate", self.frame_rate_fraction_widget)
 
         # Bind the widgets in the Audio tab to the Audio Presets Manager.
-        self.bindCombo(self.audio_presets, "channels", self.channels_combo)
-        self.bindCombo(
+        self.bind_combo(self.audio_presets, "channels", self.channels_combo)
+        self.bind_combo(
             self.audio_presets, "sample-rate", self.sample_rate_combo)
 
-        self.widgets_group.addEdge(
+        self.widgets_group.add_edge(
             self.frame_rate_fraction_widget, self.video_preset_menubutton)
-        self.widgets_group.addEdge(self.width_spinbutton, self.video_preset_menubutton)
-        self.widgets_group.addEdge(self.height_spinbutton, self.video_preset_menubutton)
+        self.widgets_group.add_edge(self.width_spinbutton, self.video_preset_menubutton)
+        self.widgets_group.add_edge(self.height_spinbutton, self.video_preset_menubutton)
 
-        self.widgets_group.addEdge(self.channels_combo, self.audio_preset_menubutton)
-        self.widgets_group.addEdge(self.sample_rate_combo, self.audio_preset_menubutton)
+        self.widgets_group.add_edge(self.channels_combo, self.audio_preset_menubutton)
+        self.widgets_group.add_edge(self.sample_rate_combo, self.audio_preset_menubutton)
 
-    def bindFractionWidget(self, mgr, name, widget):
-        mgr.bindWidget(name, widget.setWidgetValue, widget.getWidgetValue)
+    def bind_fraction_widget(self, mgr, name, widget):
+        mgr.bind_widget(name, widget.set_widget_value, widget.get_widget_value)
 
-    def bindCombo(self, mgr, name, widget):
-        mgr.bindWidget(name,
-                       lambda x: set_combo_value(widget, x),
-                       lambda: get_combo_value(widget))
+    def bind_combo(self, mgr, name, widget):
+        mgr.bind_widget(name,
+                        lambda x: set_combo_value(widget, x),
+                        lambda: get_combo_value(widget))
 
-    def bindSpinbutton(self, mgr, name, widget):
-        mgr.bindWidget(name,
-                       lambda x: widget.set_value(float(x)),
-                       lambda: int(widget.get_value()))
+    def bind_spinbutton(self, mgr, name, widget):
+        mgr.bind_widget(name,
+                        lambda x: widget.set_value(float(x)),
+                        lambda: int(widget.get_value()))
 
-    def widthHeightLinked(self):
+    def width_height_linked(self):
         return self.constrain_sar_button.props.active and not self.video_presets.ignore_update_requests
 
     def proxy_res_linked(self):
         return self.proxy_res_linked_check.props.active
 
     def _update_fraction_func(self, unused, fraction, combo):
-        fraction.setWidgetValue(get_combo_value(combo))
+        fraction.set_widget_value(get_combo_value(combo))
 
     def _update_combo_func(self, unused, combo, fraction):
-        set_combo_value(combo, fraction.getWidgetValue())
+        set_combo_value(combo, fraction.get_widget_value())
 
-    def __videoPresetLoadedCb(self, unused_mgr):
-        self.sar = self.getSAR()
+    def __video_preset_loaded_cb(self, unused_mgr):
+        self.sar = self.get_sar()
 
-    def getSAR(self):
+    def get_sar(self):
         width = int(self.width_spinbutton.get_value())
         height = int(self.height_spinbutton.get_value())
         return Gst.Fraction(width, height)
 
-    def _constrainSarButtonToggledCb(self, unused_button):
-        self.sar = self.getSAR()
+    def _constrain_sar_button_toggled_cb(self, unused_button):
+        self.sar = self.get_sar()
 
     def _update_preset_menu_button_func(self, unused_source, unused_target, mgr):
-        mgr.updateMenuActions()
+        mgr.update_menu_actions()
 
-    def updateWidth(self):
+    def update_width(self):
         height = int(self.height_spinbutton.get_value())
         fraction = height * self.sar
         width = int(fraction.num / fraction.denom)
         self.width_spinbutton.set_value(width)
 
-    def updateHeight(self):
+    def update_height(self):
         width = int(self.width_spinbutton.get_value())
         fraction = width / self.sar
         height = int(fraction.num / fraction.denom)
@@ -2204,13 +2204,13 @@ class ProjectSettingsDialog:
         height = int(fraction.num / fraction.denom)
         self.scaled_proxy_height_spin.set_value(height)
 
-    def updateUI(self):
+    def update_ui(self):
         # Video
         self.width_spinbutton.set_value(self.project.videowidth)
         self.height_spinbutton.set_value(self.project.videoheight)
-        self.frame_rate_fraction_widget.setWidgetValue(self.project.videorate)
+        self.frame_rate_fraction_widget.set_widget_value(self.project.videorate)
 
-        matching_video_preset = self.video_presets.matchingPreset(self.project)
+        matching_video_preset = self.video_presets.matching_preset(self.project)
         if matching_video_preset:
             self.video_presets_combo.set_active_id(matching_video_preset)
 
@@ -2218,7 +2218,7 @@ class ProjectSettingsDialog:
         set_combo_value(self.channels_combo, self.project.audiochannels)
         set_combo_value(self.sample_rate_combo, self.project.audiorate)
 
-        matching_audio_preset = self.audio_presets.matchingPreset(self.project)
+        matching_audio_preset = self.audio_presets.matching_preset(self.project)
         if matching_audio_preset:
             self.audio_presets_combo.set_active_id(matching_audio_preset)
 
@@ -2233,7 +2233,7 @@ class ProjectSettingsDialog:
         self.scaled_proxy_width_spin.set_value(self.project.scaled_proxy_width)
         self.scaled_proxy_height_spin.set_value(self.project.scaled_proxy_height)
 
-    def updateProject(self):
+    def update_project(self):
         with self.app.action_log.started("change project settings",
                                          toplevel=True):
             self.project.author = self.author_entry.get_text()
@@ -2241,7 +2241,7 @@ class ProjectSettingsDialog:
 
             self.project.videowidth = int(self.width_spinbutton.get_value())
             self.project.videoheight = int(self.height_spinbutton.get_value())
-            self.project.videorate = self.frame_rate_fraction_widget.getWidgetValue()
+            self.project.videorate = self.frame_rate_fraction_widget.get_widget_value()
 
             self.project.audiochannels = get_combo_value(self.channels_combo)
             self.project.audiorate = get_combo_value(self.sample_rate_combo)
@@ -2257,8 +2257,8 @@ class ProjectSettingsDialog:
 
                 self.project.regenerate_scaled_proxies()
 
-    def _responseCb(self, unused_widget, response):
+    def _response_cb(self, unused_widget, response):
         """Handles the dialog being closed."""
         if response == Gtk.ResponseType.OK:
-            self.updateProject()
+            self.update_project()
         self.window.destroy()

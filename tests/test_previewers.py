@@ -105,7 +105,7 @@ class TestPreviewer(common.TestCase):
         """Checks the `thumb_interval` method."""
         def run_thumb_interval(interval):
             """Runs thumb_interval."""
-            with mock.patch("pitivi.utils.timeline.Zoomable.pixelToNs") as pixel_to_ns:
+            with mock.patch("pitivi.utils.timeline.Zoomable.pixel_to_ns") as pixel_to_ns:
                 pixel_to_ns.return_value = interval
                 return Previewer.thumb_interval(1)
 

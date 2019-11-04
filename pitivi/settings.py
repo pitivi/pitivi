@@ -96,10 +96,10 @@ class Notification:
 
     def __init__(self, attrname):
         self.attrname = "_" + attrname
-        self.signame = self.signalName(attrname)
+        self.signame = self.signal_name(attrname)
 
     @staticmethod
-    def signalName(attrname):
+    def signal_name(attrname):
         return attrname + "Changed"
 
     def __get__(self, instance, unused):
@@ -118,7 +118,7 @@ class GlobalSettings(GObject.Object, Loggable):
     - environment variables.
 
     Modules declare which settings they wish to access by calling the
-    addConfigOption() class method during initialization.
+    add_config_option() class method during initialization.
 
     Attributes:
         options (dict): The available settings.
@@ -135,8 +135,8 @@ class GlobalSettings(GObject.Object, Loggable):
 
         self.conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
         self._config = configparser.ConfigParser()
-        self._readSettingsFromConfigurationFile()
-        self._readSettingsFromEnvironmentVariables()
+        self._read_settings_from_configuration_file()
+        self._read_settings_from_environment_variables()
 
     def reload_attribute_from_file(self, section, attrname):
         """Reads and sets an attribute from the configuration file.
@@ -185,7 +185,7 @@ class GlobalSettings(GObject.Object, Loggable):
         else:
             self._config.set(section, key, str(value))
 
-    def _readSettingsFromConfigurationFile(self):
+    def _read_settings_from_configuration_file(self):
         """Reads the settings from the user configuration file."""
         try:
             self._config.read(self.conf_file_path)
@@ -197,7 +197,7 @@ class GlobalSettings(GObject.Object, Loggable):
             self.error("Failed to parse %s: %s", self.conf_file_path, e)
             return
 
-        for (section, attrname, typ, key, unused_env, value) in self.iterAllOptions():
+        for (section, attrname, typ, key, unused_env, value) in self.iter_all_options():
             if not self._config.has_section(section):
                 continue
             if key and self._config.has_option(section, key):
@@ -229,9 +229,9 @@ class GlobalSettings(GObject.Object, Loggable):
 
                 setattr(self, section + option, value)
 
-    def _readSettingsFromEnvironmentVariables(self):
+    def _read_settings_from_environment_variables(self):
         """Reads settings from their registered environment variables."""
-        for unused_section, attrname, typ, unused_key, env, unused_value in self.iterAllOptions():
+        for unused_section, attrname, typ, unused_key, env, unused_value in self.iter_all_options():
             if not env:
                 # This option does not have an environment variable name.
                 continue
@@ -239,8 +239,8 @@ class GlobalSettings(GObject.Object, Loggable):
             if var is not None:
                 setattr(self, attrname, var)
 
-    def _writeSettingsToConfigurationFile(self):
-        for section, unused_attrname, unused_typ, key, unused_env_var, value in self.iterAllOptions():
+    def _write_settings_to_configuration_file(self):
+        for section, unused_attrname, unused_typ, key, unused_env_var, value in self.iter_all_options():
             if not self._config.has_section(section):
                 self._config.add_section(section)
             if key:
@@ -254,24 +254,24 @@ class GlobalSettings(GObject.Object, Loggable):
         except (IOError, OSError) as e:
             self.error("Failed to write to %s: %s", self.conf_file_path, e)
 
-    def storeSettings(self):
+    def store_settings(self):
         """Writes settings to the user's local configuration file.
 
         Only those settings which were added with a section and a key value are
         stored.
         """
-        self._writeSettingsToConfigurationFile()
+        self._write_settings_to_configuration_file()
 
-    def iterAllOptions(self):
+    def iter_all_options(self):
         """Iterates over all registered options."""
         for section, options in list(self.options.items()):
             for attrname, (typ, key, environment) in list(options.items()):
                 yield section, attrname, typ, key, environment, getattr(self, attrname)
 
-    def isDefault(self, attrname):
+    def is_default(self, attrname):
         return getattr(self, attrname) == self.defaults[attrname]
 
-    def setDefault(self, attrname):
+    def set_default(self, attrname):
         """Resets the specified setting to its default value."""
         setattr(self, attrname, self.defaults[attrname])
 
@@ -303,8 +303,8 @@ class GlobalSettings(GObject.Object, Loggable):
         self._config.set(section, option, value)
 
     @classmethod
-    def addConfigOption(cls, attrname, type_=None, section=None, key=None,
-                        environment=None, default=None, notify=False,):
+    def add_config_option(cls, attrname, type_=None, section=None, key=None,
+                          environment=None, default=None, notify=False,):
         """Adds a configuration option.
 
         This function should be called during module initialization, before
@@ -321,7 +321,7 @@ class GlobalSettings(GObject.Object, Loggable):
                 `default` value is specified.
             section (Optional[str]): The section of the config file under which
                 this option is saved. This section must have been added with
-                addConfigSection(). Not necessary if `key` is not given.
+                add_config_section(). Not necessary if `key` is not given.
             key (Optional[str]): The key under which this option is to be saved.
                 By default the option will not be saved.
             notify (Optional[bool]): Whether this attribute should emit
@@ -360,7 +360,7 @@ class GlobalSettings(GObject.Object, Loggable):
         cls.defaults[attrname] = default
 
     @classmethod
-    def addConfigSection(cls, section):
+    def add_config_section(cls, section):
         """Adds a section to the local config file.
 
         Args:
@@ -371,7 +371,7 @@ class GlobalSettings(GObject.Object, Loggable):
         cls.options[section] = {}
 
     @classmethod
-    def notifiesConfigOption(cls, attrname):
+    def notifies_config_option(cls, attrname):
         """Checks whether a signal is emitted when the setting is changed.
 
         Args:
@@ -381,5 +381,5 @@ class GlobalSettings(GObject.Object, Loggable):
             bool: True when the setting emits a signal when changed,
                 False otherwise.
         """
-        signal_name = Notification.signalName(attrname)
+        signal_name = Notification.signal_name(attrname)
         return bool(GObject.signal_lookup(signal_name, cls))

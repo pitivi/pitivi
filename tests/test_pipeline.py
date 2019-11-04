@@ -41,7 +41,7 @@ class TestPipeline(common.TestCase):
         error = GLib.Error.new_literal(Gst.core_error_quark(),
                                        "fake", Gst.CoreError.TOO_LAZY)
         message.parse_error = mock.MagicMock(return_value=(error, "fake"))
-        pipeline._busMessageCb(None, message)
+        pipeline._bus_message_cb(None, message)
 
     def test_recovery(self):
         """Checks the recovery mechanism."""
@@ -106,12 +106,12 @@ class TestPipeline(common.TestCase):
         message.type = Gst.MessageType.STATE_CHANGED
         message.src = pipe._pipeline
         message.parse_state_changed.return_value = (Gst.State.NULL, Gst.State.READY, Gst.State.PAUSED)
-        pipe._busMessageCb(None, message)
+        pipe._bus_message_cb(None, message)
 
         # Pretend the state changed to PAUSED.
         message.parse_state_changed.return_value = (Gst.State.READY, Gst.State.PAUSED, Gst.State.VOID_PENDING)
         self.assertEqual(pipe._next_seek, None)
-        pipe._busMessageCb(None, message)
+        pipe._bus_message_cb(None, message)
         self.assertEqual(pipe._recovery_state, SimplePipeline.RecoveryState.SEEKED_AFTER_RECOVERING)
         self.assertTrue(pipe._busy_async)
         # The pipeline should have tried to seek back to the last position.
@@ -121,7 +121,7 @@ class TestPipeline(common.TestCase):
         message.type = Gst.MessageType.ASYNC_DONE
         with mock.patch.object(pipe, "get_state") as get_state:
             get_state.return_value = (0, Gst.State.PAUSED, 0)
-            pipe._busMessageCb(None, message)
+            pipe._bus_message_cb(None, message)
         self.assertEqual(pipe._recovery_state, SimplePipeline.RecoveryState.NOT_RECOVERING)
         # Should still be busy because of seeking to _next_seek.
         self.assertTrue(pipe._busy_async)
@@ -129,7 +129,7 @@ class TestPipeline(common.TestCase):
 
         # Pretend the seek async operation finished.
         message.type = Gst.MessageType.ASYNC_DONE
-        pipe._busMessageCb(None, message)
+        pipe._bus_message_cb(None, message)
         self.assertEqual(pipe._recovery_state, SimplePipeline.RecoveryState.NOT_RECOVERING)
         self.assertFalse(pipe._busy_async)
         self.assertIsNone(pipe._next_seek)
@@ -140,7 +140,7 @@ class TestPipeline(common.TestCase):
         timeline = GES.Timeline()
         pipe.set_timeline(timeline)
 
-        with mock.patch.object(pipe, "get_simple_state") as get_state:
+        with mock.patch.object(pipe, "get_state") as get_state:
             get_state.return_value = (0, Gst.State.PAUSED, 0)
             with mock.patch.object(timeline, "commit") as commit:
                 with pipe.commit_timeline_after():

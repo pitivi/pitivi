@@ -16,7 +16,7 @@
         <property name="label" translatable="yes">Import</property>
         <property name="use_underline">True</property>
         <property name="icon_name">list-add-symbolic</property>
-        <signal name="clicked" handler="_importSourcesCb" swapped="no"/>
+        <signal name="clicked" handler="_import_sources_cb" swapped="no"/>
         <child internal-child="accessible">
           <object class="AtkObject" id="media_import_button-atkobject">
             <property name="AtkObject::accessible-name">media_import_button</property>
@@ -55,7 +55,7 @@
         <property name="tooltip_text" translatable="yes">Clip properties...</property>
         <property name="use_underline">True</property>
         <property name="icon_name">document-properties-symbolic</property>
-        <signal name="clicked" handler="_clipPropertiesCb" swapped="no"/>
+        <signal name="clicked" handler="_clip_properties_cb" swapped="no"/>
         <child internal-child="accessible">
           <object class="AtkObject" id="media_props_button-atkobject">
             <property name="AtkObject::accessible-name">media_props_button</property>
@@ -94,7 +94,7 @@
         <property name="tooltip_markup" translatable="yes">Show clips as a detailed list</property>
         <property name="use_underline">True</property>
         <property name="icon_name">view-list-symbolic</property>
-        <signal name="toggled" handler="_toggleViewTypeCb" swapped="no"/>
+        <signal name="toggled" handler="_toggle_view_type_cb" swapped="no"/>
         <child internal-child="accessible">
           <object class="AtkObject" id="media_listview_button-atkobject">
             <property name="AtkObject::accessible-name">media_listview_button</property>
