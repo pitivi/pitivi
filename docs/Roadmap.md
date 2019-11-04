@@ -22,19 +22,14 @@ Any time estimates here are mostly wild guesses. Do not treat them as
 hard deadlines. This aims mostly at giving an idea of how milestones
 follow each other.
 
--   2019 Q1: release [1.0](releases/1.0.md) with ponies and rainbows
+-   2019 Q4: release [1.0](releases/1.0.md) with ponies and rainbows
 
 See [Current events](Current_events.md) for past items.
 
 # Major features
 
-## Porting to Windows and Mac
-
-Status: started
-
-We have a [Homebrew recipe](https://gist.github.com/aleb/8bfe374e4fe68419567a9d473217da95)
-for building Pitivi, but we still have to integrate Matplotlib and
-make a standalone DMG out of that.
+Besides the items below we care about, see also the list of
+[GSoC project ideas](GSoC_Ideas.md).
 
 ## Motion ramping, time stretching
 
@@ -51,27 +46,6 @@ make a standalone DMG out of that.
     compositing](https://gitlab.gnome.org/GNOME/pitivi/issues/966),
     [audio equalizer](https://gitlab.gnome.org/GNOME/pitivi/issues/1551)
 
-## Advanced layer management
-
--   See [issue 930](https://gitlab.gnome.org/GNOME/pitivi/issues/930#note_68393)
-
-## A better title editor
-
--   The current title editor UI is very simple. Please join us to make
-    it work up to your expectations! See the existing [title editor
-    issues](https://gitlab.gnome.org/GNOME/pitivi/issues?label_name%5B%5D=titles+editor).
-
-## MAM/DAM
-
--   [Digital asset
-    management](http://en.wikipedia.org/wiki/Digital_asset_management)
-    is the ability to manage huge amounts of media (video clips, sounds,
-    images, etc.). This feature is very much needed for professional
-    editing; it allows handling multiple simultaneous camera angles,
-    multiple takes of the same scene, multiple sound sources, etc.
--   Potentially being addressed by the Novacut team with
-    [dmedia](https://launchpad.net/dmedia)
-
 ## Hardware-accelerated decoding and encoding
 
 -   Since GStreamer 1.2, the basic infrastructure allowing us to cleanly
@@ -79,11 +53,3 @@ make a standalone DMG out of that.
     cards is there. We need to ensure that our planned usecases are
     properly supported with the most common graphic drivers (through
     VA-API) and to make the integration work in Pitivi.
-
-## Proxy editing
-
--   Status: [done](https://gitlab.gnome.org/GNOME/pitivi/issues/743) but
-    the proxy experience can be better
--   See [proxy editing
-    requirements](design/Proxy_editing_requirements.md) for the “spec”
-    of how this feature should behave
