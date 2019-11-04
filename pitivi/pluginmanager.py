@@ -29,10 +29,10 @@ from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 
 
-GlobalSettings.addConfigSection("plugins")
-GlobalSettings.addConfigOption("ActivePlugins",
-                               section="plugins", key="active-plugins",
-                               default=[])
+GlobalSettings.add_config_section("plugins")
+GlobalSettings.add_config_option("ActivePlugins",
+                                 section="plugins", key="active-plugins",
+                                 default=[])
 
 
 class API(GObject.GObject):

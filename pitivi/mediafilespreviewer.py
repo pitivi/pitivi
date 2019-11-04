@@ -41,19 +41,19 @@ from pitivi.viewer.viewer import ViewerWidget
 PREVIEW_WIDTH = 250
 PREVIEW_HEIGHT = 100
 
-GlobalSettings.addConfigSection('filechooser-preview')
-GlobalSettings.addConfigOption('FCEnablePreview',
-                               section='filechooser-preview',
-                               key='do-preview-on-clip-import',
-                               default=True)
-GlobalSettings.addConfigOption('FCpreviewWidth',
-                               section='filechooser-preview',
-                               key='video-preview-width',
-                               default=PREVIEW_WIDTH)
-GlobalSettings.addConfigOption('FCpreviewHeight',
-                               section='filechooser-preview',
-                               key='video-preview-height',
-                               default=PREVIEW_HEIGHT)
+GlobalSettings.add_config_section('filechooser-preview')
+GlobalSettings.add_config_option('FCEnablePreview',
+                                 section='filechooser-preview',
+                                 key='do-preview-on-clip-import',
+                                 default=True)
+GlobalSettings.add_config_option('FCpreviewWidth',
+                                 section='filechooser-preview',
+                                 key='video-preview-width',
+                                 default=PREVIEW_WIDTH)
+GlobalSettings.add_config_option('FCpreviewHeight',
+                                 section='filechooser-preview',
+                                 key='video-preview-height',
+                                 default=PREVIEW_HEIGHT)
 
 ACCEPTABLE_TAGS = [
     Gst.TAG_ALBUM_ARTIST,
@@ -85,8 +85,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
 
         # playbin for play pics
         self.player = AssetPipeline(name="preview-player")
-        self.player.connect('eos', self._pipelineEosCb)
-        self.player.connect('error', self._pipelineErrorCb)
+        self.player.connect('eos', self._pipeline_eos_cb)
+        self.player.connect('error', self._pipeline_error_cb)
         self.player._bus.connect('message::tag', self._tag_found_cb)
 
         # some global variables for preview handling
@@ -324,7 +324,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.play_button.set_icon_name("media-playback-start")
         self.log("Preview paused")
 
-    def togglePlayback(self):
+    def toggle_playback(self):
         if self.is_playing:
             self.pause()
         else:
@@ -366,24 +366,24 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.player.simple_seek(value)
             self.at_eos = False
 
-    def _pipelineEosCb(self, unused_pipeline):
+    def _pipeline_eos_cb(self, unused_pipeline):
         self._update_position()
         self.pause()
         # The pipeline is at the end. Leave it like that so the last frame
         # is displayed.
         self.at_eos = True
 
-    def _pipelineErrorCb(self, unused_pipeline, unused_message, unused_detail):
+    def _pipeline_error_cb(self, unused_pipeline, unused_message, unused_detail):
         self.pause(state=Gst.State.NULL)
 
     def _update_position(self, *unused_args):
         if self.is_playing and not self.slider_being_used:
-            curr_pos = self.player.getPosition()
+            curr_pos = self.player.get_position()
             self.pos_adj.set_value(int(curr_pos))
         return self.is_playing
 
     def _on_start_stop_clicked_cb(self, button):
-        self.togglePlayback()
+        self.toggle_playback()
 
     def _on_zoom_clicked_cb(self, button, increment):
         if self.current_preview_type == 'video':

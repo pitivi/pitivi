@@ -36,67 +36,67 @@ class PreferencesDialogTest(common.TestCase):
         with mock.patch.object(Gtk.Dialog, "set_transient_for"):
             PreferencesDialog(app)
 
-    def testNumeric(self):
-        PreferencesDialog.addNumericPreference('numericPreference1',
-                                               label="Open Range",
-                                               section="timeline",
-                                               description="This option has no upper bound",
-                                               lower=-10)
+    def test_numeric(self):
+        PreferencesDialog.add_numeric_preference('numericPreference1',
+                                                 label="Open Range",
+                                                 section="timeline",
+                                                 description="This option has no upper bound",
+                                                 lower=-10)
         self.assertTrue(
             'numericPreference1' in PreferencesDialog.prefs["timeline"])
 
-        PreferencesDialog.addNumericPreference('numericPreference2',
-                                               label="Closed Range",
-                                               section="timeline",
-                                               description="This option has both upper and lower bounds",
-                                               lower=-10,
-                                               upper=10000)
+        PreferencesDialog.add_numeric_preference('numericPreference2',
+                                                 label="Closed Range",
+                                                 section="timeline",
+                                                 description="This option has both upper and lower bounds",
+                                                 lower=-10,
+                                                 upper=10000)
 
-    def testText(self):
-        PreferencesDialog.addTextPreference('textPreference1',
-                                            label="Unfiltered",
-                                            section="timeline",
-                                            description="Anything can go in this box")
-
-        PreferencesDialog.addTextPreference('textPreference2',
-                                            label="Numbers only",
-                                            section="timeline",
-                                            description="This input validates its input with a regex",
-                                            matches=r"^-?\d+(\.\d+)?$")
-
-    def testOther(self):
-        PreferencesDialog.addPathPreference('aPathPreference',
-                                            label="Test Path",
-                                            section="timeline",
-                                            description="Test the path widget")
-
-        PreferencesDialog.addChoicePreference('aChoicePreference',
-                                              label="Swallow Velocity",
+    def test_text(self):
+        PreferencesDialog.add_text_preference('textPreference1',
+                                              label="Unfiltered",
                                               section="timeline",
-                                              description="What is the airspeed velocity of a coconut-laden swallow?",
-                                              choices=(
-                                                  ("42 Knots", 32),
-                                                  ("9 furlongs per fortnight", 42),
-                                                  ("I don't know that!", None)))
+                                              description="Anything can go in this box")
 
-        PreferencesDialog.addChoicePreference('aLongChoicePreference',
-                                              label="Favorite Color",
+        PreferencesDialog.add_text_preference('textPreference2',
+                                              label="Numbers only",
                                               section="timeline",
-                                              description="What is the color of the parrot's plumage?",
-                                              choices=(
-                                                  ("Mauve", "Mauve"),
-                                                  ("Chartreuse", "Chartreuse"),
-                                                  ("Magenta", "Magenta"),
-                                                  ("Pink", "Pink"),
-                                                  ("Norwegian Blue", "Norwegian Blue"),
-                                                  ("Yellow Ochre", "Yellow Ochre")))
+                                              description="This input validates its input with a regex",
+                                              matches=r"^-?\d+(\.\d+)?$")
 
-        PreferencesDialog.addTogglePreference('aTogglePreference',
-                                              label="Test Toggle",
+    def test_other(self):
+        PreferencesDialog.add_path_preference('aPathPreference',
+                                              label="Test Path",
                                               section="timeline",
-                                              description="Test the toggle widget")
+                                              description="Test the path widget")
 
-        PreferencesDialog.addFontPreference('aFontPreference',
-                                            label="Foo Font",
-                                            section="timeline",
-                                            description="Test the font widget")
+        PreferencesDialog.add_choice_preference('aChoicePreference',
+                                                label="Swallow Velocity",
+                                                section="timeline",
+                                                description="What is the airspeed velocity of a coconut-laden swallow?",
+                                                choices=(
+                                                    ("42 Knots", 32),
+                                                    ("9 furlongs per fortnight", 42),
+                                                    ("I don't know that!", None)))
+
+        PreferencesDialog.add_choice_preference('aLongChoicePreference',
+                                                label="Favorite Color",
+                                                section="timeline",
+                                                description="What is the color of the parrot's plumage?",
+                                                choices=(
+                                                    ("Mauve", "Mauve"),
+                                                    ("Chartreuse", "Chartreuse"),
+                                                    ("Magenta", "Magenta"),
+                                                    ("Pink", "Pink"),
+                                                    ("Norwegian Blue", "Norwegian Blue"),
+                                                    ("Yellow Ochre", "Yellow Ochre")))
+
+        PreferencesDialog.add_toggle_preference('aTogglePreference',
+                                                label="Test Toggle",
+                                                section="timeline",
+                                                description="Test the toggle widget")
+
+        PreferencesDialog.add_font_preference('aFontPreference',
+                                              label="Foo Font",
+                                              section="timeline",
+                                              description="Test the font widget")

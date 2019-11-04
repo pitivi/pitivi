@@ -37,16 +37,16 @@ class TestGlobalSettings(common.TestCase):
         self.__options = GlobalSettings.options
         self.__environment = GlobalSettings.environment
         self.__defaults = GlobalSettings.defaults
-        self.__add_config_option_real = GlobalSettings.addConfigOption
+        self.__add_config_option_real = GlobalSettings.add_config_option
         GlobalSettings.options = {}
         GlobalSettings.environment = set()
         GlobalSettings.defaults = {}
-        GlobalSettings.addConfigOption = self.__add_config_option
+        GlobalSettings.add_config_option = self.__add_config_option
 
     def __add_config_option(self, attrname, *args, **kwargs):
-        """Calls GlobalSettings.addConfigOption but remembers attributes.
+        """Calls GlobalSettings.add_config_option but remembers attributes.
 
-        It receives the same arguments as GlobalSettings.addConfigOption but
+        It receives the same arguments as GlobalSettings.add_config_option but
         remembers attributes so they can be cleaned later.
         """
         self.__add_config_option_real(attrname, *args, **kwargs)
@@ -57,7 +57,7 @@ class TestGlobalSettings(common.TestCase):
         GlobalSettings.options = self.__options
         GlobalSettings.environment = self.__environment
         GlobalSettings.defaults = self.__defaults
-        GlobalSettings.addConfigOption = self.__add_config_option_real
+        GlobalSettings.add_config_option = self.__add_config_option_real
         self.__clean_settings_attributes()
 
     def __clean_settings_attributes(self):
@@ -67,37 +67,37 @@ class TestGlobalSettings(common.TestCase):
         self.__attributes = []
 
     def test_add_section(self):
-        GlobalSettings.addConfigSection("section-a")
-        GlobalSettings.addConfigSection("section-a")
+        GlobalSettings.add_config_section("section-a")
+        GlobalSettings.add_config_section("section-a")
 
     def test_add_config_option(self):
         def add_option():
-            GlobalSettings.addConfigOption("optionA1", section="section-a",
-                                           key="option-a-1", default=False)
+            GlobalSettings.add_config_option("optionA1", section="section-a",
+                                             key="option-a-1", default=False)
         # "section-a" does not exist.
         with self.assertRaises(ConfigError):
             add_option()
 
-        GlobalSettings.addConfigSection("section-a")
+        GlobalSettings.add_config_section("section-a")
         add_option()
         self.assertFalse(GlobalSettings.optionA1)
         with self.assertRaises(ConfigError):
             add_option()
 
     def test_read_config_file(self):
-        GlobalSettings.addConfigSection("section-1")
-        GlobalSettings.addConfigOption("section1OptionA", section="section-1",
-                                       key="option-a", default=50)
-        GlobalSettings.addConfigOption("section1OptionB", section="section-1",
-                                       key="option-b", default=False)
-        GlobalSettings.addConfigOption("section1OptionC", section="section-1",
-                                       key="option-c", default="")
-        GlobalSettings.addConfigOption("section1OptionD", section="section-1",
-                                       key="option-d", default=[])
-        GlobalSettings.addConfigOption("section1OptionE", section="section-1",
-                                       key="option-e", default=["foo"])
-        GlobalSettings.addConfigOption("section1OptionF", section="section-1",
-                                       key="option-f", default=Gdk.RGBA())
+        GlobalSettings.add_config_section("section-1")
+        GlobalSettings.add_config_option("section1OptionA", section="section-1",
+                                         key="option-a", default=50)
+        GlobalSettings.add_config_option("section1OptionB", section="section-1",
+                                         key="option-b", default=False)
+        GlobalSettings.add_config_option("section1OptionC", section="section-1",
+                                         key="option-c", default="")
+        GlobalSettings.add_config_option("section1OptionD", section="section-1",
+                                         key="option-d", default=[])
+        GlobalSettings.add_config_option("section1OptionE", section="section-1",
+                                         key="option-e", default=["foo"])
+        GlobalSettings.add_config_option("section1OptionF", section="section-1",
+                                         key="option-f", default=Gdk.RGBA())
 
         self.assertEqual(GlobalSettings.section1OptionA, 50)
         self.assertEqual(GlobalSettings.section1OptionB, False)
@@ -144,13 +144,13 @@ class TestGlobalSettings(common.TestCase):
         self.assertEqual(settings.section1OptionF, Gdk.RGBA(0.2, 0.4, 1.0, 0.4))
 
     def test_write_config_file(self):
-        GlobalSettings.addConfigSection("section-new")
-        GlobalSettings.addConfigOption("sectionNewOptionA",
-                                       section="section-new", key="option-a",
-                                       default="elmo")
-        GlobalSettings.addConfigOption("sectionNewOptionB",
-                                       section="section-new", key="option-b",
-                                       default=["foo"])
+        GlobalSettings.add_config_section("section-new")
+        GlobalSettings.add_config_option("sectionNewOptionA",
+                                         section="section-new", key="option-a",
+                                         default="elmo")
+        GlobalSettings.add_config_option("sectionNewOptionB",
+                                         section="section-new", key="option-b",
+                                         default=["foo"])
 
         with mock.patch("pitivi.settings.xdg_config_home") as xdg_config_home,\
                 tempfile.TemporaryDirectory() as temp_dir:
@@ -159,7 +159,7 @@ class TestGlobalSettings(common.TestCase):
 
             settings1.sectionNewOptionA = "kermit"
             settings1.sectionNewOptionB = []
-            settings1.storeSettings()
+            settings1.store_settings()
 
             settings2 = GlobalSettings()
             self.assertEqual(settings2.sectionNewOptionA, "kermit")

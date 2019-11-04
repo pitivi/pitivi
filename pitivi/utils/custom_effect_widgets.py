@@ -45,7 +45,7 @@ def setup_from_ui_file(element_setting_widget, path):
     builder = Gtk.Builder()
     builder.add_from_file(path)
     # Link ui widgets to the corresponding properties of the effect
-    element_setting_widget.mapBuilder(builder)
+    element_setting_widget.map_builder(builder)
     return builder
 
 
@@ -166,11 +166,11 @@ def create_alpha_widget(effect_prop_manager, element_setting_widget, element):
             color_button.set_rgba(get_current_rgba())
             widget.block_signals()
             try:
-                widget.setWidgetValue(value)
+                widget.set_widget_value(value)
             finally:
                 widget.unblock_signals()
         else:
-            widget.setWidgetValue(value)
+            widget.set_widget_value(value)
 
     element.connect("deep-notify", property_changed_cb)
 
@@ -188,7 +188,7 @@ def create_3point_color_balance_widget(effect_prop_manager, element_setting_widg
     """Creates a widget for the `frei0r-filter-3-point-color-balance` effect."""
     ui_path = os.path.join(CUSTOM_WIDGETS_DIR, "frei0r-filter-3-point-color-balance.ui")
     builder = setup_from_ui_file(element_setting_widget, ui_path)
-    element_setting_widget.mapBuilder(builder)
+    element_setting_widget.map_builder(builder)
     color_balance_grid = builder.get_object("base_table")
 
     shadows_wheel = Gtk.HSV()
@@ -236,17 +236,17 @@ def create_3point_color_balance_widget(effect_prop_manager, element_setting_widg
         """Gets the color value for the GES element property."""
         return self.adjustment.get_value() / 255
 
-    black_r.getWidgetValue = MethodType(get_widget_scaled_value, black_r)
-    black_g.getWidgetValue = MethodType(get_widget_scaled_value, black_g)
-    black_b.getWidgetValue = MethodType(get_widget_scaled_value, black_b)
+    black_r.get_widget_value = MethodType(get_widget_scaled_value, black_r)
+    black_g.get_widget_value = MethodType(get_widget_scaled_value, black_g)
+    black_b.get_widget_value = MethodType(get_widget_scaled_value, black_b)
 
-    gray_r.getWidgetValue = MethodType(get_widget_scaled_value, gray_r)
-    gray_g.getWidgetValue = MethodType(get_widget_scaled_value, gray_g)
-    gray_b.getWidgetValue = MethodType(get_widget_scaled_value, gray_b)
+    gray_r.get_widget_value = MethodType(get_widget_scaled_value, gray_r)
+    gray_g.get_widget_value = MethodType(get_widget_scaled_value, gray_g)
+    gray_b.get_widget_value = MethodType(get_widget_scaled_value, gray_b)
 
-    white_r.getWidgetValue = MethodType(get_widget_scaled_value, white_r)
-    white_b.getWidgetValue = MethodType(get_widget_scaled_value, white_b)
-    white_g.getWidgetValue = MethodType(get_widget_scaled_value, white_g)
+    white_r.get_widget_value = MethodType(get_widget_scaled_value, white_r)
+    white_b.get_widget_value = MethodType(get_widget_scaled_value, white_b)
+    white_g.get_widget_value = MethodType(get_widget_scaled_value, white_g)
 
     # Update underlying GObject color properties when the color widgets change.
 
@@ -300,7 +300,7 @@ def create_3point_color_balance_widget(effect_prop_manager, element_setting_widg
             wheel.set_color(*new_hsv)
         numeric_widget.block_signals()
         try:
-            numeric_widget.setWidgetValue(round(value * 255))
+            numeric_widget.set_widget_value(round(value * 255))
         finally:
             numeric_widget.unblock_signals()
 
@@ -324,7 +324,7 @@ def create_3point_color_balance_widget(effect_prop_manager, element_setting_widg
         elif pspec.name in ("white-color-r", "white-color-g", "white-color-b"):
             update_wheel("white-color-r", "white-color-g", "white-color-b", highlights_wheel, widget, value)
         else:
-            widget.setWidgetValue(value)
+            widget.set_widget_value(value)
 
     element.connect("deep-notify", property_changed_cb)
 
@@ -451,18 +451,18 @@ def create_alphaspot_widget(effect_prop_manager, element_setting_widget, element
             shape_picker.set_active(get_current_shape())
             widget.block_signals()
             try:
-                widget.setWidgetValue(value)
+                widget.set_widget_value(value)
             finally:
                 widget.unblock_signals()
         elif pspec.name in ("operation",):
             op_picker.set_active(get_current_op())
             widget.block_signals()
             try:
-                widget.setWidgetValue(value)
+                widget.set_widget_value(value)
             finally:
                 widget.unblock_signals()
         else:
-            widget.setWidgetValue(value)
+            widget.set_widget_value(value)
 
     element.connect("deep-notify", property_changed_cb)
 

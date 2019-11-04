@@ -15,7 +15,7 @@
         <property name="use_underline">True</property>
         <property name="icon_name">video-x-generic</property>
         <property name="active">True</property>
-        <signal name="toggled" handler="_toggleViewTypeCb" swapped="no"/>
+        <signal name="toggled" handler="_toggle_view_type_cb" swapped="no"/>
         <child internal-child="accessible">
           <object class="AtkObject" id="video_togglebutton-atkobject">
             <property name="AtkObject::accessible-name">effects library video togglebutton</property>
@@ -34,7 +34,7 @@
         <property name="tooltip_text" translatable="yes">Show audio effects</property>
         <property name="use_underline">True</property>
         <property name="icon_name">audio-x-generic</property>
-        <signal name="toggled" handler="_toggleViewTypeCb" swapped="no"/>
+        <signal name="toggled" handler="_toggle_view_type_cb" swapped="no"/>
         <child internal-child="accessible">
           <object class="AtkObject" id="audio_togglebutton-atkobject">
             <property name="AtkObject::accessible-name">effects library audio togglebutton</property>

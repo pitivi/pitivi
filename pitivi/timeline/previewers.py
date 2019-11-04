@@ -70,12 +70,12 @@ PREVIEW_GENERATOR_SIGNALS = {
     "error": (GObject.SignalFlags.RUN_LAST, None, ()),
 }
 
-GlobalSettings.addConfigSection("previewers")
+GlobalSettings.add_config_section("previewers")
 
-GlobalSettings.addConfigOption("previewers_max_cpu",
-                               section="previewers",
-                               key="max-cpu-usage",
-                               default=90)
+GlobalSettings.add_config_option("previewers_max_cpu",
+                                 section="previewers",
+                                 key="max-cpu-usage",
+                                 default=90)
 
 
 class PreviewerBin(Gst.Bin, Loggable):
@@ -120,7 +120,7 @@ class TeedThumbnailBin(PreviewerBin):
         self.thumb_cache = None
         self.gdkpixbufsink = self.internal_bin.get_by_name("gdkpixbufsink")
 
-    def __addThumbnail(self, message):
+    def __add_thumbnail(self, message):
         struct = message.get_structure()
         struct_name = struct.get_name()
         if struct_name == "pixbuf":
@@ -134,7 +134,7 @@ class TeedThumbnailBin(PreviewerBin):
     def do_post_message(self, message):
         if message.type == Gst.MessageType.ELEMENT and \
                 message.src == self.gdkpixbufsink:
-            GLib.idle_add(self.__addThumbnail, message)
+            GLib.idle_add(self.__add_thumbnail, message)
 
         return Gst.Bin.do_post_message(self, message)
 
@@ -392,7 +392,7 @@ class Previewer(GObject.Object):
         Returns:
             int: a duration in nanos, multiple of THUMB_PERIOD.
         """
-        interval = Zoomable.pixelToNs(thumb_width + THUMB_MARGIN_PX)
+        interval = Zoomable.pixel_to_ns(thumb_width + THUMB_MARGIN_PX)
         # Make sure the thumb interval is a multiple of THUMB_PERIOD.
         quantized = quantize(interval, THUMB_PERIOD)
         # Make sure the quantized thumb interval fits
@@ -465,7 +465,7 @@ class ImagePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
         y = (self.props.height_request - self.thumb_height) / 2
         for position in range(element_left, element_right, interval):
-            x = Zoomable.nsToPixel(position) - self.nsToPixel(self.ges_elem.props.in_point)
+            x = Zoomable.ns_to_pixel(position) - self.ns_to_pixel(self.ges_elem.props.in_point)
             try:
                 thumb = self.thumbs.pop(position)
                 self.move(thumb, x, y)
@@ -481,7 +481,7 @@ class ImagePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
             self.remove(thumb)
         self.thumbs = thumbs
 
-    def zoomChanged(self):
+    def zoom_changed(self):
         self._update_thumbnails()
 
     def _height_changed_cb(self, unused_widget, unused_param_spec):
@@ -848,7 +848,7 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
         element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
         y = (self.props.height_request - self.thumb_height) / 2
         for position in range(element_left, element_right, interval):
-            x = Zoomable.nsToPixel(position) - self.nsToPixel(self.ges_elem.props.in_point)
+            x = Zoomable.ns_to_pixel(position) - self.ns_to_pixel(self.ges_elem.props.in_point)
             try:
                 thumb = self.thumbs.pop(position)
                 self.move(thumb, x, y)
@@ -897,7 +897,7 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
         """Handles the changing of the duration of the clip."""
         self._update_thumbnails()
 
-    def zoomChanged(self):
+    def zoom_changed(self):
         self._update_thumbnails()
 
 
@@ -982,7 +982,7 @@ class ThumbnailCache(Loggable):
             raise ValueError("Unhandled type: %s" % type(obj))
 
         if ProxyManager.is_proxy_asset(uri):
-            uri = ProxyManager.getTargetUri(uri)
+            uri = ProxyManager.get_target_uri(uri)
 
         if uri not in cls.caches_by_uri:
             cls.caches_by_uri[uri] = ThumbnailCache(uri)
@@ -1076,7 +1076,7 @@ class ThumbnailCache(Loggable):
 def get_wavefile_location_for_uri(uri):
     """Computes the URI where the wave.npy file should be stored."""
     if ProxyManager.is_proxy_asset(uri):
-        uri = ProxyManager.getTargetUri(uri)
+        uri = ProxyManager.get_target_uri(uri)
     filename = hash_file(Gst.uri_get_location(uri)) + ".wave.npy"
     cache_dir = get_dir(os.path.join(xdg_cache_home(), "waves"))
 
@@ -1125,7 +1125,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
 
         self.become_controlled()
 
-    def _startLevelsDiscovery(self):
+    def _start_levels_discovery(self):
         filename = get_wavefile_location_for_uri(self._uri)
         if os.path.exists(filename):
             with open(filename, "rb") as samples:
@@ -1133,7 +1133,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
             self.queue_draw()
         else:
             self.wavefile = filename
-            self._launchPipeline()
+            self._launch_pipeline()
 
     @staticmethod
     def _scale_samples(samples):
@@ -1150,7 +1150,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
 
         return list(samples)
 
-    def _launchPipeline(self):
+    def _launch_pipeline(self):
         self.debug(
             "Now generating waveforms for: %s", path_from_uri(self._uri))
         self.pipeline = Gst.parse_launch("uridecodebin name=decode uri=" +
@@ -1172,15 +1172,15 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         decode.connect("autoplug-select", self._autoplug_select_cb)
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
-        bus.connect("message", self._busMessageCb)
+        bus.connect("message", self._bus_message_cb)
 
-    def _prepareSamples(self):
+    def _prepare_samples(self):
         self._wavebin.finalize()
         self.samples = self._scale_samples(self._wavebin.samples)
 
-    def _busMessageCb(self, bus, message):
+    def _bus_message_cb(self, bus, message):
         if message.type == Gst.MessageType.EOS:
-            self._prepareSamples()
+            self._prepare_samples()
             self.queue_draw()
             self.stop_generation()
 
@@ -1193,8 +1193,8 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
                              " for the %ith time, trying again with no rate "
                              " modulation", message.parse_error(),
                              self._num_failures)
-                bus.disconnect_by_func(self._busMessageCb)
-                self._launchPipeline()
+                bus.disconnect_by_func(self._bus_message_cb)
+                self._launch_pipeline()
                 self.become_controlled()
             else:
                 if self.pipeline:
@@ -1221,10 +1221,10 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         rect = Gdk.cairo_get_clip_rectangle(context)[1]
         inpoint = self.ges_elem.props.in_point
         max_duration = self.ges_elem.get_asset().get_filesource_asset().get_duration()
-        start_ns = min(max(0, self.pixelToNs(rect.x) + inpoint), max_duration)
-        end_ns = min(max(0, self.pixelToNs(rect.x + rect.width) + inpoint), max_duration)
+        start_ns = min(max(0, self.pixel_to_ns(rect.x) + inpoint), max_duration)
+        end_ns = min(max(0, self.pixel_to_ns(rect.x + rect.width) + inpoint), max_duration)
 
-        zoom = self.getCurrentZoomLevel()
+        zoom = self.get_current_zoom_level()
         height = self.get_allocation().height
         if not self.surface or \
                 height != self.surface.get_height() or \
@@ -1237,14 +1237,14 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
             self._surface_zoom_level = zoom
             # The generated waveform is for an extended range if possible,
             # so if the user scrolls we don't rebuild the waveform every time.
-            extra = self.pixelToNs(WAVEFORM_SURFACE_EXTRA_PX)
+            extra = self.pixel_to_ns(WAVEFORM_SURFACE_EXTRA_PX)
             self._surface_start_ns = max(0, start_ns - extra)
             self._surface_end_ns = min(end_ns + extra, max_duration)
 
             range_start = min(max(0, int(self._surface_start_ns / SAMPLE_DURATION)), len(self.samples))
             range_end = min(max(0, int(self._surface_end_ns / SAMPLE_DURATION)), len(self.samples))
             samples = self.samples[range_start:range_end]
-            surface_width = self.nsToPixel(self._surface_end_ns - self._surface_start_ns)
+            surface_width = self.ns_to_pixel(self._surface_end_ns - self._surface_start_ns)
             self.surface = renderer.fill_surface(samples, surface_width, height)
 
         # Paint the surface, ignoring the clipped rect.
@@ -1253,7 +1253,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         # the surface in context, if the entire asset would be drawn.
         # 2. - inpoint, because we're drawing a clip, not the entire asset.
         context.set_operator(cairo.OPERATOR_OVER)
-        offset = self.nsToPixel(self._surface_start_ns - inpoint)
+        offset = self.ns_to_pixel(self._surface_start_ns - inpoint)
         context.set_source_surface(self.surface, offset, 0)
         context.paint()
 
@@ -1266,7 +1266,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
 
     def start_generation(self):
         if not self.pipeline:
-            self._startLevelsDiscovery()
+            self._start_levels_discovery()
         else:
             self.pipeline.set_state(Gst.State.PLAYING)
 
@@ -1280,7 +1280,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
     def stop_generation(self):
         if self.pipeline:
             self.pipeline.set_state(Gst.State.NULL)
-            self.pipeline.get_bus().disconnect_by_func(self._busMessageCb)
+            self.pipeline.get_bus().disconnect_by_func(self._bus_message_cb)
             self.pipeline = None
 
         self.emit("done")

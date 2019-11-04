@@ -834,8 +834,8 @@ class BaseLoggable:
         """
         if _can_shortcut_logging(self.log_category, ERROR):
             return
-        error_object(self.logObjectName(),
-                     self.log_category, *self.logFunction(*args))
+        error_object(self.log_object_name(),
+                     self.log_category, *self.log_function(*args))
 
     def warning(self, *args):
         """Logs a warning.
@@ -845,7 +845,7 @@ class BaseLoggable:
         if _can_shortcut_logging(self.log_category, WARN):
             return
         warning_object(
-            self.logObjectName(), self.log_category, *self.logFunction(*args))
+            self.log_object_name(), self.log_category, *self.log_function(*args))
 
     def fixme(self, *args):
         """Logs a fixme.
@@ -854,8 +854,8 @@ class BaseLoggable:
         """
         if _can_shortcut_logging(self.log_category, FIXME):
             return
-        fixme_object(self.logObjectName(),
-                     self.log_category, *self.logFunction(*args))
+        fixme_object(self.log_object_name(),
+                     self.log_category, *self.log_function(*args))
 
     def info(self, *args):
         """Logs an informational message.
@@ -864,8 +864,8 @@ class BaseLoggable:
         """
         if _can_shortcut_logging(self.log_category, INFO):
             return
-        info_object(self.logObjectName(),
-                    self.log_category, *self.logFunction(*args))
+        info_object(self.log_object_name(),
+                    self.log_category, *self.log_function(*args))
 
     def debug(self, *args):
         """Logs a debug message.
@@ -874,8 +874,8 @@ class BaseLoggable:
         """
         if _can_shortcut_logging(self.log_category, DEBUG):
             return
-        debug_object(self.logObjectName(),
-                     self.log_category, *self.logFunction(*args))
+        debug_object(self.log_object_name(),
+                     self.log_category, *self.log_function(*args))
 
     def log(self, *args):
         """Logs a log message.
@@ -884,10 +884,10 @@ class BaseLoggable:
         """
         if _can_shortcut_logging(self.log_category, LOG):
             return
-        log_object(self.logObjectName(),
-                   self.log_category, *self.logFunction(*args))
+        log_object(self.log_object_name(),
+                   self.log_category, *self.log_function(*args))
 
-    def doLog(self, level, where, fmt, *args, **kwargs):
+    def do_log(self, level, where, fmt, *args, **kwargs):
         """Logs a message at the specified level.
 
         Args:
@@ -898,26 +898,26 @@ class BaseLoggable:
             fmt (str): The string template for the message.
             *args: The arguments used when converting the `fmt`
                 string template to the message.
-            **kwargs: The pre-calculated values from a previous doLog call.
+            **kwargs: The pre-calculated values from a previous do_log call.
 
         Returns:
             dict: The calculated variables, to be reused in a
-                 call to doLog that should show the same location.
+                 call to do_log that should show the same location.
         """
         if _can_shortcut_logging(self.log_category, level):
             return {}
-        args = self.logFunction(*args)
-        return do_log(level, self.logObjectName(), self.log_category,
+        args = self.log_function(*args)
+        return do_log(level, self.log_object_name(), self.log_category,
                       fmt, args, where=where, **kwargs)
 
-    def logFunction(self, *args):
+    def log_function(self, *args):
         """Processes the arguments applied to the message template.
 
         Default just returns the arguments unchanged.
         """
         return args
 
-    def logObjectName(self):
+    def log_object_name(self):
         """Gets the name of this object."""
         for name in ['logName', 'name']:
             if hasattr(self, name):
@@ -925,7 +925,7 @@ class BaseLoggable:
 
         return None
 
-    def handleException(self, exc):
+    def handle_exception(self, exc):
         self.warning(get_exception_message(exc))
 
 
@@ -937,8 +937,8 @@ class Loggable(BaseLoggable):
         elif not hasattr(self, 'log_category'):
             self.log_category = self.__class__.__name__.lower()
 
-    def logObjectName(self):
-        res = BaseLoggable.logObjectName(self)
+    def log_object_name(self):
+        res = BaseLoggable.log_object_name(self)
         if not res:
             return "<%s at 0x%x>" % (self.__class__.__name__, id(self))
         return res
@@ -946,5 +946,5 @@ class Loggable(BaseLoggable):
     def error(self, fmt, *args):
         if _can_shortcut_logging(self.log_category, ERROR):
             return
-        do_log(ERROR, self.logObjectName(), self.log_category,
-               fmt, self.logFunction(*args), where=-2)
+        do_log(ERROR, self.log_object_name(), self.log_category,
+               fmt, self.log_function(*args), where=-2)

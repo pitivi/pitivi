@@ -51,13 +51,13 @@ class TitleEditorTest(BaseTestUndoTimeline):
 
         from pitivi.timeline.timeline import TimelineContainer
         timeline_container = TimelineContainer(self.app)
-        timeline_container.setProject(self.project)
+        timeline_container.set_project(self.project)
         self.app.gui.editor.timeline_ui = timeline_container
 
-        title_editor._newProjectLoadedCb(None, self.project)
-        self.project.pipeline.getPosition = mock.Mock(return_value=0)
+        title_editor._new_project_loaded_cb(None, self.project)
+        self.project.pipeline.get_position = mock.Mock(return_value=0)
 
-        title_editor._createCb(None)
+        title_editor._create_cb(None)
         ps1 = self._get_title_source_child_props()
 
         self.action_log.undo()

@@ -51,7 +51,7 @@ class FileListErrorDialog(GObject.Object, Loggable):
         self.builder.get_object("headline").set_text(headline)
         self.errorvbox = self.builder.get_object("errorvbox")
 
-    def addFailedFile(self, uri, reason=_("Unknown reason"), extra=None):
+    def add_failed_file(self, uri, reason=_("Unknown reason"), extra=None):
         """Adds the specified URI to the list of failures.
 
         Args:
@@ -59,14 +59,14 @@ class FileListErrorDialog(GObject.Object, Loggable):
             reason (Optional[str]): The reason of the file discovery failure.
         """
         self.debug("Uri: %s, reason: %s, extra: %s", uri, reason, extra)
-        exp = self.__createFileExpander(uri, reason, extra)
+        exp = self.__create_file_expander(uri, reason, extra)
         self.errorvbox.pack_start(exp, False, False, 0)
         if len(self.errorvbox.get_children()) < 3:
             exp.set_expanded(True)  # Let's save the user some clicks
         exp.show_all()
 
     @staticmethod
-    def __createFileExpander(uri, reason, extra=None):
+    def __create_file_expander(uri, reason, extra=None):
         if uri:
             if uri.startswith("file://"):
                 uri = uri[7:]
@@ -103,7 +103,7 @@ class FileListErrorDialog(GObject.Object, Loggable):
 
         return exp
 
-    def isVisible(self):
+    def is_visible(self):
         """Returns True if the dialog is currently shown."""
         return self.window.get_property("visible")
 
@@ -113,10 +113,10 @@ class FileListErrorDialog(GObject.Object, Loggable):
 
     # Callbacks from glade
 
-    def _closeCb(self, unused_dialog):
+    def _close_cb(self, unused_dialog):
         """Emits the `close` signal."""
         self.emit('close')
 
-    def _responseCb(self, unused_dialog, response):
+    def _response_cb(self, unused_dialog, response):
         """Emits the `response` signal."""
         self.emit('response', response)

@@ -157,7 +157,7 @@ class TestFormatAudiochannels(common.TestCase):
 
 class TestDependencyChecks(common.TestCase):
 
-    def testDependencies(self):
+    def test_dependencies(self):
         gi_dep = GstDependency("Gst", "1.0", "1.0.0")
         gi_dep.check()
         self.assertTrue(gi_dep.satisfied)
