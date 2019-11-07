@@ -1,15 +1,16 @@
 # Traditional Chinese translation for pitivi
 #
 # Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>, 2008.
+# Cheng-Chia Tseng <pswo10680@gmail.com>, 2013, 2015.
+# Walter Cheuk <wwycheuk@gmail.com>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi 0.15.0\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2014-12-13 19:10+0000\n"
-"PO-Revision-Date: 2015-02-24 21:03+0800\n"
-"Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
+"POT-Creation-Date: 2019-09-24 07:02+0000\n"
+"PO-Revision-Date: 2019-11-04 16:09+0800\n"
+"Last-Translator: Walter Cheuk <wwycheuk@gmail.com>\n"
 "Language-Team: Chinese/Traditional <community@linuxhall.org>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
@@ -17,9 +18,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Launchpad-Export-Date: 2011-10-05 16:08+0000\n"
-"X-Generator: Poedit 1.7.1\n"
+"X-Generator: Poedit 2.2.4\n"
 
-#: ../data/pitivi.appdata.xml.in.h:1
+#: data/org.pitivi.Pitivi-mime.xml.in:4
+msgid "Pitivi video project (legacy)"
+msgstr "Pitivi 影片專案 (舊版)"
+
+#: data/org.pitivi.Pitivi-mime.xml.in:12
+msgid "Pitivi/GES video project"
+msgstr "Pitivi/GES 影片專案"
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:8 data/org.pitivi.Pitivi.desktop.in:4
+msgid "Pitivi"
+msgstr "Pitivi 影片剪輯器"
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:9 data/org.pitivi.Pitivi.desktop.in:6
+msgid "Create and edit your own movies"
+msgstr "建立與編輯您的電影"
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:11
 msgid ""
 "Pitivi is a video editor that aims to appeal to hobbyists and professionals "
 "alike, with a strong focus on efficiency, quality and usability. It "
@@ -30,7 +47,7 @@ msgstr ""
 "質、便用。它不只與其他應用程式整合良好，更具有美觀的使用者介面，設計雖強大但"
 "仍易於學習。"
 
-#: ../data/pitivi.appdata.xml.in.h:2
+#: data/org.pitivi.Pitivi.appdata.xml.in:12
 msgid ""
 "With a non-modal editing workflow, a framerate-independent and playhead-"
 "centric timeline, Pitivi allows you quickly and accurately trim, split and "
@@ -41,807 +58,881 @@ msgstr ""
 "速且精確地修剪、裁切、檢閱各個場景。Pitivi 的漣漪與捲滾編輯特色，讓您可以更專"
 "注於說故事本身，而不是「到處拖推剪輯位置」。"
 
-#: ../data/pitivi.appdata.xml.in.h:3
+#: data/org.pitivi.Pitivi.appdata.xml.in:13
 msgid "Some other features include:"
 msgstr "其他特點包括："
 
-#: ../data/pitivi.appdata.xml.in.h:4
+#: data/org.pitivi.Pitivi.appdata.xml.in:15
 msgid ""
 "Accepts any file formats supported by the GStreamer multimedia framework"
 msgstr "接受任何 GStreamer 多媒體框架所支援的檔案格式"
 
-#: ../data/pitivi.appdata.xml.in.h:5
+#: data/org.pitivi.Pitivi.appdata.xml.in:16
 msgid ""
 "Can animate hundreds of special effects and filters with keyframable "
 "properties"
 msgstr "有上百種特效與過濾器可以利用鍵幀屬性來製作動畫"
 
-#: ../data/pitivi.appdata.xml.in.h:6
+#: data/org.pitivi.Pitivi.appdata.xml.in:17
 msgid "Ability to set custom aspect ratios, framerates and rendering presets"
 msgstr "可以自訂長寬比、幀率、壓製預置設定"
 
-#: ../data/pitivi.appdata.xml.in.h:7
+#: data/org.pitivi.Pitivi.appdata.xml.in:18
 msgid "Easy to use crossfades and SMPTE transitions"
 msgstr "易用的交錯淡化與 SMPTE 轉場"
 
-#: ../data/pitivi.appdata.xml.in.h:8
+#: data/org.pitivi.Pitivi.appdata.xml.in:19
 msgid "Multihead-friendly with detachable user interface components"
 msgstr "對多螢幕友善的可脫離式使用者介面組件"
 
-#: ../data/pitivi.desktop.in.in.h:1
+#: data/org.pitivi.Pitivi.appdata.xml.in:41
+msgid "The Pitivi Team"
+msgstr "Pitivi 團隊"
+
+#: data/org.pitivi.Pitivi.desktop.in:5
 msgid "Video Editor"
 msgstr "影片編輯器"
 
-#: ../data/pitivi.desktop.in.in.h:2
-msgid "Create and edit your own movies"
-msgstr "建立與編輯您的電影"
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.pitivi.Pitivi.desktop.in:16
+msgid "video;film;movie;editor;"
+msgstr "video;film;movie;editor;"
 
-#: ../data/ui/alignmentprogress.ui.h:1
+#: data/ui/alignmentprogress.ui:8
 msgid "Auto-Alignment Starting"
 msgstr "自動校準開始"
 
-#: ../data/ui/alignmentprogress.ui.h:2
+#: data/ui/alignmentprogress.ui:25
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>執行自動對齊</big></b>"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1069
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1138
 msgid "Estimating..."
-msgstr "估計..."
+msgstr "正在估計時間..."
 
-#: ../data/ui/clipmediaprops.ui.h:1
+#: data/ui/clipmediaprops.ui:8
 msgid "Clip Properties"
 msgstr "剪輯屬性"
 
-#: ../data/ui/clipmediaprops.ui.h:2
+#: data/ui/clipmediaprops.ui:23
 msgid "_Cancel"
 msgstr "取消(_C)"
 
-#: ../data/ui/clipmediaprops.ui.h:3
+#: data/ui/clipmediaprops.ui:37
 msgid "_Apply to project"
 msgstr "套用至專案(_A)"
 
-#: ../data/ui/clipmediaprops.ui.h:4 ../data/ui/projectsettings.ui.h:11
-msgid "Size (pixels):"
-msgstr "尺寸 (像素)："
+#: data/ui/clipmediaprops.ui:124
+msgid "Size (pixels)"
+msgstr "尺寸 (像素)"
 
-#: ../data/ui/clipmediaprops.ui.h:5 ../data/ui/renderingdialog.ui.h:30
-msgid "Frame rate:"
-msgstr "幀率："
+#: data/ui/clipmediaprops.ui:139
+msgid "Frame rate"
+msgstr "幀率"
 
 #. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
-#: ../data/ui/clipmediaprops.ui.h:7
-msgid "Pixel aspect ratio:"
-msgstr "像素寬高比："
+#: data/ui/clipmediaprops.ui:154
+msgid "Pixel aspect ratio"
+msgstr "像素寬高比"
 
-#: ../data/ui/clipmediaprops.ui.h:8
+#: data/ui/clipmediaprops.ui:197
 msgid "Video:"
 msgstr "視訊："
 
-#: ../data/ui/clipmediaprops.ui.h:9 ../data/ui/projectsettings.ui.h:23
-#: ../data/ui/renderingdialog.ui.h:34
-msgid "Channels:"
-msgstr "聲道："
+#: data/ui/clipmediaprops.ui:249
+msgid "Sample rate"
+msgstr "取樣率"
 
-#: ../data/ui/clipmediaprops.ui.h:10 ../data/ui/projectsettings.ui.h:24
-#: ../data/ui/renderingdialog.ui.h:35
-msgid "Sample rate:"
-msgstr "取樣率："
+#: data/ui/clipmediaprops.ui:264
+msgid "Channels"
+msgstr "聲道"
 
-#: ../data/ui/clipmediaprops.ui.h:11
+#: data/ui/clipmediaprops.ui:285
 msgid "Audio:"
 msgstr "音訊："
 
-#: ../data/ui/cliptransformation.ui.h:1
-msgid "Viewer Zoom"
-msgstr "預覽畫面遠近調整"
-
-#: ../data/ui/cliptransformation.ui.h:2
+#: data/ui/cliptransformation.ui:44
 msgid "X:"
-msgstr "X："
+msgstr "水平位移："
 
-#: ../data/ui/cliptransformation.ui.h:3
+#: data/ui/cliptransformation.ui:56
 msgid "Y:"
-msgstr "Y："
+msgstr "垂直位移："
 
-#: ../data/ui/cliptransformation.ui.h:4
-msgid "Position"
-msgstr "位置"
-
-#: ../data/ui/cliptransformation.ui.h:5
+#: data/ui/cliptransformation.ui:126
 msgid "Width:"
 msgstr "寬度："
 
-#: ../data/ui/cliptransformation.ui.h:6
+#: data/ui/cliptransformation.ui:138
 msgid "Height:"
 msgstr "高度："
 
-#: ../data/ui/cliptransformation.ui.h:7
-msgid "Size"
-msgstr "尺寸"
-
-#: ../data/ui/cliptransformation.ui.h:8
-msgid "Crop"
-msgstr "剪裁"
-
-#: ../data/ui/depsmanager.ui.h:1
+#: data/ui/depsmanager.ui:8
 msgid "Missing Dependencies"
-msgstr "無法滿足相依關係"
+msgstr "缺少的組件"
 
-#: ../data/ui/depsmanager.ui.h:2
+#: data/ui/depsmanager.ui:36
 msgid "Install"
 msgstr "安裝"
 
-#: ../data/ui/depsmanager.ui.h:3
+#: data/ui/depsmanager.ui:68
 msgid ""
 "To enable additional features, please install the following packages and "
 "restart Pitivi:"
-msgstr "若要啟用額外功能，請安裝下列套件並重新啟動 Pitivi："
+msgstr "若要啟用額外功能，請安裝以下套件並重新啟動 Pitivi："
 
-#: ../data/ui/effectslibrary.ui.h:1
+#: data/ui/effectslibrary.ui:14
 msgid "Show video effects"
 msgstr "顯示視訊特效"
 
-#: ../data/ui/effectslibrary.ui.h:2
+#: data/ui/effectslibrary.ui:34
 msgid "Show audio effects"
 msgstr "顯示音訊特效"
 
-#: ../data/ui/effectslibrary.ui.h:3
+#: data/ui/effectslibrary.ui:84
 msgid "Clear the current search"
 msgstr "清除目前的搜尋"
 
-#: ../data/ui/effectslibrary.ui.h:4 ../data/ui/medialibrary.ui.h:12
-#: ../pitivi/transitions.py:72
+#: data/ui/effectslibrary.ui:85 data/ui/medialibrary.ui:124
+#: pitivi/transitions.py:76
 msgid "Search..."
 msgstr "搜尋..."
 
-#: ../data/ui/elementsettingsdialog.ui.h:1
-msgid "Properties for <element>"
-msgstr "<element> 的屬性"
-
-#: ../data/ui/elementsettingsdialog.ui.h:2
+#: data/ui/elementsettingsdialog.ui:24
 msgid "Reset all"
 msgstr "全部重設"
 
-#: ../data/ui/elementsettingsdialog.ui.h:3 ../data/ui/projectsettings.ui.h:6
+#: data/ui/elementsettingsdialog.ui:39 data/ui/projectsettings.ui:59
 msgid "OK"
 msgstr "確定"
 
-#: ../data/ui/mainmenubutton.ui.h:1
+#: data/ui/mainmenubutton.ui:18
 msgid "New project"
-msgstr "新增專案"
+msgstr "新專案"
 
-#: ../data/ui/mainmenubutton.ui.h:2
+#: data/ui/mainmenubutton.ui:26
 msgid "Open project..."
 msgstr "開啟專案..."
 
-#: ../data/ui/mainmenubutton.ui.h:3
+#: data/ui/mainmenubutton.ui:39
 msgid "Save the current project under a new name or a different location"
-msgstr "將目前的專案以新名稱儲存，或儲存到不同位置上"
+msgstr "將目前的專案以新名稱儲存，或儲存到不同位置"
 
-#: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1177
-#: ../pitivi/mainwindow.py:1235
+#: data/ui/mainmenubutton.ui:41 pitivi/mainwindow.py:1120
+#: pitivi/mainwindow.py:1174
 msgid "Save As..."
 msgstr "另存新檔..."
 
-#: ../data/ui/mainmenubutton.ui.h:5
+#: data/ui/mainmenubutton.ui:48
 msgid "Reload the current project"
 msgstr "重新載入目前專案"
 
-#: ../data/ui/mainmenubutton.ui.h:6
+#: data/ui/mainmenubutton.ui:50
 msgid "Revert to saved version"
 msgstr "還原成儲存的版本"
 
-#: ../data/ui/mainmenubutton.ui.h:7
+#: data/ui/mainmenubutton.ui:57
 msgid "Export the current project and all its media in a .tar archive"
 msgstr "以 .tar 封存檔匯出目前的專案與所有內含媒體"
 
-#: ../data/ui/mainmenubutton.ui.h:8
+#: data/ui/mainmenubutton.ui:59
 msgid "Export as Archive..."
 msgstr "匯出為封存檔..."
 
-#: ../data/ui/mainmenubutton.ui.h:9
+#: data/ui/mainmenubutton.ui:72
 msgid "Export the frame at the current playhead position as an image file."
 msgstr "將目前播放頭所在位置的框幀匯出為影像檔。"
 
-#: ../data/ui/mainmenubutton.ui.h:10
+#: data/ui/mainmenubutton.ui:74
 msgid "Export current frame..."
 msgstr "匯出目前框幀..."
 
-#: ../data/ui/mainmenubutton.ui.h:11
+#: data/ui/mainmenubutton.ui:87
 msgid "Edit the project settings"
-msgstr "編輯專案設定值"
+msgstr "編輯專案設定"
 
-#: ../data/ui/mainmenubutton.ui.h:12 ../data/ui/projectsettings.ui.h:4
+#: data/ui/mainmenubutton.ui:89 data/ui/projectsettings.ui:29
+#: pitivi/medialibrary.py:393
 msgid "Project Settings"
-msgstr "專案設定值"
+msgstr "專案設定"
 
-#: ../data/ui/mainmenubutton.ui.h:13 ../data/ui/preferences.ui.h:1
+#: data/ui/mainmenubutton.ui:103 data/ui/preferences.ui:7
 msgid "Preferences"
 msgstr "偏好設定"
 
-#: ../data/ui/mainmenubutton.ui.h:14
+#: data/ui/mainmenubutton.ui:111
+msgid "Keyboard Shortcuts"
+msgstr "鍵盤快捷鍵"
+
+#: data/ui/mainmenubutton.ui:119
 msgid "User Manual"
 msgstr "使用者手冊"
 
-#: ../data/ui/mainmenubutton.ui.h:15
-msgid "About"
-msgstr "關於"
+#: data/ui/mainmenubutton.ui:127
+msgid "About Pitivi"
+msgstr "關於 Pitivi"
 
-#: ../data/ui/medialibrary.ui.h:1
+#: data/ui/medialibrary.ui:14 pitivi/mainwindow.py:473
 msgid "Add media files to your project"
 msgstr "將媒體檔添加到您的專案"
 
-#: ../data/ui/medialibrary.ui.h:2
+#: data/ui/medialibrary.ui:16
 msgid "Import"
 msgstr "匯入"
 
-#: ../data/ui/medialibrary.ui.h:3
+#: data/ui/medialibrary.ui:35
 msgid "Remove selected clips from the project"
-msgstr "從專案中移除所選的剪輯"
+msgstr "從專案移除所選的剪輯"
 
-#: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:288
+#: data/ui/medialibrary.ui:37
 msgid "_Remove from Project"
-msgstr "從專案中移除(_R)"
+msgstr "從專案移除(_R)"
 
-#: ../data/ui/medialibrary.ui.h:5
-msgid "Clip Properties..."
+#: data/ui/medialibrary.ui:55
+msgid "Clip properties..."
 msgstr "剪輯屬性..."
 
-#: ../data/ui/medialibrary.ui.h:6
+#: data/ui/medialibrary.ui:74
 msgid "Insert the selected clips at the end of the timeline"
-msgstr "將所選的剪輯插入時間軸末端"
+msgstr "將所選的剪輯插入至時間軸末端"
 
-#: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:291
+#: data/ui/medialibrary.ui:76
 msgid "Insert at _End of Timeline"
 msgstr "插入至時間軸末端(_E)"
 
-#: ../data/ui/medialibrary.ui.h:8
+#: data/ui/medialibrary.ui:94
 msgid "Show clips as a detailed list"
 msgstr "以詳細清單顯示剪輯"
 
 #. This is used as a toolbar button tooltip. Here, "select" means "find" rather than "choose". It is not the user who selects, but rather the user requesting the application to select the relevant items.
-#: ../data/ui/medialibrary.ui.h:10
+#: data/ui/medialibrary.ui:122
 msgid "Select clips that have not been used in the project"
-msgstr "選取專案中已經沒在使用的剪輯"
+msgstr "選取專案已經沒在使用的剪輯"
 
-#: ../data/ui/medialibrary.ui.h:11
+#: data/ui/medialibrary.ui:123
 msgid "Show all clips"
 msgstr "顯示所有剪輯"
 
-#: ../data/ui/medialibrary.ui.h:13
-msgid "Close this message"
-msgstr "關閉此訊息"
-
-#: ../data/ui/medialibrary.ui.h:14
+#: data/ui/medialibrary.ui:237
 msgid ""
 "Add media to your project by dragging files and folders here or by using the "
 "\"Import\" button."
 msgstr ""
-"透過將檔案或資料夾拖曳到此處可添加媒體到您的專案中，或者使用「匯入」按鈕也可"
-"達成。"
+"要為專案加入媒體，可將檔案或資料夾拖曳到此處；或使用「匯入」按鈕。"
 
-#: ../data/ui/preferences.ui.h:2
-msgid "Section"
-msgstr "節"
-
-#: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart Pitivi"
-msgstr "有些變更還不會套用效果直到您重新啟動 Pitivi 為止"
-
-#: ../data/ui/preferences.ui.h:4
+#: data/ui/preferences.ui:23
 msgid "Reset to Factory Settings"
-msgstr "重設為出廠設定值"
+msgstr "重設為預設值"
 
-#: ../data/ui/preferences.ui.h:5
+#: data/ui/preferences.ui:29
 msgid "Reset all settings to their default values"
-msgstr "將所有的設定值重置回預設值"
+msgstr "將所有的設定重置回預設值"
 
-#: ../data/ui/preferences.ui.h:6
+#: data/ui/preferences.ui:41
 msgid "Revert"
 msgstr "還原"
 
-#: ../data/ui/preferences.ui.h:7
+#: data/ui/preferences.ui:47
 msgid ""
 "Revert all settings to the previous values (before you opened the "
 "preferences dialog)"
 msgstr "將所有的設定值還原成上個設定值 (在您開啟偏好設定對話盒之前的狀態)"
 
-#: ../data/ui/preferences.ui.h:8 ../data/ui/renderingdialog.ui.h:8
-#: ../data/ui/renderingprogress.ui.h:6
+#: data/ui/preferences.ui:58 data/ui/renderingdialog.ui:38
+#: data/ui/renderingprogress.ui:85
 msgid "Close"
 msgstr "關閉"
 
-#: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:451
-msgid "Standard (4:3)"
-msgstr "標準 (4:3)"
+#: data/ui/preferences.ui:159
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "重新啟動 Pitivi 之後，某些變更才會生效"
 
-#: ../data/ui/projectsettings.ui.h:2
-msgid "Standard PAL"
-msgstr "標準 PAL"
-
-#: ../data/ui/projectsettings.ui.h:3
-msgid "25 FPS"
-msgstr "25 FPS"
-
-#: ../data/ui/projectsettings.ui.h:5 ../data/ui/renderingprogress.ui.h:4
-#: ../pitivi/mainwindow.py:684 ../pitivi/mainwindow.py:806
-#: ../pitivi/mainwindow.py:938 ../pitivi/mainwindow.py:1133
-#: ../pitivi/mainwindow.py:1180 ../pitivi/mainwindow.py:1237
-#: ../pitivi/medialibrary.py:469
+#: data/ui/projectsettings.ui:46 data/ui/renderingprogress.ui:41
+#: pitivi/mainwindow.py:676 pitivi/mainwindow.py:785 pitivi/mainwindow.py:925
+#: pitivi/mainwindow.py:1075 pitivi/mainwindow.py:1123
+#: pitivi/mainwindow.py:1176 pitivi/medialibrary.py:749
 msgid "Cancel"
 msgstr "取消"
 
-#: ../data/ui/projectsettings.ui.h:7
-msgid "Video Preset"
-msgstr "視訊預先設定"
+#: data/ui/projectsettings.ui:112 data/ui/projectsettings.ui:385
+#: data/ui/renderingdialog.ui:231
+msgid "Preset:"
+msgstr "預置設定："
 
-#: ../data/ui/projectsettings.ui.h:8 ../data/ui/renderingdialog.ui.h:10
-msgid "Create a new preset"
-msgstr "建立新的預置設定"
+#: data/ui/projectsettings.ui:184
+msgid "Size:"
+msgstr "尺寸："
 
-#: ../data/ui/projectsettings.ui.h:9 ../data/ui/renderingdialog.ui.h:11
-msgid "Remove the selected preset"
-msgstr "移除所選的預置設定"
+#: data/ui/projectsettings.ui:244
+msgid "pixels"
+msgstr "像素"
 
-#: ../data/ui/projectsettings.ui.h:10 ../data/ui/renderingdialog.ui.h:12
-msgid "Save changes to the currently selected preset"
-msgstr "儲存變更至目前所選的預置設定"
-
-#: ../data/ui/projectsettings.ui.h:12
-msgid "Aspect Ratio:"
-msgstr "寬高比："
-
-#. DAR is the aspect ratio of the image being displayed to the viewer. "Display" is used as a noun, not as a verb/action.
-#: ../data/ui/projectsettings.ui.h:14
-msgid "Display aspect ratio"
-msgstr "顯示寬高比"
-
-#. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
-#: ../data/ui/projectsettings.ui.h:16
-msgid "Pixel aspect ratio"
-msgstr "像素寬高比"
-
-#: ../data/ui/projectsettings.ui.h:17
-msgid "x"
-msgstr "x"
-
-#: ../data/ui/projectsettings.ui.h:18
+#. When checked, changing the width or height affects also the other so that the aspect ratio value (width / height) does not change.
+#: data/ui/projectsettings.ui:261
 msgid "Link"
 msgstr "連結"
 
-#: ../data/ui/projectsettings.ui.h:19
+#: data/ui/projectsettings.ui:295
 msgid "Frame Rate:"
 msgstr "幀率："
 
-#: ../data/ui/projectsettings.ui.h:20 ../data/ui/renderingdialog.ui.h:33
-#: ../pitivi/effects.py:260
+#. The title of the section with the video settings
+#: data/ui/projectsettings.ui:348 data/ui/renderingdialog.ui:466
+#: pitivi/effects.py:242
 msgid "Video"
 msgstr "視訊"
 
-#: ../data/ui/projectsettings.ui.h:21
-msgid "Audio Preset"
-msgstr "音訊預先設定"
+#: data/ui/projectsettings.ui:451 data/ui/renderingdialog.ui:505
+msgid "Channels:"
+msgstr "聲道："
 
-#: ../data/ui/projectsettings.ui.h:22
-msgid "Format"
-msgstr "格式"
+#: data/ui/projectsettings.ui:485 data/ui/renderingdialog.ui:614
+msgid "Sample rate:"
+msgstr "取樣率："
 
-#: ../data/ui/projectsettings.ui.h:25 ../data/ui/renderingdialog.ui.h:37
-#: ../pitivi/effects.py:261
+#. The title of the section with the audio settings
+#: data/ui/projectsettings.ui:529 data/ui/renderingdialog.ui:632
+#: pitivi/effects.py:242
 msgid "Audio"
 msgstr "音訊"
 
-#: ../data/ui/projectsettings.ui.h:26
+#: data/ui/projectsettings.ui:574
 msgid "Author:"
 msgstr "作者："
 
-#: ../data/ui/projectsettings.ui.h:27
+#: data/ui/projectsettings.ui:586
 msgid "Year:"
 msgstr "年份："
 
-#: ../data/ui/projectsettings.ui.h:28
-msgid "Project title:"
-msgstr "專案題名："
-
-#: ../data/ui/projectsettings.ui.h:29
+#. The title of the section with the name, author, year fields
+#: data/ui/projectsettings.ui:618
 msgid "Info"
 msgstr "相關資訊"
 
-#: ../data/ui/renderingdialog.ui.h:1
-msgid "MP4"
-msgstr "MP4"
-
-#: ../data/ui/renderingdialog.ui.h:2
-msgid "H.264"
-msgstr "H.264"
-
-#: ../data/ui/renderingdialog.ui.h:3
-msgid "29.97 fps"
-msgstr "29.97 fps"
-
-#: ../data/ui/renderingdialog.ui.h:4
-msgid "AC-3"
-msgstr "AC-3"
-
-#: ../data/ui/renderingdialog.ui.h:5
-msgid "AAC"
-msgstr "AAC"
-
-#: ../data/ui/renderingdialog.ui.h:6
-msgid "6 channels (5.1)"
-msgstr "6 聲道 (5.1)"
-
-#: ../data/ui/renderingdialog.ui.h:7 ../pitivi/mainwindow.py:442
+#: data/ui/renderingdialog.ui:20 data/ui/renderingdialog.ui:52
+#: pitivi/mainwindow.py:393
 msgid "Render"
 msgstr "壓製"
 
-#: ../data/ui/renderingdialog.ui.h:9
-msgid "Render Preset"
-msgstr "壓製預置值"
-
-#: ../data/ui/renderingdialog.ui.h:13
-msgid "Folder"
-msgstr "資料夾"
-
-#: ../data/ui/renderingdialog.ui.h:14
-msgid "Container format:"
-msgstr "容器格式："
-
-#: ../data/ui/renderingdialog.ui.h:15
+#: data/ui/renderingdialog.ui:106
 msgid "Folder:"
 msgstr "資料夾："
 
-#: ../data/ui/renderingdialog.ui.h:16
+#: data/ui/renderingdialog.ui:121
 msgid "File name:"
 msgstr "檔案名稱："
 
-#: ../data/ui/renderingdialog.ui.h:17
-msgid "File name"
-msgstr "檔案名稱"
+#: data/ui/renderingdialog.ui:148
+msgid "Container format:"
+msgstr "容器格式："
 
-#: ../data/ui/renderingdialog.ui.h:18
-msgid "Container format"
-msgstr "容器格式"
-
-#: ../data/ui/renderingdialog.ui.h:19 ../data/ui/startupwizard.ui.h:5
+#: data/ui/renderingdialog.ui:181 data/ui/startupwizard.ui:109
+#: pitivi/mainwindow.py:444
 msgid "Help"
 msgstr "求助"
 
-#: ../data/ui/renderingdialog.ui.h:20
-msgid "Render only the selected clips"
-msgstr "只壓製選取的剪輯片段"
-
-#: ../data/ui/renderingdialog.ui.h:21
-msgid "Draft (no special effects, single pass)"
-msgstr "草稿(沒有特殊特效，單通過)"
-
-#: ../data/ui/renderingdialog.ui.h:22
-msgid "General"
-msgstr "一般"
-
-#: ../data/ui/renderingdialog.ui.h:23
-msgid "Advanced..."
-msgstr "進階..."
-
-#: ../data/ui/renderingdialog.ui.h:24
-msgid "Codec:"
-msgstr "編碼："
-
-#: ../data/ui/renderingdialog.ui.h:25
-msgid "Framerate"
-msgstr "幀率"
-
-#: ../data/ui/renderingdialog.ui.h:26
-msgid "Scale"
-msgstr "尺寸"
-
-#: ../data/ui/renderingdialog.ui.h:27
-msgid "1000 x 1000"
-msgstr "1000 x 1000"
-
-#: ../data/ui/renderingdialog.ui.h:28
-msgid "Height"
-msgstr "高度"
-
-#: ../data/ui/renderingdialog.ui.h:29
-msgid "Edit Project Settings..."
-msgstr "編輯專案設定值..."
-
-#: ../data/ui/renderingdialog.ui.h:31
+#: data/ui/renderingdialog.ui:280
 msgid "Scale:"
 msgstr "尺寸："
 
-#: ../data/ui/renderingdialog.ui.h:32
-msgid "Enable video"
-msgstr "啟用視訊"
+#: data/ui/renderingdialog.ui:313
+msgid "Scale"
+msgstr "尺寸"
 
-#: ../data/ui/renderingdialog.ui.h:36
-msgid "Enable audio"
-msgstr "啟用音訊"
+#: data/ui/renderingdialog.ui:333
+msgid "Height"
+msgstr "高度"
 
-#: ../data/ui/renderingprogress.ui.h:1
+#: data/ui/renderingdialog.ui:352
+msgid "Project Settings..."
+msgstr "專案設定..."
+
+#: data/ui/renderingdialog.ui:367 data/ui/renderingdialog.ui:537
+msgid "Advanced..."
+msgstr "進階..."
+
+#: data/ui/renderingdialog.ui:406 data/ui/renderingdialog.ui:577
+msgid "Codec:"
+msgstr "編碼："
+
+#: data/ui/renderingdialog.ui:432
+msgid "Framerate"
+msgstr "幀率"
+
+#: data/ui/renderingdialog.ui:448
+msgid "Frame rate:"
+msgstr "幀率："
+
+#: data/ui/renderingdialog.ui:656
+msgid "Automatically render from proxy files"
+msgstr "自動從代理檔壓製"
+
+#: data/ui/renderingdialog.ui:660
+msgid ""
+"Use proxy files if they are available and the source asset media format is "
+"not officially supported.\n"
+"\n"
+"This option is a good trade-off between quality of the rendered video and "
+"stability."
+msgstr ""
+"若果來源資產媒體不是正式支援的格式，而又可以取得的話，則使用代理檔。\n"
+"\n"
+"本選項能在品質和壓製影片的穩定性之間取得較好的平衡。"
+
+#: data/ui/renderingdialog.ui:675
+msgid "Always render from proxy files"
+msgstr "一定從代理檔壓製"
+
+#: data/ui/renderingdialog.ui:679
+msgid ""
+"Render all proxied clips from the proxy assets. There might be some quality "
+"loss during the rendering process."
+msgstr "從代理資產壓製代理剪輯。壓製的品質可能較差。"
+
+#: data/ui/renderingdialog.ui:692
+msgid "Never render from proxy files"
+msgstr "永不從代理檔壓製"
+
+#: data/ui/renderingdialog.ui:696
+msgid ""
+"Always use source assets for rendering. It is the best choice for the "
+"quality of the rendered video, but you might hit some bugs because of the "
+"use of not officially supported media formats.\n"
+"<i>Use at your own risk!</i>"
+msgstr ""
+"只會使用來源資產進行壓製。壓製出來的影片品質最佳，但因為媒體不是正式支援的格式，"
+"有可能遇到問題。\n"
+"<i>請小心使用本選項！</i>"
+
+#: data/ui/renderingprogress.ui:8
 msgid "Rendering"
 msgstr "壓製中"
 
-#: ../data/ui/renderingprogress.ui.h:2
+#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:549
+msgid "Pause"
+msgstr "暫停"
+
+#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:541
+#: pitivi/timeline/timeline.py:1611
+msgid "Play"
+msgstr "播放"
+
+#: data/ui/renderingprogress.ui:70
+msgid "Open Folder"
+msgstr "開啟資料夾"
+
+#: data/ui/renderingprogress.ui:110
 msgid ""
 "<small>This process may take a long time depending on the selected codecs, "
 "the image resolution, your computer's processing power, applied effects and "
 "the length of your movie.</small>"
 msgstr ""
-"<small>此程序可能會耗上很長一段時間，取決於所選的編解碼器、影像解析度、電腦處"
-"理效能、套用的特效、影片的長度等，時間會有所不同。</small>"
+"<small>此程序可能會耗上很長一段時間，視乎所選擇的編解碼器、影像解析度、電腦處"
+"理效能、套用的特效、影片的長度等等。</small>"
 
-#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:1079
-msgid "Pause"
-msgstr "暫停"
-
-#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:1071
-msgid "Play"
-msgstr "播放"
-
-#: ../data/ui/renderingprogress.ui.h:7
+#: data/ui/renderingprogress.ui:126
 msgid "Initializing..."
 msgstr "初始化中..."
 
-#: ../data/ui/renderingprogress.ui.h:8
+#: data/ui/renderingprogress.ui:155
 msgid "Estimated filesize:"
-msgstr "預估檔案大小："
+msgstr "估計檔案大小："
 
-#: ../data/ui/startupwizard.ui.h:1
+#: data/ui/startupwizard.ui:7
 msgid "Welcome"
 msgstr "歡迎使用"
 
-#: ../data/ui/startupwizard.ui.h:2
+#: data/ui/startupwizard.ui:36
 msgid "Double-click a project below to load it:"
-msgstr "雙擊下面的一個專案來載入它："
+msgstr "雙擊下方的專案以載入："
 
-#: ../data/ui/startupwizard.ui.h:3
+#: data/ui/startupwizard.ui:79 pitivi/preset.py:104
 msgid "New"
 msgstr "新增"
 
-#: ../data/ui/startupwizard.ui.h:4
+#: data/ui/startupwizard.ui:95
 msgid "Browse projects..."
 msgstr "瀏覽專案..."
 
-#: ../data/ui/startupwizard.ui.h:6
+#: data/ui/startupwizard.ui:123
 msgid "Keyboard shortcuts"
 msgstr "鍵盤快捷鍵"
 
-#: ../data/ui/startupwizard.ui.h:7
+#: data/ui/startupwizard.ui:137
 msgid "Missing dependencies..."
-msgstr "無法滿足相依關係..."
+msgstr "缺少的組件..."
 
-#: ../data/ui/titleeditor.ui.h:1
+#: data/ui/timelinetoolbar.ui:15
+msgid "Split clips at playhead position"
+msgstr "於播放頭位置分割剪輯"
+
+#: data/ui/timelinetoolbar.ui:17
+msgid "Split"
+msgstr "分割"
+
+#: data/ui/timelinetoolbar.ui:30
+msgid "Delete clips"
+msgstr "刪除剪輯"
+
+#: data/ui/timelinetoolbar.ui:32
+msgid "Delete"
+msgstr "刪除"
+
+#: data/ui/timelinetoolbar.ui:45
+msgid "Group clips"
+msgstr "產生剪輯群組"
+
+#: data/ui/timelinetoolbar.ui:47
+msgid "Group"
+msgstr "群組"
+
+#: data/ui/timelinetoolbar.ui:60
+msgid "Ungroup clips"
+msgstr "取消剪輯群組"
+
+#: data/ui/timelinetoolbar.ui:62
+msgid "Ungroup"
+msgstr "取消群組"
+
+#: data/ui/timelinetoolbar.ui:75
+msgid "Copy clips"
+msgstr "複製剪輯"
+
+#: data/ui/timelinetoolbar.ui:89
+msgid "Paste clips"
+msgstr "貼上剪輯"
+
+#: data/ui/timelinetoolbar.ui:103
+msgid "Align clips based on their soundtracks"
+msgstr "根據剪輯的音軌對齊剪輯"
+
+#: data/ui/timelinetoolbar.ui:106
+msgid "Align"
+msgstr "對齊方式"
+
+#: data/ui/timelinetoolbar.ui:119
+msgid ""
+"Toggle gapless mode\n"
+"When enabled, adjacent clips automatically move to fill gaps."
+msgstr ""
+"無縫模式開關\n"
+"啟用後，相鄰的剪輯會自動移動以填滿間隔。"
+
+#: data/ui/timelinetoolbar.ui:122
+msgid "Gapless mode"
+msgstr "無縫模式"
+
+#: data/ui/titleeditor.ui:36
 msgid "Create"
 msgstr "建立"
 
-#: ../data/ui/titleeditor.ui.h:2
+#: data/ui/titleeditor.ui:67
 msgid "Select a title clip to edit or create a new one."
-msgstr "請選取一份標題剪輯以編輯，或是建立新的剪輯。"
+msgstr "請選取字幕/標題剪輯以編輯，或是建立新剪輯。"
 
-#: ../data/ui/titleeditor.ui.h:3
+#: data/ui/titleeditor.ui:124
 msgid "Choose a font"
 msgstr "選取字型"
 
-#: ../data/ui/titleeditor.ui.h:4
+#: data/ui/titleeditor.ui:140 data/ui/titleeditor.ui:141
 msgid "Text color"
 msgstr "文字色彩"
 
-#: ../data/ui/titleeditor.ui.h:5
+#: data/ui/titleeditor.ui:149
 msgid "Pick a text color"
 msgstr "挑選文字色彩"
 
-#: ../data/ui/titleeditor.ui.h:6
+#: data/ui/titleeditor.ui:165 data/ui/titleeditor.ui:166
 msgid "Background color"
 msgstr "背景色彩"
 
-#: ../data/ui/titleeditor.ui.h:7
+#: data/ui/titleeditor.ui:174
 msgid "Pick a background color"
 msgstr "挑選背景色彩"
 
-#: ../data/ui/titleeditor.ui.h:8
-msgid "Horizontal alignment:"
-msgstr "水平對齊："
+#: data/ui/titleeditor.ui:234
+msgid "Horizontal:"
+msgstr "水平："
 
-#: ../data/ui/titleeditor.ui.h:9
-msgid "Vertical alignment:"
-msgstr "垂直對齊："
+#: data/ui/titleeditor.ui:246
+msgid "Vertical:"
+msgstr "垂直："
 
-#: ../data/ui/titleeditor.ui.h:10
-msgid "Advanced positioning"
-msgstr "進階定位"
+#: data/ui/titleeditor.ui:320
+msgid "Alignment"
+msgstr "對齊"
+
+#: pitivi/application.py:158
+msgid "General"
+msgstr "一般"
+
+#: pitivi/application.py:163
+msgid "Undo the most recent action"
+msgstr "復原最近的操作"
+
+#: pitivi/application.py:169
+msgid "Redo the most recent action"
+msgstr "重做最近的操作"
+
+#: pitivi/application.py:174
+msgid "Quit"
+msgstr "結束"
+
+#: pitivi/application.py:181
+msgid "Show the Shortcuts Window"
+msgstr "顯示快捷鍵視窗"
 
 #. Translators: %s is a Python module name or another os component
-#: ../pitivi/check.py:112
+#: pitivi/check.py:109
 #, python-format
 msgid "- %s not found on the system"
-msgstr "- 系統中找不到 %s "
+msgstr "- 系統中找不到 %s"
 
 #. Translators: %s is a Python module name or another os component
-#: ../pitivi/check.py:115
+#: pitivi/check.py:112
 #, python-format
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgstr "- 已安裝 %s 版本 %s，但 Pitivi 需要至少 %s 版以上"
 
-#: ../pitivi/check.py:220
+#. Translators: %s is a Python module name or another os component
+#: pitivi/check.py:185
+#, python-format
+msgid "- %s GStreamer plug-in not found on the system"
+msgstr "- 系統中找不到 GStreamer 插件 %s"
+
+#. Translators: %s is a Python module name or another os component
+#: pitivi/check.py:188
+#, python-format
+msgid ""
+"- %s Gstreamer plug-in version %s is installed but Pitivi requires at least "
+"version %s"
+msgstr "- 已安裝 GStreamer 插件 %s 版本 %s，但 Pitivi 需要至少 %s 版以上"
+
+#: pitivi/check.py:298
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "錯誤 - 無法滿足下列硬性依賴："
 
-#: ../pitivi/check.py:229
+#: pitivi/check.py:307
 msgid "Missing soft dependency:"
-msgstr "遺失軟性依賴："
+msgstr "缺失軟性依賴："
 
-#: ../pitivi/check.py:236
+#: pitivi/check.py:314
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
 msgstr "錯誤 — 無法建立 Gst.Fraction — 這代表 gst-python 並未正確安裝。"
 
-#: ../pitivi/check.py:241
+#: pitivi/check.py:319
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
 msgstr ""
-"無法建立音訊輸出 sink。請確認您已有有效的 sink (pulsesink、alsasink 或 "
+"無法建立音訊輸出目的地(sink)。請確認已有有效目的地 (pulsesink、alsasink 或 "
 "osssink 等)。"
 
-#: ../pitivi/check.py:301
+#: pitivi/check.py:324
+msgid ""
+"Could not create video output sink. Make sure you have a gtksink available."
+msgstr "無法建立視訊輸出目的地(sink)。請確認已有有效目的地 gtksink。"
+
+#: pitivi/check.py:339
+#, python-format
+msgid "Could not import '%s'. Make sure you have it available."
+msgstr "無法匯入「%s」。請確認是可取用的。"
+
+#: pitivi/check.py:369
+msgid "Could not import 'gi'. Make sure you have pygobject available."
+msgstr "無法匯入「gi」。請確認 pygobject 是可取用的。"
+
+#: pitivi/check.py:456
 msgid "enables sound notifications when rendering is complete"
-msgstr "當壓製完成時啟用音效通知"
+msgstr "當完成壓製時，以聲音通知"
 
-#: ../pitivi/check.py:302
-msgid "file thumbnails provided by GNOME's thumbnailers"
-msgstr "檔案縮圖由 GNOME 的縮圖服務程式提供"
-
-#: ../pitivi/check.py:303
+#: pitivi/check.py:458
 msgid "enables visual notifications when rendering is complete"
-msgstr "當壓製完成時啟用視覺通知"
+msgstr "當完成壓製時，以畫面通知"
 
-#: ../pitivi/check.py:304
+#: pitivi/check.py:460
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "透過 GStreamer Libav 函式庫獲得的其他多媒體編解碼器"
 
-#: ../pitivi/check.py:305
+#: pitivi/check.py:462
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
 msgstr ""
 "啟用看門狗監控 Gstreamer 導管。用來偵測 GStreamer 是否有錯誤發生，並從之復原"
 
-#: ../pitivi/clipproperties.py:156
+#: pitivi/clipproperties.py:113
 msgid "Effects"
 msgstr "特效"
 
-#: ../pitivi/clipproperties.py:178
+#: pitivi/clipproperties.py:127
+msgid "To apply an effect to the clip, drag it from the Effect Library."
+msgstr "若要將特效套用到剪輯，請將之拖曳到特效庫。"
+
+#: pitivi/clipproperties.py:145
 msgid "Remove effect"
 msgstr "刪除特效"
 
-#: ../pitivi/clipproperties.py:213
+#: pitivi/clipproperties.py:180
 msgid "Active"
 msgstr "使用中"
 
-#: ../pitivi/clipproperties.py:215
+#: pitivi/clipproperties.py:183
 msgid "Type"
 msgstr "類型"
 
-#: ../pitivi/clipproperties.py:225
+#: pitivi/clipproperties.py:192
 msgid "Effect name"
 msgstr "特效名稱"
 
-#: ../pitivi/clipproperties.py:246
+#: pitivi/clipproperties.py:220
 msgid "Select a clip on the timeline to configure its associated effects"
-msgstr "選取一個時間軸上的剪輯以配置其相關特效"
+msgstr "選取時間軸上的剪輯，以配置其相關特效"
 
-#: ../pitivi/clipproperties.py:587
+#: pitivi/clipproperties.py:243
+msgid "Clip Effects"
+msgstr "剪輯特效"
+
+#: pitivi/clipproperties.py:249
+msgid "Remove the selected effect"
+msgstr "移除所選的特效"
+
+#: pitivi/clipproperties.py:567
 msgid "Transformation"
 msgstr "變形"
 
-#: ../pitivi/effects.py:64
+#: pitivi/effects.py:63
 msgid "Colors"
 msgstr "色彩"
 
-#: ../pitivi/effects.py:81
+#: pitivi/effects.py:80
 msgid "Compositing"
 msgstr "混成"
 
-#: ../pitivi/effects.py:88
+#: pitivi/effects.py:87
 msgid "Noise & blur"
 msgstr "噪訊與模糊"
 
-#: ../pitivi/effects.py:94
+#: pitivi/effects.py:93
 msgid "Analysis"
 msgstr "分析"
 
-#: ../pitivi/effects.py:102
+#: pitivi/effects.py:101
 msgid "Geometry"
 msgstr "幾何"
 
-#: ../pitivi/effects.py:113
+#: pitivi/effects.py:112
 msgid "Fancy"
-msgstr "幻想"
+msgstr "夢幻"
 
-#: ../pitivi/effects.py:125
+#: pitivi/effects.py:124
 msgid "Time"
 msgstr "時間"
 
-#. Add Uncategorized only if there are other categories defined.
-#: ../pitivi/effects.py:249 ../pitivi/effects.py:289
-msgid "Uncategorized"
-msgstr "尚未分類"
-
-#: ../pitivi/effects.py:251 ../pitivi/effects.py:286
-msgid "All effects"
-msgstr "所有的特效"
-
-#: ../pitivi/effects.py:262
+#: pitivi/effects.py:242
 msgid "effect"
 msgstr "特效"
 
-#: ../pitivi/mainwindow.py:297
+#. Add Uncategorized only if there are other categories defined.
+#: pitivi/effects.py:336 pitivi/effects.py:357
+msgid "Uncategorized"
+msgstr "未分類"
+
+#: pitivi/effects.py:337 pitivi/effects.py:354
+msgid "All effects"
+msgstr "所有特效"
+
+#: pitivi/mainwindow.py:237 pitivi/medialibrary.py:545
 msgid "Media Library"
 msgstr "媒體庫"
 
-#: ../pitivi/mainwindow.py:299
+#: pitivi/mainwindow.py:239
 msgid "Effect Library"
 msgstr "特效庫"
 
-#: ../pitivi/mainwindow.py:310
+#: pitivi/mainwindow.py:250
 msgid "Clip"
 msgstr "剪輯"
 
-#: ../pitivi/mainwindow.py:312
+#: pitivi/mainwindow.py:252
 msgid "Transition"
 msgstr "轉場"
 
-#: ../pitivi/mainwindow.py:314
+#: pitivi/mainwindow.py:254
 msgid "Title"
-msgstr "標題"
+msgstr "字幕/標題"
 
-#: ../pitivi/mainwindow.py:421
+#: pitivi/mainwindow.py:377
 msgid "Undo"
 msgstr "取消動作"
 
-#: ../pitivi/mainwindow.py:427
-msgid "Redo"
-msgstr "再次動作"
-
-#: ../pitivi/mainwindow.py:435 ../pitivi/mainwindow.py:800
-#: ../pitivi/mainwindow.py:1134 ../pitivi/mainwindow.py:1181
-#: ../pitivi/mainwindow.py:1238
+#: pitivi/mainwindow.py:387 pitivi/mainwindow.py:779 pitivi/mainwindow.py:1076
+#: pitivi/mainwindow.py:1124 pitivi/mainwindow.py:1177 pitivi/preset.py:116
+#: pitivi/project.py:180
 msgid "Save"
 msgstr "儲存"
 
-#: ../pitivi/mainwindow.py:444
+#: pitivi/mainwindow.py:395
 msgid "Export your project as a finished movie"
-msgstr "匯出專案作為一個完成的影片"
+msgstr "匯出專案，成為完成的影片"
 
-#: ../pitivi/mainwindow.py:624
-msgid "Development version"
-msgstr "開發版本"
+#: pitivi/mainwindow.py:415
+msgid "Project"
+msgstr "專案"
 
-#: ../pitivi/mainwindow.py:626
+#: pitivi/mainwindow.py:420
+msgid "Save the current project"
+msgstr "儲存目前的專案"
+
+#: pitivi/mainwindow.py:427
+msgid "Create a new project"
+msgstr "建立新專案"
+
+#: pitivi/mainwindow.py:433
+msgid "Open a project"
+msgstr "開啟專案"
+
+#: pitivi/mainwindow.py:439
+msgid "Save the current project as"
+msgstr "將目前的專案另存為："
+
+#: pitivi/mainwindow.py:450
+msgid "Show the menu button content"
+msgstr "顯示選單按鈕內容"
+
+#: pitivi/mainwindow.py:483
+msgid "About"
+msgstr "關於"
+
+#: pitivi/mainwindow.py:610
+#, python-format
+msgid "Development version: %s"
+msgstr "開發版本：%s"
+
+#: pitivi/mainwindow.py:614
 #, python-format
 msgid "Version %(cur_ver)s — %(new_ver)s is available"
 msgstr "版本 %(cur_ver)s — %(new_ver)s 可供使用"
 
-#: ../pitivi/mainwindow.py:630
+#: pitivi/mainwindow.py:618
 #, python-format
 msgid "Version %s"
 msgstr "版本 %s"
 
-#: ../pitivi/mainwindow.py:638
+#: pitivi/mainwindow.py:627
 msgid "Current maintainers:"
 msgstr "目前的維護者："
 
-#: ../pitivi/mainwindow.py:643
+#: pitivi/mainwindow.py:632
 msgid "Past maintainers:"
 msgstr "過去的維護者："
 
 #. Translators: this paragraph is to be translated, the list
 #. of contributors is shown dynamically as a clickable link
 #. below it
-#: ../pitivi/mainwindow.py:651
+#: pitivi/mainwindow.py:641
 msgid ""
 "Contributors:\n"
 "A handwritten list here would...\n"
@@ -860,7 +951,7 @@ msgstr ""
 "出於對我們貢獻者的尊崇，我們改請您前往：\n"
 
 #. Translators: keep the %s at the end of the 1st line
-#: ../pitivi/mainwindow.py:658
+#: pitivi/mainwindow.py:648
 #, python-format
 msgid ""
 "The list of contributors on Ohloh %s\n"
@@ -869,103 +960,100 @@ msgstr ""
 "Ohloh %s 上的貢獻者列表\n"
 "您也可以執行：git shortlog -s -n"
 
-#: ../pitivi/mainwindow.py:662
+#. Translators: See
+#. https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
+#. for details on how this is used.
+#: pitivi/mainwindow.py:655
 msgid "translator-credits"
 msgstr ""
 "Launchpad 貢獻者：\n"
 "  Chao-Hsiung Liao https://launchpad.net/~j-h-liau\n"
 "  Roy Chan https://launchpad.net/~roy-chan-linux\n"
 "  Yu - Sian , Liu https://launchpad.net/~thomasysliu\n"
-"  taijuin lee https://launchpad.net/~taijuinGNOME Damed Lies 貢獻者： Cheng-"
-"Chia Tseng <pswo10680@gmail.com>, 2013."
+"  taijuin lee https://launchpad.net/~taijuin\n"
+"GNOME Damned-Lies 貢獻者：\n"
+"  Cheng-Chia Tseng <pswo10680@gmail.com>, 2013, 2015.\n"
+"  Walter Cheuk <wwycheuk@gmail.com>, 2019."
 
 #. The user has not made a decision, don't do anything
-#: ../pitivi/mainwindow.py:681
+#: pitivi/mainwindow.py:673
 msgid "Open File..."
 msgstr "開啟檔案..."
 
-#: ../pitivi/mainwindow.py:685 ../pitivi/mainwindow.py:939
+#: pitivi/mainwindow.py:677 pitivi/mainwindow.py:926
 msgid "Open"
 msgstr "開啟"
 
-#: ../pitivi/mainwindow.py:701
+#: pitivi/mainwindow.py:693
 msgid "All supported formats"
 msgstr "所有支援格式"
 
-#: ../pitivi/mainwindow.py:769
+#: pitivi/mainwindow.py:748
 #, python-format
 msgid "Unable to save project \"%s\""
-msgstr "無法儲存專案「%s」"
+msgstr "無法儲存「%s」專案"
 
-#: ../pitivi/mainwindow.py:802
+#: pitivi/mainwindow.py:781 pitivi/project.py:179
 msgid "Save as..."
 msgstr "另存新檔..."
 
-#: ../pitivi/mainwindow.py:805
+#: pitivi/mainwindow.py:784
 msgid "Close without saving"
-msgstr "關閉而不儲存"
+msgstr "不儲存並關閉"
 
-#: ../pitivi/mainwindow.py:820
+#: pitivi/mainwindow.py:799
 msgid "Save changes to the current project before closing?"
-msgstr "要在關閉之前儲存變更到目前的專案嗎？"
+msgstr "關閉之前，要儲存目前專案的變更嗎？"
 
-#: ../pitivi/mainwindow.py:833
+#: pitivi/mainwindow.py:812
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
-msgstr "如果您不儲存的話，您將失去近 %s 內所作的更動。"
+msgstr "如果不儲存的話，會失去之前 %s所作的變更。"
 
-#: ../pitivi/mainwindow.py:837
+#: pitivi/mainwindow.py:816
 msgid "If you don't save, your changes will be lost."
-msgstr "如果您不儲存的話，您將失去所作過的更動。"
+msgstr "如果不儲存的話，會失去之前所作的變更。"
 
-#: ../pitivi/mainwindow.py:901
+#: pitivi/mainwindow.py:883
 msgid "Revert to saved project version?"
-msgstr "還原成儲存的專案版本？"
+msgstr "是否還原成儲存的專案版本？"
 
-#: ../pitivi/mainwindow.py:906
+#: pitivi/mainwindow.py:888
 msgid "This will reload the current project. All unsaved changes will be lost."
-msgstr "目前的專案會重新載入。所有尚未儲存的變動將會流失。"
+msgstr "目前的專案會重新載入。所有未儲存的變更會失去。"
 
-#: ../pitivi/mainwindow.py:921
+#: pitivi/mainwindow.py:903
 #, python-format
 msgid "Unable to load project \"%s\""
-msgstr "無法載入專案「%s」"
+msgstr "無法載入「%s」專案"
 
-#: ../pitivi/mainwindow.py:934
+#: pitivi/mainwindow.py:921
 msgid "Locate missing file..."
-msgstr "為遺失的檔案定位..."
+msgstr "尋找缺少的檔案..."
 
-#. The file is probably an image, not video or audio.
-#: ../pitivi/mainwindow.py:965
-#, python-format
-msgid ""
-"The following file has moved: \"<b>%s</b>\"\n"
-"Please specify its new location:"
-msgstr ""
-"下列檔案已被移動：「<b>%s</b>」\n"
-"請指定其新位置："
+#: pitivi/mainwindow.py:937
+msgid "The following file could not be found:"
+msgstr "找不到以下檔案："
 
-#: ../pitivi/mainwindow.py:970
-#, python-format
-msgid ""
-"The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
-"Please specify its new location:"
-msgstr ""
-"下列檔案已被移動：「<b>%s</b>」(時間長度：%s)\n"
-"請指定其新位置："
+#: pitivi/mainwindow.py:961
+msgid "Please specify its new location:"
+msgstr "請指定其新位置："
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI
 #. files"
-#: ../pitivi/mainwindow.py:994
+#: pitivi/mainwindow.py:983
 #, python-format
 msgid "%s files"
-msgstr "%s 份檔案"
+msgstr "%s 檔案"
 
-#: ../pitivi/mainwindow.py:998 ../pitivi/medialibrary.py:498
+#: pitivi/mainwindow.py:987 pitivi/medialibrary.py:773
 msgid "All files"
 msgstr "所有檔案"
 
-#: ../pitivi/mainwindow.py:1023
+#. Signal the project loading failure.
+#. You have to do this *after* successfully creating a blank project,
+#. or the startupwizard will still be connected to that signal too.
+#: pitivi/mainwindow.py:1012
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -976,193 +1064,256 @@ msgstr ""
 "\n"
 "Pitivi 目前尚未支援部份專案。"
 
-#: ../pitivi/mainwindow.py:1130
+#: pitivi/mainwindow.py:1072
 msgid "Export To..."
 msgstr "匯出至..."
 
-#: ../pitivi/mainwindow.py:1145 ../pitivi/mainwindow.py:1190
-#: ../pitivi/mainwindow.py:1241 ../pitivi/mainwindow.py:1269
-#: ../pitivi/render.py:366
-msgid "Untitled"
-msgstr "未命名"
-
-#: ../pitivi/mainwindow.py:1151
+#: pitivi/mainwindow.py:1089
 msgid "Tar archive"
 msgstr "Tar 封存檔"
 
-#: ../pitivi/mainwindow.py:1155 ../pitivi/mainwindow.py:1196
+#: pitivi/mainwindow.py:1093 pitivi/mainwindow.py:1139
 msgid "Detect automatically"
 msgstr "自動偵測"
 
-#: ../pitivi/mainwindow.py:1243
+#: pitivi/mainwindow.py:1133 pitivi/mainwindow.py:1180 pitivi/project.py:64
+#: pitivi/render.py:428
+msgid "Untitled"
+msgstr "未命名"
+
+#: pitivi/mainwindow.py:1182
 msgid "PNG image"
 msgstr "PNG 影像"
 
-#: ../pitivi/mainwindow.py:1244
+#: pitivi/mainwindow.py:1183
 msgid "JPEG image"
 msgstr "JPEG 影像"
 
-#: ../pitivi/mainwindow.py:1295
+#: pitivi/mainwindow.py:1224
 msgid "Preview"
 msgstr "預覽"
 
-#: ../pitivi/mediafilespreviewer.py:164
+#: pitivi/mediafilespreviewer.py:159
 msgid "Pitivi can not preview this file."
 msgstr "Pitivi 無法預覽此檔案。"
 
-#: ../pitivi/mediafilespreviewer.py:165
+#: pitivi/mediafilespreviewer.py:160
 msgid "More info"
 msgstr "更多資訊"
 
-#: ../pitivi/mediafilespreviewer.py:264
+#: pitivi/mediafilespreviewer.py:271
 #, python-format
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>解析度</b>：%d×%d"
 
-#: ../pitivi/mediafilespreviewer.py:266 ../pitivi/mediafilespreviewer.py:283
+#: pitivi/mediafilespreviewer.py:273 pitivi/mediafilespreviewer.py:290
+#: pitivi/utils/ui.py:366
 #, python-format
 msgid "<b>Duration</b>: %s"
-msgstr "<b>時間長度</b>：%s"
+msgstr "<b>長度</b>：%s"
 
-#: ../pitivi/mediafilespreviewer.py:455 ../pitivi/medialibrary.py:860
+#: pitivi/mediafilespreviewer.py:464 pitivi/medialibrary.py:1079
 msgid "Error while analyzing a file"
-msgstr "解析檔案時發生錯誤"
+msgid_plural "Error while analyzing files"
+msgstr[0] "分析檔案時發生錯誤"
 
-#: ../pitivi/medialibrary.py:198
-msgid "Icon"
-msgstr "圖示"
-
-#: ../pitivi/medialibrary.py:207
-msgid "Information"
-msgstr "資訊"
-
-#: ../pitivi/medialibrary.py:218
-msgid "Duration"
-msgstr "持續時間"
-
-#: ../pitivi/medialibrary.py:460
-msgid "Select One or More Files"
-msgstr "選取一個或多個檔案"
-
-#: ../pitivi/medialibrary.py:462
+#: pitivi/medialibrary.py:127
 msgid "Close after importing files"
 msgstr "匯入檔案後關閉"
 
-#: ../pitivi/medialibrary.py:470
+#: pitivi/medialibrary.py:132
+msgid "Create proxies when the media format is not supported officially"
+msgstr "若媒體檔不是正式支援的格式，則建立代理檔"
+
+#: pitivi/medialibrary.py:134
+msgid ""
+"Let Pitivi decide when to create proxy files and when not. The decision will "
+"be made depending on the file format, and how well it is supported. For "
+"example H.264, FLAC files contained in QuickTime will not be proxied, but "
+"AAC, H.264 contained in MPEG-TS will.\n"
+"\n"
+"<i>This is the only option officially supported by the Pitivi developers and "
+"thus is the safest.</i>"
+msgstr ""
+"讓 Pitivi 決定是否建立代理檔。決定是根據檔案格式以及其支援程式而定。例如 "
+"QuickTime 內的 H.264 和 FLAC 檔案不會建立代理檔，但 MPEG-TS 內的 AAC 和 "
+"H.264 則會。\n"
+"\n"
+"<i>此為 Pitivi 開發團隊唯一正式支援的選項，也是最安全的。</i>"
+
+#: pitivi/medialibrary.py:144
+msgid "Create proxies for all files"
+msgstr "為所有檔案建立代理檔"
+
+#: pitivi/medialibrary.py:146
+msgid ""
+"Use proxies for every imported file whatever its current media format is."
+msgstr "不論匯入的是什麼媒體格式，一律使用代理檔。"
+
+#: pitivi/medialibrary.py:149
+msgid "Do not use proxy files"
+msgstr "不使用代理檔"
+
+#: pitivi/medialibrary.py:381 pitivi/medialibrary.py:938
+msgid "Unknown"
+msgstr "不明"
+
+#: pitivi/medialibrary.py:461
+msgid "Icon"
+msgstr "圖示"
+
+#: pitivi/medialibrary.py:472
+msgid "Information"
+msgstr "資訊"
+
+#: pitivi/medialibrary.py:551
+msgid "Remove the selected assets"
+msgstr "移除所選的資產"
+
+#: pitivi/medialibrary.py:557
+msgid "Insert selected assets at the end of the timeline"
+msgstr "將所選的資產插入至時間軸末端"
+
+#: pitivi/medialibrary.py:746
+msgid "Select One or More Files"
+msgstr "選取一個或多個檔案"
+
+#: pitivi/medialibrary.py:750
 msgid "Add"
 msgstr "加入"
 
-#: ../pitivi/medialibrary.py:487
+#: pitivi/medialibrary.py:765
 msgid "Supported file formats"
 msgstr "支援的檔案格式"
 
-#. Also allow showing known but not reliable demuxers
-#: ../pitivi/medialibrary.py:493
-msgid "All known file formats"
-msgstr "所有已知的檔案格式"
-
-#: ../pitivi/medialibrary.py:516
+#. Translators: this string indicates the estimated time
+#. remaining until an action (such as rendering) completes.
+#. The "%s" is an already-localized human-readable duration,
+#. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
+#. In some languages, "About %s left" can be expressed roughly as
+#. "There remains approximatively %s" (to handle gender and plurals)
+#: pitivi/medialibrary.py:844
 #, python-format
-msgid "Importing clip %(current_clip)d of %(total)d"
-msgstr "正在匯入 %(current_clip)d 份剪輯，共 %(total)d 份"
+msgid "Transcoding %d asset: %d%% (About %s left)"
+msgid_plural "Transcoding %d assets: %d%% (About %s left)"
+msgstr[0] "正在為 %d 項資產進行轉碼：%d%% (大約還有 %s)"
 
-#: ../pitivi/medialibrary.py:694
+#: pitivi/medialibrary.py:950
 msgid "View error"
 msgid_plural "View errors"
 msgstr[0] "檢視錯誤"
 
 #. Translators: {0:d} is just like %d (integer number variable)
-#: ../pitivi/medialibrary.py:696
+#: pitivi/medialibrary.py:952
 #, python-brace-format
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
 msgstr[0] "匯入時發生 {0:d} 項錯誤。"
 
-#: ../pitivi/medialibrary.py:857
-msgid "Error while analyzing files"
-msgstr "解析檔案時發生錯誤"
+#: pitivi/medialibrary.py:968
+#, python-format
+msgid "The project settings have been set to match file '%s'"
+msgstr "專案設定已設定為符合「%s」檔案"
 
-#: ../pitivi/medialibrary.py:858
-msgid "The following files can not be used with Pitivi."
-msgstr "下列檔案不能與 Pitivi 一起使用。"
-
-#: ../pitivi/medialibrary.py:861
+#: pitivi/medialibrary.py:1082
 msgid "The following file can not be used with Pitivi."
-msgstr "下列檔案不能與 Pitivi 一起使用。"
+msgid_plural "The following files can not be used with Pitivi."
+msgstr[0] "以下檔案不能與 Pitivi 一起使用。"
 
-#: ../pitivi/preset.py:96 ../pitivi/preset.py:211 ../pitivi/preset.py:216
-#: ../pitivi/preset.py:259 ../pitivi/preset.py:276 ../pitivi/project.py:1558
-#: ../pitivi/project.py:1563 ../pitivi/render.py:430
-msgid "No preset"
-msgstr "無預設"
+#: pitivi/medialibrary.py:1191
+msgid "Open containing folder"
+msgstr "開啟儲存的資料夾"
 
-#: ../pitivi/project.py:240
-msgid "Save project as"
-msgstr "另存新專案為"
+#: pitivi/medialibrary.py:1209
+msgid "Do not use proxy for selected asset"
+msgid_plural "Do not use proxies for selected assets"
+msgstr[0] "所選的資產不要使用代理檔"
 
-#: ../pitivi/project.py:241
-msgid "Save project"
-msgstr "儲存專案"
+#: pitivi/medialibrary.py:1220
+msgid "Delete corresponding proxy file"
+msgid_plural "Delete corresponding proxy files"
+msgstr[0] "刪除對應的代理檔"
 
-#: ../pitivi/project.py:242
-msgid "Close pitivi"
+#: pitivi/medialibrary.py:1231
+msgid "Use proxy for selected asset"
+msgid_plural "Use proxies for selected assets"
+msgstr[0] "所選的資產使用代理檔"
+
+#: pitivi/preset.py:110
+msgid "Remove"
+msgstr "移除"
+
+#: pitivi/preset.py:230
+msgid "New preset"
+msgstr "新預設"
+
+#: pitivi/preset.py:233
+#, python-format
+msgid "New preset %d"
+msgstr "新預設 %d"
+
+#. Translators: This must contain exclusively low case alphanum and '-'
+#: pitivi/preset.py:541
+msgid "new-profile"
+msgstr "新-設定組合"
+
+#. Translators: This must contain exclusively low case alphanum and '-'
+#: pitivi/preset.py:545
+#, python-format
+msgid "new-profile-%d"
+msgstr "新-設定組合-%d"
+
+#. GTK does not allow an empty string as the dialog title, so we use the
+#. same translatable one as render.py's pipeline error message dialog:
+#: pitivi/project.py:163 pitivi/render.py:863
+msgid "Sorry, something didn’t work right."
+msgstr "抱歉，有些東西沒有正常運作。"
+
+#: pitivi/project.py:166
+msgid ""
+"Pitivi detected a serious backend problem and could not recover from it, "
+"even after multiple tries. The only thing that can be done at this point is "
+"to <b>restart Pitivi</b>.\n"
+"\n"
+"This is a rare and severe kind of bug. Please see our <a href=\"http://"
+"developer.pitivi.org/Bug_reporting.html\">bug reporting guide</a> and take "
+"the time to report it! We will be very happy to fix this bug and make sure "
+"it does not occur again in future versions.\n"
+"\n"
+"Before closing Pitivi, you can save changes to the existing project file or "
+"as a separate project file."
+msgstr ""
+"Pitivi 偵測到後端程式發生嚴重問題，重試多次也無法復原。現時唯一的解決辦法是"
+"<b>重新啟動 Pitivi</b>。\n"
+"\n"
+"這是很少發生的，而且是嚴重的軟體問題。請參閱我們的<a href=\"http://developer."
+"pitivi.org/Bug_reporting.html\">問題報告指南</a>，並花一點時間來告訴我們！我"
+"們希望能解決此問題，使將來不會再發生。\n"
+"\n"
+"在關閉 Pitivi 之前，您可以將對目前專案的變更儲存，又或儲存到另一個專案檔案。"
+
+#: pitivi/project.py:181
+msgid "Close Pitivi"
 msgstr "關閉 Pitivi"
 
-#. Even though we set the title to an empty string when creating dialog,
-#. seems we really have to do it once more so it doesn't show
-#. "pitivi"...
-#: ../pitivi/project.py:246
-msgid "Pitivi died"
-msgstr "Pitivi 掛了"
-
-#: ../pitivi/project.py:247
-msgid ""
-"We detected the application had a serious problem.\n"
-"There is no other choice than saving your project and <b>restart\n"
-"the application</b> at this point.\n"
-"\n"
-"Note that a severe bug happened and we would be very happy\n"
-"to hear about that to make sure it get fixed.\n"
-"\n"
-"You are very welcome to follow our guide to report bugs:\n"
-"\n"
-"      <a href=\"http://developer.pitivi.org/Bug_reporting.html\">How to report a "
-"bug</a>\n"
-"\n"
-"and we will make sure to get it fixed!"
-msgstr ""
-"我們偵測到應用程式有發生嚴重的問題。\n"
-"目前除了儲存您的專案並 <b>重新啟動程式</b>\n"
-"之外，我們別無他法。\n"
-"\n"
-"請注意，有隻重大的臭蟲爬了出來，我們很樂意\n"
-"聽見您的回報，這樣我們才有機會除掉它。\n"
-"\n"
-"歡迎您根據我們的指引來回報臭蟲資訊：\n"
-"\n"
-"      <a href=\"http://developer.pitivi.org/Bug_reporting.html\">How to report a "
-"bug</a>\n"
-"\n"
-"我們會努力修正這個問題的！"
-
-#: ../pitivi/project.py:334
+#: pitivi/project.py:252
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
 "instead."
 msgstr ""
-"這可能起因於臭蟲，或是未支援的專案檔格式。若您剛才正試圖添加媒體檔案到您的專"
-"案中，請改使用「匯入」按鈕。"
+"這可能起因於軟體臭蟲，或是未支援的專案檔格式。若您剛才正試圖添加媒體檔案到您"
+"的專案中，請改用「匯入」按鈕。"
 
-#: ../pitivi/project.py:347
+#: pitivi/project.py:274
 msgid "Ignore backup"
 msgstr "忽略備份"
 
-#: ../pitivi/project.py:348
+#: pitivi/project.py:275
 msgid "Restore from backup"
 msgstr "從備份還原"
 
-#: ../pitivi/project.py:364
+#: pitivi/project.py:291
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1170,46 +1321,27 @@ msgid ""
 "\n"
 "Would you like to load it instead?"
 msgstr ""
-"我們找到您的專案檔有個自動儲存的版本。它比儲存的專案還新 %s。\n"
+"找到您的專案檔有個自動儲存的版本。它比儲存的專案還新 %s。\n"
 "\n"
-"您是否想改載入這個版本？"
+"是否改為載入這個版本？"
 
-#: ../pitivi/project.py:436
+#: pitivi/project.py:367
 msgid "You do not have permissions to write to this folder."
-msgstr "您並未取得寫入此資料夾的許可。"
+msgstr "並未取得寫入此資料夾的權限。"
 
-#. write project file to temporary file
-#: ../pitivi/project.py:472
+#. Save the project to a temporary file.
+#: pitivi/project.py:400
 msgid "project"
 msgstr "專案"
 
-#. We don't have a URI here, None means we're loading a new project
-#: ../pitivi/project.py:587
-msgid "New Project"
-msgstr "新專案"
-
-#: ../pitivi/project.py:737
+#: pitivi/project.py:710
 msgid "Pitivi encoding profile"
-msgstr "Pitivi 編碼設定檔"
+msgstr "Pitivi 編碼設定組合"
 
-#: ../pitivi/project.py:1579 ../pitivi/render.py:562
-#, python-format
-msgid "\"%s\" already exists."
-msgstr "「%s」已經存在。"
-
-#: ../pitivi/project.py:1652 ../pitivi/render.py:603
-msgid "New preset"
-msgstr "新的預設"
-
-#: ../pitivi/project.py:1655 ../pitivi/render.py:606
-#, python-format
-msgid "New preset %d"
-msgstr "新預設 %d"
-
-#: ../pitivi/render.py:275
+#: pitivi/render.py:336
 #, python-format
 msgid "Rendering — %d%% complete"
-msgstr "壓製中 — %d%% 完成"
+msgstr "壓製中 — 完成 %d%%"
 
 #. Translators: this string indicates the estimated time
 #. remaining until an action (such as rendering) completes.
@@ -1217,149 +1349,178 @@ msgstr "壓製中 — %d%% 完成"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals).
-#: ../pitivi/render.py:284
+#: pitivi/render.py:345
 #, python-format
 msgid "About %s left"
-msgstr "大約剩下 %s"
+msgstr "大約還有 %s"
 
-#: ../pitivi/render.py:324
+#: pitivi/render.py:392
 msgid "Currently rendering"
 msgstr "目前正壓製中"
 
-#: ../pitivi/render.py:742
-msgid "A file name is required."
-msgstr "檔案名稱是必需的。"
+#. Translators: This item appears in a combobox's popup and
+#. contains as children the unsupported (but still available)
+#. muxers and encoders.
+#: pitivi/render.py:650
+msgid "Unsupported"
+msgstr "不支援"
 
-#: ../pitivi/render.py:744
+#: pitivi/render.py:690
+msgid "A file name is required."
+msgstr "必須有檔案名稱。"
+
+#: pitivi/render.py:692
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
 msgstr ""
-"這個檔案已經存在了。\n"
-"如果您不想覆蓋它，請選擇不同的檔案名稱或資料夾。"
+"已有這個檔案。\n"
+"如果不想將之覆蓋，請選擇不同的檔案名稱或資料夾。"
 
-#: ../pitivi/render.py:773
+#: pitivi/render.py:696
+#, python-format
+msgid "Remove invalid characters from the filename: %s"
+msgstr "從檔案名稱 (%s) 移除無效字元"
+
+#: pitivi/render.py:725
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: ../pitivi/render.py:778
+#: pitivi/render.py:730
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: ../pitivi/render.py:833
-msgid "Sorry, something didn’t work right."
-msgstr "抱歉，有些東西沒有正常運作。"
-
-#: ../pitivi/render.py:834
+#: pitivi/render.py:857
 msgid ""
-"An error occured while trying to render your project. You might want to "
-"check our troubleshooting guide or file a bug report. The GStreamer error "
-"was:"
+"<b>Make sure your rendering size is even, x264enc might not be able to "
+"render otherwise.</b>\n"
+"\n"
 msgstr ""
-"嘗試壓製您的專案時遭遇錯誤。您可能想要查看我們的疑難排解指引書，或是提交一份"
-"臭蟲回報。GStreamer 錯誤為："
+"<b>請確定壓製出來的檔案的大小是雙數，否則 x264enc 可能無法再進行壓製。</b>\n"
+"\n"
 
-#: ../pitivi/render.py:1018 ../pitivi/render.py:1019 ../pitivi/render.py:1025
+#: pitivi/render.py:864
+msgid "An error occurred while trying to render your project."
+msgstr "嘗試壓製專案時發生錯誤。"
+
+#: pitivi/render.py:866
+msgid ""
+"You might want to check our troubleshooting guide or file a bug report. The "
+"GStreamer error was:"
+msgstr ""
+"您可能想要查看我們的《疑難排解指南》，或是提交一份軟體臭蟲報告。GStreamer 錯"
+"誤為："
+
+#: pitivi/render.py:1086 pitivi/render.py:1087 pitivi/render.py:1093
 msgid "Render complete"
-msgstr "壓製完成"
+msgstr "完成壓製"
 
-#: ../pitivi/render.py:1023
+#: pitivi/render.py:1091
 #, python-format
 msgid "\"%s\" has finished rendering."
-msgstr "「%s」已完成壓製。"
+msgstr "已完成壓製「%s」。"
 
-#: ../pitivi/titleeditor.py:92 ../pitivi/titleeditor.py:99
-msgid "Custom"
-msgstr "自訂"
+#: pitivi/titleeditor.py:44
+msgid "Title clip duration"
+msgstr "字幕/標題剪輯長度"
 
-#: ../pitivi/titleeditor.py:93
+#: pitivi/titleeditor.py:46
+msgid ""
+"Default clip length (in milliseconds) of titles when inserting on the "
+"timeline."
+msgstr "插入時間軸時的預設字幕/標題剪輯長度 (毫秒)。"
+
+#: pitivi/titleeditor.py:105 pitivi/titleeditor.py:112
+msgid "Absolute"
+msgstr "絕對值"
+
+#: pitivi/titleeditor.py:106
 msgid "Top"
-msgstr "頂部"
+msgstr "靠上"
 
-#: ../pitivi/titleeditor.py:94 ../pitivi/titleeditor.py:101
+#: pitivi/titleeditor.py:107 pitivi/titleeditor.py:114
 msgid "Center"
-msgstr "中央"
+msgstr "置中"
 
-#: ../pitivi/titleeditor.py:95
+#: pitivi/titleeditor.py:108
 msgid "Bottom"
-msgstr "底部"
+msgstr "靠下"
 
-#: ../pitivi/titleeditor.py:96
+#: pitivi/titleeditor.py:109
 msgid "Baseline"
 msgstr "基線"
 
-#: ../pitivi/titleeditor.py:100
+#: pitivi/titleeditor.py:113
 msgid "Left"
-msgstr "左側"
+msgstr "靠左"
 
-#: ../pitivi/titleeditor.py:102
+#: pitivi/titleeditor.py:115
 msgid "Right"
-msgstr "右側"
+msgstr "靠右"
 
-#: ../pitivi/transitions.py:79
+#: pitivi/transitions.py:84
 msgid "Normal"
 msgstr "一般"
 
-#: ../pitivi/transitions.py:81
+#: pitivi/transitions.py:89
 msgid "Loop"
 msgstr "循環"
 
-#: ../pitivi/transitions.py:94
+#: pitivi/transitions.py:96
 msgid "Reverse direction"
-msgstr "反轉方向"
+msgstr "相反方向"
 
-#: ../pitivi/transitions.py:108
+#: pitivi/transitions.py:109
 msgid ""
 "Create a transition by overlapping two adjacent clips on the same layer. "
 "Click the transition on the timeline to change the transition type."
 msgstr ""
-"利用在同個層面上重疊兩份相鄰的剪輯來建立出轉場效果。點按時間軸上的轉場可更換"
-"轉場類型。"
+"將兩個同一圖層的相鄰剪輯重疊，即可建立轉場效果。點擊時間軸上的轉場，即可更換轉場類型。"
 
-#: ../pitivi/transitions.py:203
+#: pitivi/transitions.py:234
 msgid "Slow"
 msgstr "慢"
 
-#: ../pitivi/transitions.py:205
+#: pitivi/transitions.py:236
 msgid "Fast"
 msgstr "快"
 
-#: ../pitivi/transitions.py:207
+#: pitivi/transitions.py:238
 msgid "Epileptic"
 msgstr "癲癇"
 
-#: ../pitivi/transitions.py:211
+#: pitivi/transitions.py:242
 msgid "Sharp"
 msgstr "銳利"
 
-#: ../pitivi/transitions.py:213
+#: pitivi/transitions.py:244
 msgid "Smooth"
 msgstr "平滑"
 
-#: ../pitivi/viewer.py:87
+#: pitivi/viewer/viewer.py:76
 msgid "Currently playing"
 msgstr "目前正播放中"
 
-#: ../pitivi/viewer.py:221
+#: pitivi/viewer/viewer.py:219
 msgid "Go to the beginning of the timeline"
 msgstr "跳轉到開頭"
 
-#: ../pitivi/viewer.py:228
+#: pitivi/viewer/viewer.py:226
 msgid "Go back one second"
 msgstr "回到前一秒鐘"
 
-#: ../pitivi/viewer.py:240
+#: pitivi/viewer/viewer.py:238
 msgid "Go forward one second"
 msgstr "往前走一秒鐘"
 
-#: ../pitivi/viewer.py:248
+#: pitivi/viewer/viewer.py:246
 msgid "Go to the end of the timeline"
 msgstr "跳轉到結尾"
 
-#: ../pitivi/viewer.py:255
+#: pitivi/viewer/viewer.py:253
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1367,7 +1528,7 @@ msgstr ""
 "輸入時間代碼或框幀編號\n"
 "並按下「Enter」可前往該位置"
 
-#: ../pitivi/viewer.py:263
+#: pitivi/viewer/viewer.py:262
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1375,438 +1536,678 @@ msgstr ""
 "卸離檢視器\n"
 "您可以關閉新建立的視窗來再次接上。"
 
-#: ../pitivi/viewer.py:375 ../pitivi/viewer.py:413
+#: pitivi/viewer/viewer.py:357 pitivi/viewer/viewer.py:408
 msgid "Show this window in fullscreen"
 msgstr "以全螢幕顯示此視窗"
 
-#: ../pitivi/viewer.py:410
+#: pitivi/viewer/viewer.py:405
 msgid "Exit fullscreen mode"
 msgstr "離開全螢幕模式"
 
-#: ../pitivi/timeline/layer.py:89
-msgid "Set a personalized name for this layer"
-msgstr "為此層面設定個人化的名稱"
-
-#: ../pitivi/timeline/layer.py:98
+#. Translators: This is a tooltip for a clip's keyframe curve,
+#. showing what the keyframe curve affects, the timestamp at
+#. the mouse cursor location, and the value at that timestamp.
+#: pitivi/timeline/elements.py:378
+#, python-format
 msgid ""
-"<b>Solo mode</b>\n"
-"Other non-soloed layers will be disabled as long as this is enabled."
+"Property: %s\n"
+"Timestamp: %s\n"
+"Value: %s"
 msgstr ""
-"<b>獨奏模式</b>\n"
-"只要這個選項啟用後，其他的非獨奏層面將被停用。"
+"屬性：%s\n"
+"時間戳記：%s\n"
+"值：%s"
 
-#: ../pitivi/timeline/layer.py:114
-msgid ""
-"<b>Enable or disable this layer</b>\n"
-"Disabled layers will not play nor render."
-msgstr ""
-"<b>啟用或停用此層面</b>\n"
-"被停用的層面既無法播放，也無法壓製出來。"
+#: pitivi/timeline/elements.py:1260
+msgid "Audio crossfade"
+msgstr "音訊交互淡化"
 
-#: ../pitivi/timeline/layer.py:134
-msgid "_Delete layer"
-msgstr "刪除層面(_D)"
-
-#: ../pitivi/timeline/layer.py:136
-msgid "Move layer up"
-msgstr "上移一層"
-
-#: ../pitivi/timeline/layer.py:138
-msgid "Move layer down"
-msgstr "下移一層"
-
-#: ../pitivi/timeline/layer.py:140
+#: pitivi/timeline/layer.py:168
 msgid "Move layer to top"
 msgstr "上移至最頂層"
 
-#: ../pitivi/timeline/layer.py:143
+#: pitivi/timeline/layer.py:174
+msgid "Move layer up"
+msgstr "上移一層"
+
+#: pitivi/timeline/layer.py:180
+msgid "Move layer down"
+msgstr "下移一層"
+
+#: pitivi/timeline/layer.py:186
 msgid "Move layer to bottom"
 msgstr "下移至最底層"
 
-#: ../pitivi/timeline/layer.py:179
-msgid "Make layer invisible"
-msgstr "讓層面看不見"
+#: pitivi/timeline/layer.py:192
+msgid "Delete layer"
+msgstr "刪除圖層"
 
-#: ../pitivi/timeline/layer.py:181
-msgid "Make layer visible"
-msgstr "讓層面看得見"
+#: pitivi/timeline/layer.py:284
+#, python-format
+msgid "Layer %d"
+msgstr "圖層 %d"
 
-#: ../pitivi/timeline/layer.py:303
-msgid "Opacity:"
-msgstr "不透明度："
-
-#: ../pitivi/timeline/layer.py:312
-msgid "Change video opacity"
-msgstr "變更視訊不透明度"
-
-#: ../pitivi/timeline/layer.py:331
-msgid "Vol:"
-msgstr ""
-
-#: ../pitivi/timeline/layer.py:334
-msgid "Pan:"
-msgstr ""
-
-#: ../pitivi/timeline/layer.py:342
-msgid "Change audio panning"
-msgstr "變更音訊橫移"
-
-#: ../pitivi/timeline/ruler.py:220
+#: pitivi/timeline/ruler.py:249
 #, python-format
 msgid "Frame #%d"
 msgstr "框幀 #%d"
 
-#: ../pitivi/timeline/timeline.py:57 ../pitivi/timeline/timeline.py:70
-msgid "Behavior"
-msgstr "行為"
-
-#: ../pitivi/timeline/timeline.py:58
+#: pitivi/timeline/timeline.py:76
 msgid "Snap distance"
 msgstr "突然吸附距離"
 
-#: ../pitivi/timeline/timeline.py:59
+#: pitivi/timeline/timeline.py:77
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
 msgstr ""
-"在時間軸上，兩個剪輯片段拖動靠近時，會突然像是磁鐵互相吸附的距離(以像素為"
-"單)。"
+"在時間軸上，兩個剪輯片段拖動靠近時，會突然像是磁鐵互相吸附的距離 (以像素為單"
+"位)。"
 
-#: ../pitivi/timeline/timeline.py:71
+#: pitivi/timeline/timeline.py:89
 msgid "Image clip duration"
 msgstr "影像剪輯時間"
 
-#: ../pitivi/timeline/timeline.py:73
+#: pitivi/timeline/timeline.py:91
 msgid ""
-"Default clip length (in miliseconds) of images when inserting on the "
+"Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
 msgstr "插入時間軸時的預設影像剪輯長度 (毫秒)。"
 
-#: ../pitivi/timeline/timeline.py:917
-msgid ""
-"Toggle gapless mode\n"
-"When enabled, adjacent clips automatically move to fill gaps."
-msgstr ""
-"無縫模式開關\n"
-"啟用後，相鄰的剪輯會自動移動以填滿間隔。"
+#: pitivi/timeline/timeline.py:102
+msgid "Left click also seeks"
+msgstr "點擊左鍵也會搜尋"
 
-#. TODO: use GAction + GActionGroup (Gio.SimpleAction +
-#. Gio.SimpleActionGroup)
-#. Action list items can vary in size (1-6 items). The first one is the
-#. name, and it is the only mandatory option. All the other options are
-#. optional, and if omitted will default to None.
-#.
-#. name (required), stock ID, translatable label,
-#. keyboard shortcut, translatable tooltip, callback function
-#: ../pitivi/timeline/timeline.py:1006
-msgid "Zoom In"
+#: pitivi/timeline/timeline.py:104
+msgid "Whether left-clicking also seeks besides selecting and editing clips."
+msgstr "點擊滑鼠左鍵除了選取及編輯剪輯，是否也會搜尋。"
+
+#: pitivi/timeline/timeline.py:1532 pitivi/dialogs/prefs.py:53
+msgid "Timeline"
+msgstr "時間軸"
+
+#: pitivi/timeline/timeline.py:1539
+msgid "Delete selected clips"
+msgstr "刪除所選的剪輯"
+
+#: pitivi/timeline/timeline.py:1545
+msgid "Group selected clips together"
+msgstr "將所選的剪輯合成一個群組"
+
+#: pitivi/timeline/timeline.py:1551
+msgid "Ungroup selected clips"
+msgstr "取消所選剪輯的群組"
+
+#: pitivi/timeline/timeline.py:1557
+msgid "Copy selected clips"
+msgstr "複製所選的剪輯"
+
+#: pitivi/timeline/timeline.py:1563
+msgid "Paste selected clips"
+msgstr "貼上所選的剪輯"
+
+#: pitivi/timeline/timeline.py:1576
+msgid "Split the clip at the position"
+msgstr "於位置分割剪輯"
+
+#: pitivi/timeline/timeline.py:1582
+msgid "Add keyframe to the keyframe curve of selected clip"
+msgstr "在所選的剪輯關鍵框幀曲線加入關鍵框幀"
+
+#: pitivi/timeline/timeline.py:1587
+msgid "Timeline Navigation"
+msgstr "時間軸導覽"
+
+#: pitivi/timeline/timeline.py:1594
+msgid "Zoom in"
 msgstr "拉近"
 
-#: ../pitivi/timeline/timeline.py:1007
-msgid "Zoom Out"
+#: pitivi/timeline/timeline.py:1600
+msgid "Zoom out"
 msgstr "拉遠"
 
-#: ../pitivi/timeline/timeline.py:1008 ../pitivi/utils/widgets.py:1028
-msgid "Zoom Fit"
-msgstr "縮放為適合長度"
+#: pitivi/timeline/timeline.py:1606
+msgid "Adjust zoom to fit the project to the window"
+msgstr "調整遠近，以將專案符合視窗大小"
 
-#: ../pitivi/timeline/timeline.py:1032
-msgid "Delete Selected"
-msgstr "刪除選取項"
+#: pitivi/timeline/timeline.py:1617
+msgid "Seek backward one frame"
+msgstr "往後搜索一個框幀"
 
-#: ../pitivi/timeline/timeline.py:1034
-msgid "Ungroup"
-msgstr "取消群組"
+#: pitivi/timeline/timeline.py:1623
+msgid "Seek forward one frame"
+msgstr "往前搜索一個框幀"
 
-#: ../pitivi/timeline/timeline.py:1035
-msgid "Ungroup clips"
-msgstr "取消影片剪輯群組"
+#: pitivi/timeline/timeline.py:1630
+msgid "Seek backward one second"
+msgstr "往後搜索一秒"
 
-#. Translators: This is an action, the title of a button
-#: ../pitivi/timeline/timeline.py:1038
-msgid "Group"
-msgstr "群組"
+#: pitivi/timeline/timeline.py:1637
+msgid "Seek forward one second"
+msgstr "往前搜索一秒"
 
-#: ../pitivi/timeline/timeline.py:1039
-msgid "Group clips"
-msgstr "群組影片剪輯"
+#: pitivi/dialogs/clipmediaprops.py:102
+msgid "Variable"
+msgstr "可變"
 
-#: ../pitivi/timeline/timeline.py:1041
-msgid "Align"
-msgstr "對齊"
-
-#: ../pitivi/timeline/timeline.py:1042
-msgid "Align clips based on their soundtracks"
-msgstr "根據剪輯的音軌對齊剪輯"
-
-#: ../pitivi/timeline/timeline.py:1047
-msgid "Start Playback"
-msgstr "開始播放"
-
-#: ../pitivi/timeline/timeline.py:1049
-msgid "Split"
-msgstr "分割"
-
-#: ../pitivi/timeline/timeline.py:1050
-msgid "Split clip at playhead position"
-msgstr "分割剪輯於播放開頭位置"
-
-#: ../pitivi/timeline/timeline.py:1052
-msgid "Add a Keyframe"
-msgstr "加入鍵幀"
-
-#: ../pitivi/timeline/timeline.py:1053
-msgid "Add a keyframe"
-msgstr "加入鍵幀"
-
-#. Translators: a label showing an invalid framerate value
-#: ../pitivi/dialogs/clipmediaprops.py:112
-#, python-format
-msgid "invalid (%s fps)"
-msgstr "無效 (%s fps)"
-
-#: ../pitivi/dialogs/clipmediaprops.py:135
+#: pitivi/dialogs/clipmediaprops.py:128
 msgid "Image:"
 msgstr "影像："
 
-#: ../pitivi/dialogs/filelisterrordialog.py:62
+#: pitivi/dialogs/filelisterrordialog.py:54
 msgid "Unknown reason"
-msgstr "不明的原因"
+msgstr "不明原因"
 
-#: ../pitivi/dialogs/filelisterrordialog.py:92
+#: pitivi/dialogs/filelisterrordialog.py:86
 msgid "Problem:"
 msgstr "問題："
 
-#: ../pitivi/dialogs/filelisterrordialog.py:100
+#: pitivi/dialogs/filelisterrordialog.py:94
 msgid "Extra information:"
 msgstr "額外資訊："
 
-#: ../pitivi/dialogs/prefs.py:283 ../pitivi/utils/widgets.py:753
+#. Translators: This adds a semicolon to an already
+#. translated name of a preference.
+#: pitivi/dialogs/prefs.py:179 pitivi/utils/widgets.py:716
+#, python-format
+msgid "%(preference_label)s:"
+msgstr "%(preference_label)s："
+
+#: pitivi/dialogs/prefs.py:189 pitivi/utils/widgets.py:875
 msgid "Reset to default value"
 msgstr "重置為預設值"
 
-#: ../pitivi/dialogs/startupwizard.py:71
+#: pitivi/dialogs/prefs.py:250
+msgid "Shortcuts"
+msgstr "快捷鍵"
+
+#: pitivi/dialogs/prefs.py:280
+msgid "Reset the shortcut to the default accelerator"
+msgstr "將所有的快捷鍵重置回預設的加速鍵"
+
+#: pitivi/dialogs/prefs.py:436
+msgid "Set Shortcut"
+msgstr "設定快捷鍵"
+
+#. Setup the widgets used in the dialog.
+#: pitivi/dialogs/prefs.py:451
+msgid "Apply"
+msgstr "套用"
+
+#: pitivi/dialogs/prefs.py:454
+msgid "Apply the accelerator to this shortcut."
+msgstr "對此快捷鍵套用該加速鍵。"
+
+#: pitivi/dialogs/prefs.py:457
+msgid "Replace"
+msgstr "取代"
+
+#: pitivi/dialogs/prefs.py:460
+msgid ""
+"Remove this accelerator from where it was used previously and set it for "
+"this shortcut."
+msgstr "移除此加速鍵之前的設定，並設定為此快捷鍵。"
+
+#: pitivi/dialogs/prefs.py:467
+#, python-format
+msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
+msgstr "為 <b>%s</b> 輸入新的快捷鍵，或按 Esc 取消。"
+
+#: pitivi/dialogs/prefs.py:476
+msgid ""
+"The accelerator you are trying to set might interfere with typing. Try using "
+"Control, Shift or Alt with some other key, please."
+msgstr ""
+"現時設定的加速鍵可能會影響以後用打字輸入文字。請將 Ctrl、Shift 或 Alt 鍵改為"
+"配合其他按鍵使用。"
+
+#: pitivi/dialogs/prefs.py:510
+#, python-format
+msgid ""
+"This key combination is already used by <b>%s</b>. Press Replace to use it "
+"for <b>%s</b> instead."
+msgstr "此按鍵組合已由 <b>%s</b> 使用。按「取代」改為由 <b>%s</b> 使用。"
+
+#: pitivi/dialogs/startupwizard.py:72
 msgid "Projects"
 msgstr "專案"
 
-#: ../pitivi/dialogs/startupwizard.py:180
+#: pitivi/dialogs/startupwizard.py:163
 #, python-format
 msgid "Pitivi %s is available."
-msgstr "Pitivi %s 已可使用。"
+msgstr "已提供 Pitivi %s 版。"
 
-#. Translators: "non local" means the project is not stored
-#. on a local filesystem
-#: ../pitivi/utils/misc.py:115
-#, python-format
-msgid "%s doesn't yet handle non-local projects"
-msgstr "%s 尚無法處理非本地端的專案"
+#: pitivi/utils/misc.py:266
+msgid ""
+"Failed to open the user manual. Make sure to have either the `yelp` GNOME  "
+"documentation viewer or a web browser installed"
+msgstr ""
+"未能開啟使用指南。請確定已安裝「yelp」GNOME 說明文件檢視器或網頁瀏覽器"
 
-#: ../pitivi/utils/misc.py:244
+#: pitivi/utils/misc.py:275
 msgid ""
 "The system's locale that you are using is not UTF-8 capable. Unicode support "
 "is required for Python3 software like Pitivi. Please correct your system "
 "settings; if you try to use Pitivi with a broken locale, weird bugs will "
 "happen."
 msgstr ""
-"您使用的系統語言地區並不能處理 UTF-8。Python3 軟體，例如 Pitivi 這類都需要有 "
-"Unicode 統一碼支援才行。請修正您的系統設定；如果您嘗試在傾圮的語言地區下使用 "
-"Pitivi，相信有詭異的臭蟲會趁機爬出來作亂。"
+"您使用的系統語言地區並不能處理 UTF-8。Python3 軟體 (例如 Pitivi) 需要有 "
+"Unicode 統一碼支援才行。請修正系統設定；如果在有問題的語言地區設定使用 "
+"Pitivi，會發生奇怪的問題。"
 
-#: ../pitivi/utils/misc.py:254
+#: pitivi/utils/misc.py:285
 msgid "Error while decoding a string"
 msgstr "解碼字串時發生錯誤"
 
-#: ../pitivi/utils/ui.py:232
+#. Translators: 'fps' is for 'frames per second'
+#: pitivi/utils/ui.py:184
+msgid "{0:s} fps"
+msgstr "每秒 {0:s} 幀"
+
+#: pitivi/utils/ui.py:204
+#, python-brace-format
+msgid "{0:n} kHz"
+msgstr "{0:n} kHz"
+
+#: pitivi/utils/ui.py:213
+msgid "Mono"
+msgstr "單聲道"
+
+#: pitivi/utils/ui.py:214
+msgid "Stereo"
+msgstr "立體聲"
+
+#: pitivi/utils/ui.py:215
+msgid "6 (5.1)"
+msgstr "6 (5.1)"
+
+#: pitivi/utils/ui.py:216
+msgid "8 (7.1)"
+msgstr "8 (7.1)"
+
+#: pitivi/utils/ui.py:346
+#, python-format
+msgid "<b>Duration:</b> %s"
+msgstr "<b>長度：</b>%s"
+
+#: pitivi/utils/ui.py:349
+#, python-format
+msgid "<b>Proxy creation progress:</b> %d%%"
+msgstr "<b>代理檔建立進度：</b> %d%%"
+
+#: pitivi/utils/ui.py:362
+#, python-format
+msgid "<b>Path</b>: %s"
+msgstr "<b>路徑：</b>%s"
+
+#: pitivi/utils/ui.py:371
+#, python-format
+msgid "<b>Size</b>: %s"
+msgstr "<b>大小：</b>%s"
+
+#: pitivi/utils/ui.py:397
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[0] "<b>音訊：</b>%d 聲道 %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[0] "<b>音訊：</b>%d 聲道，%d <i>Hz</i> (%d <i>位元</i>)"
 
-#: ../pitivi/utils/ui.py:242
+#: pitivi/utils/ui.py:409
 #, python-format
-msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
-msgstr "<b>視訊：</b> %d×%d <i>像素</i>， %.3f<i>fps</i>"
+msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
+msgstr "<b>視訊：</b> %d×%d <i>像素</i>，<i>每秒</i> %s <i>幀</i>"
 
-#: ../pitivi/utils/ui.py:250
+#: pitivi/utils/ui.py:412
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>影像：</b> %d×%d <i>像素</i>"
 
-#: ../pitivi/utils/ui.py:297 ../pitivi/utils/ui.py:325
-#: ../pitivi/utils/ui.py:349
+#: pitivi/utils/ui.py:466 pitivi/utils/ui.py:493 pitivi/utils/ui.py:517
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d 小時"
 
-#: ../pitivi/utils/ui.py:300 ../pitivi/utils/ui.py:328
-#: ../pitivi/utils/ui.py:352
+#: pitivi/utils/ui.py:469 pitivi/utils/ui.py:496 pitivi/utils/ui.py:520
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d 分鐘"
 
-#: ../pitivi/utils/ui.py:303 ../pitivi/utils/ui.py:331
-#: ../pitivi/utils/ui.py:355
+#: pitivi/utils/ui.py:472 pitivi/utils/ui.py:499 pitivi/utils/ui.py:523
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d 秒"
 
-#: ../pitivi/utils/ui.py:323
+#: pitivi/utils/ui.py:491
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d 天"
 
-#. Translators: fps is for frames per second
-#: ../pitivi/utils/ui.py:408 ../pitivi/utils/ui.py:409
-#: ../pitivi/utils/ui.py:410 ../pitivi/utils/ui.py:412
-#: ../pitivi/utils/ui.py:413 ../pitivi/utils/ui.py:415
-#: ../pitivi/utils/ui.py:416 ../pitivi/utils/ui.py:418
-#: ../pitivi/utils/ui.py:419
-#, python-format
-msgid "%d fps"
-msgstr "%d fps"
-
-#: ../pitivi/utils/ui.py:411
-#, python-format
-msgid "%.3f fps"
-msgstr "%.3f fps"
-
-#: ../pitivi/utils/ui.py:414 ../pitivi/utils/ui.py:417
-#, python-format
-msgid "%.2f fps"
-msgstr "%.2f fps"
-
-#: ../pitivi/utils/ui.py:423 ../pitivi/utils/ui.py:424
-#: ../pitivi/utils/ui.py:425 ../pitivi/utils/ui.py:427
-#: ../pitivi/utils/ui.py:428
-#, python-format
-msgid "%d kHz"
-msgstr "%d kHz"
-
-#: ../pitivi/utils/ui.py:426
-#, python-format
-msgid "%.1f kHz"
-msgstr "%.1f kHz"
-
-#: ../pitivi/utils/ui.py:431
-msgid "6 Channels (5.1)"
-msgstr "6 聲道(5.1)"
-
-#: ../pitivi/utils/ui.py:432
-msgid "4 Channels (4.0)"
-msgstr "4 聲道(4.0)"
-
-#: ../pitivi/utils/ui.py:433
-msgid "Stereo"
-msgstr "立體聲"
-
-#: ../pitivi/utils/ui.py:434
-msgid "Mono"
-msgstr "單聲道"
-
-#: ../pitivi/utils/ui.py:439
-msgid "Square"
-msgstr "方形"
-
-#: ../pitivi/utils/ui.py:440
-msgid "480p"
-msgstr "480p"
-
-#: ../pitivi/utils/ui.py:441
-msgid "480i"
-msgstr "480i"
-
-#: ../pitivi/utils/ui.py:442
-msgid "480p Wide"
-msgstr "480p 寬"
-
-#: ../pitivi/utils/ui.py:443
-msgid "480i Wide"
-msgstr "480i 寬"
-
-#: ../pitivi/utils/ui.py:444
-msgid "576p"
-msgstr "576p"
-
-#: ../pitivi/utils/ui.py:445
-msgid "576i"
-msgstr "576i"
-
-#: ../pitivi/utils/ui.py:446
-msgid "576p Wide"
-msgstr "576p 寬"
-
-#: ../pitivi/utils/ui.py:447
-msgid "576i Wide"
-msgstr "576i 寬"
-
-#: ../pitivi/utils/ui.py:452
-msgid "DV (15:11)"
-msgstr "DV (15:11)"
-
-#: ../pitivi/utils/ui.py:453
-msgid "DV Widescreen (16:9)"
-msgstr "DV 寬螢幕 (16:9)"
-
-#: ../pitivi/utils/ui.py:454
-msgid "Cinema (1.37)"
-msgstr "Cinema (1.37)"
-
-#: ../pitivi/utils/ui.py:455
-msgid "Cinema (1.66)"
-msgstr "Cinema (1.66)"
-
-#: ../pitivi/utils/ui.py:456
-msgid "Cinema (1.85)"
-msgstr "Cinema (1.85)"
-
-#: ../pitivi/utils/ui.py:457
-msgid "Anamorphic (2.35)"
-msgstr "Anamorphic (2.35)"
-
-#: ../pitivi/utils/ui.py:458
-msgid "Anamorphic (2.39)"
-msgstr "Anamorphic (2.39)"
-
-#: ../pitivi/utils/ui.py:459
-msgid "Anamorphic (2.4)"
-msgstr "Anamorphic (2.4)"
-
-#: ../pitivi/utils/widgets.py:84
+#: pitivi/utils/widgets.py:78
 msgid "Implement Me"
-msgstr "實作我"
+msgstr "(本功能有待完成)"
 
-#: ../pitivi/utils/widgets.py:654
+#: pitivi/utils/widgets.py:741
 msgid "No properties."
 msgstr "沒有屬性。"
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:744
+#: pitivi/utils/widgets.py:860
 msgid "Show keyframes for this value"
 msgstr "顯示此值的鍵幀"
 
-#: ../pitivi/utils/widgets.py:914
+#: pitivi/utils/widgets.py:1037
 #, python-format
 msgid "Properties for %s"
 msgstr "%s 的屬性"
 
-#: ../pitivi/utils/widgets.py:1033
+#: pitivi/utils/widgets.py:1185
+msgid "Zoom Fit"
+msgstr "縮放至符合長度"
+
+#: pitivi/utils/widgets.py:1190
 msgid "Zoom"
 msgstr "縮放"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1101
+#: pitivi/utils/widgets.py:1264
 #, python-format
 msgid "%s displayed"
 msgstr "已顯示 %s"
 
-#: ../pitivi/utils/widgets.py:1105
+#: pitivi/utils/widgets.py:1268
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "已顯示 %d 奈秒，因為我們做得到"
+
+#~ msgid "Pixel aspect ratio:"
+#~ msgstr "像素寬高比："
+
+#~ msgid "Viewer Zoom"
+#~ msgstr "預覽畫面遠近調整"
+
+#~ msgid "Position"
+#~ msgstr "位置"
+
+#~ msgid "Crop"
+#~ msgstr "剪裁"
+
+#~ msgid "Properties for <element>"
+#~ msgstr "<element> 的屬性"
+
+#~ msgid "Close this message"
+#~ msgstr "關閉此訊息"
+
+#~ msgid "Section"
+#~ msgstr "節"
+
+#~ msgid "Standard (4:3)"
+#~ msgstr "標準 (4:3)"
+
+#~ msgid "Standard PAL"
+#~ msgstr "標準 PAL"
+
+#~ msgid "25 FPS"
+#~ msgstr "25 FPS"
+
+#~ msgid "Create a new preset"
+#~ msgstr "建立新的預置設定"
+
+#~ msgid "Save changes to the currently selected preset"
+#~ msgstr "儲存變更至目前所選的預置設定"
+
+#~ msgid "Aspect Ratio:"
+#~ msgstr "寬高比："
+
+#~ msgid "Display aspect ratio"
+#~ msgstr "顯示寬高比"
+
+#~ msgid "x"
+#~ msgstr "x"
+
+#~ msgid "Format"
+#~ msgstr "格式"
+
+#~ msgid "Project title:"
+#~ msgstr "專案名稱："
+
+#~ msgid "MP4"
+#~ msgstr "MP4"
+
+#~ msgid "H.264"
+#~ msgstr "H.264"
+
+#~ msgid "29.97 fps"
+#~ msgstr "29.97 fps"
+
+#~ msgid "AC-3"
+#~ msgstr "AC-3"
+
+#~ msgid "AAC"
+#~ msgstr "AAC"
+
+#~ msgid "Render Preset"
+#~ msgstr "壓製預置值"
+
+#~ msgid "File name"
+#~ msgstr "檔案名稱"
+
+#~ msgid "Container format"
+#~ msgstr "容器格式"
+
+#~ msgid "Draft (no special effects, single pass)"
+#~ msgstr "草稿(沒有特殊特效，單通過)"
+
+#~ msgid "1000 x 1000"
+#~ msgstr "1000 x 1000"
+
+#~ msgid "Edit Project Settings..."
+#~ msgstr "編輯專案設定..."
+
+#~ msgid "Enable video"
+#~ msgstr "啟用視訊"
+
+#~ msgid "Enable audio"
+#~ msgstr "啟用音訊"
+
+#~ msgid "Advanced positioning"
+#~ msgstr "進階定位"
+
+#~ msgid "file thumbnails provided by GNOME's thumbnailers"
+#~ msgstr "檔案縮圖由 GNOME 的縮圖服務程式提供"
+
+# msgid "Redo"
+# msgstr "再次動作"
+
+#~ msgid ""
+#~ "The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
+#~ "Please specify its new location:"
+#~ msgstr ""
+#~ "下列檔案已被移動：「<b>%s</b>」(時間長度：%s)\n"
+#~ "請指定其新位置："
+
+#~ msgid "Duration"
+#~ msgstr "持續時間"
+
+#~ msgid "All known file formats"
+#~ msgstr "所有已知的檔案格式"
+
+#~ msgid "Importing clip %(current_clip)d of %(total)d"
+#~ msgstr "正在匯入 %(current_clip)d 份剪輯，共 %(total)d 份"
+
+#~ msgid "Error while analyzing files"
+#~ msgstr "解析檔案時發生錯誤"
+
+#~ msgid "The following files can not be used with Pitivi."
+#~ msgstr "下列檔案不能與 Pitivi 一起使用。"
+
+#~ msgid "No preset"
+#~ msgstr "無預設"
+
+#~ msgid "Save project as"
+#~ msgstr "另存新專案為"
+
+#~ msgid ""
+#~ "We detected the application had a serious problem.\n"
+#~ "There is no other choice than saving your project and <b>restart\n"
+#~ "the application</b> at this point.\n"
+#~ "\n"
+#~ "Note that a severe bug happened and we would be very happy\n"
+#~ "to hear about that to make sure it get fixed.\n"
+#~ "\n"
+#~ "You are very welcome to follow our guide to report bugs:\n"
+#~ "\n"
+#~ "      <a href=\"http://developer.pitivi.org/Bug_reporting.html\">How to "
+#~ "report a bug</a>\n"
+#~ "\n"
+#~ "and we will make sure to get it fixed!"
+#~ msgstr ""
+#~ "我們偵測到應用程式有發生嚴重的問題。\n"
+#~ "目前除了儲存您的專案並 <b>重新啟動程式</b>\n"
+#~ "之外，我們別無他法。\n"
+#~ "\n"
+#~ "請注意，有隻重大的臭蟲爬了出來，我們很樂意\n"
+#~ "聽見您的回報，這樣我們才有機會除掉它。\n"
+#~ "\n"
+#~ "歡迎您根據我們的指引來回報臭蟲資訊：\n"
+#~ "\n"
+#~ "      <a href=\"http://developer.pitivi.org/Bug_reporting.html\">How to "
+#~ "report a bug</a>\n"
+#~ "\n"
+#~ "我們會努力修正這個問題的！"
+
+#~ msgid "New Project"
+#~ msgstr "新專案"
+
+#~ msgid "\"%s\" already exists."
+#~ msgstr "「%s」已經存在。"
+
+#~ msgid "Custom"
+#~ msgstr "自訂"
+
+#~ msgid "Set a personalized name for this layer"
+#~ msgstr "為此圖層設定個人化的名稱"
+
+#~ msgid ""
+#~ "<b>Solo mode</b>\n"
+#~ "Other non-soloed layers will be disabled as long as this is enabled."
+#~ msgstr ""
+#~ "<b>獨奏模式</b>\n"
+#~ "只要這個選項啟用後，其他的非獨奏圖層將被停用。"
+
+#~ msgid ""
+#~ "<b>Enable or disable this layer</b>\n"
+#~ "Disabled layers will not play nor render."
+#~ msgstr ""
+#~ "<b>啟用或停用此圖層</b>\n"
+#~ "被停用的圖層既無法播放，也無法壓製出來。"
+
+#~ msgid "Make layer invisible"
+#~ msgstr "讓圖層看不見"
+
+#~ msgid "Make layer visible"
+#~ msgstr "讓圖層看得見"
+
+#~ msgid "Opacity:"
+#~ msgstr "不透明度："
+
+#~ msgid "Change video opacity"
+#~ msgstr "變更視訊不透明度"
+
+#~ msgid "Change audio panning"
+#~ msgstr "變更音訊橫移 (平移[panning])"
+
+#~ msgid "Behavior"
+#~ msgstr "行為"
+
+#~ msgid "Start Playback"
+#~ msgstr "開始播放"
+
+#~ msgid "Add a Keyframe"
+#~ msgstr "加入鍵幀"
+
+#~ msgid "Add a keyframe"
+#~ msgstr "加入鍵幀"
+
+#~ msgid "invalid (%s fps)"
+#~ msgstr "無效 (%s fps)"
+
+#~ msgid "%s doesn't yet handle non-local projects"
+#~ msgstr "%s 尚無法處理非本地端的專案"
+
+#~ msgid "%d fps"
+#~ msgstr "%d fps"
+
+#~ msgid "%.3f fps"
+#~ msgstr "%.3f fps"
+
+#~ msgid "%.2f fps"
+#~ msgstr "%.2f fps"
+
+#~ msgid "%d kHz"
+#~ msgstr "%d kHz"
+
+#~ msgid "%.1f kHz"
+#~ msgstr "%.1f kHz"
+
+#~ msgid "6 Channels (5.1)"
+#~ msgstr "6 聲道 (5.1)"
+
+#~ msgid "4 Channels (4.0)"
+#~ msgstr "4 聲道 (4.0)"
+
+#~ msgid "Square"
+#~ msgstr "正方形"
+
+#~ msgid "480p"
+#~ msgstr "480p"
+
+#~ msgid "480i"
+#~ msgstr "480i"
+
+#~ msgid "480p Wide"
+#~ msgstr "480p 寬螢幕"
+
+#~ msgid "480i Wide"
+#~ msgstr "480i 寬螢幕"
+
+#~ msgid "576p"
+#~ msgstr "576p"
+
+#~ msgid "576i"
+#~ msgstr "576i"
+
+#~ msgid "576p Wide"
+#~ msgstr "576p 寬螢幕"
+
+#~ msgid "576i Wide"
+#~ msgstr "576i 寬螢幕"
+
+#~ msgid "DV (15:11)"
+#~ msgstr "DV (15:11)"
+
+#~ msgid "DV Widescreen (16:9)"
+#~ msgstr "DV 寬螢幕 (16:9)"
+
+#~ msgid "Cinema (1.37)"
+#~ msgstr "戲院銀幕 (1.37)"
+
+#~ msgid "Cinema (1.66)"
+#~ msgstr "戲院銀幕 (1.66)"
+
+#~ msgid "Cinema (1.85)"
+#~ msgstr "戲院銀幕 (1.85)"
+
+#~ msgid "Anamorphic (2.35)"
+#~ msgstr "戲院超寬銀幕 (2.35)"
+
+#~ msgid "Anamorphic (2.39)"
+#~ msgstr "戲院超寬銀幕 (2.39)"
+
+#~ msgid "Anamorphic (2.4)"
+#~ msgstr "戲院超寬銀幕 (2.4)"
 
 #~ msgid "Create and insert"
 #~ msgstr "建立並插入"
@@ -1825,9 +2226,6 @@ msgstr "已顯示 %d 奈秒，因為我們做得到"
 
 #~ msgid "Keyframe"
 #~ msgstr "鍵幀"
-
-#~ msgid "Gapless mode"
-#~ msgstr "無縫模式"
 
 #~ msgid "Details"
 #~ msgstr "細節"
@@ -1850,7 +2248,7 @@ msgstr "已顯示 %d 奈秒，因為我們做得到"
 #~ "    %prog -i [-a] [MEDIA_FILE1 ...]    # 啟動編輯器並建立一門專案。"
 
 #~ msgid "Import each MEDIA_FILE into a new project."
-#~ msgstr "匯入各個 MEDOA_FILE  至新專案。"
+#~ msgstr "匯入各個 MEDIA_FILE 至新專案。"
 
 #~ msgid "Add each imported MEDIA_FILE to the timeline."
 #~ msgstr "加入各個匯入的 MEDIA_FILE 至時間軸。"
@@ -1867,14 +2265,8 @@ msgstr "已顯示 %d 奈秒，因為我們做得到"
 #~ msgid "additional video effects, clip transformation feature"
 #~ msgstr "其他視訊特效、剪輯轉變功能"
 
-#~ msgid "Create a new project"
-#~ msgstr "建立一個新的專案"
-
 #~ msgid "Open an existing project"
 #~ msgstr "開啟一個既存的專案"
-
-#~ msgid "Save the current project"
-#~ msgstr "儲存目前的專案"
 
 #~ msgid "Save _As..."
 #~ msgstr "另存新檔(_A)..."
@@ -1885,17 +2277,11 @@ msgstr "已顯示 %d 奈秒，因為我們做得到"
 #~ msgid "_Render..."
 #~ msgstr "壓製(_R)..."
 
-#~ msgid "Undo the last operation"
-#~ msgstr "復原上一個操作"
-
 #~ msgid "Redo the last operation that was undone"
 #~ msgstr "重新進行上一個被還原的操作"
 
-#~ msgid "Remove layer"
-#~ msgstr "移除層面"
-
 #~ msgid "Remove the selected layer from the project"
-#~ msgstr "從專案中移除選取的層面"
+#~ msgstr "從專案中移除選取的圖層"
 
 #~ msgid "Information about %s"
 #~ msgstr "%s 的相關資訊"
@@ -1911,9 +2297,6 @@ msgstr "已顯示 %d 奈秒，因為我們做得到"
 
 #~ msgid "_Library"
 #~ msgstr "藏庫(_L)"
-
-#~ msgid "_Timeline"
-#~ msgstr "時間軸(_T)"
 
 #~ msgid "View the main window on the whole screen"
 #~ msgstr "以全螢幕檢視主視窗"
