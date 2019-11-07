@@ -86,7 +86,7 @@ To update the dependencies installed in the sandbox, run:
 That will actually recreate the sandbox prefix, updating all
 dependencies from their git repos and tarballs as defined in the
 [flatpak
-manifest](https://git.gnome.org/browse/pitivi/tree/build/flatpak/pitivi.template.json) (located at `build/flatpak/pitivi.template.json`).
+manifest](https://gitlab.gnome.org/GNOME/pitivi/blob/master/build/flatpak/org.pitivi.Pitivi.json).
 
 
 ### How we use the sandbox
