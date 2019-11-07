@@ -49,14 +49,14 @@ come in our [IRC channel](http://www.pitivi.org/?go=contact)!
 ## Integration tests
 
 The integration tests are run with GstValidate. They are located in the
-[tests/validate-tests](https://git.gnome.org/browse/pitivi/tree/tests/validate-tests)
+[tests/validate-tests](https://gitlab.gnome.org/GNOME/pitivi/tree/master/tests/validate-tests)
 directory. Each `.scenario` file in the
-[scenarios](https://github.com/pitivi/pitivi/tree/master/tests/validate-tests/scenarios)
+[scenarios](https://gitlab.gnome.org/GNOME/pitivi/tree/master/tests/validate-tests/scenarios)
 subdirectory contains a sequence of actions which represent a test.
 
 When a test is run, the actions in the scenario are performed by
 handlers in
-[pitivi/utils/validate.py](https://github.com/pitivi/pitivi/blob/master/pitivi/utils/validate.py),
+[pitivi/utils/validate.py](https://gitlab.gnome.org/GNOME/pitivi/blob/master/pitivi/utils/validate.py),
 or by handlers in GES. The handlers generally act on the widgets and
 check the expected effect has been obtained on the GES objects. Besides
 the checks integrated in the handlers, for now it is not possible to

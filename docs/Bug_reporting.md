@@ -161,10 +161,10 @@ gdb python3 -ex "run $(which pitivi)"
 
 ## Debug logs
 
-When you need to know what’s going on inside pitivi, you can launch it
+When you need to know what’s going on inside Pitivi, you can launch it
 with a debug level. In
-[loggable.py](https://git.gnome.org/browse/pitivi/tree/pitivi/utils/loggable.py#n50),
-there are five levels: ( <span style="color:red;">ERROR</span>,
+[loggable.py](https://gitlab.gnome.org/GNOME/pitivi/blob/master/pitivi/utils/loggable.py#L61),
+there are six levels: ( <span style="color:red;">ERROR</span>,
 <span style="color:yellow; background-color:gray;">WARN</span>,
 <span style="color:magenta;">FIXME</span>,
 <span style="color:green;">INFO</span>,
@@ -225,7 +225,7 @@ In the rare cases where a performance problem is caused by our UI code,
 you can profile Pitivi itself, with this command (and yes,
 `JUMP_THROUGH_HOOPS` is needed for this case, it is an environment
 variable of
-[bin/pitivi](https://git.gnome.org/browse/pitivi/tree/bin/pitivi.in):
+[bin/pitivi](https://gitlab.gnome.org/GNOME/pitivi/blob/master/bin/pitivi.in):
 
 ```
 JUMP_THROUGH_HOOPS=1 python3 -m cProfile -s time -o pitivi_performance.profile bin/pitivi
