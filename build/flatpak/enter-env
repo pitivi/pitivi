@@ -1,21 +1,27 @@
 #!/bin/sh
 
-PITIVI_DIR=$(realpath $(dirname $0)/../../)
-
-function generate_path_and_completion_calls {
-  echo "export PATH=$PITIVI_DIR/bin/:/app/bin/:/usr/bin/:\$PATH"
-}
+PITIVI_DIR=$(realpath "$(dirname $0)"/../../)
 
 RCFILE=$PITIVI_DIR/.bashrc
-cp ~/.bashrc $RCFILE
+(
+  cat ~/.bashrc  2>/dev/null
 
-echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/lib/" >> $RCFILE
-echo "export PS1=[ptv]\ \$PS1" >> $RCFILE
-generate_path_and_completion_calls >> $RCFILE
+  echo "export PS1=[ptv]\ \$PS1"
+
+  # Override LD_LIBRARY_PATH with the current value
+  # set by flatpak build.
+  echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+  echo "echo LD_LIBRARY_PATH=\$LD_LIBRARY_PATH"
+
+  # Override PATH so our bin/pitivi can be found.
+  echo "export PATH=$PITIVI_DIR/bin/:/app/bin/:/usr/bin/:\$PATH"
+  echo "echo PATH=\$PATH"
+) > $RCFILE
 
 
 echo "=============================="
-echo "Entering own built environment"
+echo "Launching bash in the sandbox "
 echo "=============================="
 
+# The Gnome SDK only has bash.
 bash --rcfile $RCFILE
