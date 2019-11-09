@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
+"""Logic for checking the system features availability."""
 import datetime
 import multiprocessing
 import os
@@ -22,7 +23,7 @@ import sys
 
 from gi.repository import GObject
 
-from pitivi.check import missing_soft_deps
+from pitivi.check import MISSING_SOFT_DEPS
 from pitivi.configure import APPNAME
 from pitivi.utils.loggable import Loggable
 
@@ -37,6 +38,7 @@ class System(GObject.Object, Loggable):
 
         self._x11 = False
         try:
+            # pylint: disable=unused-import
             from gi.repository import GdkX11
             self._x11 = True
         except ImportError:
@@ -45,7 +47,7 @@ class System(GObject.Object, Loggable):
     def has_x11(self):
         return self._x11
 
-    def desktopMessage(self, title, message, unused_icon=None):
+    def desktop_message(self, title, message, unused_icon=None):
         """Sends a message to the desktop to be displayed to the user.
 
         Args:
@@ -53,10 +55,9 @@ class System(GObject.Object, Loggable):
             message (str): The body of the message.
             icon (str): The icon to be shown with the message
         """
-        self.debug("desktopMessage(): %s, %s", title, message)
-        return None
+        self.debug("desktop_message(): %s, %s", title, message)
 
-    def getUniqueFilename(self, string):
+    def get_unique_filename(self, string):
         """Gets a filename which can only be obtained from the specified string.
 
         Args:
@@ -73,15 +74,15 @@ class FreedesktopOrgSystem(System):
 
     def __init__(self):
         System.__init__(self)
-        if "Notify" not in missing_soft_deps:
+        if "Notify" not in MISSING_SOFT_DEPS:
             from gi.repository import Notify
             Notify.init(APPNAME)
 
-    def desktopMessage(self, title, message, icon="pitivi"):
+    def desktop_message(self, title, message, icon="pitivi"):
         # call super method for consistent logging
-        System.desktopMessage(self, title, message, icon)
+        System.desktop_message(self, title, message, icon)
 
-        if "Notify" not in missing_soft_deps:
+        if "Notify" not in MISSING_SOFT_DEPS:
             from gi.repository import Notify
             notification = Notify.Notification.new(title, message, icon=icon)
             try:
@@ -91,7 +92,7 @@ class FreedesktopOrgSystem(System):
                 # See for example
                 # https://bugzilla.gnome.org/show_bug.cgi?id=719627.
                 self.error(
-                    "desktopMessage: Failed displaying notification: %s", e.message)
+                    "desktop_message: Failed displaying notification: %s", e.message)
                 return None
             return notification
         return None
@@ -136,7 +137,7 @@ def get_system():
     return System()
 
 
-class CPUUsageTracker(object):
+class CPUUsageTracker:
 
     def __init__(self):
         self.reset()

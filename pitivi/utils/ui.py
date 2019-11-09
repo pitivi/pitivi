@@ -41,7 +41,7 @@ from gi.repository.GstPbutils import DiscovererSubtitleInfo
 from gi.repository.GstPbutils import DiscovererVideoInfo
 
 from pitivi.configure import get_pixmap_dir
-from pitivi.utils.loggable import doLog
+from pitivi.utils.loggable import do_log
 from pitivi.utils.loggable import ERROR
 from pitivi.utils.loggable import INFO
 from pitivi.utils.misc import path_from_uri
@@ -69,7 +69,9 @@ FILE_TARGET_ENTRY = Gtk.TargetEntry.new("text/plain", 0, 0)
 URI_TARGET_ENTRY = Gtk.TargetEntry.new("text/uri-list", 0, 0)
 EFFECT_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/effect", 0, 0)
 
-TOUCH_INPUT_SOURCES = (Gdk.InputSource.TOUCHPAD, Gdk.InputSource.TRACKPOINT, Gdk.InputSource.TABLET_PAD)
+TOUCH_INPUT_SOURCES = (Gdk.InputSource.TOUCHPAD,
+                       Gdk.InputSource.TRACKPOINT,
+                       Gdk.InputSource.TABLET_PAD)
 
 
 def get_month_format_string():
@@ -415,9 +417,9 @@ def hex_to_rgb(value):
 
 
 def set_cairo_color(context, color):
-    if type(color) is Gdk.RGBA:
+    if isinstance(color, Gdk.RGBA):
         cairo_color = (float(color.red), float(color.green), float(color.blue))
-    elif type(color) is tuple:
+    elif isinstance(color, tuple):
         # Cairo's set_source_rgb function expects values from 0.0 to 1.0
         cairo_color = [max(0, min(1, x / 255.0)) for x in color]
     else:
@@ -456,7 +458,7 @@ def beautify_asset(asset):
         try:
             beautified_string = beautify_stream(stream)
         except NotImplementedError:
-            doLog(ERROR, "Beautify", "None", "Cannot beautify %s", stream)
+            do_log(ERROR, "Beautify", "None", "Cannot beautify %s", stream)
             continue
         if beautified_string:
             res.append(beautified_string)
@@ -466,7 +468,8 @@ def beautify_asset(asset):
         res.append(_("<b>Duration:</b> %s") % duration)
 
     if asset.creation_progress < 100:
-        res.append(_("<b>Proxy creation progress:</b> %d%%") % asset.creation_progress)
+        res.append(_("<b>Proxy creation progress:</b> %d%%") %
+                   asset.creation_progress)
 
     return "\n".join(res)
 
@@ -487,7 +490,8 @@ def beautify_missing_asset(asset):
 
     size = asset.get_meta("file-size")
     if size:
-        file_size = GLib.format_size_full(size, GLib.FormatSizeFlags.LONG_FORMAT)
+        file_size = GLib.format_size_full(
+            size, GLib.FormatSizeFlags.LONG_FORMAT)
         res.append(_("<b>Size</b>: %s") % file_size)
 
     return "\n".join(res)
@@ -501,7 +505,8 @@ def info_name(info):
     """
     if isinstance(info, GES.Asset):
         from pitivi.utils.proxy import get_proxy_target
-        filename = urllib.parse.unquote(os.path.basename(get_proxy_target(info).get_id()))
+        filename = urllib.parse.unquote(
+            os.path.basename(get_proxy_target(info).get_id()))
     elif isinstance(info, DiscovererInfo):
         filename = urllib.parse.unquote(os.path.basename(info.get_uri()))
     else:
@@ -518,7 +523,7 @@ def beautify_project_path(path):
 
 
 def beautify_stream(stream):
-    if type(stream) is DiscovererAudioInfo:
+    if isinstance(stream, DiscovererAudioInfo):
         if stream.get_depth() == 0:
             return None
 
@@ -529,7 +534,7 @@ def beautify_stream(stream):
         return templ % (stream.get_channels(), stream.get_sample_rate(),
                         stream.get_depth())
 
-    elif type(stream) is DiscovererVideoInfo:
+    elif isinstance(stream, DiscovererVideoInfo):
         par = stream.get_par_num() / stream.get_par_denom()
         width = stream.get_natural_width()
         height = stream.get_natural_height()
@@ -541,17 +546,17 @@ def beautify_stream(stream):
             templ = _("<b>Image:</b> %d×%d <i>pixels</i>")
             return templ % (par * width, height)
 
-    elif type(stream) is DiscovererSubtitleInfo:
+    elif isinstance(stream, DiscovererSubtitleInfo):
         # Ignore subtitle streams
         return None
 
-    elif type(stream) is DiscovererStreamInfo:
+    elif isinstance(stream, DiscovererStreamInfo):
         caps = stream.get_caps().to_string()
         if caps in ("application/x-subtitle", "application/x-id3", "text"):
             # Ignore all audio ID3 tags and subtitle tracks, we don't show them
             return None
 
-    raise NotImplementedError
+    raise ValueError("Unsupported stream type: %s" % stream)
 
 
 def time_to_string(value):
@@ -630,7 +635,7 @@ def beautify_time_delta(seconds):
     return ", ".join(parts)
 
 
-def beautify_ETA(length_nanos):
+def beautify_eta(length_nanos):
     """Converts the specified duration to a fuzzy estimate.
 
     Intended for progress ETAs, not to indicate a clip's duration.
@@ -696,7 +701,7 @@ def clear_styles(widget):
         style.remove_class(css_class)
 
 
-def model(columns, data):
+def create_model(columns, data):
     ret = Gtk.ListStore(*columns)
     for datum in data:
         ret.append(datum)
@@ -716,9 +721,9 @@ def set_combo_value(combo, value):
     combo.props.model.foreach(select_specific_row, found)
 
     if len(found) != 1:
-        doLog(INFO, None, "utils",
-              "Could not set value %s, possible values: %s",
-              (value, [v[0] for v in combo.props.model]))
+        do_log(INFO, None, "utils",
+               "Could not set value %s, possible values: %s",
+               (value, [v[0] for v in combo.props.model]))
         return False
 
     return True
@@ -774,34 +779,35 @@ def fix_infobar(infobar):
     infobar.forall(make_sure_revealer_does_nothing)
 
 
-audio_channels = model((str, int),
-                       [(format_audiochannels(ch), ch) for ch in (8, 6, 4, 2, 1)])
+AUDIO_CHANNELS = create_model((str, int),
+                              [(format_audiochannels(ch), ch)
+                               for ch in (8, 6, 4, 2, 1)])
 
-frame_rates = model((str, object),
-                    [(format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps)) for fps in (
-                        (12, 1),
-                        (15, 1),
-                        (20, 1),
-                        (24000, 1001),
-                        (24, 1),
-                        (25, 1),
-                        (30000, 1001),
-                        (30, 1),
-                        (50, 1),
-                        (60000, 1001),
-                        (60, 1),
-                        (120, 1)
-                    )])
+FRAME_RATES = create_model((str, object),
+                           [(format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps)) for fps in (
+                               (12, 1),
+                               (15, 1),
+                               (20, 1),
+                               (24000, 1001),
+                               (24, 1),
+                               (25, 1),
+                               (30000, 1001),
+                               (30, 1),
+                               (50, 1),
+                               (60000, 1001),
+                               (60, 1),
+                               (120, 1)
+                           )])
 
-audio_rates = model((str, int),
-                    [(format_audiorate(rate), rate) for rate in (
-                        8000,
-                        11025,
-                        12000,
-                        16000,
-                        22050,
-                        24000,
-                        44100,
-                        48000,
-                        96000
-                    )])
+AUDIO_RATES = create_model((str, int),
+                           [(format_audiorate(rate), rate) for rate in (
+                               8000,
+                               11025,
+                               12000,
+                               16000,
+                               22050,
+                               24000,
+                               44100,
+                               48000,
+                               96000
+                           )])

@@ -50,7 +50,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
                         Gdk.EventMask.LEAVE_NOTIFY_MASK |
                         Gdk.EventMask.ALL_EVENTS_MASK)
         self.add(sink_widget)
-        self.connect("size-allocate", self.__on_size_allocate)
+        self.connect("size-allocate", self.__size_allocate_cb)
 
         # Whether to show the percent of the size relative to the project size.
         # It is set to false initially because the viewer gets resized
@@ -65,7 +65,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
         self.add_overlay(self.revealer)
         sink_widget.connect("size-allocate", self.__sink_widget_size_allocate_cb)
 
-    def __on_size_allocate(self, widget, rectangle):
+    def __size_allocate_cb(self, widget, rectangle):
         self.window_size = numpy.array([rectangle.width,
                                         rectangle.height])
         for overlay in self.__overlays.values():
@@ -75,7 +75,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
         if source in self.__overlays:
             return self.__overlays[source]
 
-        if type(source) == GES.TitleSource:
+        if isinstance(source, GES.TitleSource):
             overlay = TitleOverlay(self, source)
         else:
             overlay = MoveScaleOverlay(self, self.app.action_log, source)
@@ -95,7 +95,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
         elif event.type == Gdk.EventType.LEAVE_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
             # If we have a click position, the user is dragging, so we don't want to lose focus and return
             if isinstance(self.click_position, numpy.ndarray):
-                return
+                return False
             for overlay in self.__overlays.values():
                 overlay.unhover()
             self.reset_cursor()
@@ -118,7 +118,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
                     if self.selected_overlay.on_hover(cursor_position):
                         if self.selected_overlay.hovered_handle:
                             self.hovered_overlay = self.selected_overlay
-                            return
+                            return False
 
                 for overlay in self.__visible_overlays:
                     if overlay.on_hover(cursor_position):

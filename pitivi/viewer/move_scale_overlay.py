@@ -22,7 +22,7 @@ import cairo
 import numpy
 
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
-from pitivi.utils.misc import disconnectAllByFunc
+from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.pipeline import PipelineError
 from pitivi.viewer.overlay import Overlay
 
@@ -64,7 +64,7 @@ class Handle:
         self.neighbours = []
 
     def _get_minimal_box_size(self):
-        pass
+        raise NotImplementedError
 
     def _needs_size_restriction(self, handle_position_compare, cursor_position_compare):
         pass
@@ -73,7 +73,7 @@ class Handle:
         pass
 
     def _restrict(self, handle_to_cursor):
-        pass
+        raise NotImplementedError
 
     def __update_window_position(self):
         self.__window_position = (self.position + self.__translation) * self._overlay.stack.window_size
@@ -244,6 +244,7 @@ class CornerHandle(Handle):
     def _needs_size_restriction(self, handle_position_compare, cursor_position_compare):
         if (handle_position_compare != cursor_position_compare).any():
             return True
+        return False
 
     def _update_neighbours(self):
         for neighbour in self.neighbours:
@@ -282,6 +283,7 @@ class EdgeHandle(Handle):
             # left right
             if handle_position_compare[0] != cursor_position_compare[0]:
                 return True
+        return False
 
     def _update_neighbours(self):
         if self.placement[0] in (Edge.left, Edge.right):
@@ -361,7 +363,7 @@ class MoveScaleOverlay(Overlay):
         if project:
             pipeline = project.pipeline
             try:
-                position = pipeline.getPosition()
+                position = pipeline.get_position()
                 return True, position
             except PipelineError:
                 pass
@@ -448,7 +450,7 @@ class MoveScaleOverlay(Overlay):
         return size[0] / size[1]
 
     def on_button_press(self):
-        disconnectAllByFunc(self._source, self.__source_property_changed_cb)
+        disconnect_all_by_func(self._source, self.__source_property_changed_cb)
         self.click_source_position = self.__get_source_position()
         self.__clicked_handle = None
 
@@ -516,7 +518,7 @@ class MoveScaleOverlay(Overlay):
 
     def on_hover(self, cursor_pos):
         if not self.is_visible():
-            return
+            return False
 
         # Check if one of the handles is hovered.
         self.hovered_handle = None

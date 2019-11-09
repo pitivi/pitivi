@@ -55,7 +55,7 @@ def scale_pixbuf(pixbuf, width, height):
 
 
 # Work around https://bugzilla.gnome.org/show_bug.cgi?id=759249
-def disconnectAllByFunc(obj, func):
+def disconnect_all_by_func(obj, func):
     i = 0
     while True:
         i += 1
@@ -63,8 +63,6 @@ def disconnectAllByFunc(obj, func):
             obj.disconnect_by_func(func)
         except TypeError:
             return i
-
-    return i
 
 
 def format_ns(timestamp):
@@ -115,7 +113,7 @@ def is_valid_file(path):
         return False
 
 
-def isWritable(path):
+def is_writable(path):
     """Returns whether the file/path is writable."""
     try:
         if os.path.isdir(path):
@@ -212,7 +210,7 @@ class PathWalker(Thread):
     def _scan_dir(self, folder):
         """Scans the folder recursively and yields the URIs of the files."""
         self.log("Scanning folder %s", folder)
-        for path, dirs, files in os.walk(folder):
+        for path, unused_dirs, files in os.walk(folder):
             if self.stopme.is_set():
                 return
             for afile in files:
@@ -239,8 +237,8 @@ def hash_file(uri):
     return sha256.hexdigest()
 
 
-def quantize(input, interval):
-    return (input // interval) * interval
+def quantize(value, interval):
+    return (value // interval) * interval
 
 
 def show_user_manual(page=None):
@@ -269,14 +267,13 @@ def show_user_manual(page=None):
         try:
             Gtk.show_uri(None, page_uri, time_now)
             return
-        except Exception as e:
+        except GLib.Error as e:
             log.info("utils", "Failed loading URI %s: %s", uri, e)
-            continue
 
+    # Last try calling yelp directly (used in flatpak while we do
+    # not have a portal to access system wild apps)
+    page_uri = get_page_uri(APPMANUALURL_OFFLINE, page)
     try:
-        # Last try calling yelp directly (used in flatpak while we do
-        # not have a portal to access system wild apps)
-        page_uri = get_page_uri(APPMANUALURL_OFFLINE, page)
         subprocess.Popen(["yelp", page_uri])
     except FileNotFoundError as e:
         log.warning("utils", "Failed loading %s: %s", page_uri, e)
@@ -308,9 +305,9 @@ def unicode_error_dialog():
 
 
 def intersect(v1, v2):
-    s = Gst.Structure('t', t=v1).intersect(Gst.Structure('t', t=v2))
-    if s:
-        return s['t']
+    structure = Gst.Structure('t', t=v1).intersect(Gst.Structure('t', t=v2))
+    if structure:
+        return structure['t']
 
     return None
 
@@ -375,16 +372,16 @@ def fixate_caps_with_default_values(template, restrictions, default_values,
                 elif default_val:
                     struct[field] = default_val
             else:
-                v = None
+                value = None
                 struct_val = struct[field]
                 if prev_val:
-                    v = intersect(struct_val, prev_val)
-                    if v is not None:
-                        struct[field] = v
-                if v is None and default_val:
-                    v = intersect(struct_val, default_val)
-                    if v is not None:
-                        struct[field] = v
+                    value = intersect(struct_val, prev_val)
+                    if value is not None:
+                        struct[field] = value
+                if value is None and default_val:
+                    value = intersect(struct_val, default_val)
+                    if value is not None:
+                        struct[field] = value
                 else:
                     log.debug("utils", "Field %s from %s is plainly fixated",
                               field, struct)
@@ -440,8 +437,7 @@ def video_info_get_rotation(video_info):
 
 
 def video_info_get_natural_width(video_info):
-    """Applies the pixel aspect ratio and rotation information
-       to the width of the video info.
+    """Gets the width by applying the pixel aspect ratio and rotation.
 
     Args:
         video_info (GstPbutils.DiscovererVideoInfo): The video info.

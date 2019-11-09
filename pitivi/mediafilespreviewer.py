@@ -41,19 +41,19 @@ from pitivi.viewer.viewer import ViewerWidget
 PREVIEW_WIDTH = 250
 PREVIEW_HEIGHT = 100
 
-GlobalSettings.addConfigSection('filechooser-preview')
-GlobalSettings.addConfigOption('FCEnablePreview',
-                               section='filechooser-preview',
-                               key='do-preview-on-clip-import',
-                               default=True)
-GlobalSettings.addConfigOption('FCpreviewWidth',
-                               section='filechooser-preview',
-                               key='video-preview-width',
-                               default=PREVIEW_WIDTH)
-GlobalSettings.addConfigOption('FCpreviewHeight',
-                               section='filechooser-preview',
-                               key='video-preview-height',
-                               default=PREVIEW_HEIGHT)
+GlobalSettings.add_config_section('filechooser-preview')
+GlobalSettings.add_config_option('FCEnablePreview',
+                                 section='filechooser-preview',
+                                 key='do-preview-on-clip-import',
+                                 default=True)
+GlobalSettings.add_config_option('FCpreviewWidth',
+                                 section='filechooser-preview',
+                                 key='video-preview-width',
+                                 default=PREVIEW_WIDTH)
+GlobalSettings.add_config_option('FCpreviewHeight',
+                                 section='filechooser-preview',
+                                 key='video-preview-height',
+                                 default=PREVIEW_HEIGHT)
 
 ACCEPTABLE_TAGS = [
     Gst.TAG_ALBUM_ARTIST,
@@ -85,8 +85,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
 
         # playbin for play pics
         self.player = AssetPipeline(name="preview-player")
-        self.player.connect('eos', self._pipelineEosCb)
-        self.player.connect('error', self._pipelineErrorCb)
+        self.player.connect('eos', self._pipeline_eos_cb)
+        self.player.connect('error', self._pipeline_error_cb)
         self.player._bus.connect('message::tag', self._tag_found_cb)
 
         # some global variables for preview handling
@@ -254,7 +254,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
                 self.current_preview_type = 'video'
                 self.preview_image.hide()
                 self.player.uri = self.current_selected_uri
-                self.player.setState(Gst.State.PAUSED)
+                self.player.set_simple_state(Gst.State.PAUSED)
                 self.pos_adj.props.upper = duration
                 video_width = video.get_natural_width()
                 video_height = video.get_natural_height()
@@ -288,9 +288,9 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.description = "\n".join([
                 beautify_stream(audio),
                 _("<b>Duration</b>: %s") % pretty_duration])
-            self.player.setState(Gst.State.NULL)
+            self.player.set_simple_state(Gst.State.NULL)
             self.player.uri = self.current_selected_uri
-            self.player.setState(Gst.State.PAUSED)
+            self.player.set_simple_state(Gst.State.PAUSED)
             self.play_button.show()
             self.seeker.show()
             self.b_zoom_in.hide()
@@ -311,7 +311,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
             # The content played once already and the pipeline is at the end.
             self.at_eos = False
             self.player.simple_seek(0)
-        self.player.setState(Gst.State.PLAYING)
+        self.player.set_simple_state(Gst.State.PLAYING)
         self.is_playing = True
         self.play_button.set_icon_name("media-playback-pause")
         GLib.timeout_add(250, self._update_position)
@@ -319,12 +319,12 @@ class PreviewWidget(Gtk.Grid, Loggable):
 
     def pause(self, state=Gst.State.PAUSED):
         if state is not None:
-            self.player.setState(state)
+            self.player.set_simple_state(state)
         self.is_playing = False
         self.play_button.set_icon_name("media-playback-start")
         self.log("Preview paused")
 
-    def togglePlayback(self):
+    def toggle_playback(self):
         if self.is_playing:
             self.pause()
         else:
@@ -349,14 +349,14 @@ class PreviewWidget(Gtk.Grid, Loggable):
         if event.type == Gdk.EventType.BUTTON_PRESS:
             self.countinuous_seek = True
             if self.is_playing:
-                self.player.setState(Gst.State.PAUSED)
+                self.player.set_simple_state(Gst.State.PAUSED)
         elif event.type == Gdk.EventType.BUTTON_RELEASE:
             self.countinuous_seek = False
             value = int(widget.get_value())
             self.player.simple_seek(value)
             self.at_eos = False
             if self.is_playing:
-                self.player.setState(Gst.State.PLAYING)
+                self.player.set_simple_state(Gst.State.PLAYING)
             # Now, allow gobject timeout to continue updating the slider pos:
             self.slider_being_used = False
 
@@ -366,24 +366,24 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.player.simple_seek(value)
             self.at_eos = False
 
-    def _pipelineEosCb(self, unused_pipeline):
+    def _pipeline_eos_cb(self, unused_pipeline):
         self._update_position()
         self.pause()
         # The pipeline is at the end. Leave it like that so the last frame
         # is displayed.
         self.at_eos = True
 
-    def _pipelineErrorCb(self, unused_pipeline, unused_message, unused_detail):
+    def _pipeline_error_cb(self, unused_pipeline, unused_message, unused_detail):
         self.pause(state=Gst.State.NULL)
 
     def _update_position(self, *unused_args):
         if self.is_playing and not self.slider_being_used:
-            curr_pos = self.player.getPosition()
+            curr_pos = self.player.get_position()
             self.pos_adj.set_value(int(curr_pos))
         return self.is_playing
 
     def _on_start_stop_clicked_cb(self, button):
-        self.togglePlayback()
+        self.toggle_playback()
 
     def _on_zoom_clicked_cb(self, button, increment):
         if self.current_preview_type == 'video':
@@ -424,19 +424,19 @@ class PreviewWidget(Gtk.Grid, Loggable):
 
     def _append_tag(self, taglist, tag, tags):
         if tag in ACCEPTABLE_TAGS:
-            name = Gst.tag_get_nick(tag)
-            type = Gst.tag_get_type(tag)
+            tag_name = Gst.tag_get_nick(tag)
+            tag_type = Gst.tag_get_type(tag)
             type_getters = {GObject.TYPE_STRING: 'get_string',
                             GObject.TYPE_DOUBLE: 'get_double',
                             GObject.TYPE_FLOAT: 'get_float',
                             GObject.TYPE_INT: 'get_int',
                             GObject.TYPE_UINT: 'get_uint'}
-            if type in type_getters:
-                res, value = getattr(taglist, type_getters[type])(tag)
+            if tag_type in type_getters:
+                res, value = getattr(taglist, type_getters[tag_type])(tag)
                 assert res
-                if not type == GObject.TYPE_STRING:
+                if not tag_type == GObject.TYPE_STRING:
                     value = str(value)
-                tags[name] = value
+                tags[tag_name] = value
 
     def _tag_found_cb(self, unused_bus, message):
         tag_list = message.parse_tag()

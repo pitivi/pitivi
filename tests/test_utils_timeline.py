@@ -32,7 +32,7 @@ from tests.test_timeline_timeline import BaseTestTimeline
 
 class TestSelected(common.TestCase):
 
-    def testBoolEvaluation(self):
+    def test_bool_evaluation(self):
         selected = Selected()
         self.assertFalse(selected)
 
@@ -45,71 +45,71 @@ class TestSelected(common.TestCase):
 
 class TestSelection(BaseTestTimeline):
 
-    def testBoolEvaluation(self):
+    def test_bool_evaluation(self):
         clip1 = mock.MagicMock()
         selection = Selection()
         self.assertFalse(selection)
-        selection.setSelection([clip1], SELECT)
+        selection.set_selection([clip1], SELECT)
         self.assertTrue(selection)
-        selection.setSelection([clip1], SELECT_ADD)
+        selection.set_selection([clip1], SELECT_ADD)
         self.assertTrue(selection)
-        selection.setSelection([clip1], UNSELECT)
+        selection.set_selection([clip1], UNSELECT)
         self.assertFalse(selection)
 
-    def testGetSingleClip(self):
+    def test_get_single_clip(self):
         selection = Selection()
         clip1 = common.create_test_clip(GES.UriClip)
         clip2 = common.create_test_clip(GES.TitleClip)
 
         # Selection empty.
-        self.assertIsNone(selection.getSingleClip())
-        self.assertIsNone(selection.getSingleClip(GES.UriClip))
-        self.assertIsNone(selection.getSingleClip(GES.TitleClip))
+        self.assertIsNone(selection.get_single_clip())
+        self.assertIsNone(selection.get_single_clip(GES.UriClip))
+        self.assertIsNone(selection.get_single_clip(GES.TitleClip))
 
-        selection.setSelection([clip1], SELECT)
-        self.assertEqual(selection.getSingleClip(), clip1)
-        self.assertEqual(selection.getSingleClip(GES.UriClip), clip1)
-        self.assertIsNone(selection.getSingleClip(GES.TitleClip))
+        selection.set_selection([clip1], SELECT)
+        self.assertEqual(selection.get_single_clip(), clip1)
+        self.assertEqual(selection.get_single_clip(GES.UriClip), clip1)
+        self.assertIsNone(selection.get_single_clip(GES.TitleClip))
 
-        selection.setSelection([clip2], SELECT)
-        self.assertEqual(selection.getSingleClip(), clip2)
-        self.assertIsNone(selection.getSingleClip(GES.UriClip))
-        self.assertEqual(selection.getSingleClip(GES.TitleClip), clip2)
+        selection.set_selection([clip2], SELECT)
+        self.assertEqual(selection.get_single_clip(), clip2)
+        self.assertIsNone(selection.get_single_clip(GES.UriClip))
+        self.assertEqual(selection.get_single_clip(GES.TitleClip), clip2)
 
-        selection.setSelection([clip1, clip2], SELECT)
-        self.assertIsNone(selection.getSingleClip())
-        self.assertIsNone(selection.getSingleClip(GES.UriClip))
-        self.assertIsNone(selection.getSingleClip(GES.TitleClip))
+        selection.set_selection([clip1, clip2], SELECT)
+        self.assertIsNone(selection.get_single_clip())
+        self.assertIsNone(selection.get_single_clip(GES.UriClip))
+        self.assertIsNone(selection.get_single_clip(GES.TitleClip))
 
     def test_can_group_ungroup(self):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
-        clip1, clip2 = self.addClipsSimple(timeline, 2)
+        clip1, clip2 = self.add_clips_simple(timeline, 2)
 
         selection = Selection()
         self.assertFalse(selection.can_group)
         self.assertFalse(selection.can_ungroup)
 
-        selection.setSelection([clip1], SELECT)
+        selection.set_selection([clip1], SELECT)
         self.assertFalse(selection.can_group)
         self.assertTrue(selection.can_ungroup)
 
-        selection.setSelection([clip2], SELECT_ADD)
+        selection.set_selection([clip2], SELECT_ADD)
         self.assertTrue(selection.can_group)
         self.assertFalse(selection.can_ungroup)
 
-        selection.setSelection([], SELECT)
+        selection.set_selection([], SELECT)
         self.assertFalse(selection.can_group)
         self.assertFalse(selection.can_ungroup)
 
     def test_toplevels(self):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
-        clip1, clip2, clip3, clip4 = self.addClipsSimple(timeline, 4)
+        clip1, clip2, clip3, clip4 = self.add_clips_simple(timeline, 4)
 
         selection = Selection()
 
-        selection.setSelection([clip1, clip2, clip3, clip4], SELECT)
+        selection.set_selection([clip1, clip2, clip3, clip4], SELECT)
         self.assertSetEqual(selection.toplevels, {clip1, clip2, clip3, clip4})
 
         group1 = GES.Container.group([clip1, clip2])

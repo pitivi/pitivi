@@ -17,6 +17,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""Tests for the pitivi.undo.timeline module."""
+# pylint: disable=protected-access
 from unittest import mock
 
 from gi.repository import Gdk
@@ -47,17 +49,18 @@ class BaseTestUndoTimeline(common.TestCase):
         self.timeline = self.project.ges_timeline
         self.layer = self.timeline.append_layer()
         self.action_log = self.app.action_log
+        self.timeline_container = None
 
     def setup_timeline_container(self):
         project = self.app.project_manager.current_project
         self.timeline_container = TimelineContainer(self.app)
-        self.timeline_container.setProject(project)
+        self.timeline_container.set_project(project)
 
         timeline = self.timeline_container.timeline
         timeline.app.project_manager.current_project = project
         timeline.get_parent = mock.MagicMock(return_value=self.timeline_container)
 
-    def getTimelineClips(self):
+    def get_timeline_clips(self):
         for layer in self.timeline.layers:
             for clip in layer.get_clips():
                 yield clip
@@ -71,9 +74,9 @@ class BaseTestUndoTimeline(common.TestCase):
         # the timeline creates transitions automatically.
         mainloop = common.create_main_loop()
 
-        def projectLoadedCb(unused_project, unused_timeline):
+        def loaded_cb(project, timeline):
             mainloop.quit()
-        self.app.project_manager.current_project.connect("loaded", projectLoadedCb)
+        self.app.project_manager.current_project.connect("loaded", loaded_cb)
         mainloop.run()
         self.assertTrue(self.timeline.props.auto_transition)
 
@@ -83,12 +86,13 @@ class BaseTestUndoTimeline(common.TestCase):
         self.assertEqual(len(effects), count)
 
     def get_transition_element(self, ges_layer):
-        """"Gets the first found GES.VideoTransition clip."""
+        """Gets the first found GES.VideoTransition clip."""
         for clip in ges_layer.get_clips():
             if isinstance(clip, GES.TransitionClip):
                 for element in clip.get_children(False):
                     if isinstance(element, GES.VideoTransition):
                         return element
+        return None
 
     def check_layers(self, layers):
         self.assertEqual(self.timeline.get_layers(), layers)
@@ -158,7 +162,7 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         self.assertIsNone(clip1.get_parent())
         self.assertIsNone(clip2.get_parent())
 
-        for i in range(4):
+        for _ in range(4):
             # Undo ungrouping.
             self.action_log.undo()
             self.assertTrue(isinstance(clip1.get_parent(), GES.Group))
@@ -187,47 +191,47 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         asset = GES.UriClipAsset.request_sync(uri)
         clip = asset.extract()
         self.layer.add_clip(clip)
-        clips = list(self.getTimelineClips())
+        clips = list(self.get_timeline_clips())
         self.assertEqual(len(clips), 1, clips)
         self.assertEqual(len(clips[0].get_children(False)), 2)
 
         common.TestCase.toggle_clip_selection(self, clips[0], True)
         self.timeline_container.ungroup_action.activate(None)
-        clips = list(self.getTimelineClips())
+        clips = list(self.get_timeline_clips())
         self.assertEqual(len(clips), 2, clips)
         self.assertEqual(len(clips[0].get_children(False)), 1)
         self.assertEqual(len(clips[1].get_children(False)), 1)
 
         timeline.selection.select(clips)
         self.timeline_container.group_action.activate(None)
-        clips = list(self.getTimelineClips())
+        clips = list(self.get_timeline_clips())
         self.assertEqual(len(clips), 1, clips)
         self.assertEqual(len(clips[0].get_children(False)), 2)
 
-        for i in range(2):
+        for _ in range(2):
             # Undo grouping.
             self.action_log.undo()
-            clips = list(self.getTimelineClips())
+            clips = list(self.get_timeline_clips())
             self.assertEqual(len(clips), 2, clips)
             self.assertEqual(len(clips[0].get_children(False)), 1)
             self.assertEqual(len(clips[1].get_children(False)), 1)
 
             # Undo ungrouping.
             self.action_log.undo()
-            clips = list(self.getTimelineClips())
+            clips = list(self.get_timeline_clips())
             self.assertEqual(len(clips), 1, clips)
             self.assertEqual(len(clips[0].get_children(False)), 2)
 
             # Redo ungrouping.
             self.action_log.redo()
-            clips = list(self.getTimelineClips())
+            clips = list(self.get_timeline_clips())
             self.assertEqual(len(clips), 2, clips)
             self.assertEqual(len(clips[0].get_children(False)), 1)
             self.assertEqual(len(clips[1].get_children(False)), 1)
 
             # Redo grouping.
             self.action_log.redo()
-            clips = list(self.getTimelineClips())
+            clips = list(self.get_timeline_clips())
             self.assertEqual(len(clips), 1, clips)
             self.assertEqual(len(clips[0].get_children(False)), 2)
 
@@ -237,17 +241,17 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         asset = GES.UriClipAsset.request_sync(uri)
         clip1 = asset.extract()
         self.timeline_container.insert_clips_on_first_layer(clips=[clip1], position=0)
-        clips = list(self.getTimelineClips())
+        clips = list(self.get_timeline_clips())
         self.assertEqual(len(clips), 1, clips)
 
         # Undo insert on first layer
         self.action_log.undo()
-        clips = list(self.getTimelineClips())
+        clips = list(self.get_timeline_clips())
         self.assertEqual(len(clips), 0, clips)
 
         # Redo insert on first layer
         self.action_log.redo()
-        clips = list(self.getTimelineClips())
+        clips = list(self.get_timeline_clips())
         self.assertEqual(len(clips), 1, clips)
 
         # Insert new clip to create a layer
@@ -276,14 +280,14 @@ class TestTimelineObserver(BaseTestUndoTimeline):
 
 class TestLayerObserver(BaseTestUndoTimeline):
 
-    def testLayerMoved(self):
+    def test_layer_moved(self):
         layer1 = self.layer
         layer2 = self.timeline.append_layer()
         layer3 = self.timeline.append_layer()
         self.assertEqual(self.timeline.get_layers(), [layer1, layer2, layer3])
 
         timeline_ui = Timeline(app=self.app, size_group=mock.Mock())
-        timeline_ui.setProject(self.app.project_manager.current_project)
+        timeline_ui.set_project(self.app.project_manager.current_project)
 
         # Click and drag a layer control box to move the layer.
         with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
@@ -295,8 +299,8 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
             with mock.patch.object(layer1.control_ui, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (0, 0)
-                with mock.patch.object(timeline_ui, "_get_layer_at") as _get_layer_at:
-                    _get_layer_at.return_value = layer3, None
+                with mock.patch.object(timeline_ui, "get_layer_at") as get_layer_at:
+                    get_layer_at.return_value = layer3, None
                     timeline_ui._motion_notify_event_cb(None, event=event)
 
             timeline_ui._button_release_event_cb(None, event=event)
@@ -310,35 +314,35 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
     def test_layer_renamed(self):
         layer = Layer(self.layer, timeline=mock.Mock())
-        self.assertIsNone(layer._nameIfSet())
+        self.assertIsNone(layer._name_if_set())
 
         with self.app.action_log.started("change layer name"):
-            layer.setName("Beautiful name")
-        self.assertEqual(layer._nameIfSet(), "Beautiful name")
+            layer.set_name("Beautiful name")
+        self.assertEqual(layer._name_if_set(), "Beautiful name")
 
         self.action_log.undo()
-        self.assertIsNone(layer._nameIfSet())
+        self.assertIsNone(layer._name_if_set())
 
         self.action_log.redo()
-        self.assertEqual(layer._nameIfSet(), "Beautiful name")
+        self.assertEqual(layer._name_if_set(), "Beautiful name")
 
     def test_add_clip(self):
         clip1 = GES.TitleClip()
         with self.action_log.started("add clip"):
             self.layer.add_clip(clip1)
 
-        stack, = self.action_log.undo_stacks
+        stack = self.action_log.undo_stacks[0]
         self.assertEqual(len(stack.done_actions), 2, stack.done_actions)
         self.assertTrue(isinstance(stack.done_actions[0], ClipAdded))
-        self.assertTrue(clip1 in self.getTimelineClips())
+        self.assertTrue(clip1 in self.get_timeline_clips())
 
         self.action_log.undo()
-        self.assertFalse(clip1 in self.getTimelineClips())
+        self.assertFalse(clip1 in self.get_timeline_clips())
 
         self.action_log.redo()
-        self.assertTrue(clip1 in self.getTimelineClips())
+        self.assertTrue(clip1 in self.get_timeline_clips())
 
-    def testRemoveClip(self):
+    def test_remove_clip(self):
         stacks = []
         self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
 
@@ -352,13 +356,13 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertEqual(1, len(stack.done_actions))
         action = stack.done_actions[0]
         self.assertTrue(isinstance(action, ClipRemoved))
-        self.assertFalse(clip1 in self.getTimelineClips())
+        self.assertFalse(clip1 in self.get_timeline_clips())
 
         self.action_log.undo()
-        self.assertTrue(clip1 in self.getTimelineClips())
+        self.assertTrue(clip1 in self.get_timeline_clips())
 
         self.action_log.redo()
-        self.assertFalse(clip1 in self.getTimelineClips())
+        self.assertFalse(clip1 in self.get_timeline_clips())
 
     def test_layer_added(self):
         self.setup_timeline_container()
@@ -402,7 +406,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
         clip1.set_start(5 * Gst.SECOND)
         clip1.set_duration(0.5 * Gst.SECOND)
-        timeline_clips = list(self.getTimelineClips())
+        timeline_clips = list(self.get_timeline_clips())
         self.assertEqual(1, len(timeline_clips), timeline_clips)
         self.assertEqual(5 * Gst.SECOND, timeline_clips[0].get_start())
         self.assertEqual(0.5 * Gst.SECOND, timeline_clips[0].get_duration())
@@ -410,7 +414,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
         with self.action_log.started("ungroup"):
             ungrouped = GES.Container.ungroup(clip1, False)
             self.assertEqual(2, len(ungrouped), ungrouped)
-        timeline_clips = list(self.getTimelineClips())
+        timeline_clips = list(self.get_timeline_clips())
         self.assertEqual(2, len(timeline_clips), timeline_clips)
         self.assertEqual(5 * Gst.SECOND, timeline_clips[0].get_start())
         self.assertEqual(0.5 * Gst.SECOND, timeline_clips[0].get_duration())
@@ -418,20 +422,20 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertEqual(0.5 * Gst.SECOND, timeline_clips[1].get_duration())
 
         self.action_log.undo()
-        timeline_clips = list(self.getTimelineClips())
+        timeline_clips = list(self.get_timeline_clips())
         self.assertEqual(1, len(timeline_clips))
         self.assertEqual(5 * Gst.SECOND, timeline_clips[0].get_start())
         self.assertEqual(0.5 * Gst.SECOND, timeline_clips[0].get_duration())
 
         self.action_log.redo()
-        timeline_clips = list(self.getTimelineClips())
+        timeline_clips = list(self.get_timeline_clips())
         self.assertEqual(2, len(timeline_clips), timeline_clips)
         self.assertEqual(5 * Gst.SECOND, timeline_clips[0].get_start())
         self.assertEqual(0.5 * Gst.SECOND, timeline_clips[0].get_duration())
         self.assertEqual(5 * Gst.SECOND, timeline_clips[1].get_start())
         self.assertEqual(0.5 * Gst.SECOND, timeline_clips[1].get_duration())
 
-    def testSplitClip(self):
+    def test_split_clip(self):
         clip = GES.TitleClip()
         clip.set_start(0 * Gst.SECOND)
         clip.set_duration(20 * Gst.SECOND)
@@ -443,7 +447,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
             self.assertEqual(2, len(self.layer.get_clips()))
 
         with self.action_log.started("split clip"):
-            clip2 = clip1.split(15 * Gst.SECOND)
+            _clip2 = clip1.split(15 * Gst.SECOND)
             self.assertEqual(3, len(self.layer.get_clips()))
 
         self.action_log.undo()
@@ -456,7 +460,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.action_log.redo()
         self.assertEqual(3, len(self.layer.get_clips()))
 
-    def testAddEffectToClip(self):
+    def test_add_effect_to_clip(self):
         stacks = []
         self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
 
@@ -486,7 +490,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
                                  clip1.get_children(True)
                                  if isinstance(effect, GES.Effect)]))
 
-    def testRemoveEffectFromClip(self):
+    def test_remove_effect_from_clip(self):
         stacks = []
         self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
 
@@ -563,7 +567,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
             self.layer.add_clip(clip2)
 
         # Make sure the transition asset is ignored.
-        stack, = self.action_log.undo_stacks
+        stack = self.action_log.undo_stacks[0]
         for action in stack.done_actions:
             self.assertNotIsInstance(action, AssetAddedAction,
                                      stack.done_actions)
@@ -679,7 +683,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.timeline_container.copy_action.emit("activate", None)
 
         position = 10
-        project.pipeline.getPosition = mock.Mock(return_value=position)
+        project.pipeline.get_position = mock.Mock(return_value=position)
         self.timeline_container.paste_action.emit("activate", None)
         self.assertEqual(len(self.layer.get_clips()), 2)
 
@@ -692,7 +696,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
 class TestControlSourceObserver(BaseTestUndoTimeline):
 
-    def testControlSourceValueAdded(self):
+    def test_control_source_value_added(self):
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip = asset.extract()
@@ -716,7 +720,7 @@ class TestControlSourceObserver(BaseTestUndoTimeline):
         self.assertEqual(Gst.SECOND * 0.5, keyframes[0].timestamp)
         self.assertEqual(0.2, keyframes[0].value)
 
-    def testControlSourceValueRemoved(self):
+    def test_control_source_value_removed(self):
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip = asset.extract()
@@ -741,7 +745,7 @@ class TestControlSourceObserver(BaseTestUndoTimeline):
         self.action_log.redo()
         self.assertEqual(0, len(control_source.get_all()))
 
-    def testControlSourceValueChanged(self):
+    def test_control_source_value_changed(self):
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip = asset.extract()
@@ -863,7 +867,7 @@ class TestTrackElementObserver(BaseTestUndoTimeline):
 
 class TestTimelineElementObserver(BaseTestUndoTimeline):
 
-    def testTrackElementPropertyChanged(self):
+    def test_track_element_property_changed(self):
         clip1 = GES.TitleClip()
         self.layer.add_clip(clip1)
 
@@ -931,7 +935,7 @@ class TestTimelineElementObserver(BaseTestUndoTimeline):
 
 class TestGObjectObserver(BaseTestUndoTimeline):
 
-    def testClipPropertyChange(self):
+    def test_clip_property_change(self):
         stacks = []
         self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
 
@@ -1036,9 +1040,9 @@ class TestDragDropUndo(BaseTestUndoTimeline):
             event.get_button.return_value = True, 1
             timeline_ui._button_press_event_cb(None, event)
 
-            def translate_coordinates(widget, x, y):
+            def translate_coordinates_func(widget, x, y):
                 return x, y
-            clip.ui.translate_coordinates = translate_coordinates
+            clip.ui.translate_coordinates = translate_coordinates_func
             event = mock.Mock()
             event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
             event.x = 1
@@ -1063,7 +1067,7 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [clip])
 
-        stack, = self.action_log.undo_stacks
+        stack = self.action_log.undo_stacks[0]
         # Only the clip creation action should be on the stack.
         self.assertEqual(len(stack.done_actions), 1, stack.done_actions)
 
@@ -1107,7 +1111,7 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [clip])
 
-        stack, = self.action_log.undo_stacks
+        stack = self.action_log.undo_stacks[0]
         # Only the clip creation action should be on the stack.
         self.assertEqual(len(stack.done_actions), 1, stack.done_actions)
 
@@ -1153,8 +1157,8 @@ class TestDragDropUndo(BaseTestUndoTimeline):
 
         # Events emitted while dragging an asset on a separator in the timeline:
         # motion, receive, motion, leave, drop.
-        with mock.patch.object(Gdk, "drag_status") as drag_status_mock:
-            with mock.patch.object(Gtk, "drag_finish") as drag_finish_mock:
+        with mock.patch.object(Gdk, "drag_status") as _drag_status_mock:
+            with mock.patch.object(Gtk, "drag_finish") as _drag_finish_mock:
                 target = mock.Mock()
                 target.name.return_value = URI_TARGET_ENTRY.target
                 timeline_ui.drag_dest_find_target = mock.Mock(return_value=target)
@@ -1162,30 +1166,30 @@ class TestDragDropUndo(BaseTestUndoTimeline):
                 timeline_ui._drag_motion_cb(None, None, 0, 0, 0)
                 self.assertTrue(timeline_ui.drag_get_data.called)
 
-                self.assertFalse(timeline_ui.dropDataReady)
+                self.assertFalse(timeline_ui.drop_data_ready)
                 selection_data = mock.Mock()
                 selection_data.get_data_type = mock.Mock(return_value=target)
                 selection_data.get_uris.return_value = [asset.props.id]
-                self.assertIsNone(timeline_ui.dropData)
-                self.assertFalse(timeline_ui.dropDataReady)
+                self.assertIsNone(timeline_ui.drop_data)
+                self.assertFalse(timeline_ui.drop_data_ready)
                 timeline_ui._drag_data_received_cb(None, None, 0, 0, selection_data, None, 0)
-                self.assertEqual(timeline_ui.dropData, [asset.props.id])
-                self.assertTrue(timeline_ui.dropDataReady)
+                self.assertEqual(timeline_ui.drop_data, [asset.props.id])
+                self.assertTrue(timeline_ui.drop_data_ready)
 
                 timeline_ui.drag_get_data.reset_mock()
-                self.assertIsNone(timeline_ui.draggingElement)
+                self.assertIsNone(timeline_ui.dragging_element)
                 self.assertFalse(timeline_ui.dropping_clips)
 
-                def translate_coordinates(widget, x, y):
+                def translate_coordinates_func(widget, x, y):
                     return x, y
-                timeline_ui.translate_coordinates = translate_coordinates
+                timeline_ui.translate_coordinates = translate_coordinates_func
                 timeline_ui._drag_motion_cb(timeline_ui, None, 0, LAYER_HEIGHT * 2, 0)
                 self.assertFalse(timeline_ui.drag_get_data.called)
-                self.assertIsNotNone(timeline_ui.draggingElement)
+                self.assertIsNotNone(timeline_ui.dragging_element)
                 self.assertTrue(timeline_ui.dropping_clips)
 
                 timeline_ui._drag_leave_cb(None, None, None)
-                self.assertIsNone(timeline_ui.draggingElement)
+                self.assertIsNone(timeline_ui.dragging_element)
                 self.assertFalse(timeline_ui.dropping_clips)
 
                 timeline_ui._drag_drop_cb(None, None, 0, 0, 0)

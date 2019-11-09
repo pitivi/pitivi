@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # pylint: disable=missing-docstring
 # -*- coding: utf-8 -*-
 # Pitivi Developer Console
@@ -26,9 +27,10 @@ import sys
 
 from gi.repository import GObject
 from gi.repository import Gtk
-from utils import display_autocompletion
-from utils import FakeOut
-from utils import swap_std
+
+from plugins.console.utils import display_autocompletion
+from plugins.console.utils import FakeOut
+from plugins.console.utils import swap_std
 
 
 class ConsoleHistory(GObject.Object):
@@ -76,7 +78,6 @@ class ConsoleHistory(GObject.Object):
 
 
 class ConsoleBuffer(Gtk.TextBuffer):
-    # pylint: disable=too-many-instance-attributes
 
     def __init__(self, namespace, welcome_message=""):
         Gtk.TextBuffer.__init__(self)
@@ -171,10 +172,8 @@ class ConsoleBuffer(Gtk.TextBuffer):
             self.__refresh_prompt(new_command)
 
     def get_autocompletion_matches(self, input_text):
-        """
-        Given an input text, return possible matches for autocompletion.
-        """
-        # pylint: disable=bare-except, eval-used, too-many-branches, too-many-locals
+        """Returns possible matches for autocompletion."""
+        # pylint: disable=bare-except, eval-used
         # Try to get the possible full object to scan.
         # For example, if input_text is "func(circle.ra", we obtain "circle.ra".
         identifiers = re.findall(r"[_A-Za-z][\w\.]*\w$", input_text)

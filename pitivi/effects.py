@@ -19,7 +19,7 @@
 # Boston, MA 02110-1301, USA.
 """Effects categorization and management.
 
- There are different types of effects available:
+There are different types of effects available:
   _ Simple Audio/Video Effects
      GStreamer elements that only apply to audio OR video
      Only take the elements who have a straightforward meaning/action
@@ -147,7 +147,7 @@ HIDDEN_EFFECTS = [
     # Overlaying an image onto a video stream can already be done.
     "gdkpixbufoverlay"]
 
-GlobalSettings.addConfigSection('effect-library')
+GlobalSettings.add_config_section('effect-library')
 
 (COL_NAME_TEXT,
  COL_DESC_TEXT,
@@ -159,7 +159,7 @@ GlobalSettings.addConfigSection('effect-library')
 ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
 
 
-class EffectInfo(object):
+class EffectInfo:
     """Info for displaying and using an effect.
 
     Attributes:
@@ -239,7 +239,7 @@ class EffectsManager(Loggable):
 
         useless_words = ["Video", "Audio", "audio", "effect",
                          _("Video"), _("Audio"), _("Audio").lower(), _("effect")]
-        uselessRe = re.compile(" |".join(useless_words))
+        useless_re = re.compile(" |".join(useless_words))
 
         registry = Gst.Registry.get()
         factories = registry.get_feature_list(Gst.ElementFactory)
@@ -274,10 +274,10 @@ class EffectsManager(Loggable):
                 # Workaround https://bugzilla.gnome.org/show_bug.cgi?id=760566
                 # Add name which identifies the element and is unique.
                 longname = "%s %s" % (longname, name)
-            human_name = uselessRe.sub("", longname).title()
+            human_name = useless_re.sub("", longname).title()
             effect = EffectInfo(name,
                                 media_type,
-                                categories=self._getEffectCategories(name),
+                                categories=self._get_effect_categories(name),
                                 human_name=human_name,
                                 description=factory.get_description())
             self._effects[name] = effect
@@ -303,7 +303,7 @@ class EffectsManager(Loggable):
             self.error("Can not use GL effects: %s", e)
             HIDDEN_EFFECTS.extend(self.gl_effects)
 
-    def getInfo(self, bin_description):
+    def get_info(self, bin_description):
         """Gets the info for an effect which can be applied.
 
         Args:
@@ -315,7 +315,7 @@ class EffectsManager(Loggable):
         name = EffectInfo.name_from_bin_description(bin_description)
         return self._effects.get(name)
 
-    def _getEffectCategories(self, effect_name):
+    def _get_effect_categories(self, effect_name):
         """Gets the categories to which the specified effect belongs.
 
         Args:
@@ -339,15 +339,15 @@ class EffectsManager(Loggable):
     @property
     def video_categories(self):
         """Gets all video effect categories names."""
-        return EffectsManager._getCategoriesNames(VIDEO_EFFECTS_CATEGORIES)
+        return EffectsManager._get_categories_names(VIDEO_EFFECTS_CATEGORIES)
 
     @property
     def audio_categories(self):
         """Gets all audio effect categories names."""
-        return EffectsManager._getCategoriesNames(AUDIO_EFFECTS_CATEGORIES)
+        return EffectsManager._get_categories_names(AUDIO_EFFECTS_CATEGORIES)
 
     @staticmethod
-    def _getCategoriesNames(categories):
+    def _get_categories_names(categories):
         ret = [category_name for category_name, unused_effects in categories]
         ret.sort()
         ret.insert(0, _("All effects"))
@@ -369,8 +369,8 @@ class EffectListWidget(Gtk.Box, Loggable):
 
         self.app = instance
 
-        self._draggedItems = None
-        self._effectType = VIDEO_EFFECT
+        self._dragged_items = None
+        self._effect_type = VIDEO_EFFECT
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
         builder = Gtk.Builder()
@@ -380,8 +380,8 @@ class EffectListWidget(Gtk.Box, Loggable):
         toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
         self.video_togglebutton = builder.get_object("video_togglebutton")
         self.audio_togglebutton = builder.get_object("audio_togglebutton")
-        self.categoriesWidget = builder.get_object("categories")
-        self.searchEntry = builder.get_object("search_entry")
+        self.categories_widget = builder.get_object("categories")
+        self.search_entry = builder.get_object("search_entry")
 
         # Store
         self.storemodel = Gtk.ListStore(
@@ -391,7 +391,7 @@ class EffectListWidget(Gtk.Box, Loggable):
 
         # Create the filter for searching the storemodel.
         self.model_filter = self.storemodel.filter_new()
-        self.model_filter.set_visible_func(self._setRowVisible, data=None)
+        self.model_filter.set_visible_func(self._set_row_visible_func, data=None)
 
         self.view = Gtk.TreeView(model=self.model_filter)
         self.view.props.headers_visible = False
@@ -416,21 +416,21 @@ class EffectListWidget(Gtk.Box, Loggable):
         text_cell.set_property("ellipsize", Pango.EllipsizeMode.END)
         text_col.pack_start(text_cell, True)
         text_col.set_cell_data_func(
-            text_cell, self.viewDescriptionCellDataFunc, None)
+            text_cell, self.view_description_cell_data_func, None)
 
         self.view.append_column(icon_col)
         self.view.append_column(text_col)
 
-        self.view.connect("query-tooltip", self._treeViewQueryTooltipCb)
+        self.view.connect("query-tooltip", self._tree_view_query_tooltip_cb)
         self.view.props.has_tooltip = True
 
         # Make the treeview a drag source which provides effects.
         self.view.enable_model_drag_source(
             Gdk.ModifierType.BUTTON1_MASK, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
 
-        self.view.connect("button-press-event", self._buttonPressEventCb)
-        self.view.connect("select-cursor-row", self._enterPressEventCb)
-        self.view.connect("drag-data-get", self._dndDragDataGetCb)
+        self.view.connect("button-press-event", self._button_press_event_cb)
+        self.view.connect("select-cursor-row", self._enter_press_event_cb)
+        self.view.connect("drag-data-get", self._dnd_drag_data_get_cb)
 
         scrollwin = Gtk.ScrolledWindow()
         scrollwin.props.hscrollbar_policy = Gtk.PolicyType.NEVER
@@ -442,7 +442,7 @@ class EffectListWidget(Gtk.Box, Loggable):
 
         # Delay the loading of the available effects so the application
         # starts faster.
-        GLib.idle_add(self._loadAvailableEffectsCb)
+        GLib.idle_add(self._load_available_effects_cb)
         self.populate_categories_widget()
 
         # Individually show the tab's widgets.
@@ -450,62 +450,62 @@ class EffectListWidget(Gtk.Box, Loggable):
         scrollwin.show_all()
         toolbar.show_all()
 
-    def _treeViewQueryTooltipCb(self, view, x, y, keyboard_mode, tooltip):
+    def _tree_view_query_tooltip_cb(self, view, x, y, keyboard_mode, tooltip):
         is_row, x, y, model, path, tree_iter = view.get_tooltip_context(
             x, y, keyboard_mode)
         if not is_row:
             return False
 
         view.set_tooltip_row(tooltip, path)
-        tooltip.set_markup(self.formatDescription(model, tree_iter))
+        tooltip.set_markup(self.format_description(model, tree_iter))
         return True
 
-    def viewDescriptionCellDataFunc(self, unused_column, cell, model, iter_, unused_data):
-        cell.props.markup = self.formatDescription(model, iter_)
+    def view_description_cell_data_func(self, unused_column, cell, model, iter_, unused_data):
+        cell.props.markup = self.format_description(model, iter_)
 
-    def formatDescription(self, model, iter_):
-        name, element_name, desc = model.get(iter_, COL_NAME_TEXT, COL_ELEMENT_NAME, COL_DESC_TEXT)
+    def format_description(self, model, iter_):
+        name, desc = model.get(iter_, COL_NAME_TEXT, COL_DESC_TEXT)
         escape = GLib.markup_escape_text
         return "<b>%s</b>\n%s" % (escape(name), escape(desc))
 
-    def _loadAvailableEffectsCb(self):
-        self._addFactories(self.app.effects.video_effects, VIDEO_EFFECT)
-        self._addFactories(self.app.effects.audio_effects, AUDIO_EFFECT)
+    def _load_available_effects_cb(self):
+        self._add_factories(self.app.effects.video_effects, VIDEO_EFFECT)
+        self._add_factories(self.app.effects.audio_effects, AUDIO_EFFECT)
         return False
 
-    def _addFactories(self, elements, effectType):
+    def _add_factories(self, elements, effect_type):
         for element in elements:
             name = element.get_name()
             if name in HIDDEN_EFFECTS:
                 continue
-            effect_info = self.app.effects.getInfo(name)
+            effect_info = self.app.effects.get_info(name)
             self.storemodel.append([effect_info.human_name,
                                     effect_info.description,
-                                    effectType,
+                                    effect_type,
                                     effect_info.categories,
                                     name,
                                     effect_info.icon])
 
     def populate_categories_widget(self):
-        self.categoriesWidget.get_model().clear()
+        self.categories_widget.get_model().clear()
         icon_column = self.view.get_column(0)
 
-        if self._effectType is VIDEO_EFFECT:
+        if self._effect_type is VIDEO_EFFECT:
             for category in self.app.effects.video_categories:
-                self.categoriesWidget.append_text(category)
+                self.categories_widget.append_text(category)
             icon_column.props.visible = True
         else:
             for category in self.app.effects.audio_categories:
-                self.categoriesWidget.append_text(category)
+                self.categories_widget.append_text(category)
             icon_column.props.visible = False
 
-        self.categoriesWidget.set_active(0)
+        self.categories_widget.set_active(0)
 
-    def _dndDragDataGetCb(self, unused_view, drag_context, selection_data, unused_info, unused_timestamp):
-        data = bytes(self.getSelectedEffect(), "UTF-8")
+    def _dnd_drag_data_get_cb(self, unused_view, drag_context, selection_data, unused_info, unused_timestamp):
+        data = bytes(self.get_selected_effect(), "UTF-8")
         selection_data.set(drag_context.list_targets()[0], 0, data)
 
-    def _rowUnderMouseSelected(self, view, event):
+    def _row_under_mouse_selected(self, view, event):
         result = view.get_path_at_pos(int(event.x), int(event.y))
         if result:
             path = result[0]
@@ -514,35 +514,35 @@ class EffectListWidget(Gtk.Box, Loggable):
                 selection.count_selected_rows() > 0
         return False
 
-    def _enterPressEventCb(self, unused_view, unused_event=None):
-        self._addSelectedEffect()
+    def _enter_press_event_cb(self, unused_view, unused_event=None):
+        self._add_selected_effect()
 
-    def _buttonPressEventCb(self, view, event):
+    def _button_press_event_cb(self, view, event):
         chain_up = True
 
         if event.button == 3:
             chain_up = False
         elif event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
-            self._addSelectedEffect()
+            self._add_selected_effect()
         else:
-            chain_up = not self._rowUnderMouseSelected(view, event)
+            chain_up = not self._row_under_mouse_selected(view, event)
 
         if chain_up:
-            self._draggedItems = None
+            self._dragged_items = None
         else:
-            self._draggedItems = self.getSelectedEffect()
+            self._dragged_items = self.get_selected_effect()
 
         Gtk.TreeView.do_button_press_event(view, event)
         return True
 
-    def _addSelectedEffect(self):
+    def _add_selected_effect(self):
         """Adds the selected effect to the single selected clip, if any."""
-        effect = self.getSelectedEffect()
-        effect_info = self.app.effects.getInfo(effect)
+        effect = self.get_selected_effect()
+        effect_info = self.app.effects.get_info(effect)
         if not effect_info:
             return
         timeline = self.app.gui.editor.timeline_ui.timeline
-        clip = timeline.selection.getSingleClip()
+        clip = timeline.selection.get_single_clip()
         if not clip:
             return
         pipeline = timeline.ges_timeline.get_parent()
@@ -552,14 +552,14 @@ class EffectListWidget(Gtk.Box, Loggable):
                                          toplevel=True):
             clip.ui.add_effect(effect_info)
 
-    def getSelectedEffect(self):
-        if self._draggedItems:
-            return self._draggedItems
-        model, rows = self.view.get_selection().get_selected_rows()
+    def get_selected_effect(self):
+        if self._dragged_items:
+            return self._dragged_items
+        unused_model, rows = self.view.get_selection().get_selected_rows()
         path = self.model_filter.convert_path_to_child_path(rows[0])
         return self.storemodel[path][COL_ELEMENT_NAME]
 
-    def _toggleViewTypeCb(self, widget):
+    def _toggle_view_type_cb(self, widget):
         """Switches the view mode between video and audio.
 
         This makes the two togglebuttons behave like a group of radiobuttons.
@@ -571,34 +571,40 @@ class EffectListWidget(Gtk.Box, Loggable):
             self.video_togglebutton.set_active(not widget.get_active())
 
         if self.video_togglebutton.get_active():
-            self._effectType = VIDEO_EFFECT
+            self._effect_type = VIDEO_EFFECT
         else:
-            self._effectType = AUDIO_EFFECT
+            self._effect_type = AUDIO_EFFECT
         self.populate_categories_widget()
         self.model_filter.refilter()
 
-    def _categoryChangedCb(self, unused_combobox):
+    def _category_changed_cb(self, combobox):
         self.model_filter.refilter()
 
-    def _searchEntryChangedCb(self, unused_entry):
+    def _search_entry_changed_cb(self, unused_entry):
         self.model_filter.refilter()
 
-    def _searchEntryIconClickedCb(self, entry, unused, unused1):
+    def _search_entry_icon_press_cb(self, entry, icon_pos, event):
         entry.set_text("")
 
-    def _setRowVisible(self, model, iter, unused_data):
-        if not self._effectType == model.get_value(iter, COL_EFFECT_TYPE):
+    def _set_row_visible_func(self, model, model_iter, data):
+        if not self._effect_type == model.get_value(model_iter, COL_EFFECT_TYPE):
             return False
-        if model.get_value(iter, COL_EFFECT_CATEGORIES) is None:
+        if model.get_value(model_iter, COL_EFFECT_CATEGORIES) is None:
             return False
-        if self.categoriesWidget.get_active_text() not in model.get_value(iter, COL_EFFECT_CATEGORIES):
+        if self.categories_widget.get_active_text() not in model.get_value(model_iter, COL_EFFECT_CATEGORIES):
             return False
-        text = self.searchEntry.get_text().lower()
-        return text in model.get_value(iter, COL_DESC_TEXT).lower() or\
-            text in model.get_value(iter, COL_NAME_TEXT).lower()
+        text = self.search_entry.get_text().lower()
+        return text in model.get_value(model_iter, COL_DESC_TEXT).lower() or\
+            text in model.get_value(model_iter, COL_NAME_TEXT).lower()
 
 
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message', 'parent']
+
+
+def create_widget_accumulator_func(ihint, return_accu, handler_return, *args):
+    """Aborts `create_widget` emission if we got a widget."""
+    continue_emission = handler_return is None
+    return continue_emission, handler_return
 
 
 class EffectsPropertiesManager(GObject.Object, Loggable):
@@ -608,19 +614,13 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
         app (Pitivi): The app.
     """
 
-    def create_widget_accumulator(*args):
-        """Aborts `create_widget` emission if we got a widget."""
-        handler_return = args[2]
-        if handler_return is None:
-            return True, handler_return
-        return False, handler_return
-
     __gsignals__ = {
-        "create_widget": (GObject.SignalFlags.RUN_LAST, Gtk.Widget, (GstElementSettingsWidget, GES.Effect,),
-                          create_widget_accumulator),
+        "create_widget": (
+            GObject.SignalFlags.RUN_LAST, Gtk.Widget, (GstElementSettingsWidget, GES.Effect,),
+            create_widget_accumulator_func),
         "create_property_widget": (
             GObject.SignalFlags.RUN_LAST, object, (GstElementSettingsWidget, GES.Effect, object, object,),
-            create_widget_accumulator),
+            create_widget_accumulator_func),
     }
 
     def do_create_widget(self, effect_widget, effect):
@@ -628,8 +628,7 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
         effect_name = effect.get_property("bin-description")
         self.log('UI is being auto-generated for "%s"', effect_name)
         effect_widget.add_widgets(create_property_widget=self.create_property_widget, with_reset_button=True)
-        self._postConfiguration(effect, effect_widget)
-        return None
+        self._post_configuration(effect, effect_widget)
 
     def do_create_property_widget(self, effect_widget, effect, prop, prop_value):
         """Creates a widget if the `create_property_widget` handlers did not."""
@@ -642,7 +641,7 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
         self.cache_dict = {}
         self.app = app
 
-    def getEffectConfigurationUI(self, effect):
+    def get_effect_configuration_ui(self, effect):
         """Gets a configuration UI element for the effect.
 
         Args:
@@ -659,28 +658,28 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
             if widget is not None:
                 effect_widget.show_widget(widget)
             self.cache_dict[effect] = effect_widget
-            self._connectAllWidgetCallbacks(effect_widget, effect)
+            self._connect_all_widget_callbacks(effect_widget, effect)
 
         return self.cache_dict[effect]
 
-    def cleanCache(self, effect):
+    def clean_cache(self, effect):
         if effect in self.cache_dict:
-            return self.cache_dict.pop(effect)
+            self.cache_dict.pop(effect)
 
-    def _postConfiguration(self, effect, effect_set_ui):
+    def _post_configuration(self, effect, effect_set_ui):
         effect_name = effect.get_property("bin-description")
         if 'aspectratiocrop' in effect.get_property("bin-description"):
             for widget in effect_set_ui.get_children()[0].get_children():
                 if isinstance(widget, FractionWidget):
-                    widget.addPresets(["4:3", "5:4", "9:3", "16:9", "16:10"])
+                    widget.add_presets(["4:3", "5:4", "9:3", "16:9", "16:10"])
         else:
             self.log('No additional set-up required for "%s"', effect_name)
             return
         self.debug('Additional properties successfully set for "%s"', effect_name)
 
-    def _connectAllWidgetCallbacks(self, effect_widget, effect):
+    def _connect_all_widget_callbacks(self, effect_widget, effect):
         for prop, widget in effect_widget.properties.items():
-            widget.connectValueChanged(self._on_widget_value_changed_cb, widget, prop, effect, effect_widget)
+            widget.connect_value_changed(self._on_widget_value_changed_cb, widget, prop, effect, effect_widget)
 
     def _on_widget_value_changed_cb(self, unused_widget, prop_widget, prop, effect, effect_widget):
         if effect_widget.updating_property:
@@ -690,7 +689,7 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
 
         effect_widget.updating_property = True
         try:
-            value = prop_widget.getWidgetValue()
+            value = prop_widget.get_widget_value()
 
             # FIXME Workaround in order to make aspectratiocrop working
             if isinstance(value, Gst.Fraction):

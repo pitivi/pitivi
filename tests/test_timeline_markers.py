@@ -28,10 +28,10 @@ from tests.test_undo_timeline import BaseTestUndoTimeline
 
 
 class TestMarkers(BaseTestUndoTimeline):
-    """Class for markers tests"""
+    """Tests for markers."""
 
     def test_marker_added_ui(self):
-        "Checks the add marker ui"
+        """Checks the add marker UI."""
         self.setup_timeline_container()
         markers = self.timeline.get_marker_list("markers")
         marker_box = self.timeline_container.markers
@@ -50,18 +50,18 @@ class TestMarkers(BaseTestUndoTimeline):
             event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
             marker_box.do_button_release_event(event)
 
-        position = Zoomable.pixelToNs(event.x)
+        position = Zoomable.pixel_to_ns(event.x)
         self.assert_markers(markers, [(position, None)])
 
     def test_marker_removed_ui(self):
-        "Checks the remove marker ui"
+        """Checks the remove marker UI."""
         self.setup_timeline_container()
         markers = self.timeline.get_marker_list("markers")
         marker_box = self.timeline_container.markers
         marker_box.markers_container = markers
 
         x = 200
-        position = Zoomable.pixelToNs(x)
+        position = Zoomable.pixel_to_ns(x)
         marker = marker_box.markers_container.add(position)
         self.assert_markers(markers, [(position, None)])
 
@@ -87,12 +87,12 @@ class TestMarkers(BaseTestUndoTimeline):
         marker_box.markers_container = markers
 
         x1 = 300
-        position1 = Zoomable.pixelToNs(x1)
+        position1 = Zoomable.pixel_to_ns(x1)
         marker = marker_box.markers_container.add(position1)
         self.assert_markers(markers, [(position1, None)])
 
         x2 = 400
-        position2 = Zoomable.pixelToNs(x2)
+        position2 = Zoomable.pixel_to_ns(x2)
 
         event = mock.Mock(spec=Gdk.EventButton)
         event.x = x2
@@ -121,7 +121,7 @@ class TestMarkers(BaseTestUndoTimeline):
         marker_box.markers_container = markers
 
         x = 500
-        position = Zoomable.pixelToNs(x)
+        position = Zoomable.pixel_to_ns(x)
         marker = marker_box.markers_container.add(position)
         self.assert_markers(markers, [(position, None)])
 

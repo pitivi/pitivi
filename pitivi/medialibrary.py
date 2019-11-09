@@ -46,7 +46,7 @@ from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.settings import GlobalSettings
 from pitivi.timeline.previewers import AssetPreviewer
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import disconnectAllByFunc
+from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import PathWalker
 from pitivi.utils.misc import quote_uri
@@ -55,7 +55,7 @@ from pitivi.utils.proxy import get_proxy_target
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.ui import beautify_asset
-from pitivi.utils.ui import beautify_ETA
+from pitivi.utils.ui import beautify_eta
 from pitivi.utils.ui import FILE_TARGET_ENTRY
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import info_name
@@ -69,21 +69,21 @@ from pitivi.utils.ui import URI_TARGET_ENTRY
 SHOW_TREEVIEW = 1
 SHOW_ICONVIEW = 2
 
-GlobalSettings.addConfigSection('clip-library')
-GlobalSettings.addConfigOption('lastImportFolder',
-                               section='clip-library',
-                               key='last-folder',
-                               environment='PITIVI_IMPORT_FOLDER',
-                               default=os.path.expanduser("~"))
-GlobalSettings.addConfigOption('closeImportDialog',
-                               section='clip-library',
-                               key='close-import-dialog-after-import',
-                               default=True)
-GlobalSettings.addConfigOption('lastClipView',
-                               section='clip-library',
-                               key='last-clip-view',
-                               type_=int,
-                               default=SHOW_ICONVIEW)
+GlobalSettings.add_config_section('clip-library')
+GlobalSettings.add_config_option('lastImportFolder',
+                                 section='clip-library',
+                                 key='last-folder',
+                                 environment='PITIVI_IMPORT_FOLDER',
+                                 default=os.path.expanduser("~"))
+GlobalSettings.add_config_option('closeImportDialog',
+                                 section='clip-library',
+                                 key='close-import-dialog-after-import',
+                                 default=True)
+GlobalSettings.add_config_option('last_clip_view',
+                                 section='clip-library',
+                                 key='last-clip-view',
+                                 type_=int,
+                                 default=SHOW_ICONVIEW)
 
 STORE_MODEL_STRUCTURE = (
     GdkPixbuf.Pixbuf, GdkPixbuf.Pixbuf,
@@ -177,11 +177,11 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
         size_group.add_widget(self.__keep_open_check)
         size_group.add_widget(hq_proxy_row)
 
-        if self.app.settings.proxyingStrategy == ProxyingStrategy.AUTOMATIC:
+        if self.app.settings.proxying_strategy == ProxyingStrategy.AUTOMATIC:
             self.hq_proxy_check.set_active(True)
             self.hq_combo.set_sensitive(True)
             self.hq_combo.props.active = 0
-        elif self.app.settings.proxyingStrategy == ProxyingStrategy.ALL:
+        elif self.app.settings.proxying_strategy == ProxyingStrategy.ALL:
             self.hq_proxy_check.set_active(True)
             self.hq_combo.set_sensitive(True)
             self.hq_combo.props.active = 1
@@ -213,7 +213,7 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
             self.hq_proxy_check.set_active(True)
 
     def _target_res_cb(self, label_widget, unused_uri):
-        self.app.gui.editor.showProjectSettingsDialog()
+        self.app.gui.editor.show_project_settings_dialog()
         self.__update_scaled_proxy_check()
 
     def __update_scaled_proxy_check(self):
@@ -221,17 +221,17 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
         target_height = self.app.project_manager.current_project.scaled_proxy_height
         self.scaled_proxy_check.set_label(_("Scale assets larger than %s×%s px.") % (target_width, target_height))
 
-    def saveValues(self):
+    def save_values(self):
         self.app.settings.closeImportDialog = not self.__keep_open_check.get_active()
 
         if self.hq_proxy_check.get_active():
             if self.hq_combo.props.active == 0:
-                self.app.settings.proxyingStrategy = ProxyingStrategy.AUTOMATIC
+                self.app.settings.proxying_strategy = ProxyingStrategy.AUTOMATIC
             else:
-                self.app.settings.proxyingStrategy = ProxyingStrategy.ALL
+                self.app.settings.proxying_strategy = ProxyingStrategy.ALL
         else:
             assert not self.scaled_proxy_check.get_active()
-            self.app.settings.proxyingStrategy = ProxyingStrategy.NOTHING
+            self.app.settings.proxying_strategy = ProxyingStrategy.NOTHING
 
         self.app.settings.auto_scaling_enabled = self.scaled_proxy_check.get_active()
 
@@ -270,6 +270,8 @@ class AssetThumbnail(GObject.Object, Loggable):
         self.__asset = asset
         self.proxy_manager = proxy_manager
         self.__previewer = None
+        self.small_thumb = None
+        self.large_thumb = None
         self.refresh()
 
     def refresh(self):
@@ -415,6 +417,7 @@ class AssetThumbnail(GObject.Object, Loggable):
         return icon
 
     def _set_state(self):
+        # pylint: disable=attribute-defined-outside-init
         asset = self.__asset
         target = asset.get_proxy_target()
         target_is_valid = target and not target.get_error()
@@ -428,7 +431,7 @@ class AssetThumbnail(GObject.Object, Loggable):
             self.state = self.ASSET_PROXYING_ERROR
         elif self.proxy_manager.is_asset_queued(asset):
             self.state = self.IN_PROGRESS
-        elif not asset.is_image() and not self.proxy_manager.isAssetFormatWellSupported(asset):
+        elif not asset.is_image() and not self.proxy_manager.is_asset_format_well_supported(asset):
             self.state = self.UNSUPPORTED
         else:
             self.state = self.NO_PROXY
@@ -488,9 +491,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.app = app
         self._errors = []
         self._project = None
-        self._draggedPaths = None
+        self._dragged_paths = None
         self.dragged = False
-        self.clip_view = self.app.settings.lastClipView
+        self.clip_view = self.app.settings.last_clip_view
         if self.clip_view not in (SHOW_TREEVIEW, SHOW_ICONVIEW):
             self.clip_view = SHOW_ICONVIEW
         self.import_start_time = time.time()
@@ -508,7 +511,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._project_settings_infobar.set_message_type(Gtk.MessageType.OTHER)
         self._project_settings_infobar.set_show_close_button(True)
         self._project_settings_infobar.add_button(_("Project Settings"), Gtk.ResponseType.OK)
-        self._project_settings_infobar.connect("response", self.__projectSettingsSetInfobarCb)
+        self._project_settings_infobar.connect("response", self.__project_settings_set_infobar_cb)
         self._project_settings_label = Gtk.Label()
         self._project_settings_label.set_line_wrap(True)
         self._project_settings_label.show()
@@ -519,7 +522,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._import_warning_infobar = builder.get_object("warning_infobar")
         fix_infobar(self._import_warning_infobar)
         self._import_warning_infobar.hide()
-        self._import_warning_infobar.connect("response", self.__warningInfobarCb)
+        self._import_warning_infobar.connect("response", self.__warning_infobar_cb)
         self._warning_label = builder.get_object("warning_label")
         self._view_error_button = builder.get_object("view_error_button")
         toolbar = builder.get_object("medialibrary_toolbar")
@@ -527,7 +530,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._import_button = builder.get_object("media_import_button")
         self._clipprops_button = builder.get_object("media_props_button")
         self._listview_button = builder.get_object("media_listview_button")
-        searchEntry = builder.get_object("media_search_entry")
+        search_entry = builder.get_object("media_search_entry")
 
         # Store
         self.storemodel = Gtk.ListStore(*STORE_MODEL_STRUCTURE)
@@ -536,8 +539,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # Prefer to sort the media library elements by URI
         # rather than show them randomly.
         self.storemodel.set_sort_column_id(COL_URI, Gtk.SortType.ASCENDING)
-        self.storemodel.connect("row-deleted", self.__updateViewCb)
-        self.storemodel.connect("row-inserted", self.__updateViewCb)
+        self.storemodel.connect("row-deleted", self.__update_view_cb)
+        self.storemodel.connect("row-inserted", self.__update_view_cb)
 
         # Scrolled Windows
         self.treeview_scrollwin = Gtk.ScrolledWindow()
@@ -556,24 +559,24 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         # Filtering model for the search box.
         # Use this instead of using self.storemodel directly
-        self.modelFilter = self.storemodel.filter_new()
-        self.modelFilter.set_visible_func(
-            self._setRowVisible, data=searchEntry)
+        self.model_filter = self.storemodel.filter_new()
+        self.model_filter.set_visible_func(
+            self._set_row_visible_func, data=search_entry)
 
         # TreeView
         # Displays icon, name, type, length
-        self.treeview = Gtk.TreeView(model=self.modelFilter)
+        self.treeview = Gtk.TreeView(model=self.model_filter)
         self.treeview_scrollwin.add(self.treeview)
         self.treeview.connect(
-            "button-press-event", self._treeViewButtonPressEventCb)
+            "button-press-event", self._tree_view_button_press_event_cb)
         self.treeview.connect(
-            "button-release-event", self._treeViewButtonReleaseEventCb)
-        self.treeview.connect("row-activated", self._itemOrRowActivatedCb)
+            "button-release-event", self._tree_view_button_release_event_cb)
+        self.treeview.connect("row-activated", self._iconview_item_or_row_activated_cb)
         self.treeview.set_headers_visible(False)
         self.treeview.set_property("search_column", COL_SEARCH_TEXT)
         tsel = self.treeview.get_selection()
         tsel.set_mode(Gtk.SelectionMode.MULTIPLE)
-        tsel.connect("changed", self._viewSelectionChangedCb)
+        tsel.connect("changed", self._iconview_selection_changed_cb)
 
         pixbufcol = Gtk.TreeViewColumn(_("Icon"))
         pixbufcol.set_expand(False)
@@ -599,15 +602,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         namecol.add_attribute(txtcell, "markup", COL_INFOTEXT)
 
         # IconView
-        self.iconview = Gtk.IconView(model=self.modelFilter)
+        self.iconview = Gtk.IconView(model=self.model_filter)
         self.iconview_scrollwin.add(self.iconview)
         self.iconview.connect(
-            "button-press-event", self._iconViewButtonPressEventCb)
+            "button-press-event", self._iconview_button_press_event_cb)
         self.iconview.connect(
-            "button-release-event", self._iconViewButtonReleaseEventCb)
-        self.iconview.connect("item-activated", self._itemOrRowActivatedCb)
-        self.iconview.connect(
-            "selection-changed", self._viewSelectionChangedCb)
+            "button-release-event", self._iconview_button_release_event_cb)
+        self.iconview.connect("item-activated", self._iconview_item_or_row_activated_cb)
+        self.iconview.connect("selection-changed", self._iconview_selection_changed_cb)
         self.iconview.set_item_orientation(Gtk.Orientation.VERTICAL)
         self.iconview.set_property("has_tooltip", True)
         self.iconview.set_tooltip_column(COL_INFOTEXT)
@@ -640,9 +642,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         project_manager = self.app.project_manager
         project_manager.connect(
             "new-project-loading", self._new_project_loading_cb)
-        project_manager.connect("new-project-loaded", self._newProjectLoadedCb)
-        project_manager.connect("new-project-failed", self._newProjectFailedCb)
-        project_manager.connect("project-closed", self._projectClosedCb)
+        project_manager.connect("new-project-loaded", self._new_project_loaded_cb)
+        project_manager.connect("new-project-failed", self._new_project_failed_cb)
+        project_manager.connect("project-closed", self._project_closed_cb)
 
         # Drag and Drop
         self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
@@ -651,34 +653,34 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.drag_dest_add_uri_targets()
         self.connect("drag_data_received", self._drag_data_received_cb)
 
-        self._setupViewAsDragAndDropSource(self.treeview)
-        self._setupViewAsDragAndDropSource(self.iconview)
+        self._setup_view_as_drag_and_drop_source(self.treeview)
+        self._setup_view_as_drag_and_drop_source(self.iconview)
 
         # Hack so that the views have the same method as self
-        self.treeview.getSelectedItems = self.getSelectedItems
+        self.treeview.get_selected_items = self.get_selected_items
 
         actions_group = Gio.SimpleActionGroup()
         self.insert_action_group("medialibrary", actions_group)
         self.app.shortcuts.register_group("medialibrary", _("Media Library"), position=50)
 
         self.remove_assets_action = Gio.SimpleAction.new("remove-assets", None)
-        self.remove_assets_action.connect("activate", self._removeAssetsCb)
+        self.remove_assets_action.connect("activate", self._remove_assets_cb)
         actions_group.add_action(self.remove_assets_action)
         self.app.shortcuts.add("medialibrary.remove-assets", ["<Primary>Delete"],
                                _("Remove the selected assets"))
 
         self.insert_at_end_action = Gio.SimpleAction.new("insert-assets-at-end", None)
-        self.insert_at_end_action.connect("activate", self._insertEndCb)
+        self.insert_at_end_action.connect("activate", self._insert_end_cb)
         actions_group.add_action(self.insert_at_end_action)
         self.app.shortcuts.add("medialibrary.insert-assets-at-end", ["Insert"],
                                _("Insert selected assets at the end of the timeline"))
 
-        self._updateActions()
+        self._update_actions()
 
         # Set the state of the view mode toggle button.
         self._listview_button.set_active(self.clip_view == SHOW_TREEVIEW)
         # Make sure the proper view is displayed.
-        self._displayClipView()
+        self._display_clip_view()
 
         # Add all the child widgets.
         self.pack_start(toolbar, False, False, 0)
@@ -693,19 +695,19 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.debug("Finalizing %s", self)
 
         self.app.project_manager.disconnect_by_func(self._new_project_loading_cb)
-        self.app.project_manager.disconnect_by_func(self._newProjectLoadedCb)
-        self.app.project_manager.disconnect_by_func(self._newProjectFailedCb)
-        self.app.project_manager.disconnect_by_func(self._projectClosedCb)
+        self.app.project_manager.disconnect_by_func(self._new_project_loaded_cb)
+        self.app.project_manager.disconnect_by_func(self._new_project_failed_cb)
+        self.app.project_manager.disconnect_by_func(self._project_closed_cb)
 
         if not self._project:
             self.debug("No project set...")
             return
 
         for asset in self._project.list_assets(GES.Extractable):
-            disconnectAllByFunc(asset, self.__assetProxiedCb)
-            disconnectAllByFunc(asset, self.__assetProxyingCb)
+            disconnect_all_by_func(asset, self.__asset_proxied_cb)
+            disconnect_all_by_func(asset, self.__asset_proxying_cb)
 
-        self.__disconnectFromProject()
+        self.__disconnect_from_project()
 
     @staticmethod
     def compare_basename(model, iter1, iter2, unused_user_data):
@@ -726,8 +728,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 return -1
         return 1
 
-    def getAssetForUri(self, uri):
-        for path in self.modelFilter:
+    def get_asset_for_uri(self, uri):
+        for path in self.model_filter:
             asset = path[COL_ASSET]
             info = asset.get_info()
             asset_uri = info.get_uri()
@@ -736,29 +738,30 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 return asset
 
         self.warning("Did not find any asset for uri: %s", uri)
+        return None
 
-    def _setupViewAsDragAndDropSource(self, view):
+    def _setup_view_as_drag_and_drop_source(self, view):
         view.drag_source_set(0, [], Gdk.DragAction.COPY)
         view.enable_model_drag_source(
             Gdk.ModifierType.BUTTON1_MASK, [URI_TARGET_ENTRY], Gdk.DragAction.COPY)
         view.drag_source_add_uri_targets()
-        view.connect("drag-data-get", self._dndDragDataGetCb)
-        view.connect_after("drag-begin", self._dndDragBeginCb)
-        view.connect("drag-end", self._dndDragEndCb)
+        view.connect("drag-data-get", self._dnd_drag_data_get_cb)
+        view.connect_after("drag-begin", self._dnd_drag_begin_cb)
+        view.connect("drag-end", self._dnd_drag_end_cb)
 
-    def __updateViewCb(self, unused_model, unused_path, unused_iter=None):
-        if not len(self.storemodel):
+    def __update_view_cb(self, unused_model, unused_path, unused_iter=None):
+        if len(self.storemodel) == 0:
             self._welcome_infobar.show_all()
         else:
             self._welcome_infobar.hide()
 
-    def _importSourcesCb(self, unused_action):
+    def _import_sources_cb(self, unused_action):
         self.show_import_assets_dialog()
 
-    def _removeAssetsCb(self, unused_action, unused_parameter):
+    def _remove_assets_cb(self, unused_action, unused_parameter):
         """Removes the selected assets from the project."""
         model = self.treeview.get_model()
-        paths = self.getSelectedPaths()
+        paths = self.get_selected_paths()
         if not paths:
             return
         # use row references so we don't have to care if a path has been
@@ -771,39 +774,39 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 asset = model[row.get_path()][COL_ASSET]
                 target = asset.get_proxy_target()
                 self._project.remove_asset(asset)
-                self.app.gui.editor.timeline_ui.purgeAsset(asset.props.id)
+                self.app.gui.editor.timeline_ui.purge_asset(asset.props.id)
 
                 if target:
                     self._project.remove_asset(target)
-                    self.app.gui.editor.timeline_ui.purgeAsset(target.props.id)
+                    self.app.gui.editor.timeline_ui.purge_asset(target.props.id)
 
         # The treeview can make some of the remaining items selected, so
         # make sure none are selected.
-        self._unselectAll()
+        self._unselect_all()
 
-    def _insertEndCb(self, unused_action, unused_parameter):
-        self.app.gui.editor.timeline_ui.insertAssets(self.getSelectedAssets(), -1)
+    def _insert_end_cb(self, unused_action, unused_parameter):
+        self.app.gui.editor.timeline_ui.insert_assets(self.get_selected_assets(), -1)
 
-    def _searchEntryChangedCb(self, entry):
+    def _search_entry_changed_cb(self, entry):
         # With many hundred clips in an iconview with dynamic columns and
         # ellipsizing, doing needless searches is very expensive.
         # Realistically, nobody expects to search for only one character,
         # and skipping that makes a huge difference in responsiveness.
         if len(entry.get_text()) != 1:
-            self.modelFilter.refilter()
+            self.model_filter.refilter()
 
-    def _searchEntryIconClickedCb(self, entry, icon_pos, unused_event):
+    def _search_entry_icon_press_cb(self, entry, icon_pos, event):
         if icon_pos == Gtk.EntryIconPosition.SECONDARY:
             entry.set_text("")
         elif icon_pos == Gtk.EntryIconPosition.PRIMARY:
-            self._selectUnusedSources()
+            self._select_unused_sources()
             # Focus the container so the user can use Ctrl+Delete, for example.
             if self.clip_view == SHOW_TREEVIEW:
                 self.treeview.grab_focus()
             elif self.clip_view == SHOW_ICONVIEW:
                 self.iconview.grab_focus()
 
-    def _setRowVisible(self, model, iter, data):
+    def _set_row_visible_func(self, model, model_iter, data):
         """Toggles the visibility of a liststore row."""
         text = data.get_text().lower()
         if not text:
@@ -811,34 +814,34 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             return True
         # We must convert to markup form to be able to search for &, ', etc.
         text = GLib.markup_escape_text(text)
-        return text in model.get_value(iter, COL_INFOTEXT).lower()
+        return text in model.get_value(model_iter, COL_INFOTEXT).lower()
 
-    def _connectToProject(self, project):
+    def _connect_to_project(self, project):
         """Connects signal handlers to the specified project."""
-        project.connect("asset-added", self._assetAddedCb)
-        project.connect("asset-loading-progress", self._assetLoadingProgressCb)
-        project.connect("asset-removed", self._assetRemovedCb)
-        project.connect("error-loading-asset", self._errorCreatingAssetCb)
-        project.connect("proxying-error", self._proxyingErrorCb)
-        project.connect("settings-set-from-imported-asset", self.__projectSettingsSetFromImportedAssetCb)
+        project.connect("asset-added", self._asset_added_cb)
+        project.connect("asset-loading-progress", self._asset_loading_progress_cb)
+        project.connect("asset-removed", self._asset_removed_cb)
+        project.connect("error-loading-asset", self._error_creating_asset_cb)
+        project.connect("proxying-error", self._proxying_error_cb)
+        project.connect("settings-set-from-imported-asset", self.__project_settings_set_from_imported_asset_cb)
 
-    def _setClipView(self, view_type):
+    def _set_clip_view(self, view_type):
         """Sets which clip view to use when medialibrary is showing clips.
 
         Args:
             view_type (int): One of SHOW_TREEVIEW or SHOW_ICONVIEW.
         """
-        self.app.settings.lastClipView = view_type
+        self.app.settings.last_clip_view = view_type
         # Gather some info before switching views
-        paths = self.getSelectedPaths()
-        self._viewUnselectAll()
+        paths = self.get_selected_paths()
+        self._view_unselect_all()
         # Now that we've got all the info, we can actually change the view type
         self.clip_view = view_type
-        self._displayClipView()
+        self._display_clip_view()
         for path in paths:
-            self._viewSelectPath(path)
+            self._view_select_path(path)
 
-    def _displayClipView(self):
+    def _display_clip_view(self):
         if self.clip_view == SHOW_TREEVIEW:
             self.iconview_scrollwin.hide()
             self.treeview_scrollwin.show_all()
@@ -870,24 +873,23 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         dialog.set_modal(True)
         dialog.set_transient_for(self.app.gui)
         dialog.set_current_folder(self.app.settings.lastImportFolder)
-        dialog.connect('response', self._importDialogBoxResponseCb)
+        dialog.connect('response', self._import_dialog_box_response_cb)
         previewer = PreviewWidget(self.app.settings)
         dialog.set_preview_widget(previewer)
         dialog.set_use_preview_label(False)
         dialog.connect('update-preview', previewer.update_preview_cb)
 
         # Filter for the "known good" formats by default
-        filter = Gtk.FileFilter()
-        filter.set_name(_("Supported file formats"))
-        filter.add_custom(Gtk.FileFilterFlags.URI |
-                          Gtk.FileFilterFlags.MIME_TYPE,
-                          self._filter_unsupported)
+        file_filter = Gtk.FileFilter()
+        file_filter.set_name(_("Supported file formats"))
+        file_filter.add_custom(Gtk.FileFilterFlags.URI | Gtk.FileFilterFlags.MIME_TYPE,
+                               self._filter_unsupported)
         for formatter in GES.list_assets(GES.Formatter):
             for extension in formatter.get_meta("extension").split(","):
                 if not extension:
                     continue
-                filter.add_pattern("*.%s" % extension)
-        dialog.add_filter(filter)
+                file_filter.add_pattern("*.%s" % extension)
+        dialog.add_filter(file_filter)
 
         # ...and allow the user to override our whitelists
         default = Gtk.FileFilter()
@@ -902,7 +904,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         dialog.show()
 
-    def _addAsset(self, asset):
+    def _add_asset(self, asset):
         if self.app.proxy_manager.is_proxy_asset(asset) and \
                 not asset.props.proxy_target:
             self.info("%s is a proxy asset but has no target, "
@@ -914,14 +916,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._pending_assets.append(asset)
 
         if self._project.loaded:
-            self._flushPendingAssets()
+            self._flush_pending_assets()
 
     def update_asset_thumbs(self, asset_uris):
         for row in self.storemodel:
             if row[COL_ASSET].props.id in asset_uris:
                 row[COL_THUMB_DECORATOR].disregard_previewer()
 
-    def _flushPendingAssets(self):
+    def _flush_pending_assets(self):
         self.debug("Flushing %d pending model rows", len(self._pending_assets))
         for asset in self._pending_assets:
             thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
@@ -959,7 +961,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     # medialibrary callbacks
 
-    def _assetLoadingProgressCb(self, project, progress, estimated_time):
+    def _asset_loading_progress_cb(self, project, progress, estimated_time):
         self._progressbar.set_fraction(progress / 100)
 
         proxying_files = []
@@ -976,12 +978,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                     row[COL_ICON_128] = asset_previewer.large_thumb
 
         if progress == 0:
-            self._startImporting(project)
+            self._start_importing()
             return
 
         if project.loaded:
             if estimated_time:
-                self.__last_proxying_estimate_time = beautify_ETA(int(
+                self.__last_proxying_estimate_time = beautify_eta(int(
                     estimated_time * Gst.SECOND))
 
             # Translators: this string indicates the estimated time
@@ -999,9 +1001,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._progressbar.set_text(progress_message)
 
         if progress == 100:
-            self._doneImporting()
+            self._done_importing()
 
-    def __assetProxyingCb(self, proxy, unused_pspec):
+    def __asset_proxying_cb(self, proxy, unused_pspec):
         if not self.app.proxy_manager.is_proxy_asset(proxy):
             self.info("Proxy is not a proxy in our terms (handling deleted proxy"
                       " files while loading a project?) - ignore it")
@@ -1010,23 +1012,23 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         self.debug("Proxy is %s - %s", proxy.props.id,
                    proxy.get_proxy_target())
-        self.__removeAsset(proxy)
+        self.__remove_asset(proxy)
 
         if proxy.get_proxy_target() is not None:
             # Re add the proxy so its emblem icon is updated.
-            self._addAsset(proxy)
+            self._add_asset(proxy)
 
-    def __assetProxiedCb(self, asset, unused_pspec):
+    def __asset_proxied_cb(self, asset, unused_pspec):
         self.debug("Asset proxied: %s -- %s", asset, asset.props.id)
         proxy = asset.props.proxy
-        self.__removeAsset(asset)
+        self.__remove_asset(asset)
         if not proxy:
-            self._addAsset(asset)
+            self._add_asset(asset)
 
         if self._project.loaded:
             self.app.gui.editor.timeline_ui.update_clips_asset(asset, proxy)
 
-    def _assetAddedCb(self, unused_project, asset):
+    def _asset_added_cb(self, unused_project, asset):
         """Checks whether the asset added to the project should be shown."""
         self._last_imported_uris.add(asset.props.id)
 
@@ -1036,24 +1038,24 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         if isinstance(asset, GES.UriClipAsset) and not asset.error:
             self.debug("Asset %s added: %s", asset, asset.props.id)
-            asset.connect("notify::proxy", self.__assetProxiedCb)
-            asset.connect("notify::proxy-target", self.__assetProxyingCb)
+            asset.connect("notify::proxy", self.__asset_proxied_cb)
+            asset.connect("notify::proxy-target", self.__asset_proxying_cb)
             if asset.get_proxy():
                 self.debug("Not adding asset %s, its proxy is used instead: %s",
                            asset.props.id,
                            asset.get_proxy().props.id)
                 return
 
-            self._addAsset(asset)
+            self._add_asset(asset)
 
-    def _assetRemovedCb(self, unused_project, asset):
+    def _asset_removed_cb(self, unused_project, asset):
         if isinstance(asset, GES.UriClipAsset):
             self.debug("Disconnecting %s - %s", asset, asset.props.id)
-            asset.disconnect_by_func(self.__assetProxiedCb)
-            asset.disconnect_by_func(self.__assetProxyingCb)
-            self.__removeAsset(asset)
+            asset.disconnect_by_func(self.__asset_proxied_cb)
+            asset.disconnect_by_func(self.__asset_proxying_cb)
+            self.__remove_asset(asset)
 
-    def __removeAsset(self, asset):
+    def __remove_asset(self, asset):
         """Removes the specified asset."""
         uri = asset.get_id()
         # Find the corresponding line in the storemodel and remove it.
@@ -1068,31 +1070,30 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self.info("Failed to remove %s as it was not found"
                       "in the liststore", uri)
 
-    def _proxyingErrorCb(self, unused_project, asset):
-        self.__removeAsset(asset)
-        self._addAsset(asset)
+    def _proxying_error_cb(self, unused_project, asset):
+        self.__remove_asset(asset)
+        self._add_asset(asset)
 
-    def _errorCreatingAssetCb(self, unused_project, error, id, type):
+    def _error_creating_asset_cb(self, unused_project, error, asset_id, extractable_type):
         """Gathers asset loading errors."""
-        if GObject.type_is_a(type, GES.UriClip):
-            if self.app.proxy_manager.is_proxy_asset(id):
+        if GObject.type_is_a(extractable_type, GES.UriClip):
+            if self.app.proxy_manager.is_proxy_asset(asset_id):
                 self.debug("Error %s with a proxy"
                            ", not showing the error message", error)
                 return
 
-            error = (id, str(error.domain), error)
-            self._errors.append(error)
+            self._errors.append((asset_id, str(error.domain), error))
 
-    def _startImporting(self, project):
+    def _start_importing(self):
         self.__last_proxying_estimate_time = _("Unknown")
         self.import_start_time = time.time()
         self._welcome_infobar.hide()
         self._progressbar.show()
 
-    def _doneImporting(self):
+    def _done_importing(self):
         self.debug("Importing took %.3f seconds",
                    time.time() - self.import_start_time)
-        self._flushPendingAssets()
+        self._flush_pending_assets()
         self._progressbar.hide()
         if self._errors:
             errors_amount = len(self._errors)
@@ -1109,32 +1110,32 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._warning_label.set_text(text)
             self._import_warning_infobar.show_all()
 
-        self._selectLastImportedUris()
+        self._select_last_imported_uris()
 
-    def __projectSettingsSetFromImportedAssetCb(self, unused_project, asset):
+    def __project_settings_set_from_imported_asset_cb(self, unused_project, asset):
         asset_path = path_from_uri(asset.get_id())
         file_name = os.path.basename(asset_path)
         message = _("The project settings have been set to match file '%s'") % file_name
         self._project_settings_label.set_text(message)
         self._project_settings_infobar.show()
 
-    def _selectLastImportedUris(self):
+    def _select_last_imported_uris(self):
         if not self._last_imported_uris:
             return
-        self._selectSources(self._last_imported_uris)
+        self._select_sources(self._last_imported_uris)
         self._last_imported_uris = set()
 
     # Error Dialog Box callbacks
 
-    def _errorDialogBoxCloseCb(self, dialog):
+    def _error_dialog_box_close_cb(self, dialog):
         dialog.destroy()
 
-    def _errorDialogBoxResponseCb(self, dialog, unused_response):
+    def _error_dialog_box_response_cb(self, dialog, unused_response):
         dialog.destroy()
 
     # Import Sources Dialog Box callbacks
 
-    def _importDialogBoxResponseCb(self, dialogbox, response):
+    def _import_dialog_box_response_cb(self, dialogbox, response):
         self.debug("response: %r", response)
         if response == Gtk.ResponseType.OK:
             lastfolder = dialogbox.get_current_folder()
@@ -1142,15 +1143,15 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             if not lastfolder:
                 lastfolder = GLib.path_get_dirname(dialogbox.get_filename())
             self.app.settings.lastImportFolder = lastfolder
-            dialogbox.props.extra_widget.saveValues()
+            dialogbox.props.extra_widget.save_values()
             filenames = dialogbox.get_uris()
-            self._project.addUris(filenames)
+            self._project.add_uris(filenames)
             if self.app.settings.closeImportDialog:
                 dialogbox.destroy()
         else:
             dialogbox.destroy()
 
-    def _sourceIsUsed(self, asset):
+    def _source_is_used(self, asset):
         """Checks whether the specified asset is present in the timeline."""
         layers = self._project.ges_timeline.get_layers()
         for layer in layers:
@@ -1159,15 +1160,15 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                     return True
         return False
 
-    def _selectUnusedSources(self):
+    def _select_unused_sources(self):
         """Selects the assets not used by any clip in the project's timeline."""
         unused_sources_uris = []
         for asset in self._project.list_assets(GES.UriClip):
-            if not self._sourceIsUsed(asset):
+            if not self._source_is_used(asset):
                 unused_sources_uris.append(asset.get_id())
-        self._selectSources(unused_sources_uris)
+        self._select_sources(unused_sources_uris)
 
-    def _selectSources(self, sources_uris):
+    def _select_sources(self, sources_uris):
         # Hack around the fact that making selections (in a treeview/iconview)
         # deselects what was previously selected
         if self.clip_view == SHOW_TREEVIEW:
@@ -1184,7 +1185,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 elif self.clip_view == SHOW_ICONVIEW:
                     self.iconview.unselect_path(row.path)
 
-    def _unselectAll(self):
+    def _unselect_all(self):
         if self.clip_view == SHOW_TREEVIEW:
             self.treeview.get_selection().unselect_all()
         elif self.clip_view == SHOW_ICONVIEW:
@@ -1192,17 +1193,17 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     # UI callbacks
 
-    def __projectSettingsSetInfobarCb(self, infobar, response_id):
+    def __project_settings_set_infobar_cb(self, infobar, response_id):
         if response_id == Gtk.ResponseType.OK:
-            self.app.gui.editor.showProjectSettingsDialog()
+            self.app.gui.editor.show_project_settings_dialog()
         infobar.hide()
 
-    def _clipPropertiesCb(self, unused_widget):
+    def _clip_properties_cb(self, unused_widget):
         """Shows the clip properties in a dialog.
 
         Allows selecting and applying them as the new project settings.
         """
-        paths = self.getSelectedPaths()
+        paths = self.get_selected_paths()
         if not paths:
             self.debug("No item selected")
             return
@@ -1213,13 +1214,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         dialog.dialog.set_transient_for(self.app.gui)
         dialog.run()
 
-    def __warningInfobarCb(self, infobar, response_id):
+    def __warning_infobar_cb(self, infobar, response_id):
         if response_id == Gtk.ResponseType.OK:
             self.__show_errors()
-        self._resetErrorList()
+        self._reset_error_list()
         infobar.hide()
 
-    def _resetErrorList(self):
+    def _reset_error_list(self):
         self._errors = []
         self._import_warning_infobar.hide()
 
@@ -1232,19 +1233,19 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                             "The following files can not be used with Pitivi.",
                             len(self._errors))
         error_dialogbox = FileListErrorDialog(title, headline)
-        error_dialogbox.connect("close", self._errorDialogBoxCloseCb)
-        error_dialogbox.connect("response", self._errorDialogBoxResponseCb)
+        error_dialogbox.connect("close", self._error_dialog_box_close_cb)
+        error_dialogbox.connect("response", self._error_dialog_box_response_cb)
 
         for uri, reason, extra in self._errors:
-            error_dialogbox.addFailedFile(uri, reason, extra)
+            error_dialogbox.add_failed_file(uri, reason, extra)
         error_dialogbox.window.set_transient_for(self.app.gui)
         error_dialogbox.window.show()
 
-    def _toggleViewTypeCb(self, widget):
+    def _toggle_view_type_cb(self, widget):
         if widget.get_active():
-            self._setClipView(SHOW_TREEVIEW)
+            self._set_clip_view(SHOW_TREEVIEW)
         else:
-            self._setClipView(SHOW_ICONVIEW)
+            self._set_clip_view(SHOW_ICONVIEW)
 
     def __get_path_under_mouse(self, view, event):
         """Gets the path of the item under the mouse cursor.
@@ -1256,14 +1257,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             path = None
             tup = view.get_path_at_pos(int(event.x), int(event.y))
             if tup:
-                path, column, x, y = tup
+                path, unused_column, unused_x, unused_y = tup
             return path
         elif isinstance(view, Gtk.IconView):
             return view.get_path_at_pos(int(event.x), int(event.y))
         else:
             raise RuntimeError("Unknown view type: %s" % type(view))
 
-    def _rowUnderMouseSelected(self, view, event):
+    def _row_under_mouse_selected(self, view, event):
         path = self.__get_path_under_mouse(view, event)
         if not path:
             return False
@@ -1275,74 +1276,75 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         else:
             raise RuntimeError("Unknown view type: %s" % type(view))
 
-    def _viewGetFirstSelected(self):
-        paths = self.getSelectedPaths()
+    def _view_get_first_selected(self):
+        paths = self.get_selected_paths()
         return paths[0]
 
-    def _viewHasSelection(self):
-        paths = self.getSelectedPaths()
+    def _view_has_selection(self):
+        paths = self.get_selected_paths()
         return bool(len(paths))
 
-    def _viewGetPathAtPos(self, event):
+    def _view_get_path_at_pos(self, event):
         if self.clip_view == SHOW_TREEVIEW:
             pathinfo = self.treeview.get_path_at_pos(
                 int(event.x), int(event.y))
             return pathinfo[0]
         elif self.clip_view == SHOW_ICONVIEW:
             return self.iconview.get_path_at_pos(int(event.x), int(event.y))
+        raise RuntimeError("Unknown view: %s" % self.clip_view)
 
-    def _viewSelectPath(self, path):
+    def _view_select_path(self, path):
         if self.clip_view == SHOW_TREEVIEW:
             selection = self.treeview.get_selection()
             selection.select_path(path)
         elif self.clip_view == SHOW_ICONVIEW:
             self.iconview.select_path(path)
 
-    def _viewUnselectAll(self):
+    def _view_unselect_all(self):
         if self.clip_view == SHOW_TREEVIEW:
             selection = self.treeview.get_selection()
             selection.unselect_all()
         elif self.clip_view == SHOW_ICONVIEW:
             self.iconview.unselect_all()
 
-    def __stopUsingProxyCb(self, unused_action, unused_parameter):
-        prefer_original = self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING
-        self._project.disable_proxies_for_assets(self.getSelectedAssets(),
+    def __stop_using_proxy_cb(self, unused_action, unused_parameter):
+        prefer_original = self.app.settings.proxying_strategy == ProxyingStrategy.NOTHING
+        self._project.disable_proxies_for_assets(self.get_selected_assets(),
                                                  hq_proxy=not prefer_original)
 
-    def __useProxiesCb(self, unused_action, unused_parameter):
-        self._project.use_proxies_for_assets(self.getSelectedAssets())
+    def __use_proxies_cb(self, unused_action, unused_parameter):
+        self._project.use_proxies_for_assets(self.get_selected_assets())
 
     def __use_scaled_proxies_cb(self, unused_action, unused_parameter):
-        self._project.use_proxies_for_assets(self.getSelectedAssets(),
+        self._project.use_proxies_for_assets(self.get_selected_assets(),
                                              scaled=True)
 
-    def __deleteProxiesCb(self, unused_action, unused_parameter):
-        prefer_original = self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING
-        self._project.disable_proxies_for_assets(self.getSelectedAssets(),
+    def __delete_proxies_cb(self, unused_action, unused_parameter):
+        prefer_original = self.app.settings.proxying_strategy == ProxyingStrategy.NOTHING
+        self._project.disable_proxies_for_assets(self.get_selected_assets(),
                                                  delete_proxy_file=True,
                                                  hq_proxy=not prefer_original)
 
     def __open_containing_folder_cb(self, unused_action, unused_parameter):
-        assets = self.getSelectedAssets()
+        assets = self.get_selected_assets()
         if len(assets) != 1:
             return
         parent_path = os.path.dirname(path_from_uri(assets[0].get_id()))
         Gio.AppInfo.launch_default_for_uri(Gst.filename_to_uri(parent_path), None)
 
     def __edit_nested_clip_cb(self, unused_action, unused_parameter):
-        assets = self.getSelectedAssets()
+        assets = self.get_selected_assets()
         if len(assets) != 1:
             return
 
         path = os.path.abspath(path_from_uri(assets[0].get_id()))
         subprocess.Popen([sys.argv[0], path])
 
-    def __createMenuModel(self):
+    def __create_menu_model(self):
         if self.app.proxy_manager.proxyingUnsupported:
             return None, None
 
-        assets = self.getSelectedAssets()
+        assets = self.get_selected_assets()
         if not assets:
             return None, None
 
@@ -1380,7 +1382,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         if hq_proxies:
             action = Gio.SimpleAction.new("unproxy-asset", None)
-            action.connect("activate", self.__stopUsingProxyCb)
+            action.connect("activate", self.__stop_using_proxy_cb)
             action_group.insert(action)
             text = ngettext("Do not use Optimised Proxy for selected asset",
                             "Do not use Optimised Proxies for selected assets",
@@ -1390,7 +1392,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                               action.get_name().replace(" ", "."))
 
             action = Gio.SimpleAction.new("delete-proxies", None)
-            action.connect("activate", self.__deleteProxiesCb)
+            action.connect("activate", self.__delete_proxies_cb)
             action_group.insert(action)
 
             text = ngettext("Delete corresponding proxy file",
@@ -1402,7 +1404,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         if in_progress:
             action = Gio.SimpleAction.new("unproxy-asset", None)
-            action.connect("activate", self.__stopUsingProxyCb)
+            action.connect("activate", self.__stop_using_proxy_cb)
             action_group.insert(action)
             text = ngettext("Do not use Proxy for selected asset",
                             "Do not use Proxies for selected assets",
@@ -1412,7 +1414,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                               action.get_name().replace(" ", "."))
 
             action = Gio.SimpleAction.new("delete-proxies", None)
-            action.connect("activate", self.__deleteProxiesCb)
+            action.connect("activate", self.__delete_proxies_cb)
             action_group.insert(action)
 
             text = ngettext("Delete corresponding proxy file",
@@ -1424,7 +1426,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         if scaled_proxies:
             action = Gio.SimpleAction.new("unproxy-asset", None)
-            action.connect("activate", self.__stopUsingProxyCb)
+            action.connect("activate", self.__stop_using_proxy_cb)
             action_group.insert(action)
             text = ngettext("Do not use Scaled Proxy for selected asset",
                             "Do not use Scaled Proxies for selected assets",
@@ -1434,7 +1436,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                               action.get_name().replace(" ", "."))
 
             action = Gio.SimpleAction.new("delete-proxies", None)
-            action.connect("activate", self.__deleteProxiesCb)
+            action.connect("activate", self.__delete_proxies_cb)
             action_group.insert(action)
 
             text = ngettext("Delete corresponding proxy file",
@@ -1446,7 +1448,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         if len(proxies) != len(assets) and len(in_progress) != len(assets):
             action = Gio.SimpleAction.new("use-proxies", None)
-            action.connect("activate", self.__useProxiesCb)
+            action.connect("activate", self.__use_proxies_cb)
             action_group.insert(action)
             text = ngettext("Use Optimised Proxy for selected asset",
                             "Use Optimised Proxies for selected assets", len(assets))
@@ -1465,12 +1467,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         return menu_model, action_group
 
-    def __maybeShowPopoverMenu(self, view, event):
+    def __maybe_show_popover_menu(self, view, event):
         res, button = event.get_button()
         if not res or button != 3:
             return False
 
-        if not self._rowUnderMouseSelected(view, event):
+        if not self._row_under_mouse_selected(view, event):
             path = self.__get_path_under_mouse(view, event)
             if path:
                 if isinstance(view, Gtk.IconView):
@@ -1481,7 +1483,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                     selection.unselect_all()
                     selection.select_path(path)
 
-        model, action_group = self.__createMenuModel()
+        model, action_group = self.__create_menu_model()
         if not model or not model.get_n_items():
             return True
 
@@ -1504,44 +1506,44 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         return True
 
-    def _treeViewButtonPressEventCb(self, treeview, event):
-        self._updateDraggedPaths(treeview, event)
+    def _tree_view_button_press_event_cb(self, treeview, event):
+        self._update_dragged_paths(treeview, event)
 
         Gtk.TreeView.do_button_press_event(treeview, event)
 
         selection = self.treeview.get_selection()
-        if self._draggedPaths:
-            for path in self._draggedPaths:
+        if self._dragged_paths:
+            for path in self._dragged_paths:
                 selection.select_path(path)
 
         return True
 
-    def _updateDraggedPaths(self, view, event):
+    def _update_dragged_paths(self, view, event):
         if event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
             # It is possible to double-click outside of clips:
-            if self.getSelectedPaths():
+            if self.get_selected_paths():
                 # Here we used to emit "play", but
                 # this is now handled by _itemOrRowActivatedCb instead.
                 pass
             chain_up = False
         elif not event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
-            chain_up = not self._rowUnderMouseSelected(view, event)
+            chain_up = not self._row_under_mouse_selected(view, event)
         else:
             chain_up = True
 
         if not chain_up:
-            self._draggedPaths = self.getSelectedPaths()
+            self._dragged_paths = self.get_selected_paths()
         else:
-            self._draggedPaths = None
+            self._dragged_paths = None
 
-    def _treeViewButtonReleaseEventCb(self, treeview, event):
-        self._draggedPaths = None
+    def _tree_view_button_release_event_cb(self, treeview, event):
+        self._dragged_paths = None
         selection = self.treeview.get_selection()
         state = event.get_state() & (
             Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)
         path = self.treeview.get_path_at_pos(event.x, event.y)
 
-        if self.__maybeShowPopoverMenu(treeview, event):
+        if self.__maybe_show_popover_menu(treeview, event):
             self.debug("Returning after showing popup menu")
             return
 
@@ -1550,33 +1552,33 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             if path:
                 selection.select_path(path[0])
 
-    def _viewSelectionChangedCb(self, unused):
-        self._updateActions()
+    def _iconview_selection_changed_cb(self, unused):
+        self._update_actions()
 
-    def _updateActions(self):
-        selected_count = len(self.getSelectedPaths())
+    def _update_actions(self):
+        selected_count = len(self.get_selected_paths())
         self.remove_assets_action.set_enabled(selected_count)
         self.insert_at_end_action.set_enabled(selected_count)
         # Some actions can only be done on a single item at a time:
         self._clipprops_button.set_sensitive(selected_count == 1)
 
-    def _itemOrRowActivatedCb(self, unused_view, path, *unused_args):
+    def _iconview_item_or_row_activated_cb(self, unused_view, path, *unused_args):
         """Plays the asset identified by the specified path.
 
         This can happen when an item is double-clicked, or
         Space, Shift+Space, Return or Enter is pressed.
         This method is the same for both iconview and treeview.
         """
-        asset = self.modelFilter[path][COL_ASSET]
+        asset = self.model_filter[path][COL_ASSET]
         self.emit('play', asset)
 
-    def _iconViewButtonPressEventCb(self, iconview, event):
-        self._updateDraggedPaths(iconview, event)
+    def _iconview_button_press_event_cb(self, iconview, event):
+        self._update_dragged_paths(iconview, event)
 
         Gtk.IconView.do_button_press_event(iconview, event)
 
-        if self._draggedPaths:
-            for path in self._draggedPaths:
+        if self._dragged_paths:
+            for path in self._dragged_paths:
                 self.iconview.select_path(path)
 
         self.iconview_cursor_pos = self.iconview.get_path_at_pos(
@@ -1584,14 +1586,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         return True
 
-    def _iconViewButtonReleaseEventCb(self, iconview, event):
-        self._draggedPaths = None
+    def _iconview_button_release_event_cb(self, iconview, event):
+        self._dragged_paths = None
 
         control_mask = event.get_state() & Gdk.ModifierType.CONTROL_MASK
         shift_mask = event.get_state() & Gdk.ModifierType.SHIFT_MASK
         modifier_active = control_mask or shift_mask
 
-        if self.__maybeShowPopoverMenu(iconview, event):
+        if self.__maybe_show_popover_menu(iconview, event):
             self.debug("Returning after showing popup menu")
             return
 
@@ -1604,33 +1606,33 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                     iconview.unselect_all()
                     iconview.select_path(current_cursor_pos)
 
-    def __disconnectFromProject(self):
-        self._project.disconnect_by_func(self._assetAddedCb)
-        self._project.disconnect_by_func(self._assetLoadingProgressCb)
-        self._project.disconnect_by_func(self._assetRemovedCb)
-        self._project.disconnect_by_func(self._proxyingErrorCb)
-        self._project.disconnect_by_func(self._errorCreatingAssetCb)
-        self._project.disconnect_by_func(self.__projectSettingsSetFromImportedAssetCb)
+    def __disconnect_from_project(self):
+        self._project.disconnect_by_func(self._asset_added_cb)
+        self._project.disconnect_by_func(self._asset_loading_progress_cb)
+        self._project.disconnect_by_func(self._asset_removed_cb)
+        self._project.disconnect_by_func(self._proxying_error_cb)
+        self._project.disconnect_by_func(self._error_creating_asset_cb)
+        self._project.disconnect_by_func(self.__project_settings_set_from_imported_asset_cb)
 
-    def _new_project_loading_cb(self, unused_project_manager, project):
+    def _new_project_loading_cb(self, project_manager, project):
         assert not self._project
 
         self._project = project
-        self._resetErrorList()
+        self._reset_error_list()
         self.storemodel.clear()
         self._welcome_infobar.show_all()
-        self._connectToProject(project)
+        self._connect_to_project(project)
 
-    def _newProjectLoadedCb(self, unused_project_manager, project):
+    def _new_project_loaded_cb(self, project_manager, project):
         # Make sure that the sources added to the project are added
-        self._flushPendingAssets()
+        self._flush_pending_assets()
 
-    def _newProjectFailedCb(self, unused_project_manager, unused_uri, unused_reason):
+    def _new_project_failed_cb(self, project_manager, uri, reason):
         self.storemodel.clear()
         self._project = None
 
-    def _projectClosedCb(self, unused_project_manager, unused_project):
-        self.__disconnectFromProject()
+    def _project_closed_cb(self, project_manager, project):
+        self.__disconnect_from_project()
         self._project_settings_infobar.hide()
         self.storemodel.clear()
         self._project = None
@@ -1645,39 +1647,39 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         # At the end of the import operation, these will be selected.
         self._last_imported_uris = set(uris)
-        assets = self._project.assetsForUris(uris)
+        assets = self._project.assets_for_uris(uris)
         if assets:
             # All the files have already been added.
             # This is the only chance we have to select them.
-            self._selectLastImportedUris()
+            self._select_last_imported_uris()
         else:
-            self._project.addUris(uris)
+            self._project.add_uris(uris)
 
-    def _drag_data_received_cb(self, unused_widget, unused_context, unused_x,
-                               unused_y, selection, targettype, unused_time):
+    def _drag_data_received_cb(self, widget, context, x, y,
+                               selection, targettype, time_):
         """Handles data being dragged onto self."""
         self.debug("targettype: %d, selection.data: %r",
                    targettype, selection.get_data())
         uris = selection.get_uris()
         # Scan in the background what was dragged and
         # import whatever can be imported.
-        self.app.threads.addThread(PathWalker, uris, self.__paths_walked_cb)
+        self.app.threads.add_thread(PathWalker, uris, self.__paths_walked_cb)
 
     # Used with TreeView and IconView
-    def _dndDragDataGetCb(self, unused_view, unused_context, data, unused_info, unused_timestamp):
-        paths = self.getSelectedPaths()
-        uris = [self.modelFilter[path][COL_URI] for path in paths]
+    def _dnd_drag_data_get_cb(self, view, context, data, info, timestamp):
+        paths = self.get_selected_paths()
+        uris = [self.model_filter[path][COL_URI] for path in paths]
         data.set_uris(uris)
 
-    def _dndDragBeginCb(self, unused_view, context):
+    def _dnd_drag_begin_cb(self, view, context):
         self.info("Drag operation begun")
         self.dragged = True
-        paths = self.getSelectedPaths()
+        paths = self.get_selected_paths()
 
         if not paths:
             context.drag_abort(int(time.time()))
         else:
-            row = self.modelFilter[paths[0]]
+            row = self.model_filter[paths[0]]
 
             icon = row[COL_ICON_128]
             icon_height = icon.get_height()
@@ -1694,45 +1696,46 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
             Gtk.drag_set_icon_surface(context, surface)
 
-    def _dndDragEndCb(self, unused_view, unused_context):
+    def _dnd_drag_end_cb(self, view, context):
         self.info("Drag operation ended")
         self.dragged = False
 
-    def getSelectedPaths(self):
+    def get_selected_paths(self):
         """Gets which treeview or iconview items are selected.
 
         Returns:
             List[Gtk.TreePath]: The paths identifying the items.
         """
         if self.clip_view == SHOW_TREEVIEW:
-            return self._getSelectedPathsTreeView()
+            return self._get_selected_paths_tree_view()
         elif self.clip_view == SHOW_ICONVIEW:
-            return self._getSelectedPathsIconView()
+            return self._get_selected_paths_icon_view()
+        raise RuntimeError("Unknown view: %s" % self.clip_view)
 
-    def _getSelectedPathsTreeView(self):
-        model, rows = self.treeview.get_selection().get_selected_rows()
+    def _get_selected_paths_tree_view(self):
+        unused_model, rows = self.treeview.get_selection().get_selected_rows()
         return rows
 
-    def _getSelectedPathsIconView(self):
+    def _get_selected_paths_icon_view(self):
         paths = self.iconview.get_selected_items()
         paths.reverse()
         return paths
 
-    def getSelectedItems(self):
+    def get_selected_items(self):
         """Gets the URIs of the selected items."""
-        if self._draggedPaths:
-            return [self.modelFilter[path][COL_URI]
-                    for path in self._draggedPaths]
-        return [self.modelFilter[path][COL_URI]
-                for path in self.getSelectedPaths()]
+        if self._dragged_paths:
+            return [self.model_filter[path][COL_URI]
+                    for path in self._dragged_paths]
+        return [self.model_filter[path][COL_URI]
+                for path in self.get_selected_paths()]
 
-    def getSelectedAssets(self):
+    def get_selected_assets(self):
         """Gets the selected assets."""
-        if self._draggedPaths:
-            return [self.modelFilter[path][COL_ASSET]
-                    for path in self._draggedPaths]
-        return [self.modelFilter[path][COL_ASSET]
-                for path in self.getSelectedPaths()]
+        if self._dragged_paths:
+            return [self.model_filter[path][COL_ASSET]
+                    for path in self._dragged_paths]
+        return [self.model_filter[path][COL_ASSET]
+                for path in self.get_selected_paths()]
 
-    def activateCompactMode(self):
+    def activate_compact_mode(self):
         self._import_button.set_is_important(False)

@@ -17,7 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Tests for the timeline.elements module."""
-# pylint: disable=protected-access,no-self-use,too-many-locals
+# pylint: disable=protected-access,no-self-use
 from unittest import mock
 
 from gi.overrides import GObject
@@ -85,7 +85,7 @@ class TestKeyframeCurve(BaseTestTimeline):
         # Add keyframes.
         for offset in offsets:
             position = start + offset
-            pipeline.getPosition = mock.Mock(return_value=position)
+            pipeline.get_position = mock.Mock(return_value=position)
             timeline_container._keyframe_cb(None, None)
             values = [item.timestamp for item in control_source.get_all()]
             self.assertIn(inpoint + offset, values)
@@ -93,7 +93,7 @@ class TestKeyframeCurve(BaseTestTimeline):
         # Remove keyframes.
         for offset in offsets:
             position = start + offset
-            pipeline.getPosition = mock.Mock(return_value=position)
+            pipeline.get_position = mock.Mock(return_value=position)
             timeline_container._keyframe_cb(None, None)
             values = [item.timestamp for item in control_source.get_all()]
             self.assertNotIn(inpoint + offset, values, offset)
@@ -102,7 +102,7 @@ class TestKeyframeCurve(BaseTestTimeline):
         # cannot be toggled.
         for offset in [0, duration]:
             position = start + offset
-            pipeline.getPosition = mock.Mock(return_value=position)
+            pipeline.get_position = mock.Mock(return_value=position)
             values = [item.timestamp for item in control_source.get_all()]
             self.assertIn(inpoint + offset, values)
             timeline_container._keyframe_cb(None, None)
@@ -113,21 +113,20 @@ class TestKeyframeCurve(BaseTestTimeline):
         for offset in [-1, duration + 1]:
             position = min(max(0, start + offset),
                            timeline.ges_timeline.props.duration)
-            pipeline.getPosition = mock.Mock(return_value=position)
+            pipeline.get_position = mock.Mock(return_value=position)
             timeline_container._keyframe_cb(None, None)
             values = [item.timestamp for item in control_source.get_all()]
             self.assertEqual(values, [inpoint, inpoint + duration])
 
-    # pylint: disable=too-many-statements
     def check_keyframe_ui_toggle(self, ges_clip, timeline_container):
         """Checks keyframes toggling by click events."""
         timeline = timeline_container.timeline
 
         start = ges_clip.props.start
-        start_px = Zoomable.nsToPixel(start)
+        start_px = Zoomable.ns_to_pixel(start)
         inpoint = ges_clip.props.in_point
         duration = ges_clip.props.duration
-        duration_px = Zoomable.nsToPixel(duration)
+        duration_px = Zoomable.ns_to_pixel(duration)
         offsets_px = (1, int(duration_px / 2), int(duration_px) - 1)
         timeline.selection.select([ges_clip])
 
@@ -141,7 +140,7 @@ class TestKeyframeCurve(BaseTestTimeline):
 
         # Add keyframes by simulating mouse clicks.
         for offset_px in offsets_px:
-            offset = Zoomable.pixelToNs(start_px + offset_px) - start
+            offset = Zoomable.pixel_to_ns(start_px + offset_px) - start
             xdata, ydata = inpoint + offset, 1
             x, y = keyframe_curve._ax.transData.transform((xdata, ydata))
 
@@ -168,7 +167,7 @@ class TestKeyframeCurve(BaseTestTimeline):
 
         # Remove keyframes by simulating mouse double-clicks.
         for offset_px in offsets_px:
-            offset = Zoomable.pixelToNs(start_px + offset_px) - start
+            offset = Zoomable.pixel_to_ns(start_px + offset_px) - start
             xdata, ydata = inpoint + offset, 1
             x, y = keyframe_curve._ax.transData.transform((xdata, ydata))
 
@@ -216,7 +215,7 @@ class TestVideoSource(BaseTestTimeline):
         timeline = timeline_container.timeline
         project = timeline.app.project_manager.current_project
 
-        clip = self.addClipsSimple(timeline, 1)[0]
+        clip = self.add_clips_simple(timeline, 1)[0]
 
         video_source = clip.find_track_element(None, GES.VideoUriSource)
         sinfo = video_source.get_asset().get_stream_info()
@@ -271,7 +270,7 @@ class TestVideoSource(BaseTestTimeline):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
 
-        clip = self.addClipsSimple(timeline, 1)[0]
+        clip = self.add_clips_simple(timeline, 1)[0]
 
         video_source = clip.find_track_element(None, GES.VideoUriSource)
         sinfo = video_source.get_asset().get_stream_info()

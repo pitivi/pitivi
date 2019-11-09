@@ -42,7 +42,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="_closeButtonClickedCb" swapped="no"/>
+                <signal name="clicked" handler="_close_button_clicked_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -59,7 +59,7 @@
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="_renderButtonClickedCb" swapped="no"/>
+                <signal name="clicked" handler="_render_button_clicked_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -165,7 +165,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <signal name="changed" handler="_muxerComboChangedCb" swapped="no"/>
+                        <signal name="changed" handler="_muxer_combo_changed_cb" swapped="no"/>
                         <child>
                           <object class="GtkCellRendererText" id="renderer1"/>
                           <attributes>
@@ -187,7 +187,7 @@
                         <property name="image">help_icon</property>
                         <property name="relief">none</property>
                         <property name="always_show_image">True</property>
-                        <signal name="clicked" handler="_containerContextHelpClickedCb" swapped="no"/>
+                        <signal name="clicked" handler="_container_context_help_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -310,7 +310,7 @@
                                 <property name="digits">1</property>
                                 <property name="numeric">True</property>
                                 <property name="value">1</property>
-                                <signal name="value-changed" handler="_scaleSpinbuttonChangedCb" swapped="no"/>
+                                <signal name="value-changed" handler="_scale_spinbutton_changed_cb" swapped="no"/>
                                 <child internal-child="accessible">
                                   <object class="AtkObject" id="scale_spinbutton-atkobject">
                                     <property name="AtkObject::accessible-name" translatable="yes">Scale</property>
@@ -357,7 +357,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="halign">end</property>
-                            <signal name="clicked" handler="_projectSettingsButtonClickedCb" swapped="no"/>
+                            <signal name="clicked" handler="_project_settings_button_clicked_cb" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -372,7 +372,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="halign">end</property>
-                            <signal name="clicked" handler="_videoSettingsButtonClickedCb" swapped="no"/>
+                            <signal name="clicked" handler="_video_settings_button_clicked_cb" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -386,7 +386,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <signal name="changed" handler="_videoEncoderComboChangedCb" swapped="no"/>
+                            <signal name="changed" handler="_video_encoder_combo_changed_cb" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="renderer2"/>
                               <attributes>
@@ -423,7 +423,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <signal name="changed" handler="_frameRateComboChangedCb" swapped="no"/>
+                            <signal name="changed" handler="_frame_rate_combo_changed_cb" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="renderer3"/>
                               <attributes>
@@ -474,7 +474,7 @@
                     <property name="xalign">0</property>
                     <property name="active">True</property>
                     <property name="draw_indicator">True</property>
-                    <signal name="toggled" handler="_videoOutputCheckbuttonToggledCb" swapped="no"/>
+                    <signal name="toggled" handler="_video_output_checkbutton_toggled_cb" swapped="no"/>
                   </object>
                 </child>
               </object>
@@ -521,7 +521,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <signal name="changed" handler="_channelsComboChangedCb" swapped="no"/>
+                            <signal name="changed" handler="_channels_combo_changed_cb" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="renderer5"/>
                               <attributes>
@@ -543,7 +543,7 @@
                             <property name="receives_default">True</property>
                             <property name="halign">end</property>
                             <property name="xalign">1</property>
-                            <signal name="clicked" handler="_audioSettingsButtonClickedCb" swapped="no"/>
+                            <signal name="clicked" handler="_audio_settings_button_clicked_cb" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -557,7 +557,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <signal name="changed" handler="_audioEncoderChangedComboCb" swapped="no"/>
+                            <signal name="changed" handler="_audio_encoder_changed_combo_cb" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="renderer4"/>
                               <attributes>
@@ -594,7 +594,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <signal name="changed" handler="_sampleRateComboChangedCb" swapped="no"/>
+                            <signal name="changed" handler="_sample_rate_combo_changed_cb" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="renderer6"/>
                               <attributes>
@@ -640,7 +640,7 @@
                     <property name="xalign">0</property>
                     <property name="active">True</property>
                     <property name="draw_indicator">True</property>
-                    <signal name="toggled" handler="_audioOutputCheckbuttonToggledCb" swapped="no"/>
+                    <signal name="toggled" handler="_audio_output_checkbutton_toggled_cb" swapped="no"/>
                   </object>
                 </child>
               </object>

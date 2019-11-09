@@ -26,10 +26,10 @@ from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import Pango
 from gi.repository import Peas
-from utils import Namespace
-from widgets import ConsoleWidget
 
 from pitivi.dialogs.prefs import PreferencesDialog
+from plugins.console.utils import Namespace
+from plugins.console.widgets import ConsoleWidget
 
 
 class PitiviNamespace(Namespace):
@@ -89,31 +89,31 @@ class Console(GObject.GObject, Peas.Activatable):
     def do_activate(self):
         api = self.object
         self.app = api.app
-        self.app.settings.addConfigSection("console")
+        self.app.settings.add_config_section("console")
 
-        self.app.settings.addConfigOption(attrname="consoleColor",
-                                          section="console",
-                                          key="console-color",
-                                          notify=True,
-                                          default=Console.DEFAULT_COLOR)
+        self.app.settings.add_config_option(attrname="consoleColor",
+                                            section="console",
+                                            key="console-color",
+                                            notify=True,
+                                            default=Console.DEFAULT_COLOR)
 
-        self.app.settings.addConfigOption(attrname="consoleErrorColor",
-                                          section="console",
-                                          key="console-error-color",
-                                          notify=True,
-                                          default=Console.DEFAULT_STDERR_COLOR)
+        self.app.settings.add_config_option(attrname="consoleErrorColor",
+                                            section="console",
+                                            key="console-error-color",
+                                            notify=True,
+                                            default=Console.DEFAULT_STDERR_COLOR)
 
-        self.app.settings.addConfigOption(attrname="consoleOutputColor",
-                                          section="console",
-                                          key="console-output-color",
-                                          notify=True,
-                                          default=Console.DEFAULT_STDOUT_COLOR)
+        self.app.settings.add_config_option(attrname="consoleOutputColor",
+                                            section="console",
+                                            key="console-output-color",
+                                            notify=True,
+                                            default=Console.DEFAULT_STDOUT_COLOR)
 
-        self.app.settings.addConfigOption(attrname="consoleFont",
-                                          section="console",
-                                          key="console-font",
-                                          notify=True,
-                                          default=Console.DEFAULT_FONT.to_string())
+        self.app.settings.add_config_option(attrname="consoleFont",
+                                            section="console",
+                                            key="console-font",
+                                            notify=True,
+                                            default=Console.DEFAULT_FONT.to_string())
 
         self.app.settings.reload_attribute_from_file("console", "consoleColor")
         self.app.settings.reload_attribute_from_file("console",
@@ -123,24 +123,24 @@ class Console(GObject.GObject, Peas.Activatable):
         self.app.settings.reload_attribute_from_file("console", "consoleFont")
 
         PreferencesDialog.add_section("console", _("Console"))
-        PreferencesDialog.addColorPreference(attrname="consoleColor",
-                                             label=_("Color"),
-                                             description=None,
-                                             section="console")
-        PreferencesDialog.addColorPreference(attrname="consoleErrorColor",
-                                             # Translators: The color of the content from stderr.
-                                             label=_("Standard error color"),
-                                             description=None,
-                                             section="console")
-        PreferencesDialog.addColorPreference(attrname="consoleOutputColor",
-                                             # Translators: The color of the content from stdout.
-                                             label=_("Standard output color"),
-                                             description=None,
-                                             section="console")
-        PreferencesDialog.addFontPreference(attrname="consoleFont",
-                                            label=_("Font"),
-                                            description=None,
-                                            section="console")
+        PreferencesDialog.add_color_preference(attrname="consoleColor",
+                                               label=_("Color"),
+                                               description=None,
+                                               section="console")
+        PreferencesDialog.add_color_preference(attrname="consoleErrorColor",
+                                               # Translators: The color of the content from stderr.
+                                               label=_("Standard error color"),
+                                               description=None,
+                                               section="console")
+        PreferencesDialog.add_color_preference(attrname="consoleOutputColor",
+                                               # Translators: The color of the content from stdout.
+                                               label=_("Standard output color"),
+                                               description=None,
+                                               section="console")
+        PreferencesDialog.add_font_preference(attrname="consoleFont",
+                                              label=_("Font"),
+                                              description=None,
+                                              section="console")
 
         open_action = Gio.SimpleAction.new("open_console", None)
         open_action.connect("activate", self.__menu_item_activate_cb)

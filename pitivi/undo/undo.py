@@ -27,12 +27,10 @@ from pitivi.utils.loggable import Loggable
 
 class UndoError(Exception):
     """Base class for undo/redo exceptions."""
-    pass
 
 
 class UndoWrongStateError(UndoError):
     """Exception related to the current state of the undo/redo stack."""
-    pass
 
 
 class Action(GObject.Object, Loggable):
@@ -42,7 +40,7 @@ class Action(GObject.Object, Loggable):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         """Converts the action to a Gst.Structure for a `.scenario` file."""
         return None
 
@@ -60,6 +58,7 @@ class UndoableAction(Action):
     def undo(self):
         raise NotImplementedError()
 
+    # pylint: disable=unused-argument
     def expand(self, action):
         """Allows the action to expand by including the specified action.
 
@@ -80,6 +79,8 @@ class UndoableAutomaticObjectAction(UndoableAction):
         auto_object (object): The object which has been automatically created
             and might become obsolete later.
     """
+
+    # pylint: disable=abstract-method
 
     __updates = {}
 
@@ -184,7 +185,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.redo_stacks = []
         self.stacks = []
         self.running = False
-        self._checkpoint = self._takeSnapshot()
+        self._checkpoint = self._take_snapshot()
 
     @contextlib.contextmanager
     def started(self, action_group_name, **kwargs):
@@ -325,17 +326,17 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.undo_stacks.append(stack)
         self.emit("move", stack)
 
-    def _takeSnapshot(self):
+    def _take_snapshot(self):
         return list(self.undo_stacks)
 
     def checkpoint(self):
         if self.stacks:
             raise UndoWrongStateError("Recording a transaction", self.stacks)
 
-        self._checkpoint = self._takeSnapshot()
+        self._checkpoint = self._take_snapshot()
 
     def dirty(self):
-        current_snapshot = self._takeSnapshot()
+        current_snapshot = self._take_snapshot()
         return current_snapshot != self._checkpoint
 
     def _run(self, operation):

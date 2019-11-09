@@ -31,7 +31,7 @@ class TestProjectUndo(common.TestCase):
         self.project = self.app.project_manager.new_blank_project()
         self.action_log = self.app.action_log
 
-    def test_new_project_has_nothing_to_undo(self):
+    def test_new_project_nothing_to_undo(self):
         mainloop = common.create_main_loop()
 
         def loaded_cb(project, timeline):
@@ -49,7 +49,7 @@ class TestProjectUndo(common.TestCase):
         mainloop = common.create_main_loop()
 
         def loaded_cb(unused_project, unused_timeline):
-            self.project.addUris(uris)
+            self.project.add_uris(uris)
 
         self.project.connect_after("loaded", loaded_cb)
 
@@ -77,7 +77,7 @@ class TestProjectUndo(common.TestCase):
 
         def loaded_cb(unused_project, unused_timeline):
             # The new project has been loaded, add some assets.
-            self.project.addUris(uris)
+            self.project.add_uris(uris)
         self.project.connect_after("loaded", loaded_cb)
 
         def progress_cb(unused_project, progress, unused_estimated_time):
@@ -133,12 +133,12 @@ class TestProjectUndo(common.TestCase):
 
         dialog.author_entry.set_text("a1")
         dialog.year_spinbutton.set_value(2001)
-        dialog.updateProject()
+        dialog.update_project()
         assert_meta("a1", "2001")
 
         dialog.author_entry.set_text("a2")
         dialog.year_spinbutton.set_value(2002)
-        dialog.updateProject()
+        dialog.update_project()
         assert_meta("a2", "2002")
 
         self.action_log.undo()

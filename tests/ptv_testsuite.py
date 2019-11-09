@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
 # Copyright (c) 2017, Thibault Saunier <tsaunier@gnome.org>
 #
@@ -34,7 +35,8 @@ from launcher.baseclasses import Test
 
 
 class PitiviTest(Test):
-    """A launcher.Test subclass for our unit tests."""
+    """A Test corresponding to a module in our unit tests suite."""
+
     def build_arguments(self):
         """Builds subprocess arguments."""
         self.add_arguments('-m', 'unittest', '.'.join(self.classname.split('.')[1:]))

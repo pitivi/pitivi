@@ -16,9 +16,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-A collection of objects to use for testing
-"""
+"""Useful objects for testing."""
+# pylint: disable=protected-access
 import contextlib
 import gc
 import locale
@@ -51,16 +50,16 @@ from pitivi.utils.timeline import Selected
 from pitivi.utils.timeline import Zoomable
 
 
-def handle_uncaught_exception(exctype, value, trace):
+def handle_uncaught_exception_func(exctype, value, trace):
     traceback.print_tb(trace)
     print(value, file=sys.stderr)
     sys.exit(1)
 
 
-sys.excepthook = handle_uncaught_exception
+sys.excepthook = handle_uncaught_exception_func
 
 
-def handle_glog(domain, level, message, udata):
+def handle_glog_func(domain, level, message, udata):
     Gst.debug_print_stack_trace()
     traceback.print_stack()
     print("%s - %s" % (domain, message), file=sys.stderr)
@@ -70,19 +69,19 @@ def handle_glog(domain, level, message, udata):
 # GStreamer Not enabled because of an assertion on caps on the CI server.
 # See https://gitlab.gnome.org/thiblahute/pitivi/-/jobs/66570
 for category in ["Gtk", "Gdk", "GLib-GObject", "GES"]:
-    GLib.log_set_handler(category, GLib.LogLevelFlags.LEVEL_CRITICAL, handle_glog, None)
+    GLib.log_set_handler(category, GLib.LogLevelFlags.LEVEL_CRITICAL, handle_glog_func, None)
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp(suffix="pitiviTestsuite")
 locale.setlocale(locale.LC_ALL, "en_US")
 
 
-def __create_settings(proxyingStrategy=ProxyingStrategy.NOTHING,
-                      numTranscodingJobs=4,
+def __create_settings(proxying_strategy=ProxyingStrategy.NOTHING,
+                      num_transcoding_jobs=4,
                       **additional_settings):
     settings = GlobalSettings()
-    settings.proxyingStrategy = proxyingStrategy
-    settings.numTranscodingJobs = numTranscodingJobs
+    settings.proxying_strategy = proxying_strategy
+    settings.num_transcoding_jobs = num_transcoding_jobs
     for key, value in additional_settings.items():
         setattr(settings, key, value)
     return settings
@@ -95,7 +94,6 @@ def create_pitivi_mock(**settings):
     app.proxy_manager = ProxyManager(app)
 
     # TODO: Get rid of Zoomable.app.
-    from pitivi.utils.timeline import Zoomable
     Zoomable.app = app
 
     return app
@@ -121,7 +119,7 @@ def create_timeline_container(**settings):
     project = app.project_manager.new_blank_project()
 
     timeline_container = TimelineContainer(app)
-    timeline_container.setProject(project)
+    timeline_container.set_project(project)
 
     timeline = timeline_container.timeline
     timeline.get_parent = mock.MagicMock(return_value=timeline_container)
@@ -159,7 +157,7 @@ class OperationTimeout(Exception):
     pass
 
 
-class checked_operation_duration:
+class CheckedOperationDuration:
 
     def __init__(self, seconds, error_message=None):
         if error_message is None:
@@ -197,9 +195,9 @@ class TestCase(unittest.TestCase, Loggable):
     def gccollect(self):
         ret = 0
         while True:
-            c = gc.collect()
-            ret += c
-            if c == 0:
+            count = gc.collect()
+            ret += count
+            if count == 0:
                 break
         return ret
 
@@ -226,15 +224,15 @@ class TestCase(unittest.TestCase, Loggable):
 
     def setUp(self):
         # TODO: Get rid of Zoomable._instances.
-        from pitivi.utils.timeline import Zoomable
         del Zoomable._instances[:]
 
+        self._result = None
         self._num_failures = len(getattr(self._result, 'failures', []))
         self._num_errors = len(getattr(self._result, 'errors', []))
         if detect_leaks:
             self.gctrack()
 
-        self.__zoom_level = Zoomable.getCurrentZoomLevel()
+        self.__zoom_level = Zoomable.get_current_zoom_level()
 
         # TODO: Get rid of Previewer.manager.
         assert hasattr(Previewer, "manager")
@@ -249,7 +247,7 @@ class TestCase(unittest.TestCase, Loggable):
         if detect_leaks:
             self.gccollect()
             self.gcverify()
-        Zoomable.setZoomLevel(self.__zoom_level)
+        Zoomable.set_zoom_level(self.__zoom_level)
 
     # override run() to save a reference to the test result object
     def run(self, result=None):
@@ -262,8 +260,8 @@ class TestCase(unittest.TestCase, Loggable):
         unused, xges_path = tempfile.mkstemp(suffix=".xges")
         proj_uri = Gst.filename_to_uri(os.path.abspath(xges_path))
 
-        with open(xges_path, "w") as f:
-            f.write(xges)
+        with open(xges_path, "w") as xges_file:
+            xges_file.write(xges)
 
         return proj_uri
 
@@ -282,8 +280,8 @@ class TestCase(unittest.TestCase, Loggable):
             ges_clip.ui.timeline._button_press_event_cb(None, event)
             with mock.patch.object(ges_clip.ui, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (0, 0)
-                with mock.patch.object(ges_clip.ui.timeline, "_get_layer_at") as _get_layer_at:
-                    _get_layer_at.return_value = ges_clip.props.layer, None
+                with mock.patch.object(ges_clip.ui.timeline, "get_layer_at") as get_layer_at:
+                    get_layer_at.return_value = ges_clip.props.layer, None
                     ges_clip.ui._button_release_event_cb(None, event)
                     ges_clip.ui.timeline._button_release_event_cb(None, event)
 

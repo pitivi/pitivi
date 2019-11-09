@@ -45,7 +45,6 @@ class BaseTabs(Gtk.Notebook, Loggable):
         notebook_widget_settings.props.gtk_dnd_drag_threshold = 1
         self.connect("create-window", self.__create_window_cb)
 
-    # pylint: disable=arguments-differ
     def append_page(self, child_name, child, label):
         Gtk.Notebook.append_page(self, child, label)
         self._set_child_properties(child, label)
@@ -133,30 +132,30 @@ class BaseTabs(Gtk.Notebook, Loggable):
     def _create_default_config(self, child_name):
         """Creates default settings to save the state of a detachable widget."""
         try:
-            GlobalSettings.addConfigSection(child_name)
+            GlobalSettings.add_config_section(child_name)
         except ConfigError:
             self.info("Section %s already exists", child_name)
             return
 
-        GlobalSettings.addConfigOption(child_name + "docked",
-                                       section=child_name,
-                                       key="docked",
-                                       default=True)
-        GlobalSettings.addConfigOption(child_name + "width",
-                                       section=child_name,
-                                       key="width",
-                                       default=320)
-        GlobalSettings.addConfigOption(child_name + "height",
-                                       section=child_name,
-                                       key="height",
-                                       default=400)
-        GlobalSettings.addConfigOption(child_name + "x",
-                                       section=child_name,
-                                       key="x",
-                                       default=0)
-        GlobalSettings.addConfigOption(child_name + "y",
-                                       section=child_name,
-                                       key="y",
-                                       default=0)
+        GlobalSettings.add_config_option(child_name + "docked",
+                                         section=child_name,
+                                         key="docked",
+                                         default=True)
+        GlobalSettings.add_config_option(child_name + "width",
+                                         section=child_name,
+                                         key="width",
+                                         default=320)
+        GlobalSettings.add_config_option(child_name + "height",
+                                         section=child_name,
+                                         key="height",
+                                         default=400)
+        GlobalSettings.add_config_option(child_name + "x",
+                                         section=child_name,
+                                         key="x",
+                                         default=0)
+        GlobalSettings.add_config_option(child_name + "y",
+                                         section=child_name,
+                                         key="y",
+                                         default=0)
 
-        GlobalSettings.readSettingSectionFromFile(self.settings, child_name)
+        self.settings.read_setting_section_from_file(child_name)

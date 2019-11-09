@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-"""
-Pitivi unit tests
-"""
+# -*- coding: utf-8 -*-
+"""Pitivi unit tests."""
 import os
 import sys
 from tempfile import mkdtemp
@@ -18,7 +17,6 @@ def get_pitivi_dir():
 
 def _prepend_env_paths(**args):
     """Prepends one or more paths to an environment variable."""
-
     for name, value in args.items():
         if not isinstance(value, list):
             value = [value]

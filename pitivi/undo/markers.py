@@ -16,7 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""Undo/redo markers"""
+"""Undo/redo logic for markers."""
 from gi.repository import Gst
 
 from pitivi.undo.undo import MetaContainerObserver
@@ -69,9 +69,9 @@ class MarkerListObserver(Loggable):
         self.action_log.push(action)
 
 
-# pylint: disable=abstract-method, too-many-ancestors
+# pylint: disable=abstract-method
 class MarkerAction(UndoableAutomaticObjectAction):
-    """Base class for add and remove marker actions"""
+    """Base class for marker actions."""
 
     def __init__(self, ges_marker_list, ges_marker):
         UndoableAutomaticObjectAction.__init__(self, ges_marker)
@@ -101,7 +101,7 @@ class MarkerAdded(MarkerAction):
     def undo(self):
         self.remove()
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("add-marker")
         return st
 
@@ -115,7 +115,7 @@ class MarkerRemoved(MarkerAction):
     def undo(self):
         self.add()
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("remove-marker")
         return st
 
@@ -135,7 +135,7 @@ class MarkerMoved(UndoableAutomaticObjectAction):
     def undo(self):
         self.ges_marker_list.move(self.auto_object, self.old_position)
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("move-marker")
         return st
 

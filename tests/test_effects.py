@@ -85,7 +85,7 @@ class EffectsPropertiesManagerTest(common.TestCase):
         self.builder = Gtk.Builder()
         path = os.path.join(os.path.dirname(__file__), "plugins", "test_alpha.ui")
         self.builder.add_objects_from_file(path, widgets)
-        self.element_settings_widget.mapBuilder(self.builder)
+        self.element_settings_widget.map_builder(self.builder)
         return self.builder.get_object("GstAlpha::black-sensitivity")
 
     def _register_alpha_widget(self, widgets):
@@ -99,8 +99,8 @@ class EffectsPropertiesManagerTest(common.TestCase):
         self.element_settings_widget = GstElementSettingsWidget(self.alpha_effect, PROPS_TO_IGNORE)
 
         self.effects_prop_manager.emit("create-widget", self.element_settings_widget, self.alpha_effect)
-        self.effects_prop_manager._connectAllWidgetCallbacks(self.element_settings_widget, self.alpha_effect)
-        self.effects_prop_manager._postConfiguration(self.alpha_effect, self.element_settings_widget)
+        self.effects_prop_manager._connect_all_widget_callbacks(self.element_settings_widget, self.alpha_effect)
+        self.effects_prop_manager._post_configuration(self.alpha_effect, self.element_settings_widget)
 
     def test_wrapping(self):
         """Checks UI updating results in updating the effect."""
@@ -113,12 +113,12 @@ class EffectsPropertiesManagerTest(common.TestCase):
         self.assertTrue(isinstance(wrapped_spin_button, NumericWidget))
 
         # Check if the wrapper has the correct default value
-        self.assertEqual(self.prop.default_value, wrapped_spin_button.getWidgetDefault())
+        self.assertEqual(self.prop.default_value, wrapped_spin_button.get_widget_default())
 
         # Check if the callbacks are functioning
         value = (1 + self.prop.default_value) % self.prop.maximum
-        wrapped_spin_button.setWidgetValue(value)
-        self.assertEqual(wrapped_spin_button.getWidgetValue(), value)
+        wrapped_spin_button.set_widget_value(value)
+        self.assertEqual(wrapped_spin_button.get_widget_value(), value)
         _, prop_value = self.alpha_effect.get_child_property(self.prop_name)
         self.assertEqual(prop_value, value)
 
@@ -146,10 +146,10 @@ class EffectsPropertiesManagerTest(common.TestCase):
 
         # Control the self.prop property on the timeline
         prop_keyframe_button.set_active(True)
-        self.assertEqual(track_element.ui_element._TimelineElement__controlledProperty, self.prop)
+        self.assertEqual(track_element.ui_element._TimelineElement__controlled_property, self.prop)
         # Revert to controlling the default property
         prop_keyframe_button.set_active(False)
-        self.assertNotEqual(track_element.ui_element._TimelineElement__controlledProperty, self.prop)
+        self.assertNotEqual(track_element.ui_element._TimelineElement__controlled_property, self.prop)
 
     def test_prop_reset(self):
         """Checks the reset button resets the property."""
@@ -159,10 +159,10 @@ class EffectsPropertiesManagerTest(common.TestCase):
         wrapped_spin_button = self.element_settings_widget.properties[self.prop]
         _, prop_value = self.alpha_effect.get_child_property(self.prop_name)
         self.assertEqual(self.prop.default_value, prop_value)
-        self.assertEqual(self.prop.default_value, wrapped_spin_button.getWidgetValue())
+        self.assertEqual(self.prop.default_value, wrapped_spin_button.get_widget_value())
 
         # Set the property value to a different value than the default
-        wrapped_spin_button.setWidgetValue((1 + self.prop.default_value) % self.prop.maximum)
+        wrapped_spin_button.set_widget_value((1 + self.prop.default_value) % self.prop.maximum)
         _, prop_value = self.alpha_effect.get_child_property(self.prop_name)
         self.assertEqual(prop_value, (1 + self.prop.default_value) % self.prop.maximum)
 
@@ -172,7 +172,7 @@ class EffectsPropertiesManagerTest(common.TestCase):
         prop_reset_button.clicked()
         _, prop_value = self.alpha_effect.get_child_property(self.prop_name)
         self.assertEqual(self.prop.default_value, prop_value)
-        self.assertEqual(self.prop.default_value, wrapped_spin_button.getWidgetValue())
+        self.assertEqual(self.prop.default_value, wrapped_spin_button.get_widget_value())
 
     def test_dependent_properties(self):
         """Checks dependent properties updating is handled correctly."""
@@ -199,12 +199,12 @@ class EffectsPropertiesManagerTest(common.TestCase):
         effect = GES.Effect.new("aspectratiocrop")
         effect.set_child_property = set_child_property
 
-        effect_widget = manager.getEffectConfigurationUI(effect)
+        effect_widget = manager.get_effect_configuration_ui(effect)
 
         widgets = {prop.name: widget
                    for prop, widget in effect_widget.properties.items()}
         # Simulate the user choosing an aspect-ratio.
-        widgets["aspect-ratio"].setWidgetValue(Gst.Fraction(4, 3))
+        widgets["aspect-ratio"].set_widget_value(Gst.Fraction(4, 3))
 
         mainloop.run(until_empty=True)
 

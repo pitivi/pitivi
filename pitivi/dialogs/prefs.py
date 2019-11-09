@@ -40,21 +40,22 @@ from pitivi.utils.ui import PREFERENCES_CSS
 from pitivi.utils.ui import SPACING
 
 
-GlobalSettings.addConfigSection("user-interface")
+GlobalSettings.add_config_section("user-interface")
 
-GlobalSettings.addConfigOption('prefsDialogWidth',
-                               section="user-interface",
-                               key="prefs-dialog-width",
-                               default=600)
+GlobalSettings.add_config_option('prefsDialogWidth',
+                                 section="user-interface",
+                                 key="prefs-dialog-width",
+                                 default=600)
 
-GlobalSettings.addConfigOption('prefsDialogHeight',
-                               section="user-interface",
-                               key="prefs-dialog-height",
-                               default=400)
+GlobalSettings.add_config_option('prefsDialogHeight',
+                                 section="user-interface",
+                                 key="prefs-dialog-height",
+                                 default=400)
 
 
 class PreferencesDialog(Loggable):
     """Preferences for how the app works."""
+
     _instance = None
     prefs = {}
     section_names = {
@@ -88,7 +89,7 @@ class PreferencesDialog(Loggable):
         self.factory_settings = builder.get_object("resetButton")
         self.restart_warning = builder.get_object("restartWarning")
 
-        self.factory_settings.set_sensitive(self._canReset())
+        self.factory_settings.set_sensitive(self._can_reset())
 
         self.add_settings_page('timeline')
         self.__add_proxies_section()
@@ -126,7 +127,7 @@ class PreferencesDialog(Loggable):
     @classmethod
     def remove_section(cls, section):
         if cls._instance is not None:
-            cls._instance._remove_page(section)
+            cls._instance.remove_page(section)
         try:
             del cls.section_names[section]
             del cls.prefs[section]
@@ -156,18 +157,18 @@ class PreferencesDialog(Loggable):
             cls.prefs[section] = {}
         cls.prefs[section][attrname] = (label, description, widget_class, args)
         if cls._instance is not None:
-            cls._instance._remove_page(section)
+            cls._instance.remove_page(section)
             cls._instance.add_settings_page(section)
 
     @classmethod
-    def addPathPreference(cls, attrname, label, description, section=None):
+    def add_path_preference(cls, attrname, label, description, section=None):
         """Adds a user preference for a file path."""
         cls._add_preference(attrname, label, description, section,
                             widgets.PathWidget)
 
     @classmethod
-    def addNumericPreference(cls, attrname, label, description, section=None,
-                             upper=None, lower=None):
+    def add_numeric_preference(cls, attrname, label, description, section=None,
+                               upper=None, lower=None):
         """Adds a user preference for a number.
 
         Show up as either a Gtk.SpinButton or a horizontal Gtk.Scale, depending
@@ -177,31 +178,31 @@ class PreferencesDialog(Loggable):
                             widgets.NumericWidget, upper=upper, lower=lower)
 
     @classmethod
-    def addTextPreference(cls, attrname, label, description, section=None, matches=None):
+    def add_text_preference(cls, attrname, label, description, section=None, matches=None):
         """Adds a user preference for text."""
         cls._add_preference(attrname, label, description, section,
                             widgets.TextWidget, matches=matches)
 
     @classmethod
-    def addChoicePreference(cls, attrname, label, description, choices, section=None):
+    def add_choice_preference(cls, attrname, label, description, choices, section=None):
         """Adds a user preference for text options."""
         cls._add_preference(attrname, label, description, section,
                             widgets.ChoiceWidget, choices=choices)
 
     @classmethod
-    def addTogglePreference(cls, attrname, label, description, section=None):
+    def add_toggle_preference(cls, attrname, label, description, section=None):
         """Adds a user preference for an on/off option."""
         cls._add_preference(attrname, label, description, section,
                             widgets.ToggleWidget)
 
     @classmethod
-    def addColorPreference(cls, attrname, label, description, section=None):
+    def add_color_preference(cls, attrname, label, description, section=None):
         """Adds a user preference for a color."""
         cls._add_preference(attrname, label, description, section,
                             widgets.ColorWidget)
 
     @classmethod
-    def addFontPreference(cls, attrname, label, description, section=None):
+    def add_font_preference(cls, attrname, label, description, section=None):
         """Adds a user preference for a font."""
         cls._add_preference(attrname, label, description, section,
                             widgets.FontWidget)
@@ -212,7 +213,7 @@ class PreferencesDialog(Loggable):
             raise Exception("%s is not a valid section id" % section)
         self.stack.add_titled(widget, section, self.section_names[section])
 
-    def _remove_page(self, section):
+    def remove_page(self, section):
         if section in self.section_names:
             widget = self.stack.get_child_by_name(section)
             if widget is not None:
@@ -291,13 +292,13 @@ class PreferencesDialog(Loggable):
         for attrname in options:
             label, description, widget_class, args = options[attrname]
             widget = widget_class(**args)
-            widget.setWidgetValue(getattr(self.settings, attrname))
-            widget.connectValueChanged(self._valueChangedCb, widget, attrname)
+            widget.set_widget_value(getattr(self.settings, attrname))
+            widget.connect_value_changed(self._value_changed_cb, widget, attrname)
             widget.set_tooltip_text(description)
             self.widgets[attrname] = widget
 
             revert = self._create_revert_button()
-            revert.set_sensitive(not self.settings.isDefault(attrname))
+            revert.set_sensitive(not self.settings.is_default(attrname))
             revert.connect("clicked", self.__reset_option_cb, attrname)
             self.resets[attrname] = revert
 
@@ -318,10 +319,10 @@ class PreferencesDialog(Loggable):
         prefs = self._prepare_prefs_widgets(self.prefs["_proxies"])
 
         self.proxy_width_widget = widgets.NumericWidget(lower=1, width_chars=4)
-        self.proxy_width_widget.setWidgetValue(self.app.settings.default_scaled_proxy_width)
+        self.proxy_width_widget.set_widget_value(self.app.settings.default_scaled_proxy_width)
         self.widgets["default_scaled_proxy_width"] = self.proxy_width_widget
         self.proxy_height_widget = widgets.NumericWidget(lower=1, width_chars=4)
-        self.proxy_height_widget.setWidgetValue(self.app.settings.default_scaled_proxy_height)
+        self.proxy_height_widget.set_widget_value(self.app.settings.default_scaled_proxy_height)
         self.widgets["default_scaled_proxy_height"] = self.proxy_height_widget
         size_box = Gtk.Box(spacing=SPACING)
         size_box.pack_start(self.proxy_width_widget, False, False, 0)
@@ -351,19 +352,19 @@ class PreferencesDialog(Loggable):
         self.__update_scaled_proxies_infobar()
         self.__update_proxy_size_revert_button()
 
-        self.proxy_width_widget.connectValueChanged(self.__scaled_proxy_size_change_cb)
-        self.proxy_height_widget.connectValueChanged(self.__scaled_proxy_size_change_cb)
+        self.proxy_width_widget.connect_value_changed(self.__scaled_proxy_size_change_cb)
+        self.proxy_height_widget.connect_value_changed(self.__scaled_proxy_size_change_cb)
         self.scaled_proxy_size_revert_button.connect("clicked", self.__reset_option_cb, "default_scaled_proxy_width", "default_scaled_proxy_height")
         self.proxy_infobar.connect("response", self.__proxy_infobar_cb)
 
     def __scaled_proxy_size_change_cb(self, unused_widget):
-        self.app.settings.default_scaled_proxy_width = self.proxy_width_widget.getWidgetValue()
-        self.app.settings.default_scaled_proxy_height = self.proxy_height_widget.getWidgetValue()
+        self.app.settings.default_scaled_proxy_width = self.proxy_width_widget.get_widget_value()
+        self.app.settings.default_scaled_proxy_height = self.proxy_height_widget.get_widget_value()
         self.__update_scaled_proxies_infobar()
         self.__update_proxy_size_revert_button()
 
     def __update_proxy_size_revert_button(self):
-        default = all([self.settings.isDefault(setting)
+        default = all([self.settings.is_default(setting)
                        for setting in ("default_scaled_proxy_width", "default_scaled_proxy_height")])
         self.scaled_proxy_size_revert_button.set_sensitive(not default)
 
@@ -371,7 +372,7 @@ class PreferencesDialog(Loggable):
         project = self.app.project_manager.current_project
         different = project and \
             (project.scaled_proxy_width != self.app.settings.default_scaled_proxy_width or
-                project.scaled_proxy_height != self.app.settings.default_scaled_proxy_height)
+             project.scaled_proxy_height != self.app.settings.default_scaled_proxy_height)
         self.proxy_infobar.set_visible(different)
         if different:
             self.scaled_proxies_infobar_label.set_text(
@@ -379,7 +380,7 @@ class PreferencesDialog(Loggable):
                 (project.scaled_proxy_width, project.scaled_proxy_height))
 
     def __proxy_infobar_cb(self, unused_infobar, unused_response_id):
-        self.app.gui.editor.showProjectSettingsDialog()
+        self.app.gui.editor.show_project_settings_dialog()
         self.__update_scaled_proxies_infobar()
 
     def __add_shortcuts_section(self):
@@ -517,21 +518,21 @@ class PreferencesDialog(Loggable):
             count = self.list_store.get_n_items()
         self.list_store.emit("items-changed", index, count, count)
 
-    def _factorySettingsButtonCb(self, unused_button):
+    def _factory_settings_button_cb(self, unused_button):
         """Resets all settings to the defaults."""
         for section in self.prefs.values():
             for attrname in section:
                 self.__reset_option(self.resets[attrname], attrname)
         self.app.shortcuts.reset_accels()
 
-    def _revertButtonCb(self, unused_button):
+    def _revert_button_cb(self, unused_button):
         """Resets all settings to the values when the dialog was opened."""
         for attrname, value in self.original_values.items():
-            self.widgets[attrname].setWidgetValue(value)
+            self.widgets[attrname].set_widget_value(value)
             setattr(self.settings, attrname, value)
         self.original_values = {}
         self.revert_button.set_sensitive(False)
-        self.factory_settings.set_sensitive(self._canReset())
+        self.factory_settings.set_sensitive(self._can_reset())
 
     def __reset_option_cb(self, button, *attrnames):
         for attrname in attrnames:
@@ -539,39 +540,39 @@ class PreferencesDialog(Loggable):
 
     def __reset_option(self, button, attrname):
         """Resets a particular setting to the factory default."""
-        if not self.settings.isDefault(attrname):
-            self.settings.setDefault(attrname)
-        self.widgets[attrname].setWidgetValue(getattr(self.settings, attrname))
+        if not self.settings.is_default(attrname):
+            self.settings.set_default(attrname)
+        self.widgets[attrname].set_widget_value(getattr(self.settings, attrname))
         button.set_sensitive(False)
-        self.factory_settings.set_sensitive(self._canReset())
+        self.factory_settings.set_sensitive(self._can_reset())
 
     def _response_cb(self, unused_button, unused_response_id):
         self.dialog.destroy()
 
-    def _valueChangedCb(self, unused_fake_widget, real_widget, attrname):
+    def _value_changed_cb(self, unused_fake_widget, real_widget, attrname):
         value = getattr(self.settings, attrname)
         if attrname not in self.original_values:
             self.original_values[attrname] = value
-            if not GlobalSettings.notifiesConfigOption(attrname):
+            if not GlobalSettings.notifies_config_option(attrname):
                 self.restart_warning.show()
             self.revert_button.set_sensitive(True)
 
-        value = real_widget.getWidgetValue()
+        value = real_widget.get_widget_value()
         setattr(self.settings, attrname, value)
 
         # adjust controls as appropriate
         self.resets[attrname].set_sensitive(
-            not self.settings.isDefault(attrname))
+            not self.settings.is_default(attrname))
         self.factory_settings.set_sensitive(True)
 
-    def _configureCb(self, unused_widget, event):
+    def _configure_cb(self, unused_widget, event):
         self.settings.prefsDialogWidth = event.width
         self.settings.prefsDialogHeight = event.height
 
-    def _canReset(self):
+    def _can_reset(self):
         for section in self.prefs.values():
             for attrname in section:
-                if not self.settings.isDefault(attrname):
+                if not self.settings.is_default(attrname):
                     return True
         return False
 
@@ -599,6 +600,7 @@ class ModelItem(GObject.Object):
 
 class CustomShortcutDialog(Gtk.Dialog):
     """Dialog for customising accelerator invoked by activating a row in preferences."""
+
     FORBIDDEN_KEYVALS = [Gdk.KEY_Escape]
 
     def __init__(self, app, pref_dialog, customised_item):
@@ -606,6 +608,9 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.app = app
         self.preferences = pref_dialog
         self.customised_item = customised_item
+
+        # The keyboard shortcut typed by the user.
+        self.accelerator = None
 
         self.set_title(_("Set Shortcut"))
         # Set a minimum size.
@@ -695,6 +700,7 @@ class CustomShortcutDialog(Gtk.Dialog):
     def do_response(self, response):
         """Handles the user's response."""
         if response == Gtk.ResponseType.OK:
+            assert self.accelerator
             if self.conflicting_action:
                 # Disable the accelerator in its previous use, set for this action.
                 accels = self.app.get_accels_for_action(self.conflicting_action)
@@ -712,7 +718,7 @@ class PluginPreferencesRow(Gtk.ListBoxRow):
     """A row in the plugins list allowing activating and deactivating a plugin."""
 
     def __init__(self, item):
-        Gtk.Bin.__init__(self)
+        Gtk.ListBoxRow.__init__(self)
         self.plugin_info = item.plugin_info
 
         self._container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)

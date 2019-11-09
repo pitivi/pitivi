@@ -52,40 +52,40 @@ class DynamicWidget(Loggable):
         super().__init__()
         self.default = default
 
-    def connectValueChanged(self, callback, *args):
+    def connect_value_changed(self, callback, *args):
         raise NotImplementedError
 
-    def setWidgetValue(self, value):
+    def set_widget_value(self, value):
         raise NotImplementedError
 
-    def getWidgetValue(self):
+    def get_widget_value(self):
         raise NotImplementedError
 
-    def getWidgetDefault(self):
+    def get_widget_default(self):
         return self.default
 
-    def setWidgetToDefault(self):
+    def set_widget_to_default(self):
         if self.default is not None:
-            self.setWidgetValue(self.default)
+            self.set_widget_value(self.default)
 
 
 class DefaultWidget(Gtk.Label):
     """When all hope fails...."""
 
-    def __init__(self, *unused, **unused_kwargs):
+    def __init__(self):
         Gtk.Label.__init__(self, _("Implement Me"))
         self.props.halign = Gtk.Align.START
 
-    def connectValueChanged(self, callback, *args):
+    def connect_value_changed(self, callback, *args):
         pass
 
-    def setWidgetValue(self, value):
+    def set_widget_value(self, value):
         pass
 
-    def getWidgetValue(self):
+    def get_widget_value(self):
         pass
 
-    def setWidgetToDefault(self):
+    def set_widget_to_default(self):
         pass
 
 
@@ -146,25 +146,25 @@ class TextWidget(Gtk.Box, DynamicWidget):
         self.text.connect("changed", self.__text_changed_cb)
         self.text.connect("activate", self.__activate_cb)
         if matches:
-            if type(matches) is str:
+            if isinstance(matches, str):
                 self.matches = re.compile(matches)
             else:
                 self.matches = matches
             self.__text_changed_cb(None)
 
-    def connectValueChanged(self, callback, *args):
+    def connect_value_changed(self, callback, *args):
         return self.connect("value-changed", callback, *args)
 
-    def setWidgetValue(self, value, send_signal=True):
+    def set_widget_value(self, value, send_signal=True):
         self.send_signal = send_signal
         self.text.set_text(value)
 
-    def getWidgetValue(self):
+    def get_widget_value(self):
         if self.matches:
             return self.last_valid
         return self.text.get_text()
 
-    def addChoices(self, choices):
+    def add_choices(self, choices):
         for choice in choices:
             self.combo.append_text(choice)
 
@@ -269,16 +269,16 @@ class NumericWidget(Gtk.Box, DynamicWidget):
         if self.handler_id:
             self.adjustment.handler_unblock(self.handler_id)
 
-    def connectValueChanged(self, callback, *args):
+    def connect_value_changed(self, callback, *args):
         self.handler_id = self.adjustment.connect("value-changed", callback, *args)
 
-    def getWidgetValue(self):
+    def get_widget_value(self):
         if self._type:
             return self._type(self.adjustment.get_value())
 
         return self.adjustment.get_value()
 
-    def setWidgetValue(self, value):
+    def set_widget_value(self, value):
         type_ = type(value)
         if self._type is None:
             self._type = type_
@@ -308,7 +308,7 @@ class TimeWidget(TextWidget, DynamicWidget):
     # The "timecode" rule is ^([0-9]:[0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$"
     # Combining the two, we get:
     VALID_REGEX = re.compile(
-        "^([0-9]+)$|^([0-9]:)?([0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
+        r"^([0-9]+)$|^([0-9]:)?([0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
 
     __gtype_name__ = 'TimeWidget'
 
@@ -319,8 +319,8 @@ class TimeWidget(TextWidget, DynamicWidget):
         self._framerate = None
         self.text.connect("focus-out-event", self._focus_out_cb)
 
-    def getWidgetValue(self):
-        timecode = TextWidget.getWidgetValue(self)
+    def get_widget_value(self):
+        timecode = TextWidget.get_widget_value(self)
 
         if ":" in timecode:
             parts = timecode.split(":")
@@ -341,28 +341,27 @@ class TimeWidget(TextWidget, DynamicWidget):
             nanosecs = frame_no / float(self._framerate) * Gst.SECOND
         return int(nanosecs)
 
-    def setWidgetValue(self, timeNanos, send_signal=True):
+    def set_widget_value(self, timeNanos, send_signal=True):
         self.default = timeNanos
         timecode = time_to_string(timeNanos)
         if timecode.startswith("0:"):
             timecode = timecode[2:]
-        TextWidget.setWidgetValue(self, timecode, send_signal=send_signal)
+        TextWidget.set_widget_value(self, timecode, send_signal=send_signal)
 
     def _focus_out_cb(self, widget, event):
         """Reset the text to display the current position of the playhead."""
         if self.default is not None:
-            self.setWidgetValue(self.default)
+            self.set_widget_value(self.default)
 
-    def connectActivateEvent(self, activateCb):
-        return self.connect("activate", activateCb)
+    def connect_activate_event(self, activate_cb):
+        return self.connect("activate", activate_cb)
 
-    def connectFocusEvents(self, focusInCb, focusOutCb):
-        fIn = self.text.connect("focus-in-event", focusInCb)
-        fOut = self.text.connect("focus-out-event", focusOutCb)
+    def connect_focus_events(self, focus_in_cb, focus_out_cb):
+        focus_in_handler_id = self.text.connect("focus-in-event", focus_in_cb)
+        focus_out_handler_id = self.text.connect("focus-out-event", focus_out_cb)
+        return [focus_in_handler_id, focus_out_handler_id]
 
-        return [fIn, fOut]
-
-    def setFramerate(self, framerate):
+    def set_framerate(self, framerate):
         self._framerate = framerate
 
 
@@ -370,28 +369,23 @@ class FractionWidget(TextWidget, DynamicWidget):
     """Widget for entering a fraction."""
 
     fraction_regex = re.compile(
-        "^([0-9]*(\.[0-9]+)?)(([:/][0-9]*(\.[0-9]+)?)|M)?$")
+        r"^([0-9]*(\.[0-9]+)?)(([:/][0-9]*(\.[0-9]+)?)|M)?$")
     __gtype_name__ = 'FractionWidget'
 
-    def __init__(self, range=None, presets=None, default=None):
+    def __init__(self, presets=None, default=None):
         DynamicWidget.__init__(self, default)
 
-        if range:
-            flow = float(range.low)
-            fhigh = float(range.high)
-        else:
-            flow = float("-Infinity")
-            fhigh = float("Infinity")
+        flow = float("-Infinity")
+        fhigh = float("Infinity")
         choices = []
         if presets:
             for preset in presets:
-                if type(preset) is str:
+                if isinstance(preset, str):
                     strval = preset
-                    preset = self._parseText(preset)
+                    preset = self._parse_text(preset)
                 else:
                     strval = "%g:%g" % (preset.num, preset.denom)
-                fpreset = float(preset)
-                if flow <= fpreset and fpreset <= fhigh:
+                if flow <= float(preset) <= fhigh:
                     choices.append(strval)
         self.low = flow
         self.high = fhigh
@@ -399,28 +393,27 @@ class FractionWidget(TextWidget, DynamicWidget):
 
     def _filter(self, text):
         if TextWidget._filter(self, text):
-            value = self._parseText(text)
+            value = self._parse_text(text)
             if self.low <= float(value) and float(value) <= self.high:
                 return True
         return False
 
-    def addPresets(self, presets):
+    def add_presets(self, presets):
         choices = []
         for preset in presets:
-            if type(preset) is str:
+            if isinstance(preset, str):
                 strval = preset
-                preset = self._parseText(preset)
+                preset = self._parse_text(preset)
             else:
                 strval = "%g:%g" % (preset.num, preset.denom)
-            fpreset = float(preset)
-            if self.low <= fpreset and fpreset <= self.high:
+            if self.low <= float(preset) <= self.high:
                 choices.append(strval)
 
-        self.addChoices(choices)
+        self.add_choices(choices)
 
-    def setWidgetValue(self, value):
-        if type(value) is str:
-            value = self._parseText(value)
+    def set_widget_value(self, value):
+        if isinstance(value, str):
+            value = self._parse_text(value)
         elif not hasattr(value, "denom"):
             value = Gst.Fraction(value)
         if value.denom == 1001:
@@ -430,13 +423,13 @@ class FractionWidget(TextWidget, DynamicWidget):
 
         self.text.set_text(text)
 
-    def getWidgetValue(self):
+    def get_widget_value(self):
         if self.last_valid:
-            return self._parseText(self.last_valid)
+            return self._parse_text(self.last_valid)
         return Gst.Fraction(1, 1)
 
     @classmethod
-    def _parseText(cls, text):
+    def _parse_text(cls, text):
         match = cls.fraction_regex.match(text)
         groups = match.groups()
         num = 1.0
@@ -464,18 +457,18 @@ class ToggleWidget(Gtk.Box, DynamicWidget):
             self.switch_button.show()
         else:
             self.switch_button = switch_button
-            self.setWidgetToDefault()
+            self.set_widget_to_default()
 
-    def connectValueChanged(self, callback, *args):
+    def connect_value_changed(self, callback, *args):
         def callback_wrapper(switch_button, unused_state):
             callback(switch_button, *args)
 
         self.switch_button.connect("state-set", callback_wrapper)
 
-    def setWidgetValue(self, value):
+    def set_widget_value(self, value):
         self.switch_button.set_active(value)
 
-    def getWidgetValue(self):
+    def get_widget_value(self):
         return self.switch_button.get_active()
 
 
@@ -490,30 +483,30 @@ class ChoiceWidget(Gtk.Box, DynamicWidget):
         self.set_orientation(Gtk.Orientation.HORIZONTAL)
         self.contents = Gtk.ComboBoxText()
         self.pack_start(self.contents, expand=False, fill=False, padding=0)
-        self.setChoices(choices)
+        self.set_choices(choices)
         self.contents.show()
         disable_scroll(self.contents)
         cell = self.contents.get_cells()[0]
         cell.props.ellipsize = Pango.EllipsizeMode.END
 
-    def connectValueChanged(self, callback, *args):
+    def connect_value_changed(self, callback, *args):
         return self.contents.connect("changed", callback, *args)
 
-    def setWidgetValue(self, value):
+    def set_widget_value(self, value):
         try:
             self.contents.set_active(self.values.index(value))
         except ValueError:
             raise ValueError("%r not in %r" % (value, self.values))
 
-    def getWidgetValue(self):
+    def get_widget_value(self):
         return self.values[self.contents.get_active()]
 
-    def setChoices(self, choices):
+    def set_choices(self, choices):
         self.choices = [choice[0] for choice in choices]
         self.values = [choice[1] for choice in choices]
-        m = Gtk.ListStore(str)
-        self.contents.set_model(m)
-        for choice, value in choices:
+        model = Gtk.ListStore(str)
+        self.contents.set_model(model)
+        for choice, unused_value in choices:
             self.contents.append_text(_(choice))
         if len(choices) <= 1:
             self.contents.set_sensitive(False)
@@ -537,20 +530,20 @@ class PathWidget(Gtk.FileChooserButton, DynamicWidget):
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
         self.dialog.set_default_response(Gtk.ResponseType.OK)
         Gtk.FileChooserButton.__init__(self, dialog=self.dialog)
-        self.dialog.connect("response", self._responseCb)
+        self.dialog.connect("response", self._response_cb)
         self.uri = ""
 
-    def connectValueChanged(self, callback, *args):
+    def connect_value_changed(self, callback, *args):
         return self.connect("value-changed", callback, *args)
 
-    def setWidgetValue(self, value):
+    def set_widget_value(self, value):
         self.set_uri(value)
         self.uri = value
 
-    def getWidgetValue(self):
+    def get_widget_value(self):
         return self.uri
 
-    def _responseCb(self, unused_dialog, response):
+    def _response_cb(self, unused_dialog, response):
         if response == Gtk.ResponseType.CLOSE:
             self.uri = self.get_uri()
             self.emit("value-changed")
@@ -563,13 +556,13 @@ class ColorWidget(Gtk.ColorButton, DynamicWidget):
         Gtk.ColorButton.__init__(self)
         DynamicWidget.__init__(self, default)
 
-    def connectValueChanged(self, callback, *args):
+    def connect_value_changed(self, callback, *args):
         self.connect("color-set", callback, *args)
 
-    def setWidgetValue(self, value):
+    def set_widget_value(self, value):
         self.set_rgba(value)
 
-    def getWidgetValue(self):
+    def get_widget_value(self):
         return self.get_rgba()
 
 
@@ -580,13 +573,13 @@ class FontWidget(Gtk.FontButton, DynamicWidget):
         DynamicWidget.__init__(self, default)
         self.set_use_font(True)
 
-    def connectValueChanged(self, callback, *args):
+    def connect_value_changed(self, callback, *args):
         self.connect("font-set", callback, *args)
 
-    def setWidgetValue(self, font_name):
+    def set_widget_value(self, font_name):
         self.set_font_name(font_name)
 
-    def getWidgetValue(self):
+    def get_widget_value(self):
         return self.get_font_name()
 
 
@@ -614,22 +607,22 @@ class InputValidationWidget(Gtk.Box, DynamicWidget):
         self.pack_start(self._warning_sign, expand=False, fill=False, padding=SPACING)
         self._warning_sign.set_no_show_all(True)
 
-        self._widget.connectValueChanged(self._widget_value_changed_cb)
+        self._widget.connect_value_changed(self._widget_value_changed_cb)
 
-    def connectValueChanged(self, callback, *args):
-        return self._widget.connectValueChanged(callback, args)
+    def connect_value_changed(self, callback, *args):
+        return self._widget.connect_value_changed(callback, args)
 
-    def setWidgetValue(self, value):
-        self._widget.setWidgetValue(value)
+    def set_widget_value(self, value):
+        self._widget.set_widget_value(value)
 
-    def getWidgetValue(self):
-        value = self._widget.getWidgetValue()
+    def get_widget_value(self):
+        value = self._widget.get_widget_value()
         if self._validation_function(value):
             return value
-        return self.getWidgetDefault()
+        return self.get_widget_default()
 
     def _widget_value_changed_cb(self, unused_widget):
-        value = self._widget.getWidgetValue()
+        value = self._widget.get_widget_value()
         if self._validation_function(value):
             self._warning_sign.hide()
         else:
@@ -655,6 +648,7 @@ def make_widget_wrapper(prop, widget):
         return ToggleWidget(prop.default_value, widget)
     else:
         Loggable().fixme("%s has not been wrapped into a Dynamic Widget", widget)
+        return None
 
 
 class GstElementSettingsWidget(Gtk.Box, Loggable):
@@ -679,7 +673,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         "x264enc": {"profile": Gst.ValueList(["high", "main", "baseline"])}
     }
 
-    def __init__(self, element, props_to_ignore=["name"], controllable=True):
+    def __init__(self, element, props_to_ignore=("name",), controllable=True):
         Gtk.Box.__init__(self)
         Loggable.__init__(self)
         self.element = element
@@ -699,7 +693,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
     def deactivate_keyframe_toggle_buttons(self):
         """Makes sure the keyframe togglebuttons are deactivated."""
         self.log("Deactivating all keyframe toggle buttons")
-        for keyframe_button in self.__widgets_by_keyframe_button.keys():
+        for keyframe_button in self.__widgets_by_keyframe_button:
             if keyframe_button.get_active():
                 # Deactivate the button. The only effect should be that
                 # the keyframe curve will control again the default property.
@@ -711,7 +705,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         self.pack_start(widget, True, True, 0)
         self.show_all()
 
-    def mapBuilder(self, builder):
+    def map_builder(self, builder):
         """Maps the GStreamer element's properties to corresponding widgets in @builder.
 
         Prop control widgets should be named "element_name::prop_name", where:
@@ -725,7 +719,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         can be used whose name is to be "element_name::prop_name::keyframe".
         """
         reset_all_button = builder.get_object("reset_all_button")
-        for prop in self._getProperties():
+        for prop in self._get_properties():
             widget_name = prop.owner_type.name + "::" + prop.name
             widget = builder.get_object(widget_name)
             if widget is None:
@@ -740,14 +734,14 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                     reset_widget = reset_all_button
                 keyframe_name = widget_name + "::" + "keyframe"
                 keyframe_widget = builder.get_object(keyframe_name)
-                self.addPropertyWidget(prop, widget, reset_widget, keyframe_widget)
+                self.add_property_widget(prop, widget, reset_widget, keyframe_widget)
 
-    def addPropertyWidget(self, prop, widget, to_default_btn=None, keyframe_btn=None):
+    def add_property_widget(self, prop, widget, to_default_btn=None, keyframe_btn=None):
         """Connects an element property to a GTK Widget.
 
         Optionally, a reset button widget can also be provided.
         Unless you want to connect each widget individually, you should be using
-        the "mapBuilder" method instead.
+        the "map_builder" method instead.
         """
         if isinstance(widget, DynamicWidget):
             # if the widget is already a DynamicWidget we use it as is
@@ -760,7 +754,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         if dynamic_widget:
             self.properties[prop] = dynamic_widget
 
-            self.element.connect("notify::" + prop.name, self._propertyChangedCb,
+            self.element.connect("notify::" + prop.name, self._property_changed_cb,
                                  dynamic_widget)
             # The "reset to default" button associated with this property
             if isinstance(to_default_btn, Gtk.Button):
@@ -771,7 +765,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
             # The "keyframe toggle" button associated with this property
             if not isinstance(widget, (ToggleWidget, ChoiceWidget)):
-                res, element, pspec = self.element.lookup_child(prop.name)
+                res, element, unused_pspec = self.element.lookup_child(prop.name)
                 assert res
                 binding = GstController.DirectControlBinding.new(
                     element, prop.name,
@@ -796,7 +790,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         if hasattr(prop, "blurb"):
             widget.set_tooltip_text(prop.blurb)
 
-    def _getProperties(self):
+    def _get_properties(self):
         if isinstance(self.element, GES.BaseEffect):
             props = self.element.list_children_properties()
         else:
@@ -814,7 +808,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             grid.attach(label, 0, y, 1, 1)
             grid.attach(widget, 1, y, 1, 1)
 
-    def add_widgets(self, create_property_widget, values={}, with_reset_button=False, caps_values=None):
+    def add_widgets(self, create_property_widget, values=None, with_reset_button=False, caps_values=None):
         """Prepares a Gtk.Grid containing the property widgets of an element.
 
         Each property is on a separate row.
@@ -829,6 +823,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             with_reset_button (bool): Whether to show a reset button for each
                 property.
         """
+        values = values or {}
         self.info("element: %s, use values: %s", self.element, values)
         self.properties.clear()
         self.__bindings_by_keyframe_button = {}
@@ -868,7 +863,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
                 widget = self._make_widget_from_gvalue(gvalue, prefered_value)
                 if caps_values.get(field):
-                    widget.setWidgetValue(caps_values[field])
+                    widget.set_widget_value(caps_values[field])
                 self.__add_widget_to_grid(grid, field.capitalize(), widget, y)
                 y += 1
 
@@ -919,7 +914,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
             keyframe_button = None
             if not isinstance(prop_widget, (ToggleWidget, ChoiceWidget)):
-                res, element, pspec = self.element.lookup_child(prop.name)
+                res, element, unused_pspec = self.element.lookup_child(prop.name)
                 assert res
                 binding = GstController.DirectControlBinding.new(
                     element, prop.name,
@@ -935,17 +930,17 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                                                                keyframe_button)
                 grid.attach(button, 3, y, 1, 1)
 
-        self.element.connect('deep-notify', self._propertyChangedCb)
+        self.element.connect('deep-notify', self._property_changed_cb)
         self.pack_start(grid, expand=False, fill=False, padding=0)
         self.show_all()
 
     def _make_widget_from_gvalue(self, gvalue, default):
-        if type(gvalue) == Gst.ValueList:
+        if isinstance(gvalue, Gst.ValueList):
             choices = []
             for val in gvalue:
                 choices.append([val, val])
             widget = ChoiceWidget(choices, default=default[0])
-            widget.setWidgetValue(default[0])
+            widget.set_widget_value(default[0])
         else:
             # TODO: implement widgets for other types.
             self.fixme("Unsupported value type: %s", type(gvalue))
@@ -953,7 +948,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
         return widget
 
-    def _propertyChangedCb(self, effect, gst_element, pspec):
+    def _property_changed_cb(self, effect, gst_element, pspec):
         if gst_element.get_control_binding(pspec.name):
             self.log("%s controlled, not displaying value", pspec.name)
             return
@@ -961,7 +956,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         widget = self.properties[pspec]
         res, value = self.element.get_child_property(pspec.name)
         assert res
-        widget.setWidgetValue(value)
+        widget.set_widget_value(value)
 
     def __create_keyframe_toggle_button(self, prop, widget):
         keyframe_button = Gtk.ToggleButton()
@@ -1013,7 +1008,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         self.log("keyframes togglebutton clicked for %s", prop)
         active = keyframe_button.get_active()
         # Now change the state of the *other* togglebuttons.
-        for toggle_keyframe_button in self.__widgets_by_keyframe_button.keys():
+        for toggle_keyframe_button in self.__widgets_by_keyframe_button:
             if toggle_keyframe_button != keyframe_button:
                 # Don't use set_active directly on the buttons; doing so will
                 # fire off signals that will toggle the others/confuse the UI
@@ -1027,11 +1022,11 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             return
 
         if active:
-            track_element.ui_element.showKeyframes(self.element, prop)
+            track_element.ui_element.show_keyframes(self.element, prop)
             binding = self.element.get_control_binding(prop.name)
             self.__bindings_by_keyframe_button[keyframe_button] = binding
         else:
-            track_element.ui_element.showDefaultKeyframes()
+            track_element.ui_element.show_default_keyframes()
 
     def __reset_to_default_clicked_cb(self, unused_button, widget,
                                       keyframe_button=None):
@@ -1045,11 +1040,11 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                     track_element = self.__get_track_element_of_same_type(
                         self.element)
                     if track_element:
-                        track_element.ui_element.showDefaultKeyframes()
+                        track_element.ui_element.show_default_keyframes()
                 self.__set_keyframe_active(keyframe_button, False)
                 self.__display_controlled(keyframe_button, False)
 
-        widget.setWidgetToDefault()
+        widget.set_widget_to_default()
 
     def __get_track_element_of_same_type(self, effect):
         track_type = effect.get_track_type()
@@ -1060,13 +1055,13 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         self.warning("Failed to find track element of type %s", track_type)
         return None
 
-    def getSettings(self, with_default=False):
+    def get_settings(self, with_default=False):
         """Gets a name/value dict with the properties."""
         values = {}
         for prop, widget in self.properties.items():
             if not prop.flags & GObject.ParamFlags.WRITABLE:
                 continue
-            value = widget.getWidgetValue()
+            value = widget.get_widget_value()
             if value is not None and (value != prop.default_value or with_default):
                 values[prop.name] = value
         return values
@@ -1074,7 +1069,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
     def get_caps_values(self):
         values = {}
         for field, widget in self.caps_widgets.items():
-            value = widget.getWidgetValue()
+            value = widget.get_widget_value()
             if value is not None:
                 values[field] = value
 
@@ -1097,12 +1092,12 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             widget = ToggleWidget(default=prop.default_value)
         elif type_name == "GEnum":
             choices = []
-            for key, val in prop.enum_class.__enum_values__.items():
+            for unused_key, val in prop.enum_class.__enum_values__.items():
                 choices.append([val.value_name, int(val)])
             widget = ChoiceWidget(choices, default=prop.default_value)
         elif type_name == "GstFraction":
             widget = FractionWidget(
-                None, presets=["0:1"], default=prop.default_value)
+                presets=["0:1"], default=prop.default_value)
         else:
             # TODO: implement widgets for: GBoxed, GFlags
             self.fixme("Unsupported property type: %s", type_name)
@@ -1111,7 +1106,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         if value is None:
             value = prop.default_value
         if value is not None:
-            widget.setWidgetValue(value)
+            widget.set_widget_value(value)
 
         return widget
 
@@ -1119,6 +1114,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         for prop in self.properties:
             if prop.name == prop_name:
                 return self.properties[prop]
+        return None
 
 
 class GstElementSettingsDialog(Loggable):
@@ -1188,12 +1184,13 @@ class GstElementSettingsDialog(Loggable):
             self.window.set_transient_for(parent_window)
         self.window.show()
 
-    def getSettings(self):
+    def get_settings(self):
         """Gets the settings of the `element`.
 
         Returns:
-            dict: A property name to value map."""
-        return self.elementsettings.getSettings()
+            dict: A property name to value map.
+        """
+        return self.elementsettings.get_settings()
 
     def get_caps(self):
         values = self.elementsettings.get_caps_values()
@@ -1206,12 +1203,12 @@ class GstElementSettingsDialog(Loggable):
             return caps
         return None
 
-    def _resetValuesClickedCb(self, unused_button):
-        self.resetAll()
+    def _reset_values_clicked_cb(self, unused_button):
+        self.reset_all()
 
-    def resetAll(self):
-        for prop, widget in self.elementsettings.properties.items():
-            widget.setWidgetToDefault()
+    def reset_all(self):
+        for unused_prop, widget in self.elementsettings.properties.items():
+            widget.set_widget_to_default()
 
 
 class ZoomBox(Gtk.Grid, Zoomable):
@@ -1239,22 +1236,22 @@ class ZoomBox(Gtk.Grid, Zoomable):
         zoom_fit_btn_grid.add(zoom_fit_btn_label)
         zoom_fit_btn_grid.set_column_spacing(SPACING / 2)
         zoom_fit_btn.add(zoom_fit_btn_grid)
-        zoom_fit_btn.connect("clicked", self._zoomFitCb)
+        zoom_fit_btn.connect("clicked", self._zoom_fit_cb)
         self.attach(zoom_fit_btn, 0, 0, 1, 1)
 
         # zooming slider
-        self._zoomAdjustment = Gtk.Adjustment()
-        self._zoomAdjustment.props.lower = 0
-        self._zoomAdjustment.props.upper = Zoomable.zoom_steps
+        self._zoom_adjustment = Gtk.Adjustment()
+        self._zoom_adjustment.props.lower = 0
+        self._zoom_adjustment.props.upper = Zoomable.zoom_steps
         zoomslider = Gtk.Scale.new(
-            Gtk.Orientation.HORIZONTAL, adjustment=self._zoomAdjustment)
-        # Setting _zoomAdjustment's value must be done after we create the
+            Gtk.Orientation.HORIZONTAL, adjustment=self._zoom_adjustment)
+        # Setting _zoom_adjustment's value must be done after we create the
         # zoom slider, otherwise the slider remains at the leftmost position.
-        self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
+        self._zoom_adjustment.set_value(Zoomable.get_current_zoom_level())
         zoomslider.props.draw_value = False
-        zoomslider.connect("scroll-event", self._zoomSliderScrollCb)
-        zoomslider.connect("value-changed", self._zoomAdjustmentChangedCb)
-        zoomslider.connect("query-tooltip", self._sliderTooltipCb)
+        zoomslider.connect("scroll-event", self._zoom_slider_scroll_cb)
+        zoomslider.connect("value-changed", self._zoom_slider_changed_cb)
+        zoomslider.connect("query-tooltip", self._zoom_slider_query_tooltip_cb)
         zoomslider.set_has_tooltip(True)
         # At least 100px wide for precision
         zoomslider.set_size_request(100, 0)
@@ -1268,19 +1265,19 @@ class ZoomBox(Gtk.Grid, Zoomable):
         self.set_column_spacing(ZOOM_SLIDER_PADDING)
         self.show_all()
 
-    def _zoomAdjustmentChangedCb(self, adjustment):
-        Zoomable.setZoomLevel(adjustment.get_value())
+    def _zoom_slider_changed_cb(self, adjustment):
+        Zoomable.set_zoom_level(adjustment.get_value())
         self.timeline.app.write_action("set-zoom-level",
                                        level=adjustment.get_value(),
                                        optional_action_type=True)
 
         if not self._manual_set:
-            self.timeline.timeline.scrollToPlayhead(delayed=True)
+            self.timeline.timeline.scroll_to_playhead(delayed=True)
 
-    def _zoomFitCb(self, unused_button):
+    def _zoom_fit_cb(self, button):
         self.timeline.timeline.set_best_zoom_ratio(allow_zoom_in=True)
 
-    def _zoomSliderScrollCb(self, unused, event):
+    def _zoom_slider_scroll_cb(self, unused, event):
         delta = 0
         if event.direction in [Gdk.ScrollDirection.UP, Gdk.ScrollDirection.RIGHT]:
             delta = 1
@@ -1293,22 +1290,22 @@ class ZoomBox(Gtk.Grid, Zoomable):
             elif delta_y:
                 delta = math.copysign(1, -delta_y)
         if delta:
-            Zoomable.setZoomLevel(Zoomable.getCurrentZoomLevel() + delta)
+            Zoomable.set_zoom_level(Zoomable.get_current_zoom_level() + delta)
 
-    def zoomChanged(self):
-        zoomLevel = self.getCurrentZoomLevel()
-        if int(self._zoomAdjustment.get_value()) != zoomLevel:
+    def zoom_changed(self):
+        zoom_level = self.get_current_zoom_level()
+        if int(self._zoom_adjustment.get_value()) != zoom_level:
             self._manual_set = True
             try:
-                self._zoomAdjustment.set_value(zoomLevel)
+                self._zoom_adjustment.set_value(zoom_level)
             finally:
                 self._manual_set = False
 
-    def _sliderTooltipCb(self, unused_slider, unused_x, unused_y, unused_keyboard_mode, tooltip):
+    def _zoom_slider_query_tooltip_cb(self, unused_slider, unused_x, unused_y, unused_keyboard_mode, tooltip):
         # We assume the width of the ruler is exactly the width of the
         # timeline.
         width_px = self.timeline.ruler.get_allocated_width()
-        timeline_width_ns = Zoomable.pixelToNs(width_px)
+        timeline_width_ns = Zoomable.pixel_to_ns(width_px)
         if timeline_width_ns >= Gst.SECOND:
             # Translators: %s represents a duration, for example "10 minutes"
             tip = _("%s displayed") % beautify_length(timeline_width_ns)
@@ -1429,7 +1426,7 @@ class ColorPickerButton(Gtk.Button):
         # Get color-picker cursor if it exists in the current theme else fallback to generating it ourself
         try:
             cursor = Gdk.Cursor.new_from_name(screen.get_display(), "color-picker")
-        except:
+        except TypeError:
             pixbuf = GdkPixbuf.Pixbuf.new_from_data(DROPPER_BITS, GdkPixbuf.Colorspace.RGB, True, 8, DROPPER_WIDTH,
                                                     DROPPER_HEIGHT, DROPPER_WIDTH * 4)
             cursor = Gdk.Cursor.new_from_pixbuf(screen.get_display(), pixbuf, DROPPER_X_HOT, DROPPER_Y_HOT)
@@ -1437,12 +1434,13 @@ class ColorPickerButton(Gtk.Button):
 
     def button_release_event_cb(self, widget, event):
         if event.button != Gdk.BUTTON_PRIMARY:
-            return False
-        self.grab_color_at_pointer(event.get_screen(), event.get_device(), event.x_root, event.y_root)
+            return
+
+        self.grab_color_at_pointer(event.get_screen(), event.x_root, event.y_root)
         self.emit("value-changed")
         self.shutdown_eyedropper()
 
-    def grab_color_at_pointer(self, screen, device, x, y, *args):
+    def grab_color_at_pointer(self, screen, x, y):
         root_window = screen.get_root_window()
         pixbuf = Gdk.pixbuf_get_from_window(root_window, x, y, 1, 1)
         pixels = pixbuf.get_pixels()

@@ -17,7 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Tests for the pitivi.clipproperties module."""
-# pylint: disable=protected-access,no-self-use,too-many-locals
+# pylint: disable=protected-access,no-self-use
 from unittest import mock
 
 from gi.repository import Gtk
@@ -34,37 +34,37 @@ class EffectPropertiesTest(common.TestCase):
     def test_calculate_effect_priority(self):
         """Checks the effect priority calculation."""
         # Dragging 1 onto itself and nearby.
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+        self.assertEqual(1, EffectProperties.calculate_effect_priority(
             1, 0, Gtk.TreeViewDropPosition.AFTER))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+        self.assertEqual(1, EffectProperties.calculate_effect_priority(
             1, 1, Gtk.TreeViewDropPosition.BEFORE))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+        self.assertEqual(1, EffectProperties.calculate_effect_priority(
             1, 1, Gtk.TreeViewDropPosition.INTO_OR_BEFORE))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+        self.assertEqual(1, EffectProperties.calculate_effect_priority(
             1, 1, Gtk.TreeViewDropPosition.INTO_OR_AFTER))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+        self.assertEqual(1, EffectProperties.calculate_effect_priority(
             1, 1, Gtk.TreeViewDropPosition.AFTER))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+        self.assertEqual(1, EffectProperties.calculate_effect_priority(
             1, 2, Gtk.TreeViewDropPosition.BEFORE))
 
         # Dragging 0 and 3 between rows 1 and 2.
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+        self.assertEqual(1, EffectProperties.calculate_effect_priority(
             0, 1, Gtk.TreeViewDropPosition.AFTER))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+        self.assertEqual(1, EffectProperties.calculate_effect_priority(
             0, 2, Gtk.TreeViewDropPosition.BEFORE))
-        self.assertEqual(2, EffectProperties.calculateEffectPriority(
+        self.assertEqual(2, EffectProperties.calculate_effect_priority(
             3, 1, Gtk.TreeViewDropPosition.AFTER))
-        self.assertEqual(2, EffectProperties.calculateEffectPriority(
+        self.assertEqual(2, EffectProperties.calculate_effect_priority(
             3, 2, Gtk.TreeViewDropPosition.BEFORE))
 
         # Dragging 0 and 2 onto 1.
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+        self.assertEqual(1, EffectProperties.calculate_effect_priority(
             0, 1, Gtk.TreeViewDropPosition.INTO_OR_BEFORE))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+        self.assertEqual(1, EffectProperties.calculate_effect_priority(
             0, 1, Gtk.TreeViewDropPosition.INTO_OR_AFTER))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+        self.assertEqual(1, EffectProperties.calculate_effect_priority(
             2, 1, Gtk.TreeViewDropPosition.INTO_OR_BEFORE))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+        self.assertEqual(1, EffectProperties.calculate_effect_priority(
             2, 1, Gtk.TreeViewDropPosition.INTO_OR_AFTER))
 
 
@@ -77,7 +77,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         app = timeline_container.app
         transformation_box = TransformationProperties(app)
         project = timeline_container._project
-        transformation_box._newProjectLoadedCb(app, project)
+        transformation_box._new_project_loaded_cb(app, project)
 
         return transformation_box
 
@@ -89,7 +89,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         spin_buttons = transformation_box.spin_buttons
 
         # Add a clip and select it
-        clip = self.addClipsSimple(timeline, 1)[0]
+        clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
 
         # Check that spin buttons display the correct values by default
@@ -118,7 +118,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         spin_buttons = transformation_box.spin_buttons
 
         # Add a clip and select it
-        clip = self.addClipsSimple(timeline, 1)[0]
+        clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
         source = transformation_box.source
         self.assertIsNotNone(source)
@@ -152,7 +152,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         spin_buttons = transformation_box.spin_buttons
 
         # Add two clips and select the first one
-        clips = self.addClipsSimple(timeline, 2)
+        clips = self.add_clips_simple(timeline, 2)
         timeline.selection.select([clips[0]])
         source = transformation_box.source
         self.assertIsNotNone(source)
@@ -184,7 +184,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         timeline = transformation_box.app.gui.editor.timeline_ui.timeline
 
         # Add a clip and select it
-        clip = self.addClipsSimple(timeline, 1)[0]
+        clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
         source = transformation_box.source
         self.assertIsNotNone(source)
@@ -221,7 +221,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         spin_buttons = transformation_box.spin_buttons
 
         # Add a clip and select it
-        clip = self.addClipsSimple(timeline, 1)[0]
+        clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
         source = transformation_box.source
         self.assertIsNotNone(source)
@@ -237,7 +237,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         for prop in ["posx", "posy", "width", "height"]:
             for index, offset in enumerate(offsets):
                 timestamp, value = inpoint + offset, offset * 10
-                with mock.patch.object(pipeline, "getPosition") as get_position:
+                with mock.patch.object(pipeline, "get_position") as get_position:
                     get_position.return_value = start + offset
                     spin_buttons[prop].set_value(value)
 
@@ -253,7 +253,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         pipeline = timeline._project.pipeline
 
         # Add a clip and select it
-        clip = self.addClipsSimple(timeline, 1)[0]
+        clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
         source = transformation_box.source
         self.assertIsNotNone(source)
@@ -281,7 +281,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
             prev_keyframe_ts = offsets[prev_index] + inpoint
             next_keyframe_ts = offsets[next_index] + inpoint
 
-            with mock.patch.object(pipeline, "getPosition") as get_position:
+            with mock.patch.object(pipeline, "get_position") as get_position:
                 get_position.return_value = start + position
                 with mock.patch.object(pipeline, "simple_seek") as simple_seek:
                     transformation_box._prev_keyframe_btn.clicked()
@@ -301,7 +301,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         timeline = transformation_box.app.gui.editor.timeline_ui.timeline
 
         # Add a clip and select it
-        clip = self.addClipsSimple(timeline, 1)[0]
+        clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
         source = transformation_box.source
         self.assertIsNotNone(source)

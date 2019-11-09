@@ -27,7 +27,7 @@ from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 
-from pitivi.check import videosink_factory
+from pitivi.check import VIDEOSINK_FACTORY
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import format_ns
 
@@ -75,7 +75,7 @@ class SimplePipeline(GObject.Object, Loggable):
 
     __gsignals__ = PIPELINE_SIGNALS
 
-    class RecoveryState(object):
+    class RecoveryState:
         NOT_RECOVERING = "not-recovering"
         STARTED_RECOVERING = "started-recovering"
         SEEKED_AFTER_RECOVERING = "seeked-after-recovering"
@@ -87,10 +87,10 @@ class SimplePipeline(GObject.Object, Loggable):
         self._pipeline = pipeline
         self._bus = self._pipeline.get_bus()
         self._bus.add_signal_watch()
-        self._bus.connect("message", self._busMessageCb)
+        self._bus.connect("message", self._bus_message_cb)
         self._listening = False  # for the position handler
-        self._listeningInterval = DEFAULT_POSITION_LISTENNING_INTERVAL
-        self._listeningSigId = 0
+        self._listening_interval = DEFAULT_POSITION_LISTENNING_INTERVAL
+        self._listening_sig_id = 0
         self._duration = Gst.CLOCK_TIME_NONE
         # The last known position.
         self._last_position = 0 * Gst.SECOND
@@ -108,7 +108,7 @@ class SimplePipeline(GObject.Object, Loggable):
             (Gst.Element, Gtk.Widget): An element of type Gst.ElementFlags.SINK
             and a widget connected to it.
         """
-        factory_name = videosink_factory.get_name()
+        factory_name = VIDEOSINK_FACTORY.get_name()
         sink = Gst.ElementFactory.make(factory_name, None)
         widget = sink.props.widget
 
@@ -116,13 +116,13 @@ class SimplePipeline(GObject.Object, Loggable):
             self.info("Using gtksink")
             video_sink = sink
         else:
-            self.info("Using glsinkbin around %s", videosink_factory.get_name())
+            self.info("Using glsinkbin around %s", VIDEOSINK_FACTORY.get_name())
             video_sink = Gst.ElementFactory.make("glsinkbin", None)
             video_sink.props.sink = sink
 
         return video_sink, widget
 
-    def setForcePositionListener(self, force):
+    def set_force_position_listener(self, force):
         self._force_position_listener = force
 
     def release(self):
@@ -133,26 +133,25 @@ class SimplePipeline(GObject.Object, Loggable):
 
         The instance will no longer be usable.
         """
-        self._removeWaitingForAsyncDoneTimeout()
-        self.deactivatePositionListener()
-        self._bus.disconnect_by_func(self._busMessageCb)
+        self._remove_waiting_for_async_done_timeout()
+        self.deactivate_position_listener()
+        self._bus.disconnect_by_func(self._bus_message_cb)
         self._bus.remove_signal_watch()
 
         self._pipeline.set_state(Gst.State.NULL)
         self._bus = None
 
-    def flushSeek(self):
-        if self.getState() == Gst.State.PLAYING:
+    def flush_seek(self):
+        if self.get_simple_state() == Gst.State.PLAYING:
             self.debug("Playing, no need to flush here!")
             return
 
         try:
-            self.simple_seek(self.getPosition())
+            self.simple_seek(self.get_position())
         except PipelineError as e:
             self.warning("Could not flush because: %s", e)
-            pass
 
-    def setState(self, state):
+    def set_simple_state(self, state):
         """Sets the low-level pipeline to the specified state.
 
         Raises:
@@ -162,16 +161,16 @@ class SimplePipeline(GObject.Object, Loggable):
         """
         self.debug("Setting state to: %r", state)
         if state >= Gst.State.PAUSED:
-            cstate = self.getState()
+            cstate = self.get_simple_state()
             if cstate < Gst.State.PAUSED:
                 if cstate == Gst.State.NULL:
                     timeout = MAX_BRINGING_TO_PAUSED_DURATION
                 else:
                     timeout = MAX_SET_STATE_DURATION
 
-                self._addWaitingForAsyncDoneTimeout(timeout)
+                self._add_waiting_for_async_done_timeout(timeout)
         else:
-            self._removeWaitingForAsyncDoneTimeout()
+            self._remove_waiting_for_async_done_timeout()
 
         res = self._pipeline.set_state(state)
         if res == Gst.StateChangeReturn.FAILURE:
@@ -180,7 +179,7 @@ class SimplePipeline(GObject.Object, Loggable):
             raise PipelineError(
                 "Failure changing state of the Gst.Pipeline to %r, currently reset to NULL" % state)
 
-    def getState(self):
+    def get_simple_state(self):
         """Queries the low-level pipeline for the current state.
 
         This will do an actual query to the underlying GStreamer Pipeline.
@@ -196,20 +195,20 @@ class SimplePipeline(GObject.Object, Loggable):
 
     def play(self):
         """Sets the state to Gst.State.PLAYING."""
-        self.setState(Gst.State.PLAYING)
+        self.set_simple_state(Gst.State.PLAYING)
 
     def pause(self):
         """Sets the state to Gst.State.PAUSED."""
-        self.setState(Gst.State.PAUSED)
+        self.set_simple_state(Gst.State.PAUSED)
 
     def stop(self):
         """Sets the state to Gst.State.READY."""
-        self.setState(Gst.State.READY)
+        self.set_simple_state(Gst.State.READY)
 
     def playing(self):
-        return self.getState() == Gst.State.PLAYING
+        return self.get_simple_state() == Gst.State.PLAYING
 
-    def togglePlayback(self):
+    def toggle_playback(self):
         if self.playing():
             self.pause()
         else:
@@ -217,7 +216,7 @@ class SimplePipeline(GObject.Object, Loggable):
 
     # Position and Seeking methods
 
-    def getPosition(self, fails=True):
+    def get_position(self, fails=True):
         """Gets the current position of the low-level pipeline.
 
         Returns:
@@ -229,7 +228,7 @@ class SimplePipeline(GObject.Object, Loggable):
         try:
             res, cur = self._pipeline.query_position(Gst.Format.TIME)
         except Exception as e:
-            self.handleException(e)
+            self.handle_exception(e)
             raise PipelineError("Couldn't get position")
 
         if res:
@@ -243,16 +242,16 @@ class SimplePipeline(GObject.Object, Loggable):
         self.log("Got position %s", format_ns(cur))
         return cur
 
-    def getDuration(self):
+    def get_duration(self):
         """Gets the duration of the low-level pipeline."""
-        dur = self._getDuration()
+        dur = self._get_duration()
         self.log("Got duration %s", format_ns(dur))
         if self._duration != dur:
             self.emit("duration-changed", dur)
         self._duration = dur
         return dur
 
-    def activatePositionListener(self, interval=DEFAULT_POSITION_LISTENNING_INTERVAL):
+    def activate_position_listener(self, interval=DEFAULT_POSITION_LISTENNING_INTERVAL):
         """Activates the position listener.
 
         When activated, the instance will emit the `position` signal at the
@@ -267,54 +266,55 @@ class SimplePipeline(GObject.Object, Loggable):
         if self._listening:
             return True
         self._listening = True
-        self._listeningInterval = interval
+        self._listening_interval = interval
         # if we're in playing, switch it on
-        self._listenToPosition(self.getState() == Gst.State.PLAYING)
+        self._listen_to_position(self.get_simple_state() == Gst.State.PLAYING)
         return True
 
-    def deactivatePositionListener(self):
+    def deactivate_position_listener(self):
         """De-activates the position listener."""
-        self._listenToPosition(False)
+        self._listen_to_position(False)
         self._listening = False
 
-    def _positionListenerCb(self):
+    def _position_listener_cb(self):
         try:
             try:
-                position = self.getPosition()
+                position = self.get_position()
             except PipelineError as e:
                 self.warning("Could not get position because: %s", e)
             else:
                 if position != Gst.CLOCK_TIME_NONE:
                     self.emit("position", position)
         finally:
-            return True
+            # Call me again.
+            return True  # pylint: disable=lost-exception
 
-    def _listenToPosition(self, listen=True):
+    def _listen_to_position(self, listen=True):
         # stupid and dumm method, not many checks done
         # i.e. it does NOT check for current state
         if listen:
-            if self._listening and self._listeningSigId == 0:
-                self._listeningSigId = GLib.timeout_add(
-                    self._listeningInterval,
-                    self._positionListenerCb)
-        elif self._listeningSigId != 0:
-            GLib.source_remove(self._listeningSigId)
-            self._listeningSigId = 0
+            if self._listening and self._listening_sig_id == 0:
+                self._listening_sig_id = GLib.timeout_add(
+                    self._listening_interval,
+                    self._position_listener_cb)
+        elif self._listening_sig_id != 0:
+            GLib.source_remove(self._listening_sig_id)
+            self._listening_sig_id = 0
 
     def _async_done_not_received_cb(self):
         self.error("we didn't get async done, this is a bug")
-        self._removeWaitingForAsyncDoneTimeout()
+        self._remove_waiting_for_async_done_timeout()
         self._recover()
         return False
 
-    def _removeWaitingForAsyncDoneTimeout(self):
+    def _remove_waiting_for_async_done_timeout(self):
         if not self._busy_async:
             return
         GLib.source_remove(self._timeout_async_id)
         self._timeout_async_id = 0
 
-    def _addWaitingForAsyncDoneTimeout(self, timeout=WATCHDOG_TIMEOUT):
-        self._removeWaitingForAsyncDoneTimeout()
+    def _add_waiting_for_async_done_timeout(self, timeout=WATCHDOG_TIMEOUT):
+        self._remove_waiting_for_async_done_timeout()
         self._timeout_async_id = GLib.timeout_add_seconds(timeout,
                                                           self._async_done_not_received_cb)
 
@@ -346,7 +346,7 @@ class SimplePipeline(GObject.Object, Loggable):
         Raises:
             PipelineError: When the seek fails.
         """
-        if self._busy_async or self.getState() < Gst.State.PAUSED:
+        if self._busy_async or self.get_simple_state() < Gst.State.PAUSED:
             self._next_seek = position
             self.info("Setting next seek to %s", self._next_seek)
             return
@@ -354,7 +354,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._next_seek = None
 
         # clamp between [0, duration]
-        position = max(0, min(position, self.getDuration()))
+        position = max(0, min(position, self.get_duration()))
         self.debug("Seeking to position: %s", format_ns(position))
         res = self._pipeline.seek(1.0,
                                   Gst.Format.TIME,
@@ -366,21 +366,21 @@ class SimplePipeline(GObject.Object, Loggable):
         if not res:
             raise PipelineError(self.get_name() + " seek failed: " + str(position))
 
-        self._addWaitingForAsyncDoneTimeout()
+        self._add_waiting_for_async_done_timeout()
 
         self.emit('position', position)
 
-    def seekRelative(self, time_delta):
+    def seek_relative(self, time_delta):
         try:
-            self.simple_seek(self.getPosition() + int(time_delta))
+            self.simple_seek(self.get_position() + int(time_delta))
         except PipelineError:
             self.error("Error while seeking %s relative", time_delta)
 
     # Private methods
 
-    def _busMessageCb(self, unused_bus, message):
+    def _bus_message_cb(self, unused_bus, message):
         if message.type == Gst.MessageType.EOS:
-            self.__emitPosition()
+            self.__emit_position()
             self.pause()
             self.emit('eos')
         elif message.type == Gst.MessageType.STATE_CHANGED:
@@ -393,11 +393,10 @@ class SimplePipeline(GObject.Object, Loggable):
                 if prev == Gst.State.READY and new == Gst.State.PAUSED:
                     # trigger duration-changed
                     try:
-                        self.getDuration()
+                        self.get_duration()
                     except PipelineError as e:
                         self.warning("Could not get duration because: %s", e)
                         # no sinks??
-                        pass
 
                     if self._recovery_state == self.RecoveryState.STARTED_RECOVERING:
                         if self._attempted_recoveries == MAX_RECOVERIES:
@@ -412,48 +411,48 @@ class SimplePipeline(GObject.Object, Loggable):
                             if self._next_seek is not None:
                                 position = self._next_seek
                             self.simple_seek(position)
-                    self._listenToPosition(self._force_position_listener)
+                    self._listen_to_position(self._force_position_listener)
                 elif prev == Gst.State.PAUSED and new == Gst.State.PLAYING:
-                    self._listenToPosition(True)
+                    self._listen_to_position(True)
                 elif prev == Gst.State.PLAYING and new == Gst.State.PAUSED:
-                    self._listenToPosition(self._force_position_listener)
+                    self._listen_to_position(self._force_position_listener)
 
                 if emit_state_change:
                     self.emit('state-change', new, prev)
 
         elif message.type == Gst.MessageType.ERROR:
             error, detail = message.parse_error()
-            self._handleErrorMessage(error, detail, message.src)
+            self._handle_error_message(error, detail, message.src)
             Gst.debug_bin_to_dot_file_with_ts(self._pipeline,
                                               Gst.DebugGraphDetails.ALL,
                                               "pitivi.error")
             if not self._rendering():
-                self._removeWaitingForAsyncDoneTimeout()
+                self._remove_waiting_for_async_done_timeout()
                 self._recover()
         elif message.type == Gst.MessageType.DURATION_CHANGED:
             self.debug("Querying duration async, because it changed")
-            GLib.idle_add(self._queryDurationAsync)
+            GLib.idle_add(self._query_duration_async)
         elif message.type == Gst.MessageType.ASYNC_DONE:
             self.debug("Async done, ready for action")
             self.emit("async-done")
-            self._removeWaitingForAsyncDoneTimeout()
+            self._remove_waiting_for_async_done_timeout()
             if self._recovery_state == self.RecoveryState.SEEKED_AFTER_RECOVERING:
                 self._recovery_state = self.RecoveryState.NOT_RECOVERING
                 self._attempted_recoveries = 0
-            self.__emitPosition()
+            self.__emit_position()
             if self._next_seek is not None:
                 self.info("Performing seek after ASYNC_DONE")
                 self.simple_seek(self._next_seek)
         else:
             self.log("%s [%r]", message.type, message.src)
 
-    def __emitPosition(self):
+    def __emit_position(self):
         # When the pipeline has been paused we need to update the
         # timeline/playhead position, as the 'position' signal
         # is only emitted every DEFAULT_POSITION_LISTENNING_INTERVAL
         # ms and the playhead jumps during the playback.
         try:
-            position = self.getPosition()
+            position = self.get_position()
         except PipelineError as e:
             self.warning("Getting the position failed: %s", e)
             return None
@@ -475,26 +474,26 @@ class SimplePipeline(GObject.Object, Loggable):
         self._attempted_recoveries += 1
         self.error("Resetting pipeline because error detected during playback. "
                    "Try %d", self._attempted_recoveries)
-        self.setState(Gst.State.NULL)
+        self.set_simple_state(Gst.State.NULL)
         self._recovery_state = self.RecoveryState.STARTED_RECOVERING
         self.pause()
 
-    def _queryDurationAsync(self, *unused_args, **unused_kwargs):
+    def _query_duration_async(self, *unused_args, **unused_kwargs):
         try:
-            self.getDuration()
-        except Exception as e:
+            self.get_duration()
+        except PipelineError as e:
             self.warning("Could not get duration because: %s", e)
         return False
 
-    def _handleErrorMessage(self, error, detail, source):
+    def _handle_error_message(self, error, detail, source):
         self.error("error from %s: %s (%s)", source, error, detail)
         self.emit('error', error.message, detail)
 
-    def _getDuration(self):
+    def _get_duration(self):
         try:
             res, dur = self._pipeline.query_duration(Gst.Format.TIME)
         except Exception as e:
-            self.handleException(e)
+            self.handle_exception(e)
             raise PipelineError("Couldn't get duration: %s" % e)
 
         if not res:
@@ -571,16 +570,16 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         self._next_seek = None
         return GES.Pipeline.set_mode(self, mode)
 
-    def _getDuration(self):
+    def _get_duration(self):
         return self.props.timeline.get_duration()
 
     def do_change_state(self, state):
         if state == Gst.StateChange.PAUSED_TO_READY:
-            self._removeWaitingForAsyncDoneTimeout()
+            self._remove_waiting_for_async_done_timeout()
 
         return GES.Pipeline.do_change_state(self, state)
 
-    def stepFrame(self, framerate, frames_offset):
+    def step_frame(self, framerate, frames_offset):
         """Seeks backwards or forwards the specified amount of frames.
 
         This clamps the playhead to the project frames.
@@ -590,7 +589,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
                 for stepping backwards.
         """
         try:
-            position = self.getPosition()
+            position = self.get_position()
         except PipelineError:
             self.warning(
                 "Couldn't get position (you're framestepping too quickly), ignoring this request")
@@ -617,9 +616,9 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             raise PipelineError("Trying to seek while rendering")
 
         st = Gst.Structure.new_empty("seek")
-        if self.getState() == Gst.State.PLAYING:
+        if self.get_simple_state() == Gst.State.PLAYING:
             st.set_value("playback_time", float(
-                self.getPosition()) / Gst.SECOND)
+                self.get_position()) / Gst.SECOND)
         st.set_value("start", float(position / Gst.SECOND))
         st.set_value("flags", "accurate+flush")
         self.app.write_action(st)
@@ -630,18 +629,18 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             self.error("Error while seeking to position: %s, reason: %s",
                        format_ns(position), e)
 
-    def _busMessageCb(self, bus, message):
+    def _bus_message_cb(self, bus, message):
         if message.type == Gst.MessageType.ASYNC_DONE:
             self.app.gui.editor.timeline_ui.timeline.update_visible_overlays()
 
         if message.type == Gst.MessageType.ASYNC_DONE and\
                 self._commit_wanted:
             self.debug("Committing now that ASYNC is DONE")
-            self._addWaitingForAsyncDoneTimeout()
+            self._add_waiting_for_async_done_timeout()
             self.props.timeline.commit()
             self._commit_wanted = False
         else:
-            SimplePipeline._busMessageCb(self, bus, message)
+            SimplePipeline._bus_message_cb(self, bus, message)
 
     @contextlib.contextmanager
     def commit_timeline_after(self):
@@ -654,7 +653,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             self.commit_timeline()
 
     def commit_timeline(self):
-        if self._prevent_commits > 0 or self.getState() == Gst.State.NULL:
+        if self._prevent_commits > 0 or self.get_simple_state() == Gst.State.NULL:
             # No need to commit. NLE will do it automatically when
             # changing state from READY to PAUSED.
             return
@@ -664,17 +663,17 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             self._was_empty = False
             self.log("commit wanted")
         else:
-            self._addWaitingForAsyncDoneTimeout()
+            self._add_waiting_for_async_done_timeout()
             self.props.timeline.commit()
             self.debug("Committing right now")
             self._was_empty = is_empty
 
-    def setState(self, state):
-        SimplePipeline.setState(self, state)
+    def set_simple_state(self, state):
+        SimplePipeline.set_simple_state(self, state)
         if state >= Gst.State.PAUSED and self.props.timeline.is_empty():
             self.debug("No ASYNC_DONE will be emitted on empty timelines")
             self._was_empty = True
-            self._removeWaitingForAsyncDoneTimeout()
+            self._remove_waiting_for_async_done_timeout()
 
     def _rendering(self):
         mask = GES.PipelineFlags.RENDER | GES.PipelineFlags.SMART_RENDER

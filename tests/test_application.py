@@ -39,37 +39,37 @@ class TestPitivi(common.TestCase):
 
     def test_version_info(self):
         app = application.Pitivi()
-        self.assertTrue(app.isLatest())
+        self.assertTrue(app.is_latest())
 
         app = self.call_version_info_received("invalid")
-        self.assertTrue(app.isLatest())
+        self.assertTrue(app.is_latest())
 
         app = self.call_version_info_received(
             "%s=CURRENT" % configure.VERSION)
-        self.assertTrue(app.isLatest())
-        self.assertEqual(configure.VERSION, app.getLatest())
+        self.assertTrue(app.is_latest())
+        self.assertEqual(configure.VERSION, app.get_latest())
 
         app = self.call_version_info_received(
             "%s=current\n0=supported" % configure.VERSION)
-        self.assertTrue(app.isLatest())
-        self.assertEqual(configure.VERSION, app.getLatest())
+        self.assertTrue(app.is_latest())
+        self.assertEqual(configure.VERSION, app.get_latest())
 
         app = self.call_version_info_received("999.0=CURRENT")
-        self.assertFalse(app.isLatest())
-        self.assertEqual("999.0", app.getLatest())
+        self.assertFalse(app.is_latest())
+        self.assertEqual("999.0", app.get_latest())
 
         app = self.call_version_info_received(
             "999.0=CURRENT\n%s=SUPPORTED" % configure.VERSION)
-        self.assertFalse(app.isLatest())
-        self.assertEqual("999.0", app.getLatest())
+        self.assertFalse(app.is_latest())
+        self.assertEqual("999.0", app.get_latest())
 
         app = self.call_version_info_received("0.91=current")
-        self.assertTrue(app.isLatest())
-        self.assertEqual("0.91", app.getLatest())
+        self.assertTrue(app.is_latest())
+        self.assertEqual("0.91", app.get_latest())
 
         app = self.call_version_info_received("9999.00000000=current")
-        self.assertFalse(app.isLatest())
-        self.assertEqual("9999.00000000", app.getLatest())
+        self.assertFalse(app.is_latest())
+        self.assertEqual("9999.00000000", app.get_latest())
 
     def test_inhibition(self):
         app = application.Pitivi()

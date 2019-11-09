@@ -38,7 +38,7 @@ class TitleOverlay(Overlay):
     def on_async_done(self, unused_pipeline):
         # Only update on_async when we are not dragging
         if isinstance(self.stack.click_position, numpy.ndarray):
-                return
+            return
         self.update_from_source()
 
     def __draw_rectangle(self, cr):

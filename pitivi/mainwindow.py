@@ -17,7 +17,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Pitivi's main window."""
-# pylint: disable=too-many-instance-attributes
 import os
 from gettext import gettext as _
 from urllib.parse import unquote
@@ -36,38 +35,37 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import show_user_manual
 
 
-GlobalSettings.addConfigOption('mainWindowX',
-                               section="main-window",
-                               key="X", default=0, type_=int)
-GlobalSettings.addConfigOption('mainWindowY',
-                               section="main-window",
-                               key="Y", default=0, type_=int)
-GlobalSettings.addConfigOption('mainWindowWidth',
-                               section="main-window",
-                               key="width", default=-1, type_=int)
-GlobalSettings.addConfigOption('mainWindowHeight',
-                               section="main-window",
-                               key="height", default=-1, type_=int)
+GlobalSettings.add_config_option('mainWindowX',
+                                 section="main-window",
+                                 key="X", default=0, type_=int)
+GlobalSettings.add_config_option('mainWindowY',
+                                 section="main-window",
+                                 key="Y", default=0, type_=int)
+GlobalSettings.add_config_option('mainWindowWidth',
+                                 section="main-window",
+                                 key="width", default=-1, type_=int)
+GlobalSettings.add_config_option('mainWindowHeight',
+                                 section="main-window",
+                                 key="height", default=-1, type_=int)
 
-GlobalSettings.addConfigSection('export')
-GlobalSettings.addConfigOption('lastExportFolder',
-                               section='export',
-                               key="last-export-folder",
-                               environment="PITIVI_EXPORT_FOLDER",
-                               default=os.path.expanduser("~"))
+GlobalSettings.add_config_section('export')
+GlobalSettings.add_config_option('lastExportFolder',
+                                 section='export',
+                                 key="last-export-folder",
+                                 environment="PITIVI_EXPORT_FOLDER",
+                                 default=os.path.expanduser("~"))
 
-GlobalSettings.addConfigSection("version")
-GlobalSettings.addConfigOption('displayCounter',
-                               section='version',
-                               key='info-displayed-counter',
-                               default=0)
-GlobalSettings.addConfigOption('lastCurrentVersion',
-                               section='version',
-                               key='last-current-version',
-                               default='')
+GlobalSettings.add_config_section("version")
+GlobalSettings.add_config_option('displayCounter',
+                                 section='version',
+                                 key='info-displayed-counter',
+                                 default=0)
+GlobalSettings.add_config_option('lastCurrentVersion',
+                                 section='version',
+                                 key='last-current-version',
+                                 default='')
 
 
-# pylint: disable=attribute-defined-outside-init,too-many-instance-attributes
 class MainWindow(Gtk.ApplicationWindow, Loggable):
     """Pitivi's main window.
 
@@ -112,7 +110,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.log("Setting up the perspectives.")
 
         self.set_icon_name("pitivi")
-        self.__set_keyboard_shortcuts()
+        self._create_actions()
 
         self.greeter.setup_ui()
         self.editor.setup_ui()
@@ -163,10 +161,10 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.debug("Screen size is %sx%s", screen_width, screen_height)
         return min_size.width >= 0.9 * screen_width
 
-    # pylint: disable=attribute-defined-outside-init
-    def __set_keyboard_shortcuts(self):
+    def _create_actions(self):
         self.app.shortcuts.register_group("win", _("Project"), position=20)
 
+        # pylint: disable=attribute-defined-outside-init
         self.help_action = Gio.SimpleAction.new("help", None)
         self.help_action.connect("activate", self.__user_manual_cb)
         self.add_action(self.help_action)

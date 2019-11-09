@@ -1,17 +1,27 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks.git
-    rev: v2.3.0
-    hooks:
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
-        exclude: ".svg$|.po$"
-    -   id: check-docstring-first
-    -   id: debug-statements
 -   repo: https://github.com/pre-commit/pre-commit.git
     rev: v1.18.3
     hooks:
     -   id: validate_manifest
+-   repo: https://github.com/pre-commit/pre-commit-hooks.git
+    rev: v2.3.0
+    hooks:
+    # Hooks able to fix small things.
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+        exclude: ".svg$|.po$"
+    -   id: fix-encoding-pragma
+    # Hooks doing lightweight Python checks.
+    -   id: check-docstring-first
+    -   id: debug-statements
 -   repo: https://github.com/asottile/reorder_python_imports.git
     rev: v1.7.0
     hooks:
     -   id: reorder-python-imports
+-   repo: https://github.com/pycqa/pydocstyle
+    rev: 4.0.1
+    hooks:
+    -   id: pydocstyle
+        args:
+        # http://www.pydocstyle.org/en/latest/error_codes.html
+        -   --ignore=D1,D203,D213,D401,D406,D407,D413

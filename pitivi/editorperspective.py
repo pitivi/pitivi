@@ -49,24 +49,24 @@ from pitivi.utils.ui import info_name
 from pitivi.viewer.viewer import ViewerContainer
 
 
-GlobalSettings.addConfigSection("main-window")
-GlobalSettings.addConfigOption('mainWindowHPanePosition',
-                               section="main-window",
-                               key="hpane-position",
-                               type_=int)
-GlobalSettings.addConfigOption('mainWindowMainHPanePosition',
-                               section="main-window",
-                               key="main-hpane-position",
-                               type_=int)
-GlobalSettings.addConfigOption('mainWindowVPanePosition',
-                               section="main-window",
-                               key="vpane-position",
-                               type_=int)
-GlobalSettings.addConfigOption('lastProjectFolder',
-                               section="main-window",
-                               key="last-folder",
-                               environment="PITIVI_PROJECT_FOLDER",
-                               default=os.path.expanduser("~"))
+GlobalSettings.add_config_section("main-window")
+GlobalSettings.add_config_option('mainWindowHPanePosition',
+                                 section="main-window",
+                                 key="hpane-position",
+                                 type_=int)
+GlobalSettings.add_config_option('mainWindowMainHPanePosition',
+                                 section="main-window",
+                                 key="main-hpane-position",
+                                 type_=int)
+GlobalSettings.add_config_option('mainWindowVPanePosition',
+                                 section="main-window",
+                                 key="vpane-position",
+                                 type_=int)
+GlobalSettings.add_config_option('lastProjectFolder',
+                                 section="main-window",
+                                 key="last-folder",
+                                 environment="PITIVI_PROJECT_FOLDER",
+                                 default=os.path.expanduser("~"))
 
 
 class EditorPerspective(Perspective, Loggable):
@@ -87,31 +87,31 @@ class EditorPerspective(Perspective, Loggable):
 
         pm = self.app.project_manager
         pm.connect("new-project-loaded",
-                   self._projectManagerNewProjectLoadedCb)
+                   self._project_manager_new_project_loaded_cb)
         pm.connect("save-project-failed",
-                   self._projectManagerSaveProjectFailedCb)
-        pm.connect("project-saved", self._projectManagerProjectSavedCb)
-        pm.connect("closing-project", self._projectManagerClosingProjectCb)
+                   self._project_manager_save_project_failed_cb)
+        pm.connect("project-saved", self._project_manager_project_saved_cb)
+        pm.connect("closing-project", self._project_manager_closing_project_cb)
         pm.connect("reverting-to-saved",
-                   self._projectManagerRevertingToSavedCb)
-        pm.connect("project-closed", self._projectManagerProjectClosedCb)
-        pm.connect("missing-uri", self._projectManagerMissingUriCb)
+                   self._project_manager_reverting_to_saved_cb)
+        pm.connect("project-closed", self._project_manager_project_closed_cb)
+        pm.connect("missing-uri", self._project_manager_missing_uri_cb)
 
     def setup_ui(self):
         """Sets up the UI."""
         self.__setup_css()
-        self._createUi()
+        self._create_ui()
         self.app.gui.connect("focus-in-event", self.__focus_in_event_cb)
-        self.app.gui.connect("destroy", self._destroyedCb)
+        self.app.gui.connect("destroy", self._destroyed_cb)
 
     def activate_compact_mode(self):
         """Shrinks widgets to suit better a small screen."""
-        self.medialibrary.activateCompactMode()
-        self.viewer.activateCompactMode()
+        self.medialibrary.activate_compact_mode()
+        self.viewer.activate_compact_mode()
 
     def refresh(self):
         """Refreshes the perspective."""
-        self.focusTimeline()
+        self.focus_timeline()
 
     def __setup_css(self):
         css_provider = Gtk.CssProvider()
@@ -138,25 +138,25 @@ class EditorPerspective(Perspective, Loggable):
             for ges_layer in ges_timeline.get_layers():
                 for ges_clip in ges_layer.get_clips():
                     if ges_clip.get_asset().props.id in changed_files_uris:
-                        if ges_clip.ui._audioSource:
-                            ges_clip.ui._audioSource.update_previewer()
-                        if ges_clip.ui._videoSource:
-                            ges_clip.ui._videoSource.update_previewer()
+                        if ges_clip.ui.audio_widget:
+                            ges_clip.ui.audio_widget.update_previewer()
+                        if ges_clip.ui.video_widget:
+                            ges_clip.ui.video_widget.update_previewer()
 
-    def _destroyedCb(self, unused_main_window):
+    def _destroyed_cb(self, unused_main_window):
         """Cleanup before destroying this window."""
         pm = self.app.project_manager
-        pm.disconnect_by_func(self._projectManagerNewProjectLoadedCb)
-        pm.disconnect_by_func(self._projectManagerSaveProjectFailedCb)
-        pm.disconnect_by_func(self._projectManagerProjectSavedCb)
-        pm.disconnect_by_func(self._projectManagerClosingProjectCb)
-        pm.disconnect_by_func(self._projectManagerRevertingToSavedCb)
-        pm.disconnect_by_func(self._projectManagerProjectClosedCb)
-        pm.disconnect_by_func(self._projectManagerMissingUriCb)
+        pm.disconnect_by_func(self._project_manager_new_project_loaded_cb)
+        pm.disconnect_by_func(self._project_manager_save_project_failed_cb)
+        pm.disconnect_by_func(self._project_manager_project_saved_cb)
+        pm.disconnect_by_func(self._project_manager_closing_project_cb)
+        pm.disconnect_by_func(self._project_manager_reverting_to_saved_cb)
+        pm.disconnect_by_func(self._project_manager_project_closed_cb)
+        pm.disconnect_by_func(self._project_manager_missing_uri_cb)
         self.toplevel_widget.remove(self.timeline_ui)
         self.timeline_ui.destroy()
 
-    def _renderCb(self, unused_button):
+    def _render_cb(self, unused_button):
         """Shows the RenderDialog for the current project."""
         from pitivi.render import RenderDialog
 
@@ -164,7 +164,7 @@ class EditorPerspective(Perspective, Loggable):
         dialog = RenderDialog(self.app, project)
         dialog.window.show()
 
-    def _createUi(self):
+    def _create_ui(self):
         """Creates the graphical interface.
 
         The rough hierarchy is:
@@ -175,6 +175,7 @@ class EditorPerspective(Perspective, Loggable):
         The full hierarchy can be admired by starting the GTK+ Inspector
         with Ctrl+Shift+I.
         """
+        # pylint: disable=attribute-defined-outside-init
         # Main "toolbar" (using client-side window decorations with HeaderBar)
         self.headerbar = self.__create_headerbar()
 
@@ -200,7 +201,7 @@ class EditorPerspective(Perspective, Loggable):
                                    self.medialibrary, Gtk.Label(label=_("Media Library")))
         self.main_tabs.append_page("Effect Library",
                                    self.effectlist, Gtk.Label(label=_("Effect Library")))
-        self.medialibrary.connect('play', self._mediaLibraryPlayCb)
+        self.medialibrary.connect('play', self._media_library_play_cb)
         self.medialibrary.show()
         self.effectlist.show()
 
@@ -234,7 +235,7 @@ class EditorPerspective(Perspective, Loggable):
         self.toplevel_widget.pack2(self.timeline_ui, resize=True, shrink=False)
 
         # Setup shortcuts for HeaderBar buttons and menu items.
-        self.__set_keyboard_shortcuts()
+        self._create_actions()
 
         # Identify widgets for AT-SPI, making our test suite easier to develop
         # These will show up in sniff, accerciser, etc.
@@ -250,12 +251,12 @@ class EditorPerspective(Perspective, Loggable):
 
         # Restore settings for position and visibility.
         if self.settings.mainWindowHPanePosition is None:
-            self._setDefaultPositions()
+            self._set_default_positions()
         self.secondhpaned.set_position(self.settings.mainWindowHPanePosition)
         self.mainhpaned.set_position(self.settings.mainWindowMainHPanePosition)
         self.toplevel_widget.set_position(self.settings.mainWindowVPanePosition)
 
-    def _setDefaultPositions(self):
+    def _set_default_positions(self):
         window_width = self.app.gui.get_size()[0]
         if self.settings.mainWindowHPanePosition is None:
             self.settings.mainWindowHPanePosition = window_width / 3
@@ -272,7 +273,7 @@ class EditorPerspective(Perspective, Loggable):
                 value = req.height / 2
             self.settings.mainWindowVPanePosition = value
 
-    def switchContextTab(self, ges_clip):
+    def switch_context_tab(self, ges_clip):
         """Activates the appropriate tab on the second set of tabs.
 
         Args:
@@ -289,7 +290,7 @@ class EditorPerspective(Perspective, Loggable):
             return
         self.context_tabs.set_current_page(page)
 
-    def focusTimeline(self):
+    def focus_timeline(self):
         layers_representation = self.timeline_ui.timeline.layout
         # Check whether it has focus already, grab_focus always emits an event.
         if not layers_representation.props.is_focus:
@@ -312,6 +313,7 @@ class EditorPerspective(Perspective, Loggable):
         redo_button.set_action_name("app.redo")
         redo_button.set_use_underline(True)
 
+        # pylint: disable=attribute-defined-outside-init
         self.save_button = Gtk.Button.new_with_label(_("Save"))
         self.save_button.set_focus_on_click(False)
 
@@ -322,7 +324,7 @@ class EditorPerspective(Perspective, Loggable):
         self.render_button.set_tooltip_text(
             _("Export your project as a finished movie"))
         self.render_button.set_sensitive(False)  # The only one we have to set.
-        self.render_button.connect("clicked", self._renderCb)
+        self.render_button.connect("clicked", self._render_cb)
 
         undo_redo_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         undo_redo_box.get_style_context().add_class("linked")
@@ -342,11 +344,12 @@ class EditorPerspective(Perspective, Loggable):
 
         return headerbar
 
-    def __set_keyboard_shortcuts(self):
+    def _create_actions(self):
         group = Gio.SimpleActionGroup()
         self.toplevel_widget.insert_action_group("editor", group)
         self.headerbar.insert_action_group("editor", group)
 
+        # pylint: disable=attribute-defined-outside-init
         self.save_action = Gio.SimpleAction.new("save", None)
         self.save_action.connect("activate", self.__save_project_cb)
         group.add_action(self.save_action)
@@ -385,16 +388,16 @@ class EditorPerspective(Perspective, Loggable):
     def __import_asset_cb(self, unused_action, unused_param):
         self.medialibrary.show_import_assets_dialog()
 
-    def showProjectStatus(self):
+    def show_project_status(self):
         project = self.app.project_manager.current_project
-        dirty = project.hasUnsavedModifications()
+        dirty = project.has_unsaved_modifications()
         self.save_action.set_enabled(dirty)
         self.revert_to_saved_action.set_enabled(bool(project.uri) and dirty)
-        self.updateTitle()
+        self.update_title()
 
 # UI Callbacks
 
-    def _mediaLibraryPlayCb(self, unused_medialibrary, asset):
+    def _media_library_play_cb(self, unused_medialibrary, asset):
         """Previews the specified asset.
 
         If the media library item to preview is an image, show it in the user's
@@ -409,32 +412,32 @@ class EditorPerspective(Perspective, Loggable):
             preview_window = PreviewAssetWindow(asset, self.app)
             preview_window.preview()
 
-    def _projectChangedCb(self, unused_project):
+    def _project_changed_cb(self, unused_project):
         self.save_action.set_enabled(True)
-        self.updateTitle()
+        self.update_title()
 
 # Toolbar/Menu actions callback
 
     def __save_project_cb(self, unused_action, unused_param):
-        self.saveProject()
+        self.save_project()
 
     def __save_project_as_cb(self, unused_action, unused_param):
-        self.saveProjectAs()
+        self.save_project_as()
 
-    def saveProject(self):
+    def save_project(self):
         if not self.app.project_manager.current_project.uri or self.app.project_manager.disable_save:
-            self.saveProjectAs()
+            self.save_project_as()
         else:
-            self.app.project_manager.saveProject()
+            self.app.project_manager.save_project()
 
     def __revert_to_saved_cb(self, unused_action, unused_param):
-        return self.app.project_manager.revertToSavedProject()
+        self.app.project_manager.revert_to_saved_project()
 
     def __export_project_cb(self, unused_action, unused_param):
-        uri = self._showExportDialog(self.app.project_manager.current_project)
+        uri = self._show_export_dialog(self.app.project_manager.current_project)
         result = None
         if uri:
-            result = self.app.project_manager.exportProject(
+            result = self.app.project_manager.export_project(
                 self.app.project_manager.current_project, uri)
 
         if not result:
@@ -442,17 +445,17 @@ class EditorPerspective(Perspective, Loggable):
         return result
 
     def __project_settings_cb(self, unused_action, unused_param):
-        self.showProjectSettingsDialog()
+        self.show_project_settings_dialog()
 
-    def showProjectSettingsDialog(self):
+    def show_project_settings_dialog(self):
         project = self.app.project_manager.current_project
         dialog = ProjectSettingsDialog(self.app.gui, project, self.app)
         dialog.window.run()
-        self.updateTitle()
+        self.update_title()
 
 # Project management callbacks
 
-    def _projectManagerNewProjectLoadedCb(self, project_manager, project):
+    def _project_manager_new_project_loaded_cb(self, project_manager, project):
         """Connects the UI to the specified project.
 
         Args:
@@ -461,19 +464,19 @@ class EditorPerspective(Perspective, Loggable):
         """
         self.log("A new project has been loaded")
 
-        self._connectToProject(project)
-        project.pipeline.activatePositionListener()
+        self._connect_to_project(project)
+        project.pipeline.activate_position_listener()
 
         self.clipconfig.project = project
 
-        self.timeline_ui.setProject(project)
+        self.timeline_ui.set_project(project)
 
         # When creating a blank project there's no project URI yet.
         if project.uri:
             folder_path = os.path.dirname(path_from_uri(project.uri))
             self.settings.lastProjectFolder = folder_path
 
-        self.updateTitle()
+        self.update_title()
 
         if project_manager.disable_save is True:
             # Special case: we enforce "Save as", but the normal "Save" button
@@ -483,7 +486,7 @@ class EditorPerspective(Perspective, Loggable):
         if project.ges_timeline.props.duration != 0:
             self.render_button.set_sensitive(True)
 
-    def _projectManagerSaveProjectFailedCb(self, unused_project_manager, uri, exception=None):
+    def _project_manager_save_project_failed_cb(self, unused_project_manager, uri, exception=None):
         project_filename = unquote(uri.split("/")[-1])
         dialog = Gtk.MessageDialog(transient_for=self.app.gui,
                                    modal=True,
@@ -498,11 +501,11 @@ class EditorPerspective(Perspective, Loggable):
         dialog.destroy()
         self.error("failed to save project")
 
-    def _projectManagerProjectSavedCb(self, unused_project_manager, unused_project, unused_uri):
-        self.updateTitle()
+    def _project_manager_project_saved_cb(self, unused_project_manager, unused_project, unused_uri):
+        self.update_title()
         self.save_action.set_enabled(False)
 
-    def _projectManagerClosingProjectCb(self, project_manager, project):
+    def _project_manager_closing_project_cb(self, project_manager, project):
         """Investigates whether it's possible to close the specified project.
 
         Args:
@@ -513,7 +516,7 @@ class EditorPerspective(Perspective, Loggable):
             bool: True when it's OK to close it, False when the user chooses
                 to cancel the closing operation.
         """
-        if not project.hasUnsavedModifications():
+        if not project.has_unsaved_modifications():
             return True
 
         if project.uri and not project_manager.disable_save:
@@ -554,9 +557,9 @@ class EditorPerspective(Perspective, Loggable):
 
         if response == Gtk.ResponseType.YES:
             if project.uri is not None and project_manager.disable_save is False:
-                res = self.app.project_manager.saveProject()
+                res = self.app.project_manager.save_project()
             else:
-                res = self.saveProjectAs()
+                res = self.save_project_as()
         elif response == Gtk.ResponseType.REJECT:
             res = True
         else:
@@ -564,7 +567,7 @@ class EditorPerspective(Perspective, Loggable):
 
         return res
 
-    def _projectManagerProjectClosedCb(self, unused_project_manager, project):
+    def _project_manager_project_closed_cb(self, unused_project_manager, project):
         """Starts disconnecting the UI from the specified project.
 
         This happens when the user closes the app or asks to load another
@@ -575,20 +578,19 @@ class EditorPerspective(Perspective, Loggable):
         Args:
             project (Project): The project which has been closed.
         """
-
         # We must disconnect from the project pipeline before it is released:
         if project.pipeline is not None:
-            project.pipeline.deactivatePositionListener()
+            project.pipeline.deactivate_position_listener()
 
         self.info("Project closed")
         if project.loaded:
-            self._disconnectFromProject(project)
-        self.timeline_ui.setProject(None)
+            self._disconnect_from_project(project)
+        self.timeline_ui.set_project(None)
         self.render_button.set_sensitive(False)
         return False
 
-    def _projectManagerRevertingToSavedCb(self, unused_project_manager, unused_project):
-        if self.app.project_manager.current_project.hasUnsavedModifications():
+    def _project_manager_reverting_to_saved_cb(self, unused_project_manager, unused_project):
+        if self.app.project_manager.current_project.has_unsaved_modifications():
             dialog = Gtk.MessageDialog(transient_for=self.app.gui,
                                        modal=True,
                                        message_type=Gtk.MessageType.WARNING,
@@ -607,14 +609,14 @@ class EditorPerspective(Perspective, Loggable):
                 return False
         return True
 
-    def _projectManagerMissingUriCb(self, project_manager, project, unused_error, asset):
+    def _project_manager_missing_uri_cb(self, project_manager, project, unused_error, asset):
         if project.at_least_one_asset_missing:
             # One asset is already missing so no point in spamming the user
             # with more file-missing dialogs, as we need all of them.
             return None
 
         if self.app.proxy_manager.is_proxy_asset(asset):
-            uri = self.app.proxy_manager.getTargetUri(asset)
+            uri = self.app.proxy_manager.get_target_uri(asset)
         else:
             uri = asset.get_id()
 
@@ -623,9 +625,9 @@ class EditorPerspective(Perspective, Loggable):
 
         if not new_uri:
             dialog.hide()
-            if not self.app.proxy_manager.checkProxyLoadingSucceeded(asset):
+            if not self.app.proxy_manager.check_proxy_loading_succeeded(asset):
                 # Reset the project manager and disconnect all the signals.
-                project_manager.closeRunningProject()
+                project_manager.close_running_project()
                 # Signal the project loading failure.
                 # You have to do this *after* successfully creating a blank project,
                 # or the startupwizard will still be connected to that signal too.
@@ -637,16 +639,16 @@ class EditorPerspective(Perspective, Loggable):
         dialog.destroy()
         return new_uri
 
-    def _connectToProject(self, project):
-        project.connect("project-changed", self._projectChangedCb)
+    def _connect_to_project(self, project):
+        project.connect("project-changed", self._project_changed_cb)
         project.ges_timeline.connect("notify::duration",
-                                     self._timelineDurationChangedCb)
+                                     self._timeline_duration_changed_cb)
 
-    def _disconnectFromProject(self, project):
-        project.disconnect_by_func(self._projectChangedCb)
-        project.ges_timeline.disconnect_by_func(self._timelineDurationChangedCb)
+    def _disconnect_from_project(self, project):
+        project.disconnect_by_func(self._project_changed_cb)
+        project.ges_timeline.disconnect_by_func(self._timeline_duration_changed_cb)
 
-    def _timelineDurationChangedCb(self, timeline, unused_duration):
+    def _timeline_duration_changed_cb(self, timeline, unused_duration):
         """Updates the render button.
 
         This covers the case when a clip is inserted into a blank timeline.
@@ -656,7 +658,7 @@ class EditorPerspective(Perspective, Loggable):
         self.debug("Timeline duration changed to %s", duration)
         self.render_button.set_sensitive(duration > 0)
 
-    def _showExportDialog(self, project):
+    def _show_export_dialog(self, project):
         self.log("Export requested")
         chooser = Gtk.FileChooserDialog(title=_("Export To..."),
                                         transient_for=self.app.gui,
@@ -698,13 +700,13 @@ class EditorPerspective(Perspective, Loggable):
         chooser.destroy()
         return ret
 
-    def saveProjectAs(self):
-        uri = self._showSaveAsDialog()
+    def save_project_as(self):
+        uri = self._show_save_as_dialog()
         if uri is None:
             return False
-        return self.app.project_manager.saveProject(uri)
+        return self.app.project_manager.save_project(uri)
 
-    def _showSaveAsDialog(self):
+    def _show_save_as_dialog(self):
         self.log("Save URI requested")
         chooser = Gtk.FileChooserDialog(title=_("Save As..."),
                                         transient_for=self.app.gui,
@@ -748,13 +750,13 @@ class EditorPerspective(Perspective, Loggable):
 
     def __save_frame_cb(self, unused_action, unused_param):
         """Exports a snapshot of the current frame as an image file."""
-        foo = self._showSaveScreenshotDialog()
-        if foo:
-            path, mime = foo[0], foo[1]
+        res = self._show_save_screenshot_dialog()
+        if res:
+            path, mime = res[0], res[1]
             self.app.project_manager.current_project.pipeline.save_thumbnail(
                 -1, -1, mime, path)
 
-    def _showSaveScreenshotDialog(self):
+    def _show_save_screenshot_dialog(self):
         """Asks the user where to save the current frame.
 
         Returns:
@@ -770,10 +772,10 @@ class EditorPerspective(Perspective, Loggable):
         chooser.props.do_overwrite_confirmation = True
         formats = {_("PNG image"): ["image/png", ("png",)],
                    _("JPEG image"): ["image/jpeg", ("jpg", "jpeg")]}
-        for format in formats:
+        for image_format in formats:
             filt = Gtk.FileFilter()
-            filt.set_name(format)
-            filt.add_mime_type(formats.get(format)[0])
+            filt.set_name(image_format)
+            filt.add_mime_type(formats.get(image_format)[0])
             chooser.add_filter(filt)
         response = chooser.run()
         if response == Gtk.ResponseType.OK:
@@ -788,10 +790,10 @@ class EditorPerspective(Perspective, Loggable):
         chooser.destroy()
         return ret
 
-    def updateTitle(self):
+    def update_title(self):
         project = self.app.project_manager.current_project
         unsaved_mark = ""
-        if project.hasUnsavedModifications():
+        if project.has_unsaved_modifications():
             unsaved_mark = "*"
         title = "%s%s — %s" % (unsaved_mark, project.name, APPNAME)
         self.headerbar.set_title(title)
@@ -819,11 +821,11 @@ class PreviewAssetWindow(Gtk.Window):
         self._previewer.preview_uri(self._asset.get_id())
         self._previewer.show()
 
-        self.connect("focus-out-event", self._leavePreviewCb)
+        self.connect("focus-out-event", self._leave_preview_cb)
 
     def preview(self):
         """Shows the window and starts the playback."""
-        width, height = self._calculatePreviewWindowSize()
+        width, height = self._calculate_preview_window_size()
         self.resize(width, height)
         # Setting the position of the window only works if it's currently hidden
         # otherwise, after the resize the position will not be readjusted
@@ -835,7 +837,7 @@ class PreviewAssetWindow(Gtk.Window):
         # focused
         self.present()
 
-    def _calculatePreviewWindowSize(self):
+    def _calculate_preview_window_size(self):
         info = self._asset.get_info()
         video_streams = info.get_video_streams()
         if not video_streams:
@@ -861,6 +863,6 @@ class PreviewAssetWindow(Gtk.Window):
             new_height = max_width * img_height / img_width
             return int(max_width), int(new_height + controls_height)
 
-    def _leavePreviewCb(self, window, unused):
+    def _leave_preview_cb(self, window, unused):
         self.destroy()
         return True
