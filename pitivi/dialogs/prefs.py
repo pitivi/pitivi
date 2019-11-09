@@ -88,10 +88,9 @@ class PreferencesDialog(Loggable):
         self.factory_settings = builder.get_object("resetButton")
         self.restart_warning = builder.get_object("restartWarning")
 
-        for section_id in self.settings_sections:
-            self.add_settings_page(section_id)
         self.factory_settings.set_sensitive(self._canReset())
 
+        self.add_settings_page('timeline')
         self.__add_proxies_section()
         self.__add_shortcuts_section()
         self.__add_plugin_manager_section()
@@ -113,9 +112,6 @@ class PreferencesDialog(Loggable):
                                               Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 # Public API
-    @property
-    def settings_sections(self):
-        return [section for section in PreferencesDialog.section_names if not section.startswith("_")]
 
     @classmethod
     def add_section(cls, section, title):
@@ -316,6 +312,11 @@ class PreferencesDialog(Loggable):
         page = PluginPreferencesPage(self.app, self)
         page.show_all()
         self._add_page("__plugins", page)
+
+    def __add_timeline_section(self):
+        page = PluginPreferencesPage(self.app, self)
+        page.show_all()
+        self._add_page("timeline", page)
 
     def __add_proxies_section(self):
         """Adds a section for proxy settings."""
