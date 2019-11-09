@@ -97,7 +97,9 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.app = app
         self.greeter = GreeterPerspective(app)
         self.editor = EditorPerspective(app)
+        self.__placed = False
         self.__perspective = None
+        self.__wanted_perspective = None
 
         app.project_manager.connect("new-project-loading",
                                     self.__new_project_loading_cb)
@@ -118,6 +120,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         width = self.app.settings.mainWindowWidth
         height = self.app.settings.mainWindowHeight
         if height == -1 and width == -1:
+            self.__placed = True
             self.maximize()
         else:
             # Wait until placing the window, to avoid the window manager
@@ -137,8 +140,12 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.connect("delete-event", self.__delete_cb)
 
     def __initial_placement_cb(self, x, y, width, height):
+        self.__placed = True
         self.resize(width, height)
         self.move(x, y)
+        if self.__wanted_perspective:
+            self.show_perspective(self.__wanted_perspective)
+            self.__wanted_perspective = None
 
     def check_screen_constraints(self):
         """Shrinks some widgets to fit better on smaller screen resolutions."""
@@ -244,6 +251,11 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
     def show_perspective(self, perspective):
         """Displays the specified perspective."""
+        if not self.__placed:
+            self.log("Postponing the perspective setting until the window is placed")
+            self.__wanted_perspective = perspective
+            return
+
         if self.__perspective is perspective:
             return
 
