@@ -568,6 +568,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.spin_buttons = {}
         self.spin_buttons_handler_ids = {}
         self.set_label(_("Transformation"))
+        self.__rotate_effect = None
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(),
@@ -622,6 +623,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
         self.__setup_spin_button("width_spinbtn", "width")
         self.__setup_spin_button("height_spinbtn", "height")
+
+        self.__setup_spin_button("rotate_spinbtn", "angle")
 
     def __get_keyframes_timestamps(self):
         keyframes_ts = []
@@ -743,6 +746,10 @@ class TransformationProperties(Gtk.Expander, Loggable):
             for prop in ["posx", "posy", "width", "height"]:
                 self.source.set_child_property(prop, self.source.ui.default_position[prop])
 
+            if self.__rotate_effect:
+                self._selected_clip.remove(self.__rotate_effect)
+                self.__update_spin_btn("angle")
+
         self.__update_keyframes_ui()
 
     def __get_source_property(self, prop):
@@ -761,13 +768,19 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 return res, value
             except PipelineError:
                 pass
+        elif prop == "angle":
+            self.__rotate_effect = self._get_rotate_effect()
+            if self.__rotate_effect:
+                return self.__rotate_effect.get_child_property(prop)
+            else:
+                return True, 0
 
         return self.source.get_child_property(prop)
 
     def _position_cb(self, unused_pipeline, unused_position):
         if not self.__source_uses_keyframes():
             return
-        for prop in ["posx", "posy", "width", "height"]:
+        for prop in ["posx", "posy", "width", "height", "angle"]:
             self.__update_spin_btn(prop)
         # Keep the overlay stack in sync with the spin buttons values
         self.app.gui.editor.viewer.overlay_stack.update(self.source)
@@ -775,8 +788,14 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def __source_property_changed_cb(self, unused_source, unused_element, param):
         self.__update_spin_btn(param.name)
 
-    def __update_spin_btn(self, prop):
-        assert self.source
+    def __effect_property_changed_cb(self, unused_source, unused_element, param):
+        self.__update_spin_btn(param.name, False)
+
+    def __update_spin_btn(self, prop, source_prop=True):
+        if source_prop:
+            assert self.source
+        else:
+            assert self.__rotate_effect
 
         try:
             spin = self.spin_buttons[prop]
@@ -784,7 +803,15 @@ class TransformationProperties(Gtk.Expander, Loggable):
         except KeyError:
             return
 
-        res, value = self.__get_source_property(prop)
+        if prop == "angle":
+            self.__rotate_effect = self._get_rotate_effect()
+            if self.__rotate_effect:
+                res, value = self.__rotate_effect.get_child_property(prop)
+            else:
+                res, value = True, 0
+        else:
+            res, value = self.__get_source_property(prop)
+
         assert res
         if spin.get_value() != value:
             # Make sure self._onValueChangedCb doesn't get called here. If that
@@ -822,10 +849,19 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 self.warning("Could not get pipeline position")
                 return
         else:
-            with self.app.action_log.started("Transformation property change",
-                                             finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
-                                             toplevel=True):
-                self.source.set_child_property(prop, value)
+            with self.app.action_log.started(
+                    "Transformation property change",
+                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                    toplevel=True):
+                if prop == "angle":
+                    if not self._get_rotate_effect():
+                        self.__rotate_effect = GES.Effect.new("rotate")
+                        self._selected_clip.add(self.__rotate_effect)
+                        self.__rotate_effect.connect("deep-notify", self.__effect_property_changed_cb)
+
+                    self.__rotate_effect.set_child_property(prop, value)
+                else:
+                    self.source.set_child_property(prop, value)
 
     def __setup_spin_button(self, widget_name, property_name):
         """Creates a SpinButton for editing a property value."""
@@ -835,12 +871,16 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.spin_buttons[property_name] = spinbtn
         self.spin_buttons_handler_ids[property_name] = handler_id
 
+    def _get_rotate_effect(self):
+        for effect in self._selected_clip.get_top_effects():
+            if effect.props.bin_description == "rotate":
+                return effect
+
     def _onValueChangedCb(self, spinbtn, prop):
         if not self.source:
             return
 
         value = spinbtn.get_value()
-
         res, cvalue = self.__get_source_property(prop)
         if not res:
             return

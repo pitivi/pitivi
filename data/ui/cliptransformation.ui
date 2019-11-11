@@ -3,12 +3,6 @@
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkActionGroup" id="actiongroup1"/>
-  <object class="GtkAdjustment" id="height_adjustment">
-    <property name="lower">-9999999999</property>
-    <property name="upper">9999999999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
   <object class="GtkImage" id="icon_reset1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -31,6 +25,18 @@
     <property name="upper">9999999999</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="height_adjustment">
+    <property name="lower">-9999999999</property>
+    <property name="upper">9999999999</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="rotate_adjustment">
+    <property name="lower">-99999999</property>
+    <property name="upper">99999999</property>
+    <property name="step_increment">0.01</property>
+    <property name="page_increment">1</property>
   </object>
   <object class="GtkGrid" id="transform_box">
     <property name="visible">True</property>
@@ -63,6 +69,7 @@
         <property name="invisible_char">•</property>
         <property name="progress_pulse_step">1</property>
         <property name="adjustment">position_x_adjustment</property>
+        <property name="width-chars">9</property>
         <property name="numeric">True</property>
       </object>
       <packing>
@@ -79,6 +86,7 @@
         <property name="invisible_char">•</property>
         <property name="progress_pulse_step">1</property>
         <property name="adjustment">position_y_adjustment</property>
+        <property name="width-chars">9</property>
         <property name="numeric">True</property>
       </object>
       <packing>
@@ -112,6 +120,18 @@
       </packing>
     </child>
     <child>
+      <object class="GtkLabel" id="label6">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">Rotate:</property>
+        <property name="xalign">0</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">4</property>
+      </packing>
+    </child>
+    <child>
       <object class="GtkSpinButton" id="width_spinbtn">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
@@ -119,6 +139,7 @@
         <property name="invisible_char">•</property>
         <property name="input_purpose">digits</property>
         <property name="adjustment">width_adjustment</property>
+        <property name="width-chars">9</property>
         <property name="numeric">True</property>
       </object>
       <packing>
@@ -134,11 +155,29 @@
         <property name="halign">end</property>
         <property name="invisible_char">•</property>
         <property name="adjustment">height_adjustment</property>
+        <property name="width-chars">9</property>
         <property name="numeric">True</property>
       </object>
       <packing>
         <property name="left_attach">1</property>
         <property name="top_attach">3</property>
+        <property name="width">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkSpinButton" id="rotate_spinbtn">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="halign">end</property>
+        <property name="invisible_char">•</property>
+        <property name="adjustment">rotate_adjustment</property>
+        <property name="digits">2</property>
+        <property name="width-chars">9</property>
+        <property name="numeric">True</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">4</property>
         <property name="width">3</property>
       </packing>
     </child>
@@ -219,13 +258,13 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">5</property>
           </packing>
         </child>
       </object>
       <packing>
         <property name="left_attach">0</property>
-        <property name="top_attach">4</property>
+        <property name="top_attach">5</property>
         <property name="width">4</property>
       </packing>
     </child>
