@@ -265,12 +265,7 @@ class TestRender(BaseTestMediaLibrary):
         project = self.create_simple_project()
         dialog = self.create_rendering_dialog(project)
 
-        # Select wanted profile
-        preset_combo = dialog.render_presets.combo
-        if profile_name:
-            i = find_preset_row_index(preset_combo, profile_name)
-            self.assertIsNotNone(i)
-            preset_combo.set_active(i)
+        self.set_preset_combo_profile_for_dialog(dialog, profile_name)
 
         return project, dialog
 
@@ -430,6 +425,25 @@ class TestRender(BaseTestMediaLibrary):
     def test_rendering_with_youtube_profile(self):
         """Tests rendering a simple timeline with the youtube profile."""
         self.check_simple_rendering_profile("youtube")
+
+    def test_preset_changes_file_extension(self):
+        """Test file extension changes according to the chosen preset."""
+        _, dialog = self.setup_project_with_profile("youtube")
+        self.assertTrue(dialog.fileentry.get_text().endswith("mov"))
+
+        self.set_preset_combo_profile_for_dialog(dialog, "dvd")
+        self.assertTrue(dialog.fileentry.get_text().endswith("mpeg"))
+
+        self.set_preset_combo_profile_for_dialog(dialog, "youtube")
+        self.assertTrue(dialog.fileentry.get_text().endswith("mov"))
+
+    def set_preset_combo_profile_for_dialog(self, dialog, profile_name):
+        """Sets the preset value for an existing dialog."""
+        preset_combo = dialog.render_presets.combo
+        if profile_name:
+            i = find_preset_row_index(preset_combo, profile_name)
+            self.assertIsNotNone(i)
+            preset_combo.set_active(i)
 
     @skipUnless(*encoding_target_exists("dvd"))
     def test_rendering_with_dvd_profile(self):

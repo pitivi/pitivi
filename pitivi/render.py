@@ -435,9 +435,9 @@ class RenderDialog(Loggable):
         # Directory and Filename
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
         if not self.project.name:
-            self.update_filename(_("Untitled"))
+            self._update_filename(_("Untitled"))
         else:
-            self.update_filename(self.project.name)
+            self._update_filename(self.project.name)
 
         # Add a shortcut for the project folder (if saved)
         if self.project.uri:
@@ -528,47 +528,11 @@ class RenderDialog(Loggable):
 
         self.update_resolution()
         self.project.add_encoding_profile(self.project.container_profile)
+        self._update_file_extension()
         self._setting_encoding_profile = False
 
     def _update_preset_menu_button(self, unused_source, unused_target):
         self.render_presets.update_menu_actions()
-
-    def muxer_setter(self, widget, muxer_name):
-        set_combo_value(widget, Encoders().factories_by_name.get(muxer_name))
-        self.project.set_encoders(muxer=muxer_name)
-
-        # Update the extension of the filename.
-        basename = os.path.splitext(self.fileentry.get_text())[0]
-        self.update_filename(basename)
-
-        # Update muxer-dependent widgets.
-        self.update_available_encoders()
-
-    def acodec_setter(self, widget, aencoder_name):
-        set_combo_value(widget, Encoders().factories_by_name.get(aencoder_name))
-        self.project.aencoder = aencoder_name
-        if not self.muxer_combo_changing:
-            # The user directly changed the audio encoder combo.
-            self.preferred_aencoder = aencoder_name
-
-    def vcodec_setter(self, widget, vencoder_name):
-        set_combo_value(widget, Encoders().factories_by_name.get(vencoder_name))
-        self.project.set_encoders(vencoder=vencoder_name)
-        if not self.muxer_combo_changing:
-            # The user directly changed the video encoder combo.
-            self.preferred_vencoder = vencoder_name
-
-    def sample_rate_setter(self, widget, value):
-        set_combo_value(widget, value)
-        self.project.audiorate = value
-
-    def channels_setter(self, widget, value):
-        set_combo_value(widget, value)
-        self.project.audiochannels = value
-
-    def framerate_setter(self, widget, value):
-        set_combo_value(widget, value)
-        self.project.videorate = value
 
     def _create_ui(self):
         builder = Gtk.Builder()
@@ -771,7 +735,7 @@ class RenderDialog(Loggable):
                 megabytes = int(round(megabytes, -1))  # -1 means round to 10
             return _("%d MB") % megabytes
 
-    def update_filename(self, basename):
+    def _update_filename(self, basename):
         """Updates the filename UI element to show the specified file name."""
         extension = extension_for_muxer(self.project.muxer)
         if extension:
@@ -1298,6 +1262,11 @@ class RenderDialog(Loggable):
         factory = get_combo_value(self.audio_encoder_combo)
         self._element_settings_dialog(factory, 'audio')
 
+    def _update_file_extension(self):
+        # Update the extension of the filename.
+        basename = os.path.splitext(self.fileentry.get_text())[0]
+        self._update_filename(basename)
+
     def _muxer_combo_changed_cb(self, combo):
         """Handles the changing of the container format combobox."""
         if self._setting_encoding_profile:
@@ -1305,9 +1274,7 @@ class RenderDialog(Loggable):
         factory = get_combo_value(combo)
         self.project.muxer = factory.get_name()
 
-        # Update the extension of the filename.
-        basename = os.path.splitext(self.fileentry.get_text())[0]
-        self.update_filename(basename)
+        self._update_file_extension()
 
         # Update muxer-dependent widgets.
         self.update_available_encoders()
