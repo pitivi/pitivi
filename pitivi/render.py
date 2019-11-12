@@ -534,41 +534,6 @@ class RenderDialog(Loggable):
     def _update_preset_menu_button(self, unused_source, unused_target):
         self.render_presets.update_menu_actions()
 
-    def muxer_setter(self, widget, muxer_name):
-        set_combo_value(widget, Encoders().factories_by_name.get(muxer_name))
-        self.project.set_encoders(muxer=muxer_name)
-
-        self._update_file_extension()
-
-        # Update muxer-dependent widgets.
-        self.update_available_encoders()
-
-    def acodec_setter(self, widget, aencoder_name):
-        set_combo_value(widget, Encoders().factories_by_name.get(aencoder_name))
-        self.project.aencoder = aencoder_name
-        if not self.muxer_combo_changing:
-            # The user directly changed the audio encoder combo.
-            self.preferred_aencoder = aencoder_name
-
-    def vcodec_setter(self, widget, vencoder_name):
-        set_combo_value(widget, Encoders().factories_by_name.get(vencoder_name))
-        self.project.set_encoders(vencoder=vencoder_name)
-        if not self.muxer_combo_changing:
-            # The user directly changed the video encoder combo.
-            self.preferred_vencoder = vencoder_name
-
-    def sample_rate_setter(self, widget, value):
-        set_combo_value(widget, value)
-        self.project.audiorate = value
-
-    def channels_setter(self, widget, value):
-        set_combo_value(widget, value)
-        self.project.audiochannels = value
-
-    def framerate_setter(self, widget, value):
-        set_combo_value(widget, value)
-        self.project.videorate = value
-
     def _create_ui(self):
         builder = Gtk.Builder()
         builder.add_from_file(
