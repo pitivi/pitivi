@@ -80,7 +80,7 @@ msgstr "Selecció i agrupament"
 #. (itstool) path: section/title
 #: C/selectiongrouping.page:27
 msgid "Making selections"
-msgstr "Fent seleccions"
+msgstr "Fer seleccions"
 
 #. (itstool) path: section/p
 #: C/selectiongrouping.page:28
@@ -439,7 +439,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/workwithprojects.page:34
 msgid "Undoing and reverting changes"
-msgstr "Desfent i revertint canvis"
+msgstr "Desfer i revertir canvis"
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:35
@@ -454,7 +454,7 @@ msgstr ""
 "de la barra o premeu <keyseq><key>Ctrl</key><key>Z</key></keyseq>. A més a "
 "més, per desfer canvis individuals podeu també revertir tots els canvis que "
 "heu fet des de la darrera vegada que heu desat el vostre projecte. Per fer "
-"això, useu el <guiseq><gui>Menú aplicacions </gui><gui>Reverteix a la versió "
+"això, useu el <guiseq><gui>Menú aplicacions</gui><gui>Reverteix a la versió "
 "desada</gui></guiseq>."
 
 #. (itstool) path: note/p
@@ -471,7 +471,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/workwithprojects.page:41
 msgid "Editing the project settings"
-msgstr "Editeu els paràmetres del projecte"
+msgstr "Editar els paràmetres del projecte"
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:42
@@ -628,7 +628,7 @@ msgstr ""
 msgid ""
 "If clips are selected, only the selected clips under the playhead are split."
 msgstr ""
-"Si s'han seleccionat vàries seqüències, sols es tallaran les seleccionades "
+"Si s'han seleccionat diferents seqüències, sols es tallaran les seleccionades "
 "sota el punt de reproducció."
 
 #. (itstool) path: item/p
@@ -1223,7 +1223,7 @@ msgid ""
 msgstr ""
 "La finestra principal, com el seu nom implica, és la finestra que conté els "
 "principals components de la interfície d'usuari de <app>Pitivi</app>: la "
-"barra de títol, les barres d'eines, la línia de temps i varis components "
+"barra de títol, les barres d'eines, la línia de temps i diferents components "
 "personalitzables (biblioteca de multimèdia, previsualitzador, biblioteca "
 "d'efectes, biblioteca de transicions, etc...)."
 
@@ -1408,7 +1408,7 @@ msgstr ""
 "utilitzareu per editar. Verticalment està dividida en capes que podeu omplir "
 "amb seqüències de vídeo i àudio. Horitzontalment, constitueix una "
 "representació proporcional al temps de la cronologia del vostre projecte. Es "
-"poden aplicar varis nivells per ampliar la línia de temps. Tot i així, això "
+"poden aplicar diferents nivells per ampliar la línia de temps. Tot i així, això "
 "sols es pot aplicar a la dimensió horitzontal (cronològica) de la línia de "
 "temps."
 
@@ -1857,10 +1857,10 @@ msgid ""
 msgstr ""
 "Podeu saltar a una posició exacta en la línia de temps editant el valor del "
 "temps mostrat en la barra d'eines de reproducció ( mireu la descripció de "
-"<link xref=\"mainwindow\">La finestra principal </link>). Per editar-ho "
+"<link xref=\"mainwindow\">La finestra principal</link>). Per editar-ho "
 "premeu sobre el giny, sobreescriviu el valor i premeu  <key>Retorn</key>. El "
 "valor pot representar un codi de temps o un número de fotograma. El codi de "
-"temps té el següent formulari: <em>hh:mm:ss.milisec </em>, on les hores són "
+"temps té el següent formulari: <em>hh:mm:ss.milisec</em>, on les hores són "
 "opcionals. Per inserir un número de fotograma, sobreescriu el codi de temps "
 "amb un nombre en format pla del fotograma desitjat."
 
@@ -2027,7 +2027,7 @@ msgstr "Introducció"
 #. (itstool) path: section/title
 #: C/index.page:28
 msgid "Getting Started"
-msgstr "Començant"
+msgstr "Començar"
 
 #. (itstool) path: section/title
 #: C/index.page:31
@@ -2141,7 +2141,7 @@ msgid ""
 "link>."
 msgstr ""
 "Els requeriments de programari estan coberts a <link xref=\"gstreamer"
-"\">Gstreamer i la seva compatibilitat </link> i <link xref=\"effects"
+"\">Gstreamer i la seva compatibilitat</link> i <link xref=\"effects"
 "\">Introducció als seus efectes</link>."
 
 #. (itstool) path: info/desc
@@ -2176,7 +2176,7 @@ msgstr ""
 "intenta aclarir aquesta distinció breument i sense entrar en detalls "
 "tècnics. Si voleu obtenir més informació sobre contenidors i còdecs, "
 "probablement hauríeu de mirar la pàgina de Wikipedia a <link href=\"http://"
-"en.wikipedia.org/wiki/Digital_container_format\">contenidors </link> i <link "
+"en.wikipedia.org/wiki/Digital_container_format\">contenidors</link> i <link "
 "href=\"http://en.wikipedia.org/wiki/Codec\">còdecs</link>."
 
 #. (itstool) path: page/p
@@ -2438,7 +2438,7 @@ msgid ""
 "be found on the <link href=\"http://gstreamer.freedesktop.org/documentation/"
 "plugins.html\">Gstreamer website</link>."
 msgstr ""
-"Els connectors <app>GStreamer </app> es troben en tres categories: Good, Bad "
+"Els connectors <app>GStreamer</app> es troben en tres categories: Good, Bad "
 "i Ugly. És possible que necessiteu instal·lar connectors de qualsevol "
 "categoria per garantir la compatibilitat amb els vostres fitxers multimèdia. "
 "Tant si els instal·leu o no, pot dependre de la jurisdicció del vostre país "
@@ -2628,7 +2628,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/usingeffects.page:26
 msgid "Configuring effects"
-msgstr "Configurant efectes"
+msgstr "Configurar efectes"
 
 #. (itstool) path: section/p
 #: C/usingeffects.page:27
@@ -2744,7 +2744,7 @@ msgstr ""
 #: C/medialibrary.page:34
 msgid "Previewing a clip from the <gui>Media Library</gui>"
 msgstr ""
-"Previsualitzant una seqüència des de la <gui>Biblioteca multimèdia</gui>"
+"Previsualitzar una seqüència des de la <gui>Biblioteca multimèdia</gui>"
 
 #. (itstool) path: section/p
 #: C/medialibrary.page:35
@@ -2814,7 +2814,7 @@ msgid ""
 msgstr ""
 "Podeu trobar-vos que importeu més seqüències de les necessiteu al vostre "
 "projecte. <app>Pitivi</app> us permet seleccionar seqüències que hi són a la "
-"biblioteca multimèdia però no hi són a la línia de temps. Hi ha vàries raons "
+"biblioteca multimèdia però no hi són a la línia de temps. Hi ha diferents raons "
 "per fer-ho:"
 
 #. (itstool) path: item/p
@@ -3075,7 +3075,7 @@ msgid ""
 "<key>Shift</key> to select multiple files at the same time."
 msgstr ""
 "Apareixerà una finestra de diàleg del selector de fitxers. Podeu prémer "
-"<key> Ctrl </key> o <key> Maj </key> per seleccionar diversos fitxers al "
+"<key>Ctrl</key> o <key>Maj</key> per seleccionar diversos fitxers al "
 "mateix temps."
 
 #. (itstool) path: section/title
@@ -3725,7 +3725,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/usingclips.page:51
 msgid "Moving clips along the timeline"
-msgstr "Movent seqüències a la línia de temps"
+msgstr "Moure seqüències a la línia de temps"
 
 #. (itstool) path: section/p
 #: C/usingclips.page:52
@@ -3780,7 +3780,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/usingclips.page:57
 msgid "Using ripple editing while moving clips"
-msgstr "Usant l'edició d'ondulació mentre moveu seqüències"
+msgstr "Usar l'edició d'ondulació mentre moveu seqüències"
 
 #. (itstool) path: section/p
 #: C/usingclips.page:58
@@ -3913,13 +3913,13 @@ msgid ""
 "<keyseq><key>Ctrl</key><key>Delete</key></keyseq>: Remove the selected clips "
 "from the project"
 msgstr ""
-"<keyseq><key>Ctrl</key><key>Suprimeix</key></keyseq>: Removeu les seqüències "
+"<keyseq><key>Ctrl</key><key>Supr</key></keyseq>: Removeu les seqüències "
 "seleccionades des del projecte"
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:64
 msgid "<key>Spacebar</key>: Toggle playback."
-msgstr "<key>Barra espaiadora</key>: Commuta reproducció."
+msgstr "<key>Espai</key>: Commuta reproducció."
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:67
@@ -3934,7 +3934,7 @@ msgstr ""
 #: C/cheatsheet.page:70
 msgid "<key>Delete</key>: Remove selected clips from the timeline."
 msgstr ""
-"<key>Suprimeix</key>: Suprimeix les seqüències seleccionades de la línia de "
+"<key>Supr</key>: Suprimeix les seqüències seleccionades de la línia de "
 "temps."
 
 #. (itstool) path: item/p

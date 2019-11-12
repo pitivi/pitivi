@@ -993,6 +993,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # See how __on_separators is used in __dragDropCb for details
         self._set_separators_prelight(False)
 
+        #from here emit clip imported on timeline  signal
+
         target = self.drag_dest_find_target(context, None)
         if self.dragging_element:
             self.__last_clips_on_leave = [(clip.get_layer(), clip)
@@ -1575,8 +1577,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _create_ui(self):
         left_size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL)
-        zoom_box = ZoomBox(self)
-        left_size_group.add_widget(zoom_box)
+        self.zoom_box = ZoomBox(self)
+        left_size_group.add_widget(self.zoom_box)
 
         self.timeline = Timeline(self.app, left_size_group)
 
@@ -1605,7 +1607,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.markers = MarkersBox(self.app, hadj=self.timeline.hadj)
 
         self.attach(self.markers, 1, 0, 1, 1)
-        self.attach(zoom_box, 0, 1, 1, 1)
+        self.attach(self.zoom_box, 0, 1, 1, 1)
         self.attach(self.ruler, 1, 1, 1, 1)
         self.attach(self.timeline, 0, 2, 2, 1)
         self.attach(self.vscrollbar, 2, 2, 1, 1)
