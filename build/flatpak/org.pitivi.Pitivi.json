@@ -399,21 +399,6 @@
             ]
         },
         {
-            "name": "opencv",
-            "buildsystem": "cmake-ninja",
-            "builddir": true,
-            "cleanup": [
-                "/bin"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://github.com/opencv/opencv/archive/3.4.8.tar.gz",
-                    "sha256": "f0901648a1db3dc3af30e65082665921dbe998673137380450bdd91e8251b567"
-                }
-            ]
-        },
-        {
             "name": "gstreamer",
             "buildsystem": "meson",
             "builddir": true,
