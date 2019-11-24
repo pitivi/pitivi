@@ -7,6 +7,16 @@ short-description: What the GSoC students did in the previous years
 See [Google Summer of Code](Google_Summer_of_Code.md) for how to
 get involved.
 
+## 2019
+
+-   [Millan Castro](https://millancv.github.io/) implemented [timeline
+    markers](https://millancv.github.io//GSoC-3/).
+-   [Swayamjeet Swain](https://swaynethoughts.wordpress.com/)
+    implemented support for [nested
+    timelines](https://swaynethoughts.wordpress.com/2019/08/25/gsoc-2019-final-report/).
+-   [Yatin Maan](https://yatinmaan.github.io/) improved the [effects
+    usability](https://yatinmaan.github.io/2019/08/26/GSoC-19-Final-Report/).
+
 ## 2018
 
 -   [Harish Fulara](https://harishfulara07.wordpress.com/) implemented
