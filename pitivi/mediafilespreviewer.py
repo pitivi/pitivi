@@ -190,7 +190,6 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.log("Preview request for %s", uri)
         self.clear_preview()
         self.current_selected_uri = uri
-
         if self._discover_sync:
             self._handle_new_asset(uri=uri)
         else:
