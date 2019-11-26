@@ -52,7 +52,6 @@ GlobalSettings.add_config_option('prefsDialogHeight',
                                  key="prefs-dialog-height",
                                  default=400)
 
-
 class PreferencesDialog(Loggable):
     """Preferences for how the app works."""
 
@@ -91,8 +90,8 @@ class PreferencesDialog(Loggable):
 
         self.factory_settings.set_sensitive(self._can_reset())
 
-        self.add_settings_page('timeline')
         self.__add_proxies_section()
+        self.add_settings_page('timeline')
         self.__add_shortcuts_section()
         self.__add_plugin_manager_section()
         self.__setup_css()
@@ -212,7 +211,6 @@ class PreferencesDialog(Loggable):
         if section not in self.section_names:
             raise Exception("%s is not a valid section id" % section)
         self.stack.add_titled(widget, section, self.section_names[section])
-
     def remove_page(self, section):
         if section in self.section_names:
             widget = self.stack.get_child_by_name(section)
