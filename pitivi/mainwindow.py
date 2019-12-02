@@ -31,6 +31,7 @@ from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.editorperspective import EditorPerspective
 from pitivi.greeterperspective import GreeterPerspective
 from pitivi.settings import GlobalSettings
+from pitivi.shortcut_bar import BarWindow
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import show_user_manual
 
@@ -195,6 +196,11 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.app.shortcuts.add("win.preferences", ["<Primary>comma"],
                                _("Preferences"), group="app")
 
+        self.action_bar = Gio.SimpleAction.new("action-bar", None)
+        self.action_bar.connect("activate", self.__action_bar_cb)
+        self.add_action(self.action_bar)
+        self.app.shortcuts.add("win.action-bar", ["slash"], _("Action bar"), group="app")
+
     @staticmethod
     def __user_manual_cb(unused_action, unused_param):
         show_user_manual()
@@ -272,3 +278,9 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.show()
         self.add(perspective.toplevel_widget)
         perspective.refresh()
+
+    def __action_bar_cb(self, unused_action, unused_param):
+        win = BarWindow(self.app)
+        win.connect("destroy", Gtk.main_quit)
+        win.show_all()
+        Gtk.main()
