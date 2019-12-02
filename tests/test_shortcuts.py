@@ -38,22 +38,22 @@ class TestShortcutsManager(common.TestCase):
         self.assertEqual(manager.groups, ["beta_group", "alpha_group"])
 
         # Test grouping using the stripping away group name from action name
-        manager.add("alpha_group.first", ["<Primary>A"], "First action")
-        self.assertIn(("alpha_group.first", "First action"),
+        manager.add("alpha_group.first", ["<Primary>A"], None, "First action")
+        self.assertIn(("alpha_group.first", "First action", None),
                       manager.group_actions["alpha_group"])
-        manager.add("alpha_group.second", ["<Primary>B"], "Second action")
-        self.assertIn(("alpha_group.second", "Second action"),
+        manager.add("alpha_group.second", ["<Primary>B"], None, "Second action")
+        self.assertIn(("alpha_group.second", "Second action", None),
                       manager.group_actions["alpha_group"])
-        manager.add("beta_group.first", ["<Primary>C"], "First beta action")
-        self.assertIn(("beta_group.first", "First beta action"),
+        manager.add("beta_group.first", ["<Primary>C"], None, "First beta action")
+        self.assertIn(("beta_group.first", "First beta action", None),
                       manager.group_actions["beta_group"])
 
         # Test grouping using the group optional argument
         # if group parameter is set, the action prefix can be anything,
         # it should be disregarded in favour of the group value.
-        manager.add("anything.third_action", ["<Primary>D"], "Third action",
+        manager.add("anything.third_action", ["<Primary>D"], None, "Third action",
                     group="beta_group")
-        self.assertIn(("anything.third_action", "Third action"),
+        self.assertIn(("anything.third_action", "Third action", None),
                       manager.group_actions["beta_group"])
 
     def test_add_shortcut(self):
@@ -66,7 +66,7 @@ class TestShortcutsManager(common.TestCase):
             # Test the add is calling set_accels_for_action(),
             # since there is no shortcuts.conf in the directory.
             manager.register_group("prefix", "General group", position=0)
-            manager.add("prefix.action1", ["<Primary>P"], "Action one")
+            manager.add("prefix.action1", ["<Primary>P"], None, "Action one")
             self.assertEqual(app.set_accels_for_action.call_count, 1)
             # Save the shortcut to the config file.
             manager.save()
@@ -79,11 +79,11 @@ class TestShortcutsManager(common.TestCase):
             manager2.register_group("prefix", "General group", position=0)
             manager2.register_group("other", "Other group", position=0)
             app.set_accels_for_action.reset_mock()
-            manager2.add("prefix.action1", ["<Primary>P"], "Action one")
+            manager2.add("prefix.action1", ["<Primary>P"], None, "Action one")
             # Above shortcut has been already loaded from the config file
             # and hence 'set_accels_for_action' is not called.
             self.assertEqual(app.set_accels_for_action.call_count, 0)
-            manager2.add("prefix.action2", ["<Primary>W"], "Action two")
+            manager2.add("prefix.action2", ["<Primary>W"], None, "Action two")
             self.assertEqual(app.set_accels_for_action.call_count, 1)
 
     def test_load_save(self):
@@ -98,9 +98,9 @@ class TestShortcutsManager(common.TestCase):
 
             # Set default shortcuts
             manager.register_group("group", "Test group", position=0)
-            manager.add("group.action1", ["<Primary>i"], "Action 1")
-            manager.add("group.action2", ["<Shift>p", "<Primary>m"], "Action 2")
-            manager.add("group.action3", ["<Primary><Shift>a", "a"], "Action 3")
+            manager.add("group.action1", ["<Primary>i"], None, "Action 1")
+            manager.add("group.action2", ["<Shift>p", "<Primary>m"], None, "Action 2")
+            manager.add("group.action3", ["<Primary><Shift>a", "a"], None, "Action 3")
 
             # After saving the shortcuts, the accels should be set when
             # initializing a ShortcutsManger.
@@ -127,8 +127,8 @@ class TestShortcutsManager(common.TestCase):
 
             # Set default shortcuts - they will be stored in self.defaults_accelerators.
             manager.register_group("group", "Test group", position=0)
-            manager.add("group.action1", ["<Primary>i"], "Action 1")
-            manager.add("group.action2", ["<Shift>p"], "Action 2")
+            manager.add("group.action1", ["<Primary>i"], None, "Action 1")
+            manager.add("group.action2", ["<Shift>p"], None, "Action 2")
 
             # Test reset of a single action. The shortcuts are saved and no file removed.
             # Only one call to set_accels_for_action() should be made.

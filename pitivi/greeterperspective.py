@@ -275,12 +275,14 @@ class GreeterPerspective(Perspective):
         self.new_project_action.connect("activate", self.__new_project_cb)
         group.add_action(self.new_project_action)
         self.app.shortcuts.add("greeter.new-project", ["<Primary>n"],
+                               self.new_project_action,
                                _("Create a new project"), group="win")
 
         self.open_project_action = Gio.SimpleAction.new("open-project", None)
         self.open_project_action.connect("activate", self.__open_project_cb)
         group.add_action(self.open_project_action)
         self.app.shortcuts.add("greeter.open-project", ["<Primary>o"],
+                               self.open_project_action,
                                _("Open a project"), group="win")
 
     @staticmethod
