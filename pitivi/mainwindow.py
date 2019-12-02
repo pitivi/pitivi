@@ -173,24 +173,24 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.help_action = Gio.SimpleAction.new("help", None)
         self.help_action.connect("activate", self.__user_manual_cb)
         self.add_action(self.help_action)
-        self.app.shortcuts.add("win.help", ["F1"], _("Help"), group="app")
+        self.app.shortcuts.add("win.help", ["F1"], self.help_action, _("Help"), group="app")
 
         self.about_action = Gio.SimpleAction.new("about", None)
         self.about_action.connect("activate", self.__about_cb)
         self.add_action(self.about_action)
-        self.app.shortcuts.add("win.about", ["<Primary><Shift>a"],
+        self.app.shortcuts.add("win.about", ["<Primary><Shift>a"], self.about_action,
                                _("About"), group="app")
 
         self.main_menu_action = Gio.SimpleAction.new("menu-button", None)
         self.main_menu_action.connect("activate", self.__menu_cb)
         self.add_action(self.main_menu_action)
-        self.app.shortcuts.add("win.menu-button", ["F10"],
+        self.app.shortcuts.add("win.menu-button", ["F10"], self.main_menu_action,
                                _("Show the menu button content"), group="app")
 
         self.preferences_action = Gio.SimpleAction.new("preferences", None)
         self.preferences_action.connect("activate", self.__preferences_cb)
         self.add_action(self.preferences_action)
-        self.app.shortcuts.add("win.preferences", ["<Primary>comma"],
+        self.app.shortcuts.add("win.preferences", ["<Primary>comma"], self.preferences_action,
                                _("Preferences"), group="app")
 
     @staticmethod
