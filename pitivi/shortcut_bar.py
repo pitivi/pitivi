@@ -22,7 +22,7 @@ class BarWindow(Gtk.Window):
         self.entry.set_completion(suggestions)
         vbox.pack_start(self.entry, True, True, 0)
 
-        self.connect('key-press-event', self.key_pressed_fun)
+        self.connect('key-press-event', key_pressed_fun)
 
     def entry_suggestion(self):
         completion = Gtk.EntryCompletion()
@@ -44,6 +44,6 @@ class BarWindow(Gtk.Window):
         entry_model = completion.get_model()[i][0].lower()
         return entry.lower() in entry_model
 
-    def key_pressed_fun(self, widget, event):
-        if keyval_name(event.keyval) == 'Escape':
-            widget.destroy()
+def key_pressed_fun(widget, event):
+    if keyval_name(event.keyval) == 'Escape':
+        widget.destroy()
