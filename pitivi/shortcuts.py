@@ -70,11 +70,11 @@ class ShortcutsManager(GObject.Object):
         """
         with open(self.config_path, "w") as conf_file:
             for unused_group_id, actions in self.group_actions.items():
-                for action, unused_title in actions:
+                for action, unused_title, unused_action_object in actions:
                     accels = ",".join(self.app.get_accels_for_action(action))
                     conf_file.write(action + ":" + accels + "\n")
 
-    def add(self, action, accelerators, title=None, group=None):
+    def add(self, action, accelerators, action_object, title=None, group=None):
         """Adds an action to be displayed.
 
         Args:
@@ -84,6 +84,7 @@ class ShortcutsManager(GObject.Object):
                 the action. They are set as the accelerators of the action
                 only if no accelerators have been loaded from the config file
                 initially, when the current manager instance has been created.
+            action_object (Gio.SimpleAction): The object of the action.
             title (Optional(str)): The title of the action.
             group (Optional[str]): The group id registered with `register_group`
                 to be used instead of that extracted from `action`.
@@ -97,7 +98,7 @@ class ShortcutsManager(GObject.Object):
             action_prefix = group or action.split(".")[0]
             if action_prefix not in self.group_actions:
                 self.group_actions[action_prefix] = []
-            self.group_actions[action_prefix].append((action, title))
+            self.group_actions[action_prefix].append((action, title, action_object))
 
     def set(self, action, accelerators):
         """Sets accelerators for a shortcut.
@@ -140,7 +141,7 @@ class ShortcutsManager(GObject.Object):
         """
         group_name = action.split(".")[0]
         for group in {group_name, "app", "win"}:
-            for neighbor_action, unused_title in self.group_actions[group]:
+            for neighbor_action, unused_title, unused_action_object in self.group_actions[group]:
                 if neighbor_action == action:
                     continue
                 for accel in self.app.get_accels_for_action(neighbor_action):
@@ -201,7 +202,7 @@ class ShortcutsWindow(Gtk.ShortcutsWindow):
         for group_id in self.app.shortcuts.groups:
             group = Gtk.ShortcutsGroup(title=self.app.shortcuts.group_titles[group_id])
             group.show()
-            for action, title in self.app.shortcuts.group_actions[group_id]:
+            for action, title, _ in self.app.shortcuts.group_actions[group_id]:
                 # Show only the first accelerator which is the main one.
                 # Don't bother with the others, to keep the dialog pretty.
                 try:
