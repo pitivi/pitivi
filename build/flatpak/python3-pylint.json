@@ -1,0 +1,64 @@
+{
+    "name": "python3-pylint",
+    "buildsystem": "simple",
+    "build-commands": [
+        "pip3 install --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} pylint"
+    ],
+    "sources": [
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/59/b0/11710a598e1e148fb7cbf9220fd2a0b82c98e94efbdecb299cb25e7f0b39/wheel-0.33.6.tar.gz",
+            "sha256": "10c9da68765315ed98850f8e048347c3eb06dd81822dc2ab1d4fde9dc9702646"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/f7/b6/5b98441b6749ea1db1e41e5e6e7a93cbdd7ffd45e11fe1b22d45884bc777/setuptools-42.0.2.zip",
+            "sha256": "c5b372090d7c8709ce79a6a66872a91e518f7d65af97fca78135e1cb10d4b940"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/83/44/53cad68ce686585d12222e6769682c4bdb9686808d2739671f9175e2938b/setuptools_scm-3.3.3.tar.gz",
+            "sha256": "bd25e1fb5e4d603dcf490f1fde40fb4c595b357795674c3e5cb7f6217ab39ea5"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/34/de/d0cfe2ea7ddfd8b2b8374ed2e04eeb08b6ee6e1e84081d151341bba596e5/typed_ast-1.4.0.tar.gz",
+            "sha256": "66480f95b8167c9c5c5c87f32cf437d585937970f3fc24386f313a4c97b44e34"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/07/3f/a3d687f83c7d44970f70ff0400677746c8860b11f0c08f6b4e07205f0cdc/lazy-object-proxy-1.4.3.tar.gz",
+            "sha256": "f3900e8a5de27447acbf900b4750b0ddfd7ec1ea7fbaf11dfa911141bc522af0"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/23/84/323c2415280bc4fc880ac5050dddfb3c8062c2552b34c2e512eb4aa68f79/wrapt-1.11.2.tar.gz",
+            "sha256": "565a021fd19419476b9362b05eeaa094178de64f8361e44468f9e9d7843901e1"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/65/26/32b8464df2a97e6dd1b656ed26b2c194606c16fe163c695a992b36c11cdf/six-1.13.0-py2.py3-none-any.whl",
+            "sha256": "1f1b7d42e254082a9db6279deae68afb421ceba6158efa6131de7b3003ee93fd"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/87/89/479dc97e18549e21354893e4ee4ef36db1d237534982482c3681ee6e7b57/mccabe-0.6.1-py2.py3-none-any.whl",
+            "sha256": "ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/e5/b0/c121fd1fa3419ea9bfd55c7f9c4fedfec5143208d8c7ad3ce3db6c623c21/isort-4.3.21-py2.py3-none-any.whl",
+            "sha256": "6e811fcb295968434526407adb8796944f1988c5b65e8139058f2014cbe100fd"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/ad/ae/86734823047962e7b8c8529186a1ac4a7ca19aaf1aa0c7713c022ef593fd/astroid-2.3.3-py3-none-any.whl",
+            "sha256": "840947ebfa8b58f318d42301cf8c0a20fd794a33b61cc4638e28e9e61ba32f42"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/e9/59/43fc36c5ee316bb9aeb7cf5329cdbdca89e5749c34d5602753827c0aa2dc/pylint-2.4.4-py3-none-any.whl",
+            "sha256": "886e6afc935ea2590b462664b161ca9a5e40168ea99e5300935f6591ad467df4"
+        }
+    ]
+}
