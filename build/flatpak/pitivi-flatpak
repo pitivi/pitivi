@@ -28,7 +28,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import venv
 from urllib.error import URLError
 from urllib.parse import urlparse
 from urllib.request import urlretrieve
@@ -120,6 +119,10 @@ def expand_manifest(manifest_path, outfile, basedir, gst_version, branchname):
                     outfile, gst_version)
 
     for module in template["modules"]:
+        if isinstance(module, str):
+            # This is the name of a file to be included containing modules.
+            continue
+
         if module["sources"][0]["type"] != "git":
             continue
 
@@ -509,7 +512,6 @@ class PitiviFlatpak:
             self.install_flatpak_runtimes()
             if missing_prefix or self.update:
                 self.setup_sandbox()
-            self.install_development_tools()
         else:
             if missing_prefix:
                 Console.message("%sPrefix missing, create it with: %s --init%s",
@@ -615,8 +617,8 @@ class PitiviFlatpak:
         # We need access to the host from the sandbox to run.
         with tempfile.NamedTemporaryFile() as coredump:
             with tempfile.NamedTemporaryFile() as stderr:
-                subprocess.check_call(["coredumpctl", "dump"] + shlex.split(self.coredumpctl_matches),
-                                      stdout=coredump, stderr=stderr)
+                command = ["coredumpctl", "dump"] + shlex.split(self.coredumpctl_matches)
+                subprocess.check_call(command, stdout=coredump, stderr=stderr)
 
                 with open(stderr.name, 'r') as stderrf:
                     stderr = stderrf.read()
@@ -628,32 +630,6 @@ class PitiviFlatpak:
                 args = ["gdb", executable, coredump.name] + shlex.split(self.coredumpgdb)
 
                 self.run_in_sandbox(*args, mount_tmp=True)
-
-    def install_development_tools(self):
-        venv_path = os.path.join(self.scriptdir, "pyvenv")
-        Console.message(
-            "Setting up a Python virtual env for development: %s", venv_path)
-        if not os.path.isdir(venv_path):
-            venv.create(venv_path, with_pip=True)
-
-        activate_script = os.path.join(venv_path, "bin", "activate")
-        pip_modules = "git-pylint-commit-hook pre-commit pylint"
-        Console.message(
-            "Installing development tools in the Python virtual env: %s", pip_modules)
-        subprocess.check_call(
-            ". %s && pip install -q -U %s" % (activate_script, pip_modules),
-            shell=True)
-
-        # git-pylint-commit-hook must run pylint in the sandbox so it uses
-        # the gi Python modules in there. At the same time it also has to be
-        # installed in the development pyvenv which is outside the sandbox
-        # because git-pylint-commit-hook needs to import pylint.config.
-        pip_modules = ["pylint"]
-        Console.message(
-            "Installing development tools in the sandbox: %s", pip_modules)
-        self.run_in_sandbox("pip3", "install", "-q", "-U", "--user",
-                            "--no-warn-script-location", *pip_modules,
-                            exit_on_failure=True)
 
     def run_in_sandbox(self, *args, exit_on_failure=False, cwd=None, mount_tmp=False):
         if not args:
@@ -673,7 +649,7 @@ class PitiviFlatpak:
         forwarded = {}
         for envvar, value in os.environ.items():
             if envvar.split("_")[0] in ("G", "GDK", "GST", "GTK", "LC", "PITIVI") or \
-                    envvar in ["DISPLAY", "LANG"]:
+                    envvar in ["DISPLAY", "GIT_INDEX_FILE", "LANG", "PYTHONPATH"]:
                 forwarded[envvar] = value
 
         prefixes = {

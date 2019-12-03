@@ -17,26 +17,4 @@ fi
 TOPLEVEL=$(git rev-parse --show-toplevel)
 export PYTHONPATH=$TOPLEVEL/pitivi/coptimizations/.libs:$PYTHONPATH
 
-PYLINT_IGNORED_FILES="
-bin/pitivi.in
-pitivi/autoaligner.py
-pitivi/utils/extract.py
-"
-
-PYLINT_IGNORE_ARGS=""
-for f in $PYLINT_IGNORED_FILES; do
-    PYLINT_IGNORE_ARGS="$PYLINT_IGNORE_ARGS --ignore=$f"
-done
-
-# Print the commands being executed so we have a clue what's going on.
-set -x
-
-# Lightweight pre-commit.com checks.
-pre-commit run --config .pre-commit-config.yaml || exit 1
-
-# We keep pylint separate from the pre-commit.com hooks
-# because we have to run it in the sandbox. This is done
-# through git-pylint-commit-hook and pitivi-flatpak.
-git-pylint-commit-hook --pylint="$TOPLEVEL/build/flatpak/pitivi-flatpak" \
-  --pylint-params="pylint" --pylintrc="$TOPLEVEL/pylint.rc" \
-  --limit=10.0 $PYLINT_IGNORE_ARGS --suppress-report || exit 1
+$TOPLEVEL/build/flatpak/pitivi-flatpak pre-commit run --config .pre-commit-config.yaml || exit 1

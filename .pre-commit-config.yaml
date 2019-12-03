@@ -25,3 +25,10 @@ repos:
         args:
         # http://www.pydocstyle.org/en/latest/error_codes.html
         -   --ignore=D1,D203,D213,D401,D406,D407,D413
+-   repo: local
+    hooks:
+    -   id: pylint
+        name: pylint
+        entry: python3 -m pylint.__main__ --rcfile=pylint.rc
+        language: system
+        types: [python]
