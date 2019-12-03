@@ -7,7 +7,7 @@ SCRIPT=${BASH_SOURCE[0]:-$0}
 
 [[ "${BASH_SOURCE[0]}" == "$0" ]] \
     && echo "This script should not be executed but sourced like:" \
-    && echo "    $ source $0" \
+    && echo "    $ . $0" \
     && echo \
     && exit 1
 
@@ -23,11 +23,11 @@ alias ptvenv="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak"
 echo "-> Setting up the prefix for the sandbox..."
 # This builds the local flatpak repo if it is not yet built.
 ptvenv --init
-if [ "$?" = "0" ];
+if [ "$?" = "0" ]
 then
-    echo Sandbox ready.
+    echo "Sandbox ready."
 
-    echo Setting up aliases etc. so configuring, building takes place in the sandbox...
+    echo "Setting up aliases etc. so configuring, building takes place in the sandbox..."
 
     # Meson sets up the build directory where ninja works.
     # Consider using `setup` instead of `meson`, see below.
@@ -51,18 +51,14 @@ then
     alias ptvtests="ptvenv gst-validate-launcher $PITIVI_REPO_DIR/tests/ptv_testsuite.py"
 
     # Prefer to run some binaries in the sandbox. For example "python3".
-    for i in `$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q ls /app/bin/`;
+    for i in `$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q ls /app/bin/`
     do
         alias $i="ptvenv $i"
     done
 
     alias pitivi="ptvenv $PITIVI_REPO_DIR/bin/pitivi"
 
-    # Enter the Python virtual env to have specific dev tools,
-    # such as git-phab, pre-commit, etc.
-    source $PITIVI_REPO_DIR/build/flatpak/pyvenv/bin/activate
-
-    # Install our pre-commit git hook, for doing clean commits.
+    echo "Installing our pre-commit git hook, for doing clean commits..."
     rm -f .git/hooks/pre-commit
     ln -s ../../pre-commit.hook .git/hooks/pre-commit
 
