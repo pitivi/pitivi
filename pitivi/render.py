@@ -1195,7 +1195,7 @@ class RenderDialog(Loggable):
         width, height = self.project.get_video_width_and_height(render=True)
         self.resolution_label.set_text("%d×%d" % (width, height))
 
-    def _project_settings_button_clicked_cb(self, unused_button):
+    def _project_settings_button_clicked_cb(self, unused_button , temp_variable):
         from pitivi.project import ProjectSettingsDialog
         dialog = ProjectSettingsDialog(self.window, self.project, self.app)
         dialog.window.run()
