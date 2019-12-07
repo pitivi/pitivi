@@ -353,11 +353,10 @@
                         <child>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can_focus">False</property>
                             <property name="receives_default">True</property>
                             <property name="label" translatable="yes">&lt;a href='#'&gt;Proxy Preferences&lt;/a&gt;</property>
                             <property name="use_markup">True</property>
-                            <property name="selectable">True</property>
                             <signal name="activate-current-link" handler="_project_settings_button_clicked_cb" swapped="no"/>
                             <signal name="activate-link" handler="_project_settings_button_clicked_cb" swapped="no"/>
                             <signal name="move-cursor" handler="_project_settings_button_clicked_cb" swapped="no"/>
