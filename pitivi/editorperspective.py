@@ -379,9 +379,7 @@ class EditorPerspective(Perspective, Loggable):
                             self.timeline_ui,self.timeline_ui.toolbar,
                             self.timeline_ui.zoom_box,self.save_button,self.render_button,self.menu_button,
                             self.undo_button,self.redo_button,self.intro_button,self.intro_button,self.intro_button,
-                            self.intro_button,self.intro_button,self.intro_button
-                           # self.medialibrary._import_button
-                           ]
+                            self.intro_button,self.intro_button,self.intro_button]
 
 
 
@@ -394,7 +392,7 @@ class EditorPerspective(Perspective, Loggable):
             self.context_tabs.set_current_page(0)
         elif intro_index == 9:
             for i in range(30):
-                self.timeline_ui._zoom_in_cb(unused_action=0, unused_parameter=0)
+                self.timeline_ui._zoom_in_cb(unused_action=0,unused_parameter=0)
         elif intro_index == 10:
             for i in range(30):
                 self.timeline_ui._zoom_out_cb(unused_action=0, unused_parameter=0)
