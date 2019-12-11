@@ -553,6 +553,9 @@ class EffectListWidget(Gtk.Box, Loggable):
             clip.ui.add_effect(effect_info)
 
     def get_selected_effect(self):
+
+        # from here emit effect added signal
+
         if self._dragged_items:
             return self._dragged_items
         unused_model, rows = self.view.get_selection().get_selected_rows()
