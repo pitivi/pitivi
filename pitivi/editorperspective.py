@@ -24,7 +24,7 @@ from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import Gtk
-
+from gi.repository import GdkPixbuf
 from pitivi.clipproperties import ClipProperties
 from pitivi.configure import APPNAME
 from pitivi.configure import get_ui_dir
@@ -318,9 +318,10 @@ class EditorPerspective(Perspective, Loggable):
         self.redo_button.set_action_name("app.redo")
         self.redo_button.set_use_underline(True)
 
-        IMAGE_FILE =os.path.join(get_pixmap_dir(),"intro.png")
+        IMAGE_FILE =os.path.join(get_pixmap_dir(),"interactive-intro.svg")
         img = Gtk.Image()
-        img.set_from_file(IMAGE_FILE)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file(IMAGE_FILE)
+        img.set_from_pixbuf(pixbuf)
 
         self.intro_button = Gtk.Button()
         self.intro_button.set_image(img)
@@ -378,7 +379,7 @@ class EditorPerspective(Perspective, Loggable):
                             self.timeline_ui,self.timeline_ui.toolbar,
                             self.timeline_ui.zoom_box,self.save_button,self.render_button,self.menu_button,
                             self.undo_button,self.redo_button,self.intro_button,self.intro_button,self.intro_button,
-                            self.intro_button,self.intro_button
+                            self.intro_button,self.intro_button,self.intro_button
                            # self.medialibrary._import_button
                            ]
 
@@ -420,11 +421,6 @@ class EditorPerspective(Perspective, Loggable):
             GObject.source_remove(self.g)
             self.interactive_intro_stop_tour()
 
-
-    def check_is_interactive_intro_running(self):
-        if self.is_intro_running:
-            return True
-        return False
 
 
     def interactive_intro_show_popup(self):
@@ -972,4 +968,4 @@ class PreviewAssetWindow(Gtk.Window):
 
     def _leave_preview_cb(self, window, unused):
         self.destroy()
-        return True       
+        return True
