@@ -17,10 +17,9 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 import os
+from gi.repository import GObject
 from gettext import gettext as _
-from time import time
 from urllib.parse import unquote
-
 from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gio
@@ -29,6 +28,7 @@ from gi.repository import Gtk
 from pitivi.clipproperties import ClipProperties
 from pitivi.configure import APPNAME
 from pitivi.configure import get_ui_dir
+from pitivi.configure import get_pixmap_dir
 from pitivi.dialogs.missingasset import MissingAssetDialog
 from pitivi.effects import EffectListWidget
 from pitivi.mediafilespreviewer import PreviewWidget
@@ -47,6 +47,7 @@ from pitivi.utils.ui import beautify_time_delta
 from pitivi.utils.ui import EDITOR_PERSPECTIVE_CSS
 from pitivi.utils.ui import info_name
 from pitivi.viewer.viewer import ViewerContainer
+from pitivi.pitivintrolist import test_list
 
 
 GlobalSettings.add_config_section("main-window")
@@ -67,6 +68,8 @@ GlobalSettings.add_config_option('lastProjectFolder',
                                  key="last-folder",
                                  environment="PITIVI_PROJECT_FOLDER",
                                  default=os.path.expanduser("~"))
+
+GObject.threads_init()
 
 
 class EditorPerspective(Perspective, Loggable):
@@ -178,6 +181,8 @@ class EditorPerspective(Perspective, Loggable):
         # pylint: disable=attribute-defined-outside-init
         # Main "toolbar" (using client-side window decorations with HeaderBar)
         self.headerbar = self.__create_headerbar()
+        self.interactive_intro_index=0
+        self.widgits_list=[]
 
         # Set up our main containers, in the order documented above
 
@@ -300,18 +305,40 @@ class EditorPerspective(Perspective, Loggable):
         headerbar = Gtk.HeaderBar()
         headerbar.set_show_close_button(True)
 
-        undo_button = Gtk.Button.new_from_icon_name(
+        self.undo_button = Gtk.Button.new_from_icon_name(
             "edit-undo-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
-        undo_button.set_always_show_image(True)
-        undo_button.set_label(_("Undo"))
-        undo_button.set_action_name("app.undo")
-        undo_button.set_use_underline(True)
+        self.undo_button.set_always_show_image(True)
+        self.undo_button.set_label(_("Undo"))
+        self.undo_button.set_action_name("app.undo")
+        self.undo_button.set_use_underline(True)
 
-        redo_button = Gtk.Button.new_from_icon_name(
+        self.redo_button = Gtk.Button.new_from_icon_name(
             "edit-redo-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
-        redo_button.set_always_show_image(True)
-        redo_button.set_action_name("app.redo")
-        redo_button.set_use_underline(True)
+        self.redo_button.set_always_show_image(True)
+        self.redo_button.set_action_name("app.redo")
+        self.redo_button.set_use_underline(True)
+
+        IMAGE_FILE =os.path.join(get_pixmap_dir(),"intro.png")
+        img = Gtk.Image()
+        img.set_from_file(IMAGE_FILE)
+
+        self.intro_button = Gtk.Button()
+        self.intro_button.set_image(img)
+        self.intro_button.set_always_show_image(True)
+        self.intro_button.connect("clicked", self.interactive_intro_start_tour)
+        self.is_intro_running= False
+
+
+        self.label = Gtk.Label()
+        self.label.set_markup('<span><b>\n\nHello, let\'s go on a quick tour.</b>\n\n<big><b>Let\'s begin.</b></big></span>')
+        self.label.set_property('margin', 10)
+        self.popover=Gtk.Popover()
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        vbox.pack_start(self.label, False, True, 10)
+        self.popover.add(vbox)
+        self.popover.set_position(Gtk.PositionType.BOTTOM)
+
+
 
         # pylint: disable=attribute-defined-outside-init
         self.save_button = Gtk.Button.new_with_label(_("Save"))
@@ -328,10 +355,9 @@ class EditorPerspective(Perspective, Loggable):
 
         undo_redo_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         undo_redo_box.get_style_context().add_class("linked")
-        undo_redo_box.pack_start(undo_button, expand=False, fill=False, padding=0)
-        undo_redo_box.pack_start(redo_button, expand=False, fill=False, padding=0)
+        undo_redo_box.pack_start(self.undo_button, expand=False, fill=False, padding=0)
+        undo_redo_box.pack_start(self.redo_button, expand=False, fill=False, padding=0)
         headerbar.pack_start(undo_redo_box)
-
         self.builder.add_from_file(
             os.path.join(get_ui_dir(), "mainmenubutton.ui"))
 
@@ -340,9 +366,90 @@ class EditorPerspective(Perspective, Loggable):
         headerbar.pack_end(self.menu_button)
         headerbar.pack_end(self.save_button)
         headerbar.pack_end(self.render_button)
+        headerbar.pack_end(self.intro_button)
         headerbar.show_all()
 
         return headerbar
+
+
+    def get_widgits_list(self):
+         self.widgits_list=[self.headerbar,self.medialibrary,self.medialibrary._import_button,
+                            self.effectlist,self.clipconfig,self.viewer,self.viewer.undock_button,
+                            self.timeline_ui,self.timeline_ui.toolbar,
+                            self.timeline_ui.zoom_box,self.save_button,self.render_button,self.menu_button,
+                            self.undo_button,self.redo_button,self.intro_button,self.intro_button,self.intro_button,
+                            self.intro_button,self.intro_button
+                           # self.medialibrary._import_button
+                           ]
+
+
+
+    def select_intro_widgits(self,intro_index):
+        if intro_index == 1:
+            self.main_tabs.set_current_page(0)
+        elif intro_index == 3:
+            self.main_tabs.set_current_page(1)
+        elif intro_index == 4:
+            self.context_tabs.set_current_page(0)
+        elif intro_index == 9:
+            for i in range(30):
+                self.timeline_ui._zoom_in_cb(unused_action=0, unused_parameter=0)
+        elif intro_index == 10:
+            for i in range(30):
+                self.timeline_ui._zoom_out_cb(unused_action=0, unused_parameter=0)
+        elif intro_index == 12:
+            self.menu_button.clicked()
+        elif intro_index == 13:
+            self.menu_button.clicked()
+        elif intro_index == 17:
+            self.main_tabs.set_current_page(0)
+
+
+
+    def interactive_intro_start_tour(self, widget):
+        if len(self.widgits_list) == 0:
+            self.get_widgits_list()
+
+        if not self.is_intro_running:
+            self.is_intro_running= True
+            self.popover.set_relative_to(self.intro_button)
+            self.popover.show_all()
+            self.popover.popup()
+            self.g = GObject.timeout_add(1000,self.interactive_intro_show_popup)
+        else:
+            GObject.source_remove(self.g)
+            self.interactive_intro_stop_tour()
+
+
+    def check_is_interactive_intro_running(self):
+        if self.is_intro_running:
+            return True
+        return False
+
+
+    def interactive_intro_show_popup(self):
+        if self.interactive_intro_index<len(self.widgits_list):
+            self.select_intro_widgits(self.interactive_intro_index)
+            self.label.set_markup('<span><b>\n'+str(test_list[self.interactive_intro_index])+'</b></span>')
+            self.popover.set_relative_to(self.widgits_list[self.interactive_intro_index])
+            self.popover.show_all()
+            self.popover.popup()
+            self.interactive_intro_index+=1
+            return True
+        else:
+            GObject.source_remove(self.g)
+            self.interactive_intro_stop_tour()
+
+
+
+
+    def interactive_intro_stop_tour(self):
+        self.popover.popdown()
+        self.interactive_intro_index=0
+        self.is_intro_running= False
+        self.label.set_markup('<span><b>\n\n\tHello, let\'s go on a quick tour.\t</b>\n\n<big><b>\t\t\tLet\'s begin.</b></big></span>')
+        return False
+
 
     def _create_actions(self):
         group = Gio.SimpleActionGroup()
@@ -865,4 +972,4 @@ class PreviewAssetWindow(Gtk.Window):
 
     def _leave_preview_cb(self, window, unused):
         self.destroy()
-        return True
+        return True       
