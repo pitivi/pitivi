@@ -415,7 +415,7 @@ class EditorPerspective(Perspective, Loggable):
             self.popover.set_relative_to(self.intro_button)
             self.popover.show_all()
             self.popover.popup()
-            self.g = GObject.timeout_add(1000,self.interactive_intro_show_popup)
+            self.g = GObject.timeout_add(3000,self.interactive_intro_show_popup)
         else:
             GObject.source_remove(self.g)
             self.interactive_intro_stop_tour()
