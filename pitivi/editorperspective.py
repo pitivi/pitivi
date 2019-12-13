@@ -33,7 +33,7 @@ from pitivi.dialogs.missingasset import MissingAssetDialog
 from pitivi.effects import EffectListWidget
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
-from pitivi.perspective import Perspective
+from pitivi.perspective import Perspectivegitgit
 from pitivi.project import ProjectSettingsDialog
 from pitivi.settings import GlobalSettings
 from pitivi.tabsmanager import BaseTabs
