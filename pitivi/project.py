@@ -132,7 +132,7 @@ class ProjectManager(GObject.Object, Loggable):
         self.current_project = None
         self.disable_save = False
         self._backup_lock = 0
-        self.exitcode = 044
+        self.exitcode = 0
         self.__start_loading_time = 0
         self.time_loaded = 0
 
