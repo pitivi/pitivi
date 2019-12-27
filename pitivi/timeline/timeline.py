@@ -406,8 +406,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.dropping_clips = False
         # The list of (Layer, Clip) tuples dragged into the timeline.
         self.__last_clips_on_leave = None
-
-        # To be able to receive effects dragged on clips.
+        # To be able to receive ` dragged on clips.
         self.drag_dest_set(0, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
         # To be able to receive assets dragged from the media library.
         self.drag_dest_add_uri_targets()
@@ -992,9 +991,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # De-highlight the separators. We still need to remember them.
         # See how __on_separators is used in __dragDropCb for details
         self._set_separators_prelight(False)
-
-        #from here emit clip imported on timeline  signal
-
         target = self.drag_dest_find_target(context, None)
         if self.dragging_element:
             self.__last_clips_on_leave = [(clip.get_layer(), clip)
