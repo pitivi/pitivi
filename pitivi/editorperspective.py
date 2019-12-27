@@ -39,6 +39,8 @@ from pitivi.settings import GlobalSettings
 from pitivi.tabsmanager import BaseTabs
 from pitivi.timeline.previewers import ThumbnailCache
 from pitivi.timeline.timeline import TimelineContainer
+from pitivi.timeline.timeline import Timeline
+from pitivi.intractiveinto import IntractiveIntro
 from pitivi.titleeditor import TitleEditor
 from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
@@ -47,7 +49,6 @@ from pitivi.utils.ui import beautify_time_delta
 from pitivi.utils.ui import EDITOR_PERSPECTIVE_CSS
 from pitivi.utils.ui import info_name
 from pitivi.viewer.viewer import ViewerContainer
-from pitivi.pitivintrolist import test_list
 
 
 GlobalSettings.add_config_section("main-window")
@@ -68,9 +69,6 @@ GlobalSettings.add_config_option('lastProjectFolder',
                                  key="last-folder",
                                  environment="PITIVI_PROJECT_FOLDER",
                                  default=os.path.expanduser("~"))
-
-GObject.threads_init()
-
 
 class EditorPerspective(Perspective, Loggable):
     """Pitivi's Editor perspective.
@@ -239,6 +237,7 @@ class EditorPerspective(Perspective, Loggable):
         self.timeline_ui = TimelineContainer(self.app)
         self.toplevel_widget.pack2(self.timeline_ui, resize=True, shrink=False)
 
+        self.intractiveintro = IntractiveIntro(self.app)
         # Setup shortcuts for HeaderBar buttons and menu items.
         self._create_actions()
 
@@ -326,9 +325,9 @@ class EditorPerspective(Perspective, Loggable):
         self.intro_button = Gtk.Button()
         self.intro_button.set_image(img)
         self.intro_button.set_always_show_image(True)
-        self.intro_button.connect("clicked", self.interactive_intro_start_tour)
+        self.intro_button.connect("clicked", self.interactive_intro_start)
         self.is_intro_running= False
-
+        self.is_intro_button_visible= True
 
         self.label = Gtk.Label()
         self.label.set_markup('<span><b>\n\nHello, let\'s go on a quick tour.</b>\n\n<big><b>Let\'s begin.</b></big></span>')
@@ -338,10 +337,6 @@ class EditorPerspective(Perspective, Loggable):
         vbox.pack_start(self.label, False, True, 10)
         self.popover.add(vbox)
         self.popover.set_position(Gtk.PositionType.BOTTOM)
-
-
-
-        # pylint: disable=attribute-defined-outside-init
         self.save_button = Gtk.Button.new_with_label(_("Save"))
         self.save_button.set_focus_on_click(False)
 
@@ -361,7 +356,6 @@ class EditorPerspective(Perspective, Loggable):
         headerbar.pack_start(undo_redo_box)
         self.builder.add_from_file(
             os.path.join(get_ui_dir(), "mainmenubutton.ui"))
-
         self.menu_button = self.builder.get_object("menubutton")
 
         headerbar.pack_end(self.menu_button)
@@ -373,78 +367,29 @@ class EditorPerspective(Perspective, Loggable):
         return headerbar
 
 
-    def get_widgits_list(self):
-         self.widgits_list=[self.headerbar,self.medialibrary,self.medialibrary._import_button,
-                            self.effectlist,self.clipconfig,self.viewer,self.viewer.undock_button,
-                            self.timeline_ui,self.timeline_ui.toolbar,
-                            self.timeline_ui.zoom_box,self.save_button,self.render_button,self.menu_button,
-                            self.undo_button,self.redo_button,self.intro_button,self.intro_button,self.intro_button,
-                            self.intro_button,self.intro_button,self.intro_button
-                           # self.medialibrary._import_button
-                           ]
+    def interactive_intro_handeler(self,unused_widget):
+        if not self.is_intro_button_visible:
+            self.is_intro_button_visible=True
+            self.intro_button.show()
+        else:
+            self.is_intro_button_visible=False
+            self.intro_button.get_popover().popdown()
+            self.intro_button.hide()
 
 
 
-    def select_intro_widgits(self,intro_index):
-        if intro_index == 1:
-            self.main_tabs.set_current_page(0)
-        elif intro_index == 3:
-            self.main_tabs.set_current_page(1)
-        elif intro_index == 4:
-            self.context_tabs.set_current_page(0)
-        elif intro_index == 9:
-            for i in range(30):
-                self.timeline_ui._zoom_in_cb(unused_action=0, unused_parameter=0)
-        elif intro_index == 10:
-            for i in range(30):
-                self.timeline_ui._zoom_out_cb(unused_action=0, unused_parameter=0)
-        elif intro_index == 12:
-            self.menu_button.clicked()
-        elif intro_index == 13:
-            self.menu_button.clicked()
-        elif intro_index == 17:
-            self.main_tabs.set_current_page(0)
 
-
-
-    def interactive_intro_start_tour(self, widget):
-        if len(self.widgits_list) == 0:
-            self.get_widgits_list()
-
+    def interactive_intro_start(self,unused_widget):
         if not self.is_intro_running:
-            self.is_intro_running= True
-            self.popover.set_relative_to(self.intro_button)
-            self.popover.show_all()
-            self.popover.popup()
-            self.g = GObject.timeout_add(3000,self.interactive_intro_show_popup)
+            #start intro
+            self.intractiveintro.interactive_intro_start_tour(unused_widget)
+            self.is_intro_running=True
         else:
-            GObject.source_remove(self.g)
-            self.interactive_intro_stop_tour()
-
-
-
-    def interactive_intro_show_popup(self):
-        if self.interactive_intro_index<len(self.widgits_list):
-            self.select_intro_widgits(self.interactive_intro_index)
-            self.label.set_markup('<span><b>\n'+str(test_list[self.interactive_intro_index])+'</b></span>')
-            self.popover.set_relative_to(self.widgits_list[self.interactive_intro_index])
-            self.popover.show_all()
-            self.popover.popup()
-            self.interactive_intro_index+=1
-            return True
-        else:
-            GObject.source_remove(self.g)
-            self.interactive_intro_stop_tour()
-
-
-
-
-    def interactive_intro_stop_tour(self):
-        self.popover.popdown()
-        self.interactive_intro_index=0
-        self.is_intro_running= False
-        self.label.set_markup('<span><b>\n\n\tHello, let\'s go on a quick tour.\t</b>\n\n<big><b>\t\t\tLet\'s begin.</b></big></span>')
-        return False
+            #stop intro
+            self.intractiveintro.interactive_intro_stop_tour(unused_widget)
+            self.is_intro_running=False
+            self.is_intro_button_visible=False
+            self.intro_button.hide()
 
 
     def _create_actions(self):
@@ -481,6 +426,10 @@ class EditorPerspective(Perspective, Loggable):
         self.project_settings_action = Gio.SimpleAction.new("project-settings", None)
         self.project_settings_action.connect("activate", self.__project_settings_cb)
         group.add_action(self.project_settings_action)
+
+        self.intractive_intro_action = Gio.SimpleAction.new("intractive-intro", None)
+        self.intractive_intro_action.connect("activate", self.__intractive_intro_cb)
+        group.add_action(self.intractive_intro_action)
 
         self.import_asset_action = Gio.SimpleAction.new("import-asset", None)
         self.import_asset_action.connect("activate", self.__import_asset_cb)
@@ -549,6 +498,11 @@ class EditorPerspective(Perspective, Loggable):
 
     def __project_settings_cb(self, unused_action, unused_param):
         self.show_project_settings_dialog()
+
+    def __intractive_intro_cb(self, unused_action, unused_param):
+        #self.intro_button.show()
+        self.is_intro_button_visible= False
+        self.interactive_intro_handeler(None)
 
     def show_project_settings_dialog(self):
         project = self.app.project_manager.current_project
