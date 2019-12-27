@@ -312,7 +312,7 @@ msgstr "Torna a carregar el projecte actual"
 
 #: ../data/ui/mainmenubutton.ui.h:6
 msgid "Revert to saved version"
-msgstr "Retorna a la versió desada"
+msgstr "Reverteix a la versió desada"
 
 #: ../data/ui/mainmenubutton.ui.h:7
 msgid "Export the current project and all its media in a .tar archive"
@@ -417,14 +417,14 @@ msgstr "Restaura tots els paràmetres als seus valors per defecte"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Revert"
-msgstr "Restaura"
+msgstr "Reverteix"
 
 #: ../data/ui/preferences.ui.h:5
 msgid ""
 "Revert all settings to the previous values (before you opened the "
 "preferences dialog)"
 msgstr ""
-"Restaura tots els paràmetres als seus valors anteriors (als d'abans que "
+"Reverteix tots els paràmetres als seus valors anteriors (als d'abans que "
 "obríssiu el diàleg de preferències)"
 
 #: ../data/ui/preferences.ui.h:6 ../data/ui/renderingdialog.ui.h:2
@@ -1112,11 +1112,11 @@ msgstr "Voleu desar els canvis del projecte actual abans de tancar?"
 #: ../pitivi/mainwindow.py:815
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
-msgstr "Perdreu els canvis dels últims %s si no els deseu."
+msgstr "Si no deseu, es perdran els canvis dels últims %s."
 
 #: ../pitivi/mainwindow.py:819
 msgid "If you don't save, your changes will be lost."
-msgstr "Perdreu els canvis si no els deseu."
+msgstr "Si no deseu, els canvis es perdran."
 
 #: ../pitivi/mainwindow.py:887
 msgid "Revert to saved project version?"
@@ -1342,7 +1342,7 @@ msgstr[1] "El fitxer següent no es pot utilitzar amb el Pitivi."
 
 #: ../pitivi/medialibrary.py:1188
 msgid "Open containing folder"
-msgstr "Obre el contingut de la carpeta"
+msgstr "Obre la carpeta contenidora"
 
 #: ../pitivi/medialibrary.py:1200
 msgid "Do not use proxy for selected asset"
