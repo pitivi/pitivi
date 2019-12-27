@@ -1,0 +1,9 @@
+[Plugin]
+Name=Fade out
+Description= Create a fade out video and audio in the selected clip
+Authors=Jean-Paul Favier
+website=...
+Copyright=
+
+Loader=python3
+Module=fade_out

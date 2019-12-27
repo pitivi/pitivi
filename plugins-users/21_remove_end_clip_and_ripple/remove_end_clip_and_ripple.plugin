@@ -1,0 +1,9 @@
+[Plugin]
+Name=Remove end of selected clip and ripple
+Description= Remove the end of the selected clip\nand move all the clips after the headplay
+Authors=Jean-Paul Favier
+website=...
+Copyright=
+
+Loader=python3
+Module=remove_end_clip_and_ripple
