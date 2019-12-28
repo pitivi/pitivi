@@ -96,7 +96,7 @@ class ConsoleWidget(Gtk.ScrolledWindow):
         """Sets the font.
 
         Args:
-            font (str): a PangoFontDescription as a string.
+            font_desc (str): a PangoFontDescription as a string.
         """
         pango_font_desc = Pango.FontDescription.from_string(font_desc)
         self._css_values["textview"]["font-family"] = pango_font_desc.get_family()

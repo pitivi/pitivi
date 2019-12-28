@@ -535,7 +535,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # Store
         self.storemodel = Gtk.ListStore(*STORE_MODEL_STRUCTURE)
         self.storemodel.set_sort_func(
-            COL_URI, MediaLibraryWidget.compare_basename)
+            COL_URI, MediaLibraryWidget.compare_basename_func)
         # Prefer to sort the media library elements by URI
         # rather than show them randomly.
         self.storemodel.set_sort_column_id(COL_URI, Gtk.SortType.ASCENDING)
@@ -710,13 +710,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.__disconnect_from_project()
 
     @staticmethod
-    def compare_basename(model, iter1, iter2, unused_user_data):
-        """Compares two model elements.
-
-        Args:
-            iter1 (Gtk.TreeIter): The iter identifying the first model element.
-            iter2 (Gtk.TreeIter): The iter identifying the second model element.
-        """
+    def compare_basename_func(model, iter1, iter2, user_data):
+        """Compares two model elements."""
         uri1 = model[iter1][COL_URI]
         uri2 = model[iter2][COL_URI]
         basename1 = GLib.path_get_basename(uri1).lower()

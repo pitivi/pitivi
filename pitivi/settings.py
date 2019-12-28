@@ -304,7 +304,7 @@ class GlobalSettings(GObject.Object, Loggable):
 
     @classmethod
     def add_config_option(cls, attrname, type_=None, section=None, key=None,
-                          environment=None, default=None, notify=False,):
+                          environment=None, default=None, notify=False):
         """Adds a configuration option.
 
         This function should be called during module initialization, before
@@ -324,6 +324,9 @@ class GlobalSettings(GObject.Object, Loggable):
                 add_config_section(). Not necessary if `key` is not given.
             key (Optional[str]): The key under which this option is to be saved.
                 By default the option will not be saved.
+            environment (Optional[str]): The name of the environment variable
+                for overwriting the value of the option.
+            default (Optional[object]): The default value of the option.
             notify (Optional[bool]): Whether this attribute should emit
                 signals when modified. By default signals are not emitted.
         """

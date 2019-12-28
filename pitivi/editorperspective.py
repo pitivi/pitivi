@@ -567,16 +567,13 @@ class EditorPerspective(Perspective, Loggable):
 
         return res
 
-    def _project_manager_project_closed_cb(self, unused_project_manager, project):
+    def _project_manager_project_closed_cb(self, project_manager, project):
         """Starts disconnecting the UI from the specified project.
 
         This happens when the user closes the app or asks to load another
         project, immediately after the user confirmed that unsaved changes,
         if any, can be discarded but before the filechooser to pick the next
         project to load appears.
-
-        Args:
-            project (Project): The project which has been closed.
         """
         # We must disconnect from the project pipeline before it is released:
         if project.pipeline is not None:

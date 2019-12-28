@@ -817,11 +817,12 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         If there are no properties, returns a "No properties" label.
 
         Args:
-            create_property_widget (function): The function that gets the widget for an effect property.
+            create_property_widget (function): The function that creates the widget for an effect property.
             values (dict): The current values of the element props, by name.
                 If empty, the default values will be used.
             with_reset_button (bool): Whether to show a reset button for each
                 property.
+            caps_values (Optional[dict]): Map of caps fields to their values.
         """
         values = values or {}
         self.info("element: %s, use values: %s", self.element, values)

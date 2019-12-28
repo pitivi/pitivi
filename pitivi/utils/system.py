@@ -47,7 +47,7 @@ class System(GObject.Object, Loggable):
     def has_x11(self):
         return self._x11
 
-    def desktop_message(self, title, message, unused_icon=None):
+    def desktop_message(self, title, message, icon=None):
         """Sends a message to the desktop to be displayed to the user.
 
         Args:
@@ -55,7 +55,7 @@ class System(GObject.Object, Loggable):
             message (str): The body of the message.
             icon (str): The icon to be shown with the message
         """
-        self.debug("desktop_message(): %s, %s", title, message)
+        self.debug("%s, %s, %s", title, message, icon)
 
     def get_unique_filename(self, string):
         """Gets a filename which can only be obtained from the specified string.
@@ -92,7 +92,7 @@ class FreedesktopOrgSystem(System):
                 # See for example
                 # https://bugzilla.gnome.org/show_bug.cgi?id=719627.
                 self.error(
-                    "desktop_message: Failed displaying notification: %s", e.message)
+                    "Failed displaying notification: %s", e.message)
                 return None
             return notification
         return None

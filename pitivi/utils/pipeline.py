@@ -585,7 +585,8 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         This clamps the playhead to the project frames.
 
         Args:
-            frames_offsets (int): The number of frames to step. Negative number
+            framerate (Gst.Fraction): The framerate of the project.
+            frames_offset (int): The number of frames to step. Negative number
                 for stepping backwards.
         """
         try:
