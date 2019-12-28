@@ -687,6 +687,10 @@ class ProxyManager(GObject.Object, Loggable):
 
         Args:
             asset (GES.Asset): The asset to be transcoded.
+            scaled (Optional[bool]): Whether to create a scaled proxy instead
+                of a high-quality proxy.
+            shadow (Optional[bool]): Whether to create a high-quality proxy
+                to shadow a scaled proxy.
         """
         force_proxying = asset.force_proxying
         # Handle Automatic scaling
