@@ -393,7 +393,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
@@ -408,7 +408,7 @@
             "name": "gst-plugins-base",
             "buildsystem": "meson",
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "-Dorc=enabled",
                 "--libdir=lib",
                 "--wrap-mode=nodownload"
@@ -427,7 +427,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
@@ -443,7 +443,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
@@ -460,7 +460,7 @@
             "builddir": true,
             "config-opts": [
                 "-Daom=disabled",
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
@@ -476,7 +476,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
@@ -521,7 +521,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "-Ddebug_viewer=false",
                 "--libdir=lib"
             ],
@@ -538,7 +538,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
@@ -554,7 +554,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
