@@ -337,6 +337,7 @@ class EditorPerspective(Perspective, Loggable):
         vbox.pack_start(self.label, False, True, 10)
         self.popover.add(vbox)
         self.popover.set_position(Gtk.PositionType.BOTTOM)
+        # pylint: disable=attribute-defined-outside-init
         self.save_button = Gtk.Button.new_with_label(_("Save"))
         self.save_button.set_focus_on_click(False)
 
