@@ -69,5 +69,5 @@ each time Pitivi is used.
 You can run the integration tests with:
 
 ```
-$ tests/validate-tests/runtests
+$ ptvenv tests/validate-tests/runtests
 ```

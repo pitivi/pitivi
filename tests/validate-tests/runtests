@@ -13,7 +13,7 @@ def main():
     except subprocess.CalledProcessError as e:
         print("ERROR: Cannot find gst-validate-launcher: %s" % e)
         print("Make sure to install gst-devtools:")
-        print("    http://cgit.freedesktop.org/gstreamer/gst-devtools/tree/validate/")
+        print("    https://gitlab.freedesktop.org/gstreamer/gst-devtools/tree/master/validate")
         sys.exit(127)
 
     path = os.path.abspath(os.path.join(os.path.dirname(__file__)))
