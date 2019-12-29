@@ -2,7 +2,7 @@
     "app-id": "org.pitivi.Pitivi",
     "branch": "master",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.32",
+    "runtime-version": "3.34",
     "command": "pitivi",
     "finish-args": [
         "--socket=x11",
@@ -20,8 +20,6 @@
     "sdk": "org.gnome.Sdk",
     "copy-icon": true,
     "build-options": {
-        "cflags": "-O2 -g",
-        "cxxflags": "-O2 -g",
         "env": {
             "PYTHON": "python3",
             "GST_PLUGIN_SYSTEM_PATH": "/app/lib/gstreamer-1.0/",
@@ -170,71 +168,6 @@
             ]
         },
         {
-            "name": "ipdb",
-            "build-options": {
-                "build-args": [
-                    "--share=network"
-                ]
-            },
-            "config-opts": [
-                "--module=ipdb==0.11"
-            ],
-            "sources": [
-                {
-                    "type": "file",
-                    "path": "py-configure",
-                    "dest-filename": "configure"
-                }
-            ]
-        },
-        {
-            "name": "nose2",
-            "build-options": {
-                "build-args": [
-                    "--share=network"
-                ]
-            },
-            "config-opts": [
-                "--module=nose2==0.8.0"
-            ],
-            "sources": [
-                {
-                    "type": "file",
-                    "path": "py-configure",
-                    "dest-filename": "configure"
-                }
-            ]
-        },
-        {
-            "name": "meson",
-            "buildsystem": "simple",
-            "ensure-writable": ["easy-install.pth"],
-            "build-commands": [
-               "mkdir -p /app/lib/python3.5/site-packages",
-               "PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/d9/5b/3e1844ecb9f4872c2aa0ea8ec180c71a8b8bd60d6ea758f3339d9c659f86/meson-0.50.1.tar.gz",
-                    "sha256": "242af7cd9088e8aeca7ff1a93e029c4d16d89880fdcf62913ad85a26bbe66316"
-                }
-            ]
-        },
-        {
-            "name": "sound-theme-freedesktop",
-            "ensure-writable": [
-                "easy-install.pth"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://anongit.freedesktop.org/git/sound-theme-freedesktop.git",
-                    "branch": "0.8"
-                }
-            ]
-        },
-        {
             "name": "gsound",
             "ensure-writable": [
                 "easy-install.pth"
@@ -258,8 +191,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://download.videolan.org/pub/x264/snapshots/x264-snapshot-20181201-2245-stable.tar.bz2",
-                    "sha256": "cd25d33c18e198b9138f8c465a5733322b082f715a7da76ec706e5d778bb9656"
+                    "url": "http://download.videolan.org/pub/x264/snapshots/x264-snapshot-20191103-2245-stable.tar.bz2",
+                    "sha256": "d74f8f819104a94b0bd075aae39652b1957bcdd460e09b5202582c86e95a5bc0"
                 }
             ]
         },
@@ -268,8 +201,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://ftp.osuosl.org/pub/xiph/releases/opus/opus-1.3.tar.gz",
-                    "sha256": "4f3d69aefdf2dbaf9825408e452a8a414ffc60494c70633560700398820dc550"
+                    "url": "https://ftp.osuosl.org/pub/xiph/releases/opus/opus-1.3.1.tar.gz",
+                    "sha256": "65b58e1e25b2a114157014736a3d9dfeaad8d41be1c8179866f144a2fb44ff9d"
                 }
             ]
         },
@@ -285,7 +218,9 @@
                 {
                     "type": "archive",
                     "url": "https://downloads.sourceforge.net/project/gmerlin/gavl/1.4.0/gavl-1.4.0.tar.gz",
-                    "mirror-urls": ["http://http.debian.net/debian/pool/main/g/gavl/gavl_1.4.0.orig.tar.gz"],
+                    "mirror-urls": [
+                        "http://http.debian.net/debian/pool/main/g/gavl/gavl_1.4.0.orig.tar.gz"
+                    ],
                     "sha256": "51aaac41391a915bd9bad07710957424b046410a276e7deaff24a870929d33ce"
                 },
                 {
@@ -294,12 +229,17 @@
                 },
                 {
                     "type": "shell",
-                    "commands": ["pwd", "cp -p /usr/share/automake-*/config.{sub,guess} ."]
+                    "commands": [
+                        "pwd",
+                        "cp -p /usr/share/automake-*/config.{sub,guess} ."
+                    ]
                 },
                 {
                     "type": "script",
                     "dest-filename": "autogen.sh",
-                    "commands": ["autoreconf -vfi"]
+                    "commands": [
+                        "autoreconf -vfi"
+                    ]
                 }
             ]
         },
@@ -334,7 +274,9 @@
                 {
                     "type": "archive",
                     "url": "https://downloads.sourceforge.net/lame/lame-3.100.tar.gz",
-                    "mirror-urls": ["http://http.debian.net/debian/pool/main/l/lame/lame_3.100.orig.tar.gz"],
+                    "mirror-urls": [
+                        "http://http.debian.net/debian/pool/main/l/lame/lame_3.100.orig.tar.gz"
+                    ],
                     "sha256": "ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e"
                 }
             ]
@@ -345,7 +287,9 @@
                 {
                     "type": "archive",
                     "url": "https://downloads.sourceforge.net/opencore-amr/vo-aacenc/vo-aacenc-0.1.3.tar.gz",
-                    "mirror-urls": ["http://ftp.debian.org/debian/pool/main/v/vo-aacenc/vo-aacenc_0.1.3.orig.tar.gz"],
+                    "mirror-urls": [
+                        "http://ftp.debian.org/debian/pool/main/v/vo-aacenc/vo-aacenc_0.1.3.orig.tar.gz"
+                    ],
                     "sha256": "e51a7477a359f18df7c4f82d195dab4e14e7414cbd48cf79cc195fc446850f36"
                 }
             ]
@@ -357,8 +301,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_2.9.tar.gz",
-                    "sha256": "ebae687c84a39f54b995417c52a2fdde65a4e2e7ebac5730d251471304b91024"
+                    "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_3.2.1.tar.gz",
+                    "sha256": "fb9badcf92364fd3567f8b5aa0e5e952aeea7a39a2b864387cec31e3b58cbbcc"
                 }
             ]
         },
@@ -410,7 +354,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/FFmpeg/FFmpeg.git",
-                    "commit": "10506de9"
+                    "commit": "n4.1.4"
                 }
             ]
         },
@@ -439,18 +383,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/opencv/opencv/archive/3.4.4.tar.gz",
-                    "sha256": "a35b00a71d77b484f73ec485c65fe56c7a6fa48acd5ce55c197aef2e13c78746"
-                }
-            ]
-        },
-        {
-            "name": "libunwind",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/libunwind/libunwind.git",
-                    "commit": "v1.2.1"
+                    "url": "https://github.com/opencv/opencv/archive/3.4.8.tar.gz",
+                    "sha256": "f0901648a1db3dc3af30e65082665921dbe998673137380450bdd91e8251b567"
                 }
             ]
         },
@@ -459,7 +393,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
@@ -474,7 +408,7 @@
             "name": "gst-plugins-base",
             "buildsystem": "meson",
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "-Dorc=enabled",
                 "--libdir=lib",
                 "--wrap-mode=nodownload"
@@ -493,7 +427,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
@@ -509,7 +443,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
@@ -526,7 +460,7 @@
             "builddir": true,
             "config-opts": [
                 "-Daom=disabled",
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
@@ -542,7 +476,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
@@ -587,7 +521,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "-Ddebug_viewer=false",
                 "--libdir=lib"
             ],
@@ -604,7 +538,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
@@ -620,7 +554,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dgtk_doc=disabled",
+                "-Ddoc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
@@ -637,10 +571,15 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://git.gnome.org/browse/libpeas"
+                    "url": "https://gitlab.gnome.org/GNOME/libpeas.git"
                 }
             ]
         },
+        "python3-ipdb.json",
+        "python3-nose2.json",
+        "python3-pre-commit.json",
+        "python3-hotdoc.json",
+        "python3-pylint.json",
         {
             "name": "pitivi",
             "buildsystem": "meson",

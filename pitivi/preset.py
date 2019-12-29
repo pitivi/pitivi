@@ -534,7 +534,7 @@ class EncodingTargetManager(PresetManager):
                 self._add_target(target)
 
     def create_preset(self, name, values=None):
-        self.save_current_preset(name, validate_name=False)
+        self._save_current_preset_as_target(name)
 
     def get_new_preset_name(self):
         """Gets a unique name for a new preset."""
@@ -547,7 +547,7 @@ class EncodingTargetManager(PresetManager):
             i += 1
         return name
 
-    def save_current_preset(self, new_name, validate_name=True):
+    def save_current_preset(self, new_name=None):
         """Saves currently selected profile on disk.
 
         Override from PresetManager
@@ -555,10 +555,13 @@ class EncodingTargetManager(PresetManager):
         Args:
             new_name (str): The name to save current Gst.EncodingProfile as.
         """
-        if validate_name and not self.combo.get_parent().valid:
+        if not self.combo.get_parent().valid:
             self.error("Current encoding target name is not valid")
             return
 
+        self._save_current_preset_as_target(new_name)
+
+    def _save_current_preset_as_target(self, new_name):
         if new_name in self._removed_profiles:
             self._removed_profiles.remove(new_name)
             self._save_removed_profiles()

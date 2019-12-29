@@ -4,33 +4,17 @@
 # the dev env with `source bin/pitivi-env`.
 
 if [ -z "${PITIVI_REPO_DIR}" ]; then
-    echo "ERROR: You're not in the Pitivi development environment. Run `source bin/pitivi-env` to enter it. See http://developer.pitivi.org/HACKING.html for details."
+    echo "ERROR: You're not in the Pitivi development environment."
+    echo
+    echo "       Enter the development environment by running:"
+    echo "           $ . bin/pitivi/env"
+    echo
+    echo "       See http://developer.pitivi.org/HACKING.html for details."
+    echo
     exit 1
 fi
 
 TOPLEVEL=$(git rev-parse --show-toplevel)
 export PYTHONPATH=$TOPLEVEL/pitivi/coptimizations/.libs:$PYTHONPATH
 
-PYLINT_IGNORED_FILES="
-bin/pitivi.in
-pitivi/autoaligner.py
-pitivi/utils/extract.py
-"
-
-PYLINT_IGNORE_ARGS=""
-for f in $PYLINT_IGNORED_FILES; do
-    PYLINT_IGNORE_ARGS="$PYLINT_IGNORE_ARGS --ignore=$f"
-done
-
-# Print the commands being executed so we have a clue what's going on.
-set -x
-
-# Lightweight pre-commit.com checks.
-pre-commit run --config .pre-commit-config.yaml || exit 1
-
-# We keep pylint separate from the pre-commit.com hooks
-# because we have to run it in the sandbox. This is done
-# through git-pylint-commit-hook and pitivi-flatpak.
-git-pylint-commit-hook --pylint="$TOPLEVEL/build/flatpak/pitivi-flatpak" \
-  --pylint-params="pylint" --pylintrc="$TOPLEVEL/pylint.rc" \
-  --limit=10.0 $PYLINT_IGNORE_ARGS --suppress-report || exit 1
+$TOPLEVEL/build/flatpak/pitivi-flatpak pre-commit run --config .pre-commit-config.yaml || exit 1

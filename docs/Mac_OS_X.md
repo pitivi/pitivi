@@ -1,35 +1,58 @@
 # Mac OS X
 
 Mac OS X is a funny kind of Unix, but it's a Unix and should be able to
-run Pitivi. It's also popular -- even lots of open source types lug
-around a MacBook of some kind. Think of applications as a free software
-gateway drug! ;)
+run Pitivi easily. It's also popular -- even lots of open source types
+lug around a MacBook of some kind. Think of applications as a free
+software gateway drug! ;)
 
 ## Current status
 
-Pitivi runs pretty well on Mac, but consider it alpha quality. A few
-[bugs](https://phabricator.freedesktop.org/project/view/123/) have been
-filed already. If you are interested please [get in
+We're working on a system to build Pitivi for Mac using GStreamer's
+Cerbero build system. At the moment it's alpha quality. See the list of
+[macOS
+issues](https://gitlab.gnome.org/GNOME/pitivi/issues?label_name%5B%5D=on+Mac+OS+X)
+for details.
+
+Besides fixing bugs, we need to also prepare a DMG to distribute Pitivi
+easily to Mac users.
+
+Any help is welcome! If you are interested to help please [get in
 touch](http://www.pitivi.org/?go=contact)!
 
-Besides fixing bugs, we need to prepare somehow out of the [Homebrew
-formula](https://github.com/aleb/homebrew-gui/blob/master/pitivi.rb) a
-proper Mac app. Help is welcome!
 
-## Installing
+## Building
 
-First install [Homebrew](http://brew.sh/) then run:
+Clone our Cerbero repository which includes `recipes/pitivi.recipe`:
 
-` brew install aleb/gui/pitivi`
+```
+$ git clone https://gitlab.gnome.org/aleb/cerbero-pitivi.git
+```
 
-To run Pitivi, run in a terminal:
+As described in the
+[README](https://gitlab.gnome.org/aleb/cerbero-pitivi/blob/pitivi-master/README.md#macos-setup)
+Cerbero needs XCode and [Python 3.5 or
+later](https://www.python.org/downloads/) to be able to bootstrap.
 
-` pitivi`
+```
+/cerbero-uninstalled bootstrap
+```
 
-Please report bugs to
-[phabricator](https://phabricator.freedesktop.org/project/view/123/).
 
-## Hacking
+Start the build. This takes ~1h30m on my laptop:
+
+```
+$ cd cerbero-pitivi
+$ ./cerbero-uninstalled build pitivi
+```
+
+To start Pitivi, run in a terminal:
+
+```
+$ ./build/dist/darwin_x86_64/bin/pitivi
+```
+
+
+## Particularities
 
 Mac OS X has a few major differences from Linux:
 
@@ -48,9 +71,5 @@ Mac OS X has a few major differences from Linux:
 
 ## Development environment
 
-Have a look at [HACKING](HACKING.md) to see how to clone a local repository.
-
-To be able to run `./configure`, you need to add
-`/usr/local/opt/gettext/bin/` to `PATH` so that `msgfmt` can be found.
-
-You should be able to run `bin/pitivi`
+Have a look at [HACKING](HACKING.md) for some inspiration. Feel free
+to add some suggestions here if you find a useful workflow.

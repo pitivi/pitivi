@@ -108,7 +108,7 @@ class Encoders(Loggable):
     """The combinations of muxers and encoders which are supported.
 
     Mirror of GES_ENCODING_TARGET_COMBINATIONS from
-    https://cgit.freedesktop.org/gstreamer/gst-editing-services/tree/tests/validate/geslaunch.py
+    https://gitlab.freedesktop.org/gstreamer/gst-editing-services/blob/master/tests/validate/geslaunch.py
     """
 
     _instance = None

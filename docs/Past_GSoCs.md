@@ -7,6 +7,16 @@ short-description: What the GSoC students did in the previous years
 See [Google Summer of Code](Google_Summer_of_Code.md) for how to
 get involved.
 
+## 2019
+
+-   [Millan Castro](https://millancv.github.io/) implemented [timeline
+    markers](https://millancv.github.io//GSoC-3/).
+-   [Swayamjeet Swain](https://swaynethoughts.wordpress.com/)
+    implemented support for [nested
+    timelines](https://swaynethoughts.wordpress.com/2019/08/25/gsoc-2019-final-report/).
+-   [Yatin Maan](https://yatinmaan.github.io/) improved the [effects
+    usability](https://yatinmaan.github.io/2019/08/26/GSoC-19-Final-Report/).
+
 ## 2018
 
 -   [Harish Fulara](https://harishfulara07.wordpress.com/) implemented
@@ -59,10 +69,10 @@ get involved.
     implementation of proxies in [GES](GES.md) (see [proxy
     editing requirements](design/Proxy_editing_requirements.md)).
 -   Joris Valette started work on slow/fast-motion in GStreamer.
--   Mathieu Duponchelle worked on heavy
-    bugfixing all across the Pitivi, [GES](GES.md) and GStreamer
-    stack, allowing us to release [0.91](releases/0.91.md) at the end of
-    the summer.
+-   [Mathieu Duponchelle](https://mathieuduponchelle.blogspot.com/)
+    worked on heavy bugfixing all across the Pitivi, [GES](GES.md) and
+    GStreamer stack, allowing us to release [0.91](releases/0.91.md) at
+    the end of the summer.
 -   [Simon Corsin](https://github.com/rFlex) worked on various pieces
     alongside Mathieu, such as the new waveforms renderer.
 
@@ -71,13 +81,10 @@ get involved.
 -   Matas Brazdeikis implemented a new UI [Test
     suite](Testing.md) using Dogtail. He also started the
     implementation of a title editing user interface.
--   Paul Lange implemented a manual layer
-    controls user interface for the timeline.
+-   [Paul Lange](https://palango.wordpress.com/) implemented a manual
+    layer controls user interface for the timeline.
 -   Volodymyr Rudoy spent some time
     designing the GES “Materials” (now known as Assets) API.
-
-All the work above has been merged and is expected to be available in
-the [0.91](releases/0.91.md) release.
 
 In addition, we also co-mentored Pēteris Krišjānis who worked on an
 audio waveform generation and display library for GStreamer (see his
@@ -90,27 +97,20 @@ report](http://pecisk.blogspot.ca/2012/11/state-of-libwaveform-after-gsoc.html))
 -   [Lubosz Sarnecki](https://lubosz.wordpress.com/) implemented a nifty
     user interface for [resizing/cropping clips directly in the
     viewer](https://lubosz.wordpress.com/2016/09/26/making-viewer-uis-for-pitivi/).
--   Mathieu Duponchelle started to port
-    PiTiVi to GES after having worked on the GES Python bindings and the
-    GES Pitivi formatter.
-
-Feroze and Lubosz's work has been merged and made available in the
-[0.15](releases/0.15.md) release. Mathieu's work has also been merged, to
-be part of the [0.91](releases/0.91.md) release.
+-   [Mathieu Duponchelle](https://mathieuduponchelle.blogspot.com/)
+    started to port PiTiVi to GES after having worked on the GES Python
+    bindings and the GES Pitivi formatter.
 
 ## 2010
 
--   Thibault Saunier implemented with the
-    core backend developers special effects. He also worked in close
-    collaboration with nekohayo for the user
-    interface and testing.
-
-Thibault's work has been merged in September/October 2010 and is
-expected to be available to users in releases &gt;0.13.5.
+-   [Thibault Saunier](https://blogs.gnome.org/tsaunier/) implemented
+    with the core backend developers special effects. He also worked in
+    close collaboration with nekohayo for the user interface and
+    testing.
 
 ## 2008
 
--   Brandon Lewis worked on the [advanced
+-   [Brandon Lewis](https://dotsony.blogspot.com/) worked on the [advanced
     timeline](http://dotsony.blogspot.ch/search?updated-min=2008-01-01T00:00:00-08:00&updated-max=2009-01-01T00:00:00-08:00&max-results=41).
 -   [Sarath Lakshman](http://www.sarathlakshman.com/about/) implemented
     [webcam
@@ -118,5 +118,5 @@ expected to be available to users in releases &gt;0.13.5.
 
 ## 2007
 
--   Brandon Lewis worked on the [simple
+-   [Brandon Lewis](https://dotsony.blogspot.com/) worked on the [simple
     timeline](Google_SoC_2007_-_Simple_Timeline.md).

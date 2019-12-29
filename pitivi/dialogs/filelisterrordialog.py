@@ -57,6 +57,7 @@ class FileListErrorDialog(GObject.Object, Loggable):
         Args:
             uri (str): The URI of the asset which cannot be imported.
             reason (Optional[str]): The reason of the file discovery failure.
+            extra (Optional[str]): Extra information to display.
         """
         self.debug("Uri: %s, reason: %s, extra: %s", uri, reason, extra)
         exp = self.__create_file_expander(uri, reason, extra)
