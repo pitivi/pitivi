@@ -4,21 +4,43 @@ short-description: Using the Pitivi development environment
 
 # Hacking on Pitivi
 
+There are two ways to set up a flatpak sandbox with all the
+dependencies required to run and develop Pitivi. We recommend
+the advanced way, but if you want something quick, go ahead with
+the easy way.
+
 ## The easy way
 
 The easy way to setup the development environment is to follow the
 [GNOME Newcomers guide](https://wiki.gnome.org/Newcomers/).
 
-Make sure to use the right git repository:
+This implies using GNOME Builder to manage the dependencies sandbox.
 
->   **https://gitlab.gnome.org/GNOME/pitivi.git**
+Clone the `https://gitlab.gnome.org/GNOME/pitivi.git` git repository
+in GNOME Builder.
+
+To run the unittests, click in Builder: Unittests > pitivi > Pitivi unit tests.
+Make sure they all pass, or tell us about any failures.
+
+To be able to use our pre-commit git hook, run:
+
+```
+$ cd ~/Projects/pitivi
+$ ln -s ../../pre-commit.hook .git/hooks/pre-commit
+```
+
+When creating commits, for the pre-commit git hook to work properly
+it has to run in the sandbox. This is possible only by running `git`
+in a Build Terminal in GNOME Builder. You might want to
+`export EDITOR=nano` if you get "error: unable to start editor 'vi'"
+when you have to enter a commit message.
 
 
 ## Setting up the advanced development environment
 
 > NOTE: This way of setting the development environment is sensibly more complex
 > but also more flexible than the one for newcomers. If you are a  beginner
-> or if you usually use [gnome-builder](https://wiki.gnome.org/Apps/Builder)
+> or if you usually use [GNOME Builder](https://wiki.gnome.org/Apps/Builder)
 > as your main IDE, follow, as previously advised, the
 > [GNOME Newcomers guide](https://wiki.gnome.org/Newcomers/)
 
