@@ -406,7 +406,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.dropping_clips = False
         # The list of (Layer, Clip) tuples dragged into the timeline.
         self.__last_clips_on_leave = None
-        # To be able to receive effects dragged on clips.
         # To be able to receive ` dragged on clips.
         self.drag_dest_set(0, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
         # To be able to receive assets dragged from the media library.
