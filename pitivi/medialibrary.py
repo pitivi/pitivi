@@ -37,12 +37,12 @@ from gi.repository import Gst
 from gi.repository import GstPbutils
 from gi.repository import Gtk
 from gi.repository import Pango
-
 from pitivi.configure import get_pixmap_dir
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.clipmediaprops import ClipMediaPropsDialog
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.mediafilespreviewer import PreviewWidget
+from pitivi import editorperspective
 from pitivi.settings import GlobalSettings
 from pitivi.timeline.previewers import AssetPreviewer
 from pitivi.utils.loggable import Loggable
@@ -763,7 +763,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # removed
         rows = [Gtk.TreeRowReference.new(model, path)
                 for path in paths]
-
         with self.app.action_log.started("assets-removal", toplevel=True):
             for row in rows:
                 asset = model[row.get_path()][COL_ASSET]
@@ -1133,6 +1132,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def _import_dialog_box_response_cb(self, dialogbox, response):
         self.debug("response: %r", response)
         if response == Gtk.ResponseType.OK:
+
+            #from here emit clip imported signal
+
             lastfolder = dialogbox.get_current_folder()
             # get_current_folder() is None if file was chosen from 'Recents'
             if not lastfolder:
