@@ -16,54 +16,58 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+from gi.repository import Gio
 from gi.repository import Gtk
 
 from pitivi.utils.ui import clear_styles
+from pitivi.utils.ui import PADDING
 
-class BarWindow(Gtk.Window):
+class ActionSearchBar(Gtk.Window):
 
     def __init__(self, app):
         self.app = app
         Gtk.Window.__init__(self, title="")
         self.set_size_request(1000, 50)
-
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=PADDING)
         self.set_decorated(False)
         self.add(vbox)
 
-        completion = self.entry_suggestion()
+        self.completion = self.entry_suggestion()
 
         self.entry = Gtk.SearchEntry()
         clear_styles(self.entry)
-        self.entry.set_completion(completion)
+        self.entry.set_completion(self.completion)
         vbox.pack_start(self.entry, True, True, 0)
 
         self.connect("focus-out-event", self.focus_out_cb)
+        self.completion.connect("match-selected", self.match_select_cb)
 
     def entry_suggestion(self):
         completion = Gtk.EntryCompletion()
-        store = Gtk.ListStore(str, str)
+        store = Gtk.ListStore(str, str, Gio.SimpleAction)
 
         for i in self.app.shortcuts.group_actions:
-            for j in self.app.shortcuts.group_actions[i]:
-                store.append([j[1], self.app.get_accels_for_action(j[0])[0]])
+            for action, title, action_obj in self.app.shortcuts.group_actions[i]:
+                store.append([title, self.app.get_accels_for_action(action)[0], action_obj])
 
-        renderer = Gtk.CellRendererText()
+        renderer = Gtk.CellRendererAccel()
         completion.pack_end(renderer, True)
 
         completion.set_model(store)
-        completion.add_attribute(renderer, "text", 1)
+        completion.add_attribute(renderer, "accel-mode", 1)
         completion.set_text_column(0)
-        completion.set_inline_completion(True)
-        completion.set_inline_selection(True)
         completion.set_match_func(self.any_match_func)
 
         return completion
 
     def any_match_func(self, completion, entry, i):
-        entry_model = completion.get_model()[i][0].lower()
-        return entry.lower() in entry_model
+        entry_option = completion.get_model()[i][0].lower()
+        return entry.lower() in entry_option
 
     def focus_out_cb(self, window, unused):
         self.destroy()
         return True
+
+    def match_select_cb(self, completion, model, iter_num):
+        self.destroy()
+        return model[iter_num][2].activate()

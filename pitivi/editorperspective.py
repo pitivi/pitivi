@@ -353,14 +353,14 @@ class EditorPerspective(Perspective, Loggable):
         self.save_action = Gio.SimpleAction.new("save", None)
         self.save_action.connect("activate", self.__save_project_cb)
         group.add_action(self.save_action)
-        self.app.shortcuts.add("editor.save", ["<Primary>s"],
+        self.app.shortcuts.add("editor.save", ["<Primary>s"], self.save_action,
                                _("Save the current project"), group="win")
         self.save_button.set_action_name("editor.save")
 
         self.save_as_action = Gio.SimpleAction.new("save-as", None)
         self.save_as_action.connect("activate", self.__save_project_as_cb)
         group.add_action(self.save_as_action)
-        self.app.shortcuts.add("editor.save-as", ["<Primary><Shift>s"],
+        self.app.shortcuts.add("editor.save-as", ["<Primary><Shift>s"], self.save_as_action,
                                _("Save the current project as"), group="win")
 
         self.revert_to_saved_action = Gio.SimpleAction.new("revert-to-saved", None)
@@ -382,7 +382,7 @@ class EditorPerspective(Perspective, Loggable):
         self.import_asset_action = Gio.SimpleAction.new("import-asset", None)
         self.import_asset_action.connect("activate", self.__import_asset_cb)
         group.add_action(self.import_asset_action)
-        self.app.shortcuts.add("editor.import-asset", ["<Primary>i"],
+        self.app.shortcuts.add("editor.import-asset", ["<Primary>i"], self.import_asset_action,
                                _("Add media files to your project"), group="win")
 
     def __import_asset_cb(self, unused_action, unused_param):
