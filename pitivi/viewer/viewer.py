@@ -292,6 +292,16 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.timecode_entry.connect("key_press_event", self._entry_key_press_event_cb)
         bbox.pack_start(self.timecode_entry, False, False, 15)
 
+        # Show the timeline duration 2019 06 jep_f
+        self.timeline_duration = TimeWidget()
+        self.timeline_duration.set_widget_value(0)
+        self.timeline_duration.set_tooltip_text(
+            _('Timeline duration'))
+        self.timeline_duration.connect_activate_event(self._duration_changed_cb)
+#        self.timeline_duration.connect("key_press_event", self._entry_key_press_event_cb)
+        bbox.pack_start(self.timeline_duration, False, False, 15)
+        # End of Show the timeline duration 2019 06 jep_f
+
         self.undock_button = Gtk.Button.new_from_icon_name("view-restore-symbolic",
                                                            Gtk.IconSize.BUTTON)
 
@@ -378,6 +388,11 @@ class ViewerContainer(Gtk.Box, Loggable):
     # Active Timeline calllbacks
     def _duration_changed_cb(self, unused_pipeline, duration):
         self._set_ui_active(duration > 0)
+        # Show the timeline duration 2019 06 19
+        timeline = self.app.gui.editor.timeline_ui.timeline
+        duration_timeline = timeline.ges_timeline.props.duration
+        self.timeline_duration.set_widget_value(duration_timeline)
+        # And of Show the timeline duration 2019 06 19
 
     def _play_button_cb(self, unused_button, unused_playing):
         self.app.project_manager.current_project.pipeline.toggle_playback()

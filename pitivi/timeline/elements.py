@@ -276,12 +276,54 @@ class KeyframeCurve(FigureCanvas, Loggable):
         if event.button != 1:
             return
 
+        pipeline = self._timeline.ges_timeline.get_parent()
         result = self._keyframes.contains(event)
         if result[0]:
             # A keyframe has been clicked.
             keyframe_index = result[1]['ind'][0]
             offsets = self._keyframes.get_offsets()
             offset = offsets[keyframe_index][0]
+            length_offsets = offsets[len(offsets) - 1][0] - offsets[0][0]
+            print("length of the clip = ", length_offsets)
+
+            print("offsets = ", offsets)
+            print("parent = ", self._timeline.ges_timeline.get_parent())
+            if event.guiEvent.type == Gdk.EventType.BUTTON_PRESS:
+                # Try fade in/out in developpement ; issue in undo
+                # with self._timeline.app.action_log.started("Keyframe first or last", toplevel=True):
+                index = result[1]['ind'][0]
+                print("index = ", index)
+                # Fade in if length of the clip is >= 2.5 seconds (a fade in and a fade out possible)
+                if index == 0 and length_offsets >= 2500000000:
+                    # It's an edge keyframe. These should not be removed.
+                    print("off +", offset + 1000000000)
+                    self._create_keyframe(offset + 1000000000)
+                    offsets = self._keyframes.get_offsets()
+                    print("kf1 = ", offsets[0])
+                    # pylint: disable=bad-continuation
+                    with self._timeline.app.action_log.started("fade in 1",
+                             finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                             toplevel=True):
+                        self._move_keyframe(offset, offset, 0.0)
+                    offsets = self._keyframes.get_offsets()
+                    print("kf2 = ", offsets[0])
+                    return
+                # Fade out if length of the clip is >= 2.5 seconds (a fade in and a fade out possible)
+                if index == len(offsets) - 1 and length_offsets >= 2500000000:
+                    # It's an edge keyframe. These should not be removed.
+                    print("off +", offset - 1000000000)
+                    self._create_keyframe(offset - 1000000000)
+                    offsets = self._keyframes.get_offsets()
+                    print("kf1 = ", offsets[len(offsets) - 1])
+                    #  pylint: disable=bad-continuation
+                    with self._timeline.app.action_log.started("fade out 1",
+                             finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                             toplevel=True):
+                        self._move_keyframe(offset, offset, 0.0)
+                    offsets = self._keyframes.get_offsets()
+                    print("kf2 = ", offsets[len(offsets) - 1])
+                    return
+                    # End of Try fade in/out in developpement ; issue in undo
 
             # pylint: disable=protected-access
             if event.guiEvent.type == Gdk.EventType._2BUTTON_PRESS:
@@ -289,6 +331,29 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 # pylint: disable=consider-using-in
                 if index == 0 or index == len(offsets) - 1:
                     # It's an edge keyframe. These should not be removed.
+                    # Try fade in/out in developpement ; issue in undo
+                    if self.__propertyName == "alpha":
+                        print("alpha")
+                        self._move_keyframe(offset, offset, 1.0)
+                        if index == 0:
+                            offset1 = offsets[keyframe_index][1]
+                            self._remove_keyframe(offset1)
+                        if index == len(offsets) - 1:
+                            offset2 = offsets[keyframe_index][len(offsets) - 2]
+                            self._remove_keyframe(offset1)
+                        if index == len(offsets) - 1:
+                            offset2 = offsets[keyframe_index][len(offsets) -2]
+                            self._remove_keyframe(offset2)
+                    if self.__propertyName == "volume":
+                        print("volume")
+                        self._move_keyframe(offset, offset, 0.1)
+#                        if index == 0:
+#                            offset1 = offsets[keyframe_index][1]
+#                            self._remove_keyframe(offset + 1000000000)
+#                        if index == len(offsets) - 1:
+#                            offset2 = offsets[keyframe_index][len(offsets) -2]
+#                            self._remove_keyframe(offset - 1000000000)
+                    # End of Try fade in/out in developpement ; issue in undo
                     return
 
                 # Rollback the last operation if it is "Move keyframe".

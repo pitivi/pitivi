@@ -60,6 +60,7 @@ class PreferencesDialog(Loggable):
     prefs = {}
     section_names = {
         "timeline": _("Timeline"),
+        "editor": _("Editor"),  # Setttings in editor
         "__plugins": _("Plugins"),
         "__shortcuts": _("Shortcuts"),
         "_proxies": _("Proxies"),
@@ -92,6 +93,7 @@ class PreferencesDialog(Loggable):
         self.factory_settings.set_sensitive(self._can_reset())
 
         self.add_settings_page('timeline')
+        self.add_settings_page('editor')
         self.__add_proxies_section()
         self.__add_shortcuts_section()
         self.__add_plugin_manager_section()
