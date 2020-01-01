@@ -130,12 +130,15 @@ class Marquee(Gtk.Box, Loggable):
         self._timeline = timeline
         self.start_x, self.start_y = 0, 0
         self.end_x, self.end_y = self.start_x, self.start_y
+
+        self.props.no_show_all = True
         self.hide()
 
         self.get_style_context().add_class("Marquee")
 
     def hide(self):
         """Hides and resets the widget."""
+        self.start_x, self.start_y = 0, 0
         self.props.height_request = -1
         self.props.width_request = -1
         self.set_visible(False)
@@ -152,10 +155,12 @@ class Marquee(Gtk.Box, Loggable):
             self._timeline.layout.layers_vbox, event.x, event.y)
         self.end_x, self.end_y = self.start_x, self.start_y
 
+        self.props.width_request = 0
+        self.props.height_request = 0
+        self.set_visible(True)
+
     def move(self, event):
         """Sets the second corner of the marquee.
-
-        Also makes the marquee visible.
 
         Args:
             event (Gdk.EventMotion): The motion event which contains
@@ -167,11 +172,10 @@ class Marquee(Gtk.Box, Loggable):
 
         x = min(self.start_x, self.end_x)
         y = min(self.start_y, self.end_y)
-
         self.get_parent().move(self, x, y)
+
         self.props.width_request = abs(self.start_x - self.end_x)
         self.props.height_request = abs(self.start_y - self.end_y)
-        self.set_visible(True)
 
     def find_clips(self):
         """Finds the clips which intersect the marquee.
@@ -179,6 +183,9 @@ class Marquee(Gtk.Box, Loggable):
         Returns:
             List[GES.Clip]: The clips under the marquee.
         """
+        if self.props.width_request == 0:
+            return []
+
         start_layer = self._timeline.get_layer_at(self.start_y)[0]
         end_layer = self._timeline.get_layer_at(self.end_y)[0]
         start_pos = max(0, self._timeline.pixel_to_ns(self.start_x))
@@ -749,7 +756,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.__end_moving_layer()
             return False
         elif res and button == 1:
-            self._select_under_marquee()
+            clips = self.layout.marquee.find_clips()
+            self.selection.set_selection(clips, SELECT)
+            self.layout.marquee.hide()
 
         self.scrubbing = False
 
@@ -865,7 +874,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             if layer != self.__moving_layer:
                 priority = layer.get_priority()
                 self.move_layer(self.__moving_layer, priority)
-        elif self.layout.marquee.start_x:
+        elif self.layout.marquee.is_visible():
             self.layout.marquee.move(event)
         elif self.scrubbing:
             self._seek(event)
@@ -902,15 +911,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.hadj.set_value(self.hadj.get_value() + x_diff)
         y_diff = self._scroll_start_y - event.y
         self.vadj.set_value(self.vadj.get_value() + y_diff)
-
-    def _select_under_marquee(self):
-        if self.layout.marquee.props.width_request > 0:
-            clips = self.layout.marquee.find_clips()
-        else:
-            clips = []
-        self.selection.set_selection(clips, SELECT)
-
-        self.layout.marquee.hide()
 
     def update_position(self):
         for ges_layer in self.ges_timeline.get_layers():
