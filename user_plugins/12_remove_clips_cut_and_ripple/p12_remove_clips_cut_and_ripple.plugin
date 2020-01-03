@@ -1,0 +1,9 @@
+[Plugin]
+Name=Remove clips cut and ripple
+Description= Remove the selected clips\nand move all the clips after the start of the first clip\nAn alert if other clips are cut
+Authors=Jean-Paul Favier
+website=...
+Copyright=
+
+Loader=python3
+Module=p12_remove_clips_cut_and_ripple

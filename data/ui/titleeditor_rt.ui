@@ -26,8 +26,8 @@
 Else it will be created automatically</property>
                 <property name="width_chars">10</property>
                 <property name="max_width_chars">10</property>
-                <signal name="enter-notify-event" handler="_title_nameCB" swapped="no"/>
-                <signal name="key-press-event" handler="_title_nameCB" swapped="no"/>
+                <signal name="enter-notify-event" handler="_title_name_cb" swapped="no"/>
+                <signal name="key-press-event" handler="_title_name_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>

@@ -1,0 +1,8 @@
+[Plugin]
+Name=Titler
+Description= Titler with control for each character
+website=...
+Copyright=
+
+Loader=python3
+Module=p45_titler_user
