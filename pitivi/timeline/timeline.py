@@ -779,7 +779,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                               toplevel=True)
                 else:
                     if not self.layout.marquee.start_x:
-                        print("Pas de marquee")
                         self.layout.marquee.set_start_position(event)
         if res and button == 3:  # 3 self._scrubbing:
             # No scrubbing and right mouse button inactive on timeline except pop menu on a clip
@@ -787,13 +786,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 clip = self._get_parent_of_type(event_widget, Clip)
                 clicked_layer = None
                 print("clip rc= ", clip)
+#                print(os.path.basename(clip.ges_clip.get_asset().props.id))  # name of the clip
                 print("selection ", self.selection)
                 if clip:
                     if clip.ges_clip in self.selection:
                         ClipPopupMenu(self.app, self, clip, None)
                         print(clip.ges_clip)
                         print(os.path.basename(clip.ges_clip.get_asset().props.id))  # name of the clip
-                        print(os.path.basename(clip.ges_clip.get_asset().props.id)) # name of the clip
                 else:
                     print("outside tl")
                     clicked_layer = self.get_clicked_layer_and_pos(event)  # layer and position
@@ -989,11 +988,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def _select_under_marquee(self):
         if self.layout.marquee.props.width_request > 0:
             clips = self.layout.marquee.find_clips()
-            print("Clips selected", clips)
         else:
             clips = []
         self.selection.set_selection(clips, SELECT)
-        print("lay marq ")
         self.layout.marquee.hide()
 
     def update_position(self):
@@ -2028,19 +2025,24 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     # Links to ClipPopupMenu in user_utils.py
     def dl_clips(self):
         self._delete_selected(unused_action=None, unused_parameter=None)
-
+        self.update_actions()
+        print("sel dl ", self.timeline.selection)
 
     def ds_clips(self):
         self._delete_selected_and_shift(unused_action=None, unused_parameter=None)
+        self.update_actions()
 
     def ct_clips(self):
         self.__cut_clips_cb(unused_action=None, unused_parameter=None)
+        self.update_actions()
 
     def cp_clips(self):
         self.__copy_clips_cb(unused_action=None, unused_parameter=None)
+#        self.update_actions()
 
     def pst_clips(self):
         self.__paste_clips_cb(unused_action=None, unused_parameter=None)
+        self.update_actions()
     # End of Links to ClipPopupMenu
 
     # Cut = copy and delete clips
@@ -2075,6 +2077,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.__copied_group.props.serialize = False
         finally:
             group.ungroup(recursive=False)
+            print("group1 ", group)
+            # Variable readable outside this class c_p =  __copied_group
+            self.c_p = self.__copied_group
+            print("cp ", self.c_p)
         self.update_actions()
 
     def __paste_clips_cb(self, unused_action, unused_parameter):
@@ -2082,7 +2088,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.info("Nothing to paste.")
             return
 
-        position = self._project.pipeline.get_position()
+        position = self._project.pipeline.get_position() -1
         with self.app.action_log.started("paste",
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                          toplevel=True):
