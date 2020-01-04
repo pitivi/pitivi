@@ -1214,8 +1214,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         return line_number
 
 # ################ Modif font, color, background
-    # pylint: disable=invalid-name
-    def _fontButtonCb(self, widget):
+    def _font_button_cb(self, widget):
         """Create the font."""
         # pylint: disable=attribute-defined-outside-init
         print("nt font button = ", self.title_list_tags)
@@ -1256,8 +1255,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
             self.letter_format["font"] = font_desc
             print("self.letter_format ", self.letter_format)
 
-    # pylint: disable=invalid-name
-    def _frontTextColorButtonCb(self, widget):
+    def _front_text_color_button_cb(self, widget):
         """Create the color."""
         # pylint: disable=attribute-defined-outside-init
         print("nt color button = ", self.title_list_tags)
@@ -1306,9 +1304,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         else:
             self.letter_format["color"] = col
 
-
-    # pylint: disable=invalid-name
-    def _backgroundColorButtonCb(self, widget):
+    def _background_color_button_cb(self, widget):
         """Create the color of the background of the title.
 
         Create the tag of the color
