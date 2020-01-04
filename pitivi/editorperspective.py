@@ -234,7 +234,6 @@ class EditorPerspective(Perspective, Loggable):
         self.toplevel_widget.pack2(self.timeline_ui, resize=True, shrink=False)
 
         self.intro = InteractiveIntro(self.app)
-        self.intro.intro_button.set_action_name("editor.interactive-intro")
         self.headerbar.pack_end(self.intro.intro_button)
 
         # Setup shortcuts for HeaderBar buttons and menu items.
@@ -339,6 +338,7 @@ class EditorPerspective(Perspective, Loggable):
             os.path.join(get_ui_dir(), "mainmenubutton.ui"))
 
         self.menu_button = self.builder.get_object("menubutton")
+        self.keyboard_shortcuts_button = self.builder.get_object("menu_shortcuts")
 
         headerbar.pack_end(self.menu_button)
         headerbar.pack_end(self.save_button)
@@ -384,6 +384,8 @@ class EditorPerspective(Perspective, Loggable):
         group.add_action(self.project_settings_action)
 
         group.add_action(self.intro.intro_action)
+        self.app.shortcuts.add("editor.interactive-intro", [], self.intro.intro_action,
+                               _("Quick intros to Pitivi"), group="win")
 
         self.import_asset_action = Gio.SimpleAction.new("import-asset", None)
         self.import_asset_action.connect("activate", self.__import_asset_cb)
