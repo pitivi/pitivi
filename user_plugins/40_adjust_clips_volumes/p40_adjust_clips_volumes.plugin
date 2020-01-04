@@ -1,0 +1,9 @@
+[Plugin]
+Name=Adjust clips volumes
+Description= Adjust the volume of the selected clips at the same value
+Authors=Jean-Paul Favier
+website=...
+Copyright=
+
+Loader=python3
+Module=p40_adjust_clips_volumes
