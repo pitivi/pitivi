@@ -22,15 +22,18 @@ from time import time
 from urllib.parse import unquote
 
 from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import Gtk
 
 from pitivi.clipproperties import ClipProperties
 from pitivi.configure import APPNAME
+from pitivi.configure import get_data_dir
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.missingasset import MissingAssetDialog
 from pitivi.effects import EffectListWidget
+from pitivi.interactiveintro import InteractiveIntro
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
 from pitivi.perspective import Perspective
@@ -178,7 +181,6 @@ class EditorPerspective(Perspective, Loggable):
         # pylint: disable=attribute-defined-outside-init
         # Main "toolbar" (using client-side window decorations with HeaderBar)
         self.headerbar = self.__create_headerbar()
-
         # Set up our main containers, in the order documented above
 
         # Separates the tabs+viewer from the timeline
@@ -234,6 +236,7 @@ class EditorPerspective(Perspective, Loggable):
         self.timeline_ui = TimelineContainer(self.app)
         self.toplevel_widget.pack2(self.timeline_ui, resize=True, shrink=False)
 
+        self.intro = InteractiveIntro(self.app)
         # Setup shortcuts for HeaderBar buttons and menu items.
         self._create_actions()
 
@@ -299,21 +302,39 @@ class EditorPerspective(Perspective, Loggable):
     def __create_headerbar(self):
         headerbar = Gtk.HeaderBar()
         headerbar.set_show_close_button(True)
-
-        undo_button = Gtk.Button.new_from_icon_name(
-            "edit-undo-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
-        undo_button.set_always_show_image(True)
-        undo_button.set_label(_("Undo"))
-        undo_button.set_action_name("app.undo")
-        undo_button.set_use_underline(True)
-
-        redo_button = Gtk.Button.new_from_icon_name(
-            "edit-redo-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
-        redo_button.set_always_show_image(True)
-        redo_button.set_action_name("app.redo")
-        redo_button.set_use_underline(True)
-
         # pylint: disable=attribute-defined-outside-init
+
+        self.undo_button = Gtk.Button.new_from_icon_name(
+            "edit-undo-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
+        self.undo_button.set_always_show_image(True)
+        self.undo_button.set_label(_("Undo"))
+        self.undo_button.set_action_name("app.undo")
+        self.undo_button.set_use_underline(True)
+
+        self.redo_button = Gtk.Button.new_from_icon_name(
+            "edit-redo-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
+        self.redo_button.set_always_show_image(True)
+        self.redo_button.set_action_name("app.redo")
+        self.redo_button.set_use_underline(True)
+
+        interactive_intro_button_icon = os.path.join(get_data_dir(), "icons/hicolor/symbolic/apps/", "org.pitivi.Pitivi-symbolic.svg")
+        img = Gtk.Image()
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file(interactive_intro_button_icon)
+        img.set_from_pixbuf(pixbuf)
+
+        self.intro_button = Gtk.Button()
+        self.intro_button.set_image(img)
+        self.intro_button.set_always_show_image(True)
+        self.intro_button.connect("clicked", self._intro_button_clicked_cb)
+
+        self.intro_label = Gtk.Label()
+        self.intro_label.set_property("margin", 10)
+        self.popover = Gtk.Popover()
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        vbox.pack_start(self.intro_label, False, True, 10)
+        self.popover.add(vbox)
+        self.popover.set_position(Gtk.PositionType.BOTTOM)
+
         self.save_button = Gtk.Button.new_with_label(_("Save"))
         self.save_button.set_focus_on_click(False)
 
@@ -328,8 +349,8 @@ class EditorPerspective(Perspective, Loggable):
 
         undo_redo_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         undo_redo_box.get_style_context().add_class("linked")
-        undo_redo_box.pack_start(undo_button, expand=False, fill=False, padding=0)
-        undo_redo_box.pack_start(redo_button, expand=False, fill=False, padding=0)
+        undo_redo_box.pack_start(self.undo_button, expand=False, fill=False, padding=0)
+        undo_redo_box.pack_start(self.redo_button, expand=False, fill=False, padding=0)
         headerbar.pack_start(undo_redo_box)
 
         self.builder.add_from_file(
@@ -340,9 +361,16 @@ class EditorPerspective(Perspective, Loggable):
         headerbar.pack_end(self.menu_button)
         headerbar.pack_end(self.save_button)
         headerbar.pack_end(self.render_button)
+        headerbar.pack_end(self.intro_button)
         headerbar.show_all()
-
         return headerbar
+
+    def _intro_button_clicked_cb(self, widget):
+        if not self.intro.running:
+            self.intro.start_tour()
+        else:
+            self.intro.stop_tour()
+            self.intro_button.hide()
 
     def _create_actions(self):
         group = Gio.SimpleActionGroup()
@@ -378,6 +406,10 @@ class EditorPerspective(Perspective, Loggable):
         self.project_settings_action = Gio.SimpleAction.new("project-settings", None)
         self.project_settings_action.connect("activate", self.__project_settings_cb)
         group.add_action(self.project_settings_action)
+
+        self.interactive_intro_action = Gio.SimpleAction.new("interactive-intro", None)
+        self.interactive_intro_action.connect("activate", self.__interactive_intro_cb)
+        group.add_action(self.interactive_intro_action)
 
         self.import_asset_action = Gio.SimpleAction.new("import-asset", None)
         self.import_asset_action.connect("activate", self.__import_asset_cb)
@@ -446,6 +478,14 @@ class EditorPerspective(Perspective, Loggable):
 
     def __project_settings_cb(self, unused_action, unused_param):
         self.show_project_settings_dialog()
+
+    def __interactive_intro_cb(self, unused_action, unused_param):
+        self.intro.running = False
+        if not self.intro_button.get_visible():
+            self.intro_button.show()
+        else:
+            self.intro_button.get_popover().popdown()
+            self.intro_button.hide()
 
     def show_project_settings_dialog(self):
         project = self.app.project_manager.current_project
