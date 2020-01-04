@@ -29,8 +29,9 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.utils.timeline import SELECT
 from pitivi.utils.user_utils import Alert
 
-class FadeIn(GObject.Object, Peas.Activatable):
-    """Create a fade in in the selected clip.
+
+class FadeOut(GObject.Object, Peas.Activatable):
+    """Create a fade out in the selected clip.
 
     Print is used for debugging goal
     Keyframecurve class in elements.py
@@ -41,20 +42,20 @@ class FadeIn(GObject.Object, Peas.Activatable):
     def do_activate(self):
         #  pylint: disable=attribute-defined-outside-init
         self.app = self.object.app
-        dir_img = os.path.join(get_pixmap_dir(), "fadein.svg")
+        dir_img = os.path.join(get_pixmap_dir(), "fadeout.svg")
         image = Gtk.Image.new_from_file(dir_img)
-        self.fade_in_button = Gtk.ToolButton.new(icon_widget=image)
-        self.fade_in_button.show_all()
-        self.fade_in_button.set_tooltip_text(" Create a fade in in the selected clip")
-#        self.fade_in_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_JUSTIFY_RIGHT)
-#        self.fade_in_button.show()
+        self.fade_out_button = Gtk.ToolButton.new(icon_widget=image)
+        self.fade_out_button.show_all()
+        self.fade_out_button.set_tooltip_text(" Create a fade out in the selected clip")
+#        self.fade_out_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_JUSTIFY_LEFT)
+#        self.fade_out_button.show()
 
         toolbar = self.app.gui.editor.timeline_ui.toolbar
-        toolbar.add(self.fade_in_button)
-        self.fade_in_button.connect("clicked", self.__clicked_fade_in_cb)
+        toolbar.add(self.fade_out_button)
+        self.fade_out_button.connect("clicked", self.__clicked_fade_out_cb)
 
-    def __clicked_fade_in_cb(self, unused_button):
-        """The video and audio are faded in from the start until the playhead position."""
+    def __clicked_fade_out_cb(self, unused_button):
+        """The video and audio are faded out from the playhead position until the end of the clip."""
         #  Undoing action :
         # http://developer.pitivi.org/Advanced_plugin.html
         with self.app.action_log.started("add clip", toplevel=True):
@@ -63,15 +64,14 @@ class FadeIn(GObject.Object, Peas.Activatable):
             if len(clips) == 1:
                 clip = clips[0]
                 print("clip = ", clip, "\n")
-                inpoint = clip.get_inpoint()
-                start = clip.get_start()
-                end = start + clip.get_duration()
-                position = timeline.layout.playhead_position
                 print("duration = ", clip.get_duration())
-                print("start = ", start)
+                end = clip.get_start() + clip.get_duration()
+                inpoint = clip.get_inpoint()
+                print("end = ", end)
+                position = timeline.layout.playhead_position
                 #  pylint: disable=chained-comparison
                 if inpoint < position and end > position:
-                    #  from timeline.py  l 1986
+                    #  from timeline l 1986
                     ges_track_elements = clip.find_track_elements(None, GES.TrackType.VIDEO, GES.Source)
                     ges_track_elements += clip.find_track_elements(None, GES.TrackType.AUDIO, GES.Source)
 
@@ -80,39 +80,37 @@ class FadeIn(GObject.Object, Peas.Activatable):
                         return
                     offset_t += clip.props.in_point
                     print("offset_t = ", offset_t)
-                    # Put keyframes on the selected clip
-                    self.put_keyframes(ges_track_elements, offset_t, inpoint)
+                    # Put keyframes on the selected clip at the position of the playhead
+                    self.put_keyframes(ges_track_elements, offset_t, end)
                     # Verify
                     # Play after the remove of the clip end.
                     # The playhead goes back two seconds or at timeline start
                     if self.app.settings.PlayAfterModif:
-                        if start >= 2 * Gst.SECOND:
-                            self.app.project_manager.current_project.pipeline.simple_seek(start - 2 * Gst.SECOND)
+                        print("offset_t = ", offset_t, 2 * Gst.SECOND)
+                        if offset_t >= 2 * Gst.SECOND:
+                            self.app.project_manager.current_project.pipeline.simple_seek(position - 2 * Gst.SECOND)
                         else:
                             self.app.project_manager.current_project.pipeline.simple_seek(0)
                         # Play to easily verify the cut
                         self.app.project_manager.current_project.pipeline.play()
                         self.app.gui.editor.focus_timeline()
-                        timeline.selection.set_selection([], SELECT)
                         # End of Verify
+                        timeline.selection.set_selection([], SELECT)
                 else:
                     Alert("Playhead out of clip",
-                          "You have to put the playhead inside the selected clip.", "service-logout.oga")
-                    self.app.gui.editor.focus_timeline()
+                          "You have to put the playhead inside the clip.", "service-logout.oga")
             else:
                 Alert("No or too clips", "You have to select one clip.", "service-logout.oga")
-                self.app.gui.editor.focus_timeline()
 
     #  pylint: disable=no-self-use
-    def put_keyframes(self, ges_track_elements, offset_t, inpoint):
-        # Put keyframes on the selected clip
+    def put_keyframes(self, ges_track_elements, offset_t, end):
         for ges_track_element in ges_track_elements:
             keyframe_curve_t = ges_track_element.ui.keyframe_curve
             # Reading only a protected object
             # pylint: disable=protected-access
             offsets = keyframe_curve_t._keyframes.get_offsets()
             print("offsets -1 = ", offsets)
-            # case if the keyframes exist, we cannot toggle
+            # case if the keyframes exists at the playhead_position, we cannot toggle
             kf_no = 0
             for off in offsets:
                 if off[0] == offset_t:
@@ -123,7 +121,7 @@ class FadeIn(GObject.Object, Peas.Activatable):
 #                    print("No = ", offset_t)
             if kf_no == 0:
                 keyframe_curve_t.toggle_keyframe(offset_t)
-        # The keyframes of the inpoint are set to 0.0
+        # The keyframes of the end are set to 0
         for ges_track_element in ges_track_elements:
             keyframe_curve = ges_track_element.ui.keyframe_curve
             # Reading only a protected object
@@ -132,15 +130,15 @@ class FadeIn(GObject.Object, Peas.Activatable):
             # from elements.py (l 244)
             print("kf", keyframe_curve.props)
             print("offsets 0 = ", offsets)
-            offset = offsets[0][0]
-            offsets[0][1] = 0
-            print("offset 2= ", offset, offsets[0][1])
-            # Test if keyframes exist between the start and the playhead position and remove them
+            offset = offsets[len(offsets) - 1][0]
+            offsets[len(offsets) - 1][1] = 0
+            print("offset 2= ", offset, offsets[len(offsets) - 1][1])
+            # Test if keyframes exist between the playhead position and the end and remove them
             for off in offsets:
                 print("off[0] = ", off[0])
-                if off[0] > 0 and off[0] < offset_t:
+                if off[0] > offset_t and off[0] < end:
                     keyframe_curve.toggle_keyframe(off[0])
-            keyframe_curve._move_keyframe(int(offset), inpoint, 0)
+            keyframe_curve._move_keyframe(end, int(offset), 0)
             print("offsets = ", offsets)
             print("Fin track --------")
 
