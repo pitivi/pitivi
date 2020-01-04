@@ -39,6 +39,7 @@ from gi.repository import GstVideo
 from gi.repository import Gtk
 
 from pitivi.configure import get_ui_dir
+from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.medialibrary import AssetThumbnail
 from pitivi.preset import AudioPresetManager
 from pitivi.preset import VideoPresetManager
@@ -2090,6 +2091,7 @@ class ProjectSettingsDialog:
         self.widgets_group.add_vertex(self.scaled_proxy_width_spin, signal="value-changed")
         self.widgets_group.add_vertex(self.scaled_proxy_height_spin, signal="value-changed")
 
+
         # Constrain width and height IFF the Constrain checkbox is checked.
         # Video
         self.widgets_group.add_edge(self.width_spinbutton, self.height_spinbutton,
@@ -2154,6 +2156,9 @@ class ProjectSettingsDialog:
 
     def proxy_res_linked(self):
         return self.proxy_res_linked_check.props.active
+
+    def _proxy_preferences_label_activate_link_cb(self, unused, unused_variable):
+        PreferencesDialog(self.app).run()
 
     def _update_fraction_func(self, unused, fraction, combo):
         fraction.set_widget_value(get_combo_value(combo))
