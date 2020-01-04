@@ -39,6 +39,7 @@ from gi.repository import GstVideo
 from gi.repository import Gtk
 
 from pitivi.configure import get_ui_dir
+from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.medialibrary import AssetThumbnail
 from pitivi.preset import AudioPresetManager
 from pitivi.preset import VideoPresetManager
@@ -2053,6 +2054,7 @@ class ProjectSettingsDialog:
         self.scaled_proxy_width_spin = self.builder.get_object("scaled_proxy_width")
         self.scaled_proxy_height_spin = self.builder.get_object("scaled_proxy_height")
         self.proxy_res_linked_check = self.builder.get_object("proxy_res_linked")
+        self.proxy_preferences_label_link = self.builder.get_object("proxy_preferences_label_link")
 
     def _setup_ui_constraints(self):
         """Creates the dynamic widgets and connects other widgets."""
@@ -2089,6 +2091,8 @@ class ProjectSettingsDialog:
         self.widgets_group.add_vertex(self.sample_rate_combo, signal="changed")
         self.widgets_group.add_vertex(self.scaled_proxy_width_spin, signal="value-changed")
         self.widgets_group.add_vertex(self.scaled_proxy_height_spin, signal="value-changed")
+        self.proxy_preferences_label_link.connect("activate-link", self._proxy_preferences_label_activate_link_cb)
+
 
         # Constrain width and height IFF the Constrain checkbox is checked.
         # Video
@@ -2154,6 +2158,9 @@ class ProjectSettingsDialog:
 
     def proxy_res_linked(self):
         return self.proxy_res_linked_check.props.active
+
+    def _proxy_preferences_label_activate_link_cb(self, unused, unused_variable):
+        PreferencesDialog(self.app).run()
 
     def _update_fraction_func(self, unused, fraction, combo):
         fraction.set_widget_value(get_combo_value(combo))
