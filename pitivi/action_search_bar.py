@@ -53,7 +53,7 @@ class ActionSearchBar(Gtk.Window):
         self.vbox.pack_start(self.results_window, True, True, 0)
 
     def setup_results_window(self):
-        self.list_model = Gtk.ListStore(str, int, Gdk.ModifierType, Gio.SimpleAction, object, bool)
+        self.list_model = Gtk.ListStore(str, int, Gdk.ModifierType, Gio.SimpleAction, object, bool, bool)
         self.model_filter = self.list_model.filter_new()
         disable_groups = ["medialibrary"]
 
@@ -63,14 +63,17 @@ class ActionSearchBar(Gtk.Window):
         for group in self.app.shortcuts.group_actions:
             if group not in disable_groups:
                 for action, title, action_object in self.app.shortcuts.group_actions[group]:
-                    accelerator_parsed = Gtk.accelerator_parse(self.app.get_accels_for_action(action)[0])
+                    accels = self.app.get_accels_for_action(action)
+                    accel = accels[0] if accels else ""
+                    accelerator_parsed = Gtk.accelerator_parse(accel)
                     disabled = not action_object.props.enabled
                     self.list_model.append([title,
                                             accelerator_parsed.accelerator_key,
                                             accelerator_parsed.accelerator_mods,
                                             action_object,
                                             title.lower().split(" "),
-                                            disabled])
+                                            disabled,
+                                            bool(accels)])
 
         self.model_filter.set_visible_func(self.filter_func)
         self.treeview = Gtk.TreeView.new_with_model(self.model_filter)
@@ -90,7 +93,7 @@ class ActionSearchBar(Gtk.Window):
         accel_renderer.props.accel_mode = Gtk.CellRendererAccelMode.OTHER
         accel_renderer.props.foreground_rgba = color_insensitive
         accel_renderer.props.foreground_set = True
-        shortcut_column = Gtk.TreeViewColumn("Shortcut", accel_renderer, accel_key=1, accel_mods=2)
+        shortcut_column = Gtk.TreeViewColumn("Shortcut", accel_renderer, accel_key=1, accel_mods=2, visible=6)
         self.treeview.append_column(shortcut_column)
 
         self.__select_row(self.model_filter.get_iter_first())
