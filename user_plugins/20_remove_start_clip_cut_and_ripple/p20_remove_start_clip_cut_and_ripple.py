@@ -197,6 +197,10 @@ class StartClipRemoverCutAndSlide(GObject.Object, Peas.Activatable):
         # End of Slide the clips after the playhead position
 
     def verif(self):
+        """Play after the remove of the clip start.
+
+        The playhead goes back two seconds or at timeline start
+        """
         # Verify
         if self.position >= 2 * Gst.SECOND:
             self.app.project_manager.current_project.pipeline.simple_seek(self.start - 2 * Gst.SECOND)
