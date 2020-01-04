@@ -31,6 +31,7 @@ from pitivi.configure import APPNAME
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.missingasset import MissingAssetDialog
 from pitivi.effects import EffectListWidget
+from pitivi.interactiveintro import InteractiveIntro
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
 from pitivi.perspective import Perspective
@@ -234,6 +235,10 @@ class EditorPerspective(Perspective, Loggable):
         self.timeline_ui = TimelineContainer(self.app)
         self.toplevel_widget.pack2(self.timeline_ui, resize=True, shrink=False)
 
+        self.intro = InteractiveIntro(self.app)
+        self.intro.intro_button.set_action_name("editor.interactive-intro")
+        self.headerbar.pack_end(self.intro.intro_button)
+
         # Setup shortcuts for HeaderBar buttons and menu items.
         self._create_actions()
 
@@ -378,6 +383,8 @@ class EditorPerspective(Perspective, Loggable):
         self.project_settings_action = Gio.SimpleAction.new("project-settings", None)
         self.project_settings_action.connect("activate", self.__project_settings_cb)
         group.add_action(self.project_settings_action)
+
+        group.add_action(self.intro.intro_action)
 
         self.import_asset_action = Gio.SimpleAction.new("import-asset", None)
         self.import_asset_action.connect("activate", self.__import_asset_cb)
