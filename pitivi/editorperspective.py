@@ -30,6 +30,7 @@ from pitivi.clipproperties import ClipProperties
 from pitivi.configure import APPNAME
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.missingasset import MissingAssetDialog
+from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.effects import EffectListWidget
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
@@ -67,7 +68,19 @@ GlobalSettings.add_config_option('lastProjectFolder',
                                  key="last-folder",
                                  environment="PITIVI_PROJECT_FOLDER",
                                  default=os.path.expanduser("~"))
+# Viewer in center
+GlobalSettings.add_config_option('ViewerCenter',
+                                 section="user-interface",
+                                 key="center-viewer",
+                                 default=True,
+                                 notify=True)
 
+PreferencesDialog.add_toggle_preference('ViewerCenter',
+                                        section="editor",
+                                        label=_("Center the viewer"),
+                                        description=_(
+                                            "If check on, the viewer is centered in the Editor window\nafter a restart of Pitivi"))
+# End of Viewer in cent
 
 class EditorPerspective(Perspective, Loggable):
     """Pitivi's Editor perspective.
@@ -112,6 +125,9 @@ class EditorPerspective(Perspective, Loggable):
     def refresh(self):
         """Refreshes the perspective."""
         self.focus_timeline()
+        # To move playhead only in the ruler with left mouse button
+        self.focus_ruler()
+        # End of To move playhead only in the ruler with left mouse button
 
     def __setup_css(self):
         css_provider = Gtk.CssProvider()
@@ -188,6 +204,7 @@ class EditorPerspective(Perspective, Loggable):
         # Separates the two sets of tabs
         self.secondhpaned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
         self.toplevel_widget.pack1(self.mainhpaned, resize=False, shrink=False)
+        # Viewer center
         self.mainhpaned.pack1(self.secondhpaned, resize=True, shrink=False)
         self.toplevel_widget.show()
         self.secondhpaned.show()
@@ -221,14 +238,35 @@ class EditorPerspective(Perspective, Loggable):
         # the Title tab allows adding titles.
         self.context_tabs.set_current_page(2)
 
-        self.secondhpaned.pack1(self.main_tabs, resize=False, shrink=False)
-        self.secondhpaned.pack2(self.context_tabs, resize=False, shrink=False)
-        self.main_tabs.show()
-        self.context_tabs.show()
-
-        # Viewer
-        self.viewer = ViewerContainer(self.app)
-        self.mainhpaned.pack2(self.viewer, resize=True, shrink=False)
+        if self.app.settings.ViewerCenter:
+            #                The viewer is centered in new hierarchy:
+            #        vpaned:
+            #        - mainhpaned(secondhpaned(main_tabs, viewer), context_tabs )
+            #        - timeline_ui
+            #
+            self.secondhpaned.pack1(self.main_tabs, resize=False, shrink=False)
+            # Viewer
+            self.viewer = ViewerContainer(self.app)
+            self.secondhpaned.pack2(self.viewer, resize=True, shrink=False)
+            self.mainhpaned.pack2(self.context_tabs, resize=False, shrink=False)
+            self.main_tabs.show()
+            self.context_tabs.show()
+        else:
+            # original
+            #                The rough hierarchy is:
+            #        vpaned:
+            #        - mainhpaned(secondhpaned(main_tabs, context_tabs ), viewer )
+            #        - timeline_ui
+            #
+            self.secondhpaned.pack1(self.main_tabs, resize=False, shrink=False)
+            self.secondhpaned.pack2(self.context_tabs, resize=False, shrink=False)
+            self.main_tabs.show()
+            self.context_tabs.show()
+#
+#        # Viewer
+            self.viewer = ViewerContainer(self.app)
+            self.mainhpaned.pack2(self.viewer, resize=True, shrink=False)
+#        # End of original
 
         # Now, the lower part: the timeline
         self.timeline_ui = TimelineContainer(self.app)
@@ -296,9 +334,27 @@ class EditorPerspective(Perspective, Loggable):
         if not layers_representation.props.is_focus:
             layers_representation.grab_focus()
 
+    # To move playhead only in the ruler with left mouse button
+    def focus_ruler(self):
+        ruler_representation = self.timeline_ui.ruler
+        print("ruler")
+        # Check whether it has focus already, grab_focus always emits an event.
+        if not ruler_representation.props.is_focus:
+            print("not ruler")
+            ruler_representation.grab_focus()
+    # End of To move playhead only in the ruler with left mouse button
+
     def __create_headerbar(self):
         headerbar = Gtk.HeaderBar()
         headerbar.set_show_close_button(True)
+
+#        back_button = Gtk.Button.new_from_icon_name(
+#            "go-previous-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
+#        back_button.set_always_show_image(True)
+#        back_button.set_tooltip_text(_("Close project"))
+#        back_button.connect("clicked", self.__close_project_cb)
+#        back_button.set_margin_right(4 * PADDING)
+#        headerbar.pack_start(back_button)
 
         undo_button = Gtk.Button.new_from_icon_name(
             "edit-undo-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
@@ -567,13 +623,17 @@ class EditorPerspective(Perspective, Loggable):
 
         return res
 
-    def _project_manager_project_closed_cb(self, project_manager, project):
+    def _project_manager_project_closed_cb(self, unused_project_manager, project):
         """Starts disconnecting the UI from the specified project.
 
         This happens when the user closes the app or asks to load another
         project, immediately after the user confirmed that unsaved changes,
         if any, can be discarded but before the filechooser to pick the next
         project to load appears.
+
+        Args:
+            unused_project_manager : unused argument
+            project (Project): The project which has been closed.
         """
         # We must disconnect from the project pipeline before it is released:
         if project.pipeline is not None:

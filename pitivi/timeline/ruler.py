@@ -24,6 +24,8 @@ from gi.repository import Gdk
 from gi.repository import Gst
 from gi.repository import Gtk
 
+from pitivi.dialogs.prefs import PreferencesDialog
+from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import beautify_length
@@ -33,7 +35,23 @@ from pitivi.utils.ui import PLAYHEAD_COLOR
 from pitivi.utils.ui import PLAYHEAD_WIDTH
 from pitivi.utils.ui import set_cairo_color
 from pitivi.utils.ui import time_to_string
+# Position playhead with the left button mouse on ruler only
 
+# Position playhead with the left button mouse on ruler only
+#from pitivi.dialogs.prefs import PreferencesDialog
+
+GlobalSettings.add_config_option('PlayheadOnRuler',
+                                 section="user-interface",
+                                 key="Playhead-on-ruler",
+                                 default=True,
+                                 notify=True)
+
+PreferencesDialog.add_toggle_preference('PlayheadOnRuler',
+                                        section="editor",
+                                        label=_("A left click only on the ruler to position the playhead. "),
+                                        description=_(
+                                            "If check, the left button is used for position playhead\nif the cursor is on the ruler"))
+# End of Position playhead with the left button mouse on ruler only
 
 # Tuples of:
 # - an interval lengths in seconds for which a timestamp will be displayed
@@ -201,21 +219,42 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             return False
 
         button = event.button
-        if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
-            self.debug("button pressed at x:%d", event.x)
-            position = self.pixel_to_ns(event.x + self.pixbuf_offset)
-            self._pipeline.simple_seek(position)
-            self.__set_tooltip_text(position, True)
-        return False
+    # Position playhead with the left button mouse on ruler only
+        if self.app.settings.PlayheadOnRuler:
+            if button == 1:
+                self.debug("button pressed at x:%d", event.x)
+                position = self.pixel_to_ns(event.x + self.pixbuf_offset)
+                self._pipeline.simple_seek(position)
+                self.__set_tooltip_text(position, True)
+            return False
+        # End of Position playhead with the left button mouse on ruler only
+        else:
+
+            if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
+                self.debug("button pressed at x:%d", event.x)
+                position = self.pixel_to_ns(event.x + self.pixbuf_offset)
+                self._pipeline.simple_seek(position)
+                self.__set_tooltip_text(position, True)
+            return False
 
     def do_button_release_event(self, event):
         button = event.button
-        if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
-            self.debug("button released at x:%d", event.x)
-            self.app.gui.editor.focus_timeline()
-            position = self.pixel_to_ns(event.x + self.pixbuf_offset)
-            self.__set_tooltip_text(position)
-        return False
+        # Position playhead with the left button mouse on ruler only
+        if self.app.settings.PlayheadOnRuler:
+            if button == 1:
+                self.debug("button released at x:%d", event.x)
+                self.app.gui.editor.focus_ruler()
+                position = self.pixel_to_ns(event.x + self.pixbuf_offset)
+                self.__set_tooltip_text(position)
+            return False
+        # End of Position playhead with the left button mouse on ruler only
+        else:
+            if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
+                self.debug("button released at x:%d", event.x)
+                self.app.gui.editor.focus_timeline()
+                position = self.pixel_to_ns(event.x + self.pixbuf_offset)
+                self.__set_tooltip_text(position)
+            return False
 
     def do_motion_notify_event(self, event):
         if not self._pipeline:
@@ -223,9 +262,14 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         position = self.pixel_to_ns(event.x + self.pixbuf_offset)
 
-        seek_mask = Gdk.ModifierType.BUTTON3_MASK
-        if self.app.settings.leftClickAlsoSeeks:
-            seek_mask |= Gdk.ModifierType.BUTTON1_MASK
+        # Position playhead with the left button mouse on ruler only
+        if self.app.settings.PlayheadOnRuler:
+            seek_mask = Gdk.ModifierType.BUTTON1_MASK
+        # End of Position playhead with the left button mouse on ruler only
+        else:  # Original
+            seek_mask = Gdk.ModifierType.BUTTON3_MASK
+            if self.app.settings.leftClickAlsoSeeks:
+                seek_mask |= Gdk.ModifierType.BUTTON1_MASK
 
         seeking = event.state & seek_mask
         if seeking:

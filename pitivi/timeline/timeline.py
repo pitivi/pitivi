@@ -63,6 +63,7 @@ from pitivi.utils.ui import SPACING
 from pitivi.utils.ui import TOUCH_INPUT_SOURCES
 from pitivi.utils.ui import unset_children_state_recurse
 from pitivi.utils.ui import URI_TARGET_ENTRY
+from pitivi.utils.user_utils import ClipPopupMenu
 from pitivi.utils.widgets import ZoomBox
 
 
@@ -96,6 +97,7 @@ PreferencesDialog.add_numeric_preference('imageClipLength',
                                              "Default clip length (in milliseconds) of images when inserting on the timeline."),
                                          lower=1)
 
+# Playhead position with left mouse button on ruler only (see ruler.py
 GlobalSettings.add_config_option('leftClickAlsoSeeks',
                                  section="user-interface",
                                  key="left-click-to-select",
@@ -103,10 +105,54 @@ GlobalSettings.add_config_option('leftClickAlsoSeeks',
                                  notify=True)
 
 PreferencesDialog.add_toggle_preference('leftClickAlsoSeeks',
-                                        section="timeline",
+                                        section="editor",  # ex timeline
                                         label=_("Left click also seeks"),
                                         description=_(
                                             "Whether left-clicking also seeks besides selecting and editing clips."))
+# End of Playhead position with left mouse button on ruler only
+
+# Horizontal Toolbar
+GlobalSettings.add_config_option('HorizontalToolbar',
+                                 section="user-interface",
+                                 key="horizontal-toolbar",
+                                 default=True,
+                                 notify=True)
+
+PreferencesDialog.add_toggle_preference('HorizontalToolbar',
+                                        section="editor",
+                                        label=_("Horizontal Toolbar"),
+                                        description=_(
+                                            "If check on,the toolbar will be horizontal\noverhead the ruler, after a restart of Pitivi"))
+# End of Horizontal Toolbar
+
+# Play after modif
+GlobalSettings.add_config_option('PlayAfterModif',
+                                 section="user-interface",
+                                 key="play-after-modif",
+                                 default=True,
+                                 notify=True)
+
+PreferencesDialog.add_toggle_preference('PlayAfterModif',
+                                        section="editor",
+                                        label=_("Play after modify"),
+                                        description=_(
+                                            "If check on, after the cuts a playing time\nafter a restart of Pitivi"))
+# End of Play after modif
+
+# No scrubbing and right mouse button inactive on timeline, clip popup menu
+GlobalSettings.add_config_option('RightButtonContextMenu',
+                                 section="user-interface",
+                                 key="No-Scrubbing-rbm-inactive",
+                                 default=True,
+                                 notify=True)
+
+PreferencesDialog.add_toggle_preference('RightButtonContextMenu',
+                                        section="editor",
+                                        label=_("Right button for menu only "),
+                                        description=_(
+                                            "The right button is used for a menu when right click on or out of a clip"))
+# End of No scrubbing and right mouse button inactive on timeline, clip popup menu
+
 
 GlobalSettings.add_config_option("timelineAutoRipple",
                                  section="user-interface",
@@ -136,6 +182,10 @@ class Marquee(Gtk.Box, Loggable):
 
     def hide(self):
         """Hides and resets the widget."""
+        self.start_x = None
+        self.start_y = None
+        self.end_x = None
+        self.end_y = None
         self.props.height_request = -1
         self.props.width_request = -1
         self.set_visible(False)
@@ -183,6 +233,8 @@ class Marquee(Gtk.Box, Loggable):
         end_layer = self._timeline.get_layer_at(self.end_y)[0]
         start_pos = max(0, self._timeline.pixel_to_ns(self.start_x))
         end_pos = max(0, self._timeline.pixel_to_ns(self.end_x))
+        print("find clips", start_layer, end_layer, start_pos, end_pos)
+        print("Clips ", self._timeline.get_clips_in_between(start_layer, end_layer, start_pos, end_pos))
 
         return self._timeline.get_clips_in_between(start_layer, end_layer,
                                                    start_pos, end_pos)
@@ -359,6 +411,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._separator_accepting_drop_id = 0
         self.__last_position = 0
         self.scrubbing = False
+        self._scrubbing = None  # Add for pylint in _button_press_event_cb
         self._scrolling = False
         # The parameters for the delayed scroll to be performed after
         # the layers box is allocated a size.
@@ -421,6 +474,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                   self.__snap_distance_changed_cb)
 
         self.layout.layers_vbox.connect_after("size-allocate", self.__size_allocate_cb)
+
 
     def __size_allocate_cb(self, unused_widget, unused_allocation):
         """Handles the layers vbox size allocations."""
@@ -724,14 +778,41 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                               finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                               toplevel=True)
                 else:
-                    self.layout.marquee.set_start_position(event)
+                    if not self.layout.marquee.start_x:
+                        self.layout.marquee.set_start_position(event)
+        if res and button == 3:  # 3 self._scrubbing:
+            # No scrubbing and right mouse button inactive on timeline except pop menu on a clip
+            if self.app.settings.RightButtonContextMenu:
+                clip = self._get_parent_of_type(event_widget, Clip)
+                clicked_layer = None
+                print("clip rc= ", clip)
+#                print(os.path.basename(clip.ges_clip.get_asset().props.id))  # name of the clip
+                print("selection ", self.selection)
+                if clip:
+                    if clip.ges_clip in self.selection:
+                        ClipPopupMenu(self.app, self, clip, None)
+                        print(clip.ges_clip)
+                        print(os.path.basename(clip.ges_clip.get_asset().props.id))  # name of the clip
+                else:
+                    print("outside tl")
+                    clicked_layer = self.get_clicked_layer_and_pos(event)  # layer and position
+                    print("layer clicked = ", clicked_layer)
+                    if clicked_layer is not None:
+                        #   layer_ = clicked_layer #.ges_layer
+                        print("layer = ", clicked_layer)
+                        ClipPopupMenu(self.app, self, "", clicked_layer)
 
-        self.scrubbing = res and button == 3
-        if self.scrubbing:
-            self._seek(event)
-            clip = self._get_parent_of_type(event_widget, Clip)
-            if clip:
-                clip.shrink_trim_handles()
+        if self.app.settings.RightButtonContextMenu:
+            pass
+        else:  # Original
+            self._scrubbing = res and button == 3
+            print("scr ori")
+            if self._scrubbing:
+                self._seek(event)
+                clip = self._getParentOfType(event_widget, Clip)
+                if clip:
+                    clip.shrinkTrimHandles()
+            # End of No scrubbing and right mouse button inactive on timeline except pop menu on a clip
 
         self._scrolling = res and button == 2
         if self._scrolling:
@@ -866,6 +947,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 priority = layer.get_priority()
                 self.move_layer(self.__moving_layer, priority)
         elif self.layout.marquee.start_x:
+#            print("slms")
             self.layout.marquee.move(event)
         elif self.scrubbing:
             self._seek(event)
@@ -909,7 +991,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         else:
             clips = []
         self.selection.set_selection(clips, SELECT)
-
         self.layout.marquee.hide()
 
     def update_position(self):
@@ -1421,10 +1502,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._project = None
         self.ges_timeline = None
         self.__copied_group = None
-
+        self.c_p = None  # Variable readable outside this class c_p =  __copied_group
         self._create_ui()
         self._create_actions()
 
+        #self.app.project_manager.connect("new-project-loaded",
+#                                         self._projectLoadedCb)
         self.timeline.connect("size-allocate", self.__timeline_size_allocate_cb)
 
     # Public API
@@ -1562,6 +1645,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.group_action.set_enabled(selection.can_group)
         self.ungroup_action.set_enabled(selection.can_ungroup)
         self.copy_action.set_enabled(selection_non_empty)
+        # Copy and cut clips
+        self.cut_action.set_enabled(selection_non_empty)
+        # End of Copy and cut clips
         can_paste = bool(self.__copied_group)
         self.paste_action.set_enabled(can_paste)
         self.keyframe_action.set_enabled(selection_non_empty)
@@ -1594,23 +1680,67 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.ruler.set_project_frame_rate(24.)
 
         builder = Gtk.Builder()
-        builder.add_from_file(os.path.join(get_ui_dir(), "timelinetoolbar.ui"))
-        self.toolbar = builder.get_object("timeline_toolbar")
-        self.toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
-        self.toolbar.get_accessible().set_name("timeline toolbar")
+        # Horizontal toolbar 2019 06 jep_f
+
+        # New toolbar ; the file toolbar.ui is copied  in a timelinetoolbar_h.ui
+        # and the Gtktoolbar is modified as horizontal
+        if self.app.settings.HorizontalToolbar:
+            builder.add_from_file(os.path.join(get_ui_dir(), "timelinetoolbar_h.ui"))
+            self.toolbar = builder.get_object("timeline_toolbar_h")
+            self.toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
+            self.toolbar.get_accessible().set_name("timeline toolbar_h")
+            self.markers = MarkersBox(self.app, hadj=self.timeline.hadj)
+            # End of Horizontal toolbar 2019 06 jep_f
+
+            # Buttons undo - redo  2019 06 19 jep_f
+            self.undo_button = Gtk.Button.new_from_icon_name(
+                "edit-undo-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
+            self.undo_button.set_always_show_image(True)
+            self.undo_button.set_label(_("Undo"))
+            self.undo_button.set_action_name("app.undo")
+            self.undo_button.set_use_underline(True)
+            self.redo_button = Gtk.Button.new_from_icon_name(
+                "edit-redo-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
+            self.redo_button.set_always_show_image(True)
+            self.redo_button.set_action_name("app.redo")
+            self.redo_button.set_use_underline(True)
+            self.undo_redo_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+            self.undo_redo_box.get_style_context().add_class("linked")
+            self.undo_redo_box.pack_end(self.redo_button, expand=False, fill=False, padding=0)
+            self.undo_redo_box.pack_end(self.undo_button, expand=False, fill=False, padding=0)
+            # End of  Buttons undo - redo  2019 06 jep_f
+
+            #  Buttons undo - redo 2019 06 jep_f
+            self.attach(self.undo_redo_box, 0, 0, 1, 1)
+            #  Horizontal toolbar  2019 06 19
+            self.attach(self.toolbar, 1, 0, 1, 1)  # new position
+            self.attach(zoom_box, 0, 1, 1, 1)
+            self.attach(self.ruler, 1, 1, 1, 1)
+            self.attach(self.timeline, 0, 2, 2, 1)
+            self.attach(self.vscrollbar, 2, 2, 1, 1)
+            self.attach(hscrollbar, 1, 3, 2, 1)
+            #        self.attach(self.toolbar, 3, 2, 1, 1)  # old position
+        else:
+            # Old toolbar
+            builder.add_from_file(os.path.join(get_ui_dir(), "timelinetoolbar.ui"))
+            self.toolbar = builder.get_object("timeline_toolbar")
+            self.toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
+            self.toolbar.get_accessible().set_name("timeline toolbar")
+
+            self.markers = MarkersBox(self.app, hadj=self.timeline.hadj)
+
+            self.attach(self.markers, 1, 0, 1, 1)
+            self.attach(zoom_box, 0, 1, 1, 1)
+            self.attach(self.ruler, 1, 1, 1, 1)
+            self.attach(self.timeline, 0, 2, 2, 1)
+            self.attach(self.vscrollbar, 2, 2, 1, 1)
+            self.attach(hscrollbar, 1, 3, 1, 1)
+            self.attach(self.toolbar, 3, 2, 1, 1)
+        # End of Horizontal toolbar 2019 06 jep_f
+#
 
         self.gapless_button = builder.get_object("gapless_button")
         self.gapless_button.set_active(self._settings.timelineAutoRipple)
-
-        self.markers = MarkersBox(self.app, hadj=self.timeline.hadj)
-
-        self.attach(self.markers, 1, 0, 1, 1)
-        self.attach(zoom_box, 0, 1, 1, 1)
-        self.attach(self.ruler, 1, 1, 1, 1)
-        self.attach(self.timeline, 0, 2, 2, 1)
-        self.attach(self.vscrollbar, 2, 2, 1, 1)
-        self.attach(hscrollbar, 1, 3, 1, 1)
-        self.attach(self.toolbar, 3, 2, 1, 1)
 
         self.set_margin_top(SPACING)
 
@@ -1672,6 +1802,14 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         group.add_action(self.ungroup_action)
         self.app.shortcuts.add("timeline.ungroup-selected-clips", ["<Primary><Shift>g"],
                                _("Ungroup selected clips"))
+
+        # Copy and cut clips
+        self.cut_action = Gio.SimpleAction.new("cut-selected-clips", None)
+        self.cut_action.connect("activate", self.__cut_clips_cb)
+        group.add_action(self.cut_action)
+        self.app.shortcuts.add("timeline.cut-selected-clips", ["<Primary>x"],
+                               _("Copy and delete selected clips"))
+        # End of Copy and cut clips
 
         self.copy_action = Gio.SimpleAction.new("copy-selected-clips", None)
         self.copy_action.connect("activate", self.__copy_clips_cb)
@@ -1884,6 +2022,54 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.timeline.selection.set_can_group_ungroup()
             self.update_actions()
 
+    # Links to ClipPopupMenu in user_utils.py
+    def dl_clips(self):
+        self._delete_selected(unused_action=None, unused_parameter=None)
+        self.update_actions()
+        print("sel dl ", self.timeline.selection)
+
+    def ds_clips(self):
+        self._delete_selected_and_shift(unused_action=None, unused_parameter=None)
+        self.update_actions()
+
+    def ct_clips(self):
+        self.__cut_clips_cb(unused_action=None, unused_parameter=None)
+        self.update_actions()
+
+    def cp_clips(self):
+        self.__copy_clips_cb(unused_action=None, unused_parameter=None)
+#        self.update_actions()
+
+    def pst_clips(self):
+        self.__paste_clips_cb(unused_action=None, unused_parameter=None)
+        self.update_actions()
+    # End of Links to ClipPopupMenu
+
+    # Cut = copy and delete clips
+    def __cut_clips_cb(self, unused_action, unused_parameter):
+        group = self.timeline.selection.group()
+        try:
+            self.__copied_group = group.copy(deep=True)
+            self.__copied_group.props.serialize = False
+        finally:
+            group.ungroup(recursive=False)
+            self.c_p = self.__copied_group  # Variable readable outside this class c_p =  __copied_group
+        if self.ges_timeline:
+            with Previewer.manager.paused():
+                with self.app.action_log.started("delete clip",
+                                                 finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                                 toplevel=True):
+                    for clip in self.timeline.selection:
+                        if isinstance(clip, GES.TransitionClip):
+                            continue
+                        layer = clip.get_layer()
+                        layer.remove_clip(clip)
+
+        self.timeline.selection.set_selection([], SELECT)
+        self.update_actions()
+    # End of Cut = copy and delete clips
+
+
     def __copy_clips_cb(self, unused_action, unused_parameter):
         group = self.timeline.selection.group()
         try:
@@ -1891,6 +2077,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.__copied_group.props.serialize = False
         finally:
             group.ungroup(recursive=False)
+            print("group1 ", group)
+            # Variable readable outside this class c_p =  __copied_group
+            self.c_p = self.__copied_group
+            print("cp ", self.c_p)
         self.update_actions()
 
     def __paste_clips_cb(self, unused_action, unused_parameter):
@@ -1898,7 +2088,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.info("Nothing to paste.")
             return
 
-        position = self._project.pipeline.get_position()
+        position = self._project.pipeline.get_position() -1
         with self.app.action_log.started("paste",
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                          toplevel=True):

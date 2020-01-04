@@ -31,6 +31,7 @@ from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SEPARATOR_HEIGHT
+from pitivi.utils.user_utils import Alert
 
 
 class SpacedSeparator(Gtk.EventBox):
@@ -84,6 +85,39 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.ges_layer.connect("notify-meta", self.__layer_rename_cb)
         self.__update_name()
         name_row.pack_start(self.name_entry, True, True, 0)
+
+        #entry_provider = Gtk.CssProvider()
+        #entry_css = ("entry:not(:focus) { border: 1px solid transparent;"
+#                     "background: transparent; }").encode("UTF-8")
+        #entry_provider.load_from_data(entry_css)
+        #Gtk.StyleContext.add_provider(self.name_entry.get_style_context(),
+#                                      entry_provider,
+#                                      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+        # Mute audio button 2019 06  jep_f
+        self.mute_audio_button = Gtk.ToggleButton()
+        mute_image = Gtk.Image.new_from_icon_name(
+            "audio-volume-high-symbolic", Gtk.IconSize.BUTTON)
+        self.mute_audio_button.set_image(mute_image)
+        self.mute_audio_button.props.valign = Gtk.Align.CENTER
+        self.mute_audio_button.props.relief = Gtk.ReliefStyle.NORMAL
+        self.mute_audio_button.set_tooltip_text("Mute audio")
+        self.mute_audio_button.connect("clicked", self.__mute_audio_cb)
+        name_row.pack_start(self.mute_audio_button, False, False, 0)
+        # End of Mute audio button 2019 06 jep_f
+
+        # Mute video button 2019 06 jep_f
+        # TODO
+#        self.mute_video_button = Gtk.ToggleButton()
+#        mute_image = Gtk.Image.new_from_icon_name(
+#            "camera-photo-symbolic", Gtk.IconSize.BUTTON)
+#        self.mute_video_button.set_image(mute_image)
+#        self.mute_video_button.props.valign = Gtk.Align.CENTER
+#        self.mute_video_button.props.relief = Gtk.ReliefStyle.NORMAL
+#        self.mute_video_button.set_tooltip_text("Mute video")
+#        self.mute_video_button.connect("clicked", self.__mute_video_cb)
+#        name_row.pack_start(self.mute_video_button, False, False, 0)
+        # End of  Mute video button 2019 06  jep_f
 
         self.menubutton = Gtk.MenuButton.new()
         self.menubutton.props.valign = Gtk.Align.CENTER
@@ -215,15 +249,119 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.ges_timeline.ui.move_layer(self.ges_layer, index)
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
+    # Mute buttons 2019 06 jep_f
+    # Audio
+    def __mute_audio_cb(self, widget):
+        if widget.get_active():
+            print("mute audio")
+            mute_image = Gtk.Image.new_from_icon_name(
+                "audio-volume-muted-symbolic", Gtk.IconSize.BUTTON)
+            self.mute_audio_button.set_image(mute_image)
+            self.__mute_audio_action_cb(True)
+        else:
+            print("unmute audio")
+            mute_image = Gtk.Image.new_from_icon_name(
+                "audio-volume-high-symbolic", Gtk.IconSize.BUTTON)
+            self.mute_audio_button.set_image(mute_image)
+            self.__mute_audio_action_cb(False)
+
+    def __mute_audio_action_cb(self, mute_b):
+        alert = True
+        ges_clips = self.ges_layer.get_clips()
+        for ges_clip in ges_clips:
+            for child in ges_clip.get_children(False):
+                track = child.get_track()
+                print("track = ", track)
+                if not track:
+                    continue
+                media_type = track.props.track_type
+                if media_type == GES.TrackType.AUDIO:
+                    alert = False
+#                        print("bef mute audio = ", child.get_child_property("mute"))
+                    # On transition, there is not child.get_child_property("mute")
+                    try:
+                        ges_clip.get_child_property("mute")
+                    # pylint: disable=bare-except
+                    except:
+                        break
+                    else:
+                        ges_clip.set_child_property("mute", mute_b)
+                        print("mute audio = ", child.get_child_property("mute"))
+                    # Cannot find more types than these.
+                    break
+#                    alert = False
+#                    print("bef mute audio = ", child.get_child_property("mute"))
+#                    ges_clip.set_child_property("mute", mute_b)
+#                    print("mute audio = ", child.get_child_property("mute"))
+#                    # Cannot find more types than these.
+#                    break
+        if alert is True and mute_b is True:  # No alert when we unmute
+            Alert("Warning", "No audio in this layer", "service-logout.oga")
+        self.app.gui.editor.focus_timeline()
+
+    # End of Audio
+
+    # Video
+    # TODO
+    def __mute_video_cb(self, widget):
+        if widget.get_active():
+            print("mute video")
+            self.__mute_video_action_cb(True)
+        else:
+            print("unmute video")
+            self.__mute_video_action_cb(False)
+
+    def __mute_video_action_cb(self, mute_v):
+        alert = True
+        ges_clips = self.ges_layer.get_clips()  # GES.Layer : Get the clips this layer contains.
+        for ges_clip in ges_clips:
+            ges_track_elements = ges_clip.find_track_elements(None, GES.TrackType.VIDEO, GES.Source)
+            print("gtes = ", ges_track_elements)
+            for ges_track_element in ges_track_elements:
+                print("gte track = ", ges_track_element, ges_track_element.get_track())
+                print("gte track active= ", ges_track_element.is_active())
+                if ges_track_element.get_track_type() == GES.TrackType.VIDEO:
+                    alert = False
+                    if mute_v is True:
+                        print("Black = ", ges_track_element, ges_track_element.get_track())
+                        gt = ges_track_element.set_active(False)  # GES.TrackElement
+                        print("Active", ges_track_element.props.active)  # GES.TrackElement
+                        print("gtt = ", gt, ges_track_element.is_active())
+                        mute_image = Gtk.Image.new_from_icon_name("weather-clear-night", Gtk.IconSize.BUTTON)
+                        self.mute_video_button.set_image(mute_image)
+                    if mute_v is False:
+                        print("Normal = ", ges_track_element)
+                        gt = ges_track_element.set_active(True)  # GES.TrackElement
+                        print("gtf = ", gt)
+                        mute_image = Gtk.Image.new_from_icon_name("camera-photo-symbolic", Gtk.IconSize.BUTTON)
+                        self.mute_video_button.set_image(mute_image)
+        if alert is True and mute_v is True:  # No alert when we unmute
+            Alert("Warning", "No video in this layer", "service-logout.oga")
+            mute_image = Gtk.Image.new_from_icon_name("camera-photo-symbolic", Gtk.IconSize.BUTTON)
+            self.mute_video_button.set_image(mute_image)
+
+        self.app.gui.editor.focus_timeline()
+
+    # End of Video
+    # End of Mute buttons 2019 06  jep_f
+
     def update(self, media_types):
         self.props.height_request = self.ges_layer.ui.props.height_request
 
         if media_types & GES.TrackType.VIDEO or not media_types:
             # The layer has video or is empty.
             icon = "video-x-generic-symbolic"
+#        # Hide the audio mute button
+#        elif not (media_types & GES.TrackType.AUDIO) and media_types & GES.TrackType.VIDEO:
+#            icon = "video-x-generic-symbolic"
+#            self.mute_audio_button.hide()
+#            # End of Hide the audio mute button
         else:
             # The layer has audio and nothing else.
             icon = "audio-x-generic-symbolic"
+            # Hide the video mute button
+#            self.mute_video_button.hide()
+            # End of Hide the video mute button
 
         if icon != self.__icon:
             image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)

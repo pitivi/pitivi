@@ -137,6 +137,9 @@ class PluginManager(Loggable):
     def _load_plugins(self):
         """Loads plugins from settings."""
         plugin_names = self.app.settings.ActivePlugins
+        # Sort the plugins in the toolbar by name   jep_f 2019 12 12
+        plugin_names.sort()
+        # End of Sort the plugins in the toolbar by name   jep_f 2019 12 12
         for plugin_name in plugin_names:
             plugin_info = self.engine.get_plugin_info(plugin_name)
             if plugin_info not in self.plugins:

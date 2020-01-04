@@ -1,0 +1,9 @@
+[Plugin]
+Name=Copy, cut clips and ripple
+Description= Copy, cut the selected clips\nand move all the clips after the start of the first clip\nAn alert if other clips are cut
+Authors=Jean-Paul Favier
+website=...
+Copyright=
+
+Loader=python3
+Module=p10_cut_copy_clips_and_ripple
