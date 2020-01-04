@@ -91,8 +91,8 @@ class PreferencesDialog(Loggable):
 
         self.factory_settings.set_sensitive(self._can_reset())
 
-        self.add_settings_page('timeline')
         self.__add_proxies_section()
+        self.add_settings_page('timeline')
         self.__add_shortcuts_section()
         self.__add_plugin_manager_section()
         self.__setup_css()

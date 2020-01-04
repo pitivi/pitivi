@@ -192,7 +192,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self.debug(
             "change: %r, state: %r, pending: %r", change, state, pending)
         return state
-
+#check this out
     def play(self):
         """Sets the state to Gst.State.PLAYING."""
         self.set_simple_state(Gst.State.PLAYING)
@@ -336,7 +336,6 @@ class SimplePipeline(GObject.Object, Loggable):
             bool: True iff the pipeline is busy.
         """
         return bool(self._timeout_async_id)
-
     def simple_seek(self, position):
         """Seeks in the low-level pipeline to the specified position.
 
