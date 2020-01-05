@@ -60,7 +60,8 @@ class TestBeautifyTime(common.TestCase):
         self.assertEqual(beautify_length(Gst.CLOCK_TIME_NONE), "")
 
     def test_beautify_last_updated_timestamp(self):
-        """Tests beautification of project's updation timestamp."""
+        """Tests beautification of project's update timestamp."""
+        # The oracles are based on 1970-01-01 00:00:00+00:00 (a Thursday).
         self.__check_beautify_last_updated_timestamp(0, "Just now")
         self.__check_beautify_last_updated_timestamp(60 * 45 - 1, "Just now")
 
@@ -88,6 +89,9 @@ class TestBeautifyTime(common.TestCase):
     def __check_beautify_last_updated_timestamp(self, seconds, expected):
         time.time = Mock()
         time.time.return_value = seconds
+        # Mock to use UTC, so that weekday naming is not timezone dependent.
+        time.localtime = Mock()
+        time.localtime.return_value = time.gmtime(0)
         self.assertEqual(beautify_last_updated_timestamp(0), expected)
 
 
