@@ -1,26 +1,20 @@
 # -*- coding: utf-8 -*-
-# -*- Mode: Python; test-case-name: test_log -*-
-# vi:si:et:sw=4:sts=4:ts=4
-#
-# Flumotion - a streaming media server
+# Pitivi video editor
 # Copyright (C) 2004,2005,2006,2007 Fluendo, S.L. (www.fluendo.com).
 # All rights reserved.
+#
 # This file may be distributed and/or modified under the terms of
 # the GNU General Public License version 2 as published by
 # the Free Software Foundation.
+#
 # This file is distributed without any warranty; without even the implied
 # warranty of merchantability or fitness for a particular purpose.
-# See "LICENSE.GPL" in the source distribution for more information.
-# Licensees having purchased or holding a valid Flumotion Advanced
-# Streaming Server license may use this file in accordance with the
-# Flumotion Advanced Streaming Server Commercial License Agreement.
-# See "LICENSE.Flumotion" in the source distribution for more information.
-# Headers in this file shall remain intact.
+#
+# You should have received a copy of the GNU General Public
+# License along with this program; if not, see <http://www.gnu.org/licenses/>.
 import unittest
 
 from pitivi.utils import loggable as log
-
-__version__ = "$Rev: 7162 $"
 
 
 class LogTester(log.Loggable):
@@ -154,9 +148,8 @@ class TestOwnLogHandler(TestWithHandler):
         TestWithHandler.setUp(self)
         self.tester = LogFunctionTester()
 
-    # test if our own log handler correctly mangles the message
-
     def test_own_log_handler_limited(self):
+        """Checks our own log handler correctly mangles the message."""
         log.set_debug("testlog:%d" % log.INFO)
         log.add_log_handler(self.handler)
 
