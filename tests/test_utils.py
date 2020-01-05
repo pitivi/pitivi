@@ -18,7 +18,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 import time
-from unittest.mock import Mock
+from unittest import mock
 
 from gi.repository import GLib
 from gi.repository import Gst
@@ -60,7 +60,8 @@ class TestBeautifyTime(common.TestCase):
         self.assertEqual(beautify_length(Gst.CLOCK_TIME_NONE), "")
 
     def test_beautify_last_updated_timestamp(self):
-        """Tests beautification of project's updation timestamp."""
+        """Tests beautification of project's update timestamp."""
+        # The oracles are based on 1970-01-01 00:00:00+00:00 (a Thursday).
         self.__check_beautify_last_updated_timestamp(0, "Just now")
         self.__check_beautify_last_updated_timestamp(60 * 45 - 1, "Just now")
 
@@ -85,20 +86,24 @@ class TestBeautifyTime(common.TestCase):
         self.__check_beautify_last_updated_timestamp(60 * 60 * 24 * 365 * 1.5, "About 2 years ago")
         self.__check_beautify_last_updated_timestamp(60 * 60 * 24 * 365 * 3, "About 3 years ago")
 
-    def __check_beautify_last_updated_timestamp(self, seconds, expected):
-        time.time = Mock()
-        time.time.return_value = seconds
-        self.assertEqual(beautify_last_updated_timestamp(0), expected)
+    def __check_beautify_last_updated_timestamp(self, now_seconds, expected):
+        with mock.patch.object(time, "time"):
+            time.time.return_value = now_seconds
+            with mock.patch.object(time, "localtime"):
+                # Mock to use UTC, so that weekday naming is not timezone dependent.
+                previously_seconds = 0
+                time.localtime.return_value = time.gmtime(previously_seconds)
+                self.assertEqual(beautify_last_updated_timestamp(previously_seconds), expected)
 
 
 class TestFormatFramerateValue(common.TestCase):
 
     def __check(self, num, denom, expected):
-        stream = Mock(spec=GstPbutils.DiscovererVideoInfo)
-        fraction = Mock(num=num, denom=denom)
+        stream = mock.Mock(spec=GstPbutils.DiscovererVideoInfo)
+        fraction = mock.Mock(num=num, denom=denom)
 
-        stream.get_framerate_num = Mock(return_value=num)
-        stream.get_framerate_denom = Mock(return_value=denom)
+        stream.get_framerate_num = mock.Mock(return_value=num)
+        stream.get_framerate_denom = mock.Mock(return_value=denom)
 
         self.assertEqual(format_framerate_value(stream), expected)
         self.assertEqual(format_framerate_value(fraction), expected)
@@ -125,8 +130,8 @@ class TestFormatFramerateValue(common.TestCase):
 class TestFormatAudiorate(common.TestCase):
 
     def __check(self, rate, expected):
-        stream = Mock(spec=GstPbutils.DiscovererAudioInfo)
-        stream.get_sample_rate = Mock(return_value=rate)
+        stream = mock.Mock(spec=GstPbutils.DiscovererAudioInfo)
+        stream.get_sample_rate = mock.Mock(return_value=rate)
 
         self.assertEqual(format_audiorate(stream), expected)
         self.assertEqual(format_audiorate(rate), expected)
@@ -143,8 +148,8 @@ class TestFormatAudiorate(common.TestCase):
 class TestFormatAudiochannels(common.TestCase):
 
     def __check(self, channels, expected):
-        stream = Mock(spec=GstPbutils.DiscovererAudioInfo)
-        stream.get_channels = Mock(return_value=channels)
+        stream = mock.Mock(spec=GstPbutils.DiscovererAudioInfo)
+        stream.get_channels = mock.Mock(return_value=channels)
 
         self.assertEqual(format_audiochannels(stream), expected)
         self.assertEqual(format_audiochannels(channels), expected)
