@@ -13,17 +13,11 @@ tutorial](http://pygstdocs.berlios.de/pygst-tutorial/index.html)
 5.  [Combining Audio and
     Video](PyGST_Tutorial/Combining_Audio_and_Video.md)
 6.  [States, and the
-    Bus](PyGST_Tutorial/States,_and_the_Bus.md) \*
-7.  [Position, Duration, and
-    Seeking](PyGST_Tutorial/Position,_Duration,_and_Seeking.md) \*
-8.  [How To Hack On PiTiVi: Two Case
-    Studies](How_To_Hack_On_PiTiVi:_Two_Case_Studies.md) \*
-
-(\*) Incomplete
+    Bus](PyGST_Tutorial/States_and_the_Bus.md)
 
 ### Creating New Elements
 
-1.  [Elements: basics](PyGST_Tutorial/Elements:_basics.md) \*
+1.  [Elements: basics](PyGST_Tutorial/Elements_basics.md) \*
 
 ## Demonstration Listings
 
