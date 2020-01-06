@@ -63,7 +63,7 @@ class PathWalkerTest(common.TestCase):
         mainloop = common.create_main_loop()
         received_uris = []
 
-        def done_cb(uris):  # pylint: disable=missing-docstring
+        def done_cb(uris):
             received_uris.extend(uris)
             mainloop.quit()
         walker = PathWalker(uris, done_cb)

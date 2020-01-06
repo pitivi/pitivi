@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Tests for the application module."""
-# pylint: disable=missing-docstring,protected-access,no-self-use
+# pylint: disable=protected-access,no-self-use
 import tempfile
 from unittest import mock
 

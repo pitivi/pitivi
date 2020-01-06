@@ -95,7 +95,7 @@ class TestRender(BaseTestMediaLibrary):
 
         mainloop = common.create_main_loop()
 
-        def asset_added_cb(project, asset):  # pylint: disable=missing-docstring
+        def asset_added_cb(project, asset):
             mainloop.quit()
 
         project.connect("asset-added", asset_added_cb)
