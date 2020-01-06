@@ -188,7 +188,7 @@ class TestGetExceptionMessage(unittest.TestCase):
     def verify_exception(self, e):
         message = log.get_exception_message(e)
         self.assertTrue("func1()" in message, message)
-        self.assertTrue("test_log.py" in message, message)
+        self.assertTrue("test_utils_loggable.py" in message, message)
         self.assertTrue("TypeError" in message, message)
 
 
