@@ -2,7 +2,7 @@
 # Pitivi video editor
 # Copyright (c) 2005-2009 Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2008-2009 Alessandro Decina <alessandro.d@gmail.com>
-# Copyright (c) 2014 Alexandru Băluț<alexandru.balut@gmail.com>
+# Copyright (c) 2014 Alexandru Băluț <alexandru.balut@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,9 +15,7 @@
 # Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the
-# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
-# Boston, MA 02110-1301, USA.
+# License along with this program; if not, see <http://www.gnu.org/licenses/>.
 import os
 import time
 from gettext import gettext as _
