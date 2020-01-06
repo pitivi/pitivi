@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=missing-docstring
-# -*- coding: utf-8 -*-
 # Pitivi Developer Console
 # Copyright (c) 2017-2018, Fabian Orccon <cfoch.fabian@gmail.com>
 #
