@@ -327,14 +327,6 @@ class EditorPerspective(Perspective, Loggable):
         self.intro_button.set_always_show_image(True)
         self.intro_button.connect("clicked", self._intro_button_clicked_cb)
 
-        self.intro_label = Gtk.Label()
-        self.intro_label.set_property("margin", 10)
-        self.popover = Gtk.Popover()
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        vbox.pack_start(self.intro_label, False, True, 10)
-        self.popover.add(vbox)
-        self.popover.set_position(Gtk.PositionType.BOTTOM)
-
         self.save_button = Gtk.Button.new_with_label(_("Save"))
         self.save_button.set_focus_on_click(False)
 
@@ -366,11 +358,7 @@ class EditorPerspective(Perspective, Loggable):
         return headerbar
 
     def _intro_button_clicked_cb(self, widget):
-        if not self.intro.running:
-            self.intro.start_tour()
-        else:
-            self.intro.stop_tour()
-            self.intro_button.hide()
+        self.intro.control_intro()
 
     def _create_actions(self):
         group = Gio.SimpleActionGroup()
@@ -480,12 +468,7 @@ class EditorPerspective(Perspective, Loggable):
         self.show_project_settings_dialog()
 
     def __interactive_intro_cb(self, unused_action, unused_param):
-        self.intro.running = False
-        if not self.intro_button.get_visible():
-            self.intro_button.show()
-        else:
-            self.intro_button.get_popover().popdown()
-            self.intro_button.hide()
+        self.intro.control_intro()
 
     def show_project_settings_dialog(self):
         project = self.app.project_manager.current_project

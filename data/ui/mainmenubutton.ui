@@ -138,32 +138,6 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="menu_interactive_intro">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="tooltip_text" translatable="yes">Intractive intro which will guide you threw Pitivi </property>
-            <property name="action_name">editor.interactive-intro</property>
-            <property name="text" translatable="yes">Interactive Intro</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">8</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSeparator">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">10</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkModelButton" id="menu_preferences">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -176,7 +150,22 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">11</property>
+            <property name="position">8</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_interactive_intro">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="tooltip_text" translatable="yes">Start the intro to Pitivi for new users</property>
+            <property name="action_name">editor.interactive-intro</property>
+            <property name="text" translatable="yes">Interactive Intro</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">9</property>
           </packing>
         </child>
         <child>
@@ -192,7 +181,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">12</property>
+            <property name="position">10</property>
           </packing>
         </child>
         <child>
@@ -208,7 +197,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">13</property>
+            <property name="position">11</property>
           </packing>
         </child>
         <child>
@@ -224,7 +213,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">14</property>
+            <property name="position">12</property>
           </packing>
         </child>
       </object>

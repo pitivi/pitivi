@@ -2090,7 +2090,6 @@ class ProjectSettingsDialog:
         self.widgets_group.add_vertex(self.scaled_proxy_width_spin, signal="value-changed")
         self.widgets_group.add_vertex(self.scaled_proxy_height_spin, signal="value-changed")
 
-
         # Constrain width and height IFF the Constrain checkbox is checked.
         # Video
         self.widgets_group.add_edge(self.width_spinbutton, self.height_spinbutton,
