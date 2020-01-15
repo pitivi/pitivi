@@ -61,6 +61,7 @@ class PreferencesDialog(Loggable):
         "__plugins": _("Plugins"),
         "__shortcuts": _("Shortcuts"),
         "_proxies": _("Proxies"),
+        "other": _("Other"),
     }
 
     def __init__(self, app):
@@ -93,6 +94,7 @@ class PreferencesDialog(Loggable):
         self.__add_proxies_section()
         self.__add_shortcuts_section()
         self.__add_plugin_manager_section()
+        self.add_settings_page('other')
         self.__setup_css()
         self.dialog.set_transient_for(app.gui)
 

@@ -63,6 +63,20 @@ GlobalSettings.add_config_option('lastCurrentVersion',
                                  key='last-current-version',
                                  default='')
 
+GlobalSettings.add_config_option("themeVariant",
+                                 section="user-interface",
+                                 key="theme-variant",
+                                 default="dark",
+                                 notify=True)
+
+PreferencesDialog.add_choice_preference("themeVariant",
+                                        section="other",
+                                        label=_("Theme variant"),
+                                        description=_("Which theme variant to use"),
+                                        choices=[(_("Dark"), "dark"),
+                                                 (_("Light"), "light"),
+                                                 (_("System Default"), "system")])
+
 
 class MainWindow(Gtk.ApplicationWindow, Loggable):
     """Pitivi's main window.
@@ -75,11 +89,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     """
 
     def __init__(self, app):
-        gtksettings = Gtk.Settings.get_default()
-        gtksettings.set_property("gtk-application-prefer-dark-theme", True)
-        theme = gtksettings.get_property("gtk-theme-name")
-        os.environ["GTK_THEME"] = theme + ":dark"
-
         # Pulseaudio "role"
         # (http://0pointer.de/blog/projects/tagging-audio.htm)
         os.environ["PULSE_PROP_media.role"] = "production"
@@ -99,11 +108,25 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.__perspective = None
         self.__wanted_perspective = None
 
+        self.app.settings.connect("themeVariantChanged",
+                                  self.__theme_variant_changed_cb)
+        self.__theme_variant_changed_cb(None)
+
         app.project_manager.connect("new-project-loading",
                                     self.__new_project_loading_cb)
         app.project_manager.connect("new-project-failed",
                                     self.__new_project_failed_cb)
         app.project_manager.connect("project-closed", self.__project_closed_cb)
+
+    def __theme_variant_changed_cb(self, unused_settings):
+        gtksettings = Gtk.Settings.get_default()
+        theme_variant = self.app.settings.themeVariant
+        if theme_variant == 'system':
+            gtksettings.reset_property("gtk-application-prefer-dark-theme")
+        elif theme_variant == 'light':
+            gtksettings.set_property("gtk-application-prefer-dark-theme", False)
+        else:
+            gtksettings.set_property("gtk-application-prefer-dark-theme", True)
 
     def setup_ui(self):
         """Sets up the various perspectives's UI."""
