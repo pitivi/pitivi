@@ -208,6 +208,7 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
 
     def _scaled_proxy_check_cb(self, unused_button):
         if self.scaled_proxy_check.get_active():
+            self.hq_combo.props.active = 0
             self.hq_proxy_check.set_active(True)
 
     def _target_res_cb(self, label_widget, unused_uri):
