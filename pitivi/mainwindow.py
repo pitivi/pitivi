@@ -63,6 +63,17 @@ GlobalSettings.add_config_option('lastCurrentVersion',
                                  key='last-current-version',
                                  default='')
 
+GlobalSettings.add_config_option("useDarkTheme",
+                                 section="user-interface",
+                                 key="use-dark-theme",
+                                 default=True,
+                                 notify=True)
+
+PreferencesDialog.add_toggle_preference("useDarkTheme",
+                                        section="other",
+                                        label=_("Dark Theme"),
+                                        description=_("Whether or not to use a dark theme."))
+
 
 class MainWindow(Gtk.ApplicationWindow, Loggable):
     """Pitivi's main window.
@@ -75,11 +86,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     """
 
     def __init__(self, app):
-        gtksettings = Gtk.Settings.get_default()
-        gtksettings.set_property("gtk-application-prefer-dark-theme", True)
-        theme = gtksettings.get_property("gtk-theme-name")
-        os.environ["GTK_THEME"] = theme + ":dark"
-
         # Pulseaudio "role"
         # (http://0pointer.de/blog/projects/tagging-audio.htm)
         os.environ["PULSE_PROP_media.role"] = "production"
@@ -99,11 +105,23 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.__perspective = None
         self.__wanted_perspective = None
 
+        self.app.settings.connect("useDarkThemeChanged",
+                                  self.__use_dark_theme_changed_cb)
+        self.update_use_dark_theme()
+
         app.project_manager.connect("new-project-loading",
                                     self.__new_project_loading_cb)
         app.project_manager.connect("new-project-failed",
                                     self.__new_project_failed_cb)
         app.project_manager.connect("project-closed", self.__project_closed_cb)
+
+    def update_use_dark_theme(self):
+        gtksettings = Gtk.Settings.get_default()
+        use_dark_theme = self.app.settings.useDarkTheme
+        gtksettings.set_property("gtk-application-prefer-dark-theme", use_dark_theme)
+
+    def __use_dark_theme_changed_cb(self, unused_settings):
+        self.update_use_dark_theme()
 
     def setup_ui(self):
         """Sets up the various perspectives's UI."""
