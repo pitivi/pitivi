@@ -68,6 +68,7 @@ from pitivi.utils.ui import URI_TARGET_ENTRY
 SHOW_TREEVIEW = 1
 SHOW_ICONVIEW = 2
 
+
 GlobalSettings.add_config_section('clip-library')
 GlobalSettings.add_config_option('lastImportFolder',
                                  section='clip-library',
