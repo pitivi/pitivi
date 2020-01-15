@@ -287,7 +287,7 @@ EDITOR_PERSPECTIVE_CSS = """
 
 PREFERENCES_CSS = """
     .sidebar list {
-        background: rgb(45, 45, 45);
+        background: @content_view_bg;
     }
 
     .sidebar row {
