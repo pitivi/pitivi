@@ -67,6 +67,10 @@ from pitivi.utils.ui import URI_TARGET_ENTRY
 SHOW_TREEVIEW = 1
 SHOW_ICONVIEW = 2
 
+class OptimizeOption:
+    UNSUPPORTED_ASSETS = 0
+    ALL = 1
+
 GlobalSettings.add_config_section('clip-library')
 GlobalSettings.add_config_option('lastImportFolder',
                                  section='clip-library',
@@ -136,9 +140,9 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
         self.hq_proxy_check.connect("toggled", self._hq_proxy_check_cb)
 
         self.hq_combo = Gtk.ComboBoxText.new()
-        self.hq_combo.insert_text(0, _("Unsupported assets"))
-        self.hq_combo.insert_text(1, _("All"))
-        self.hq_combo.props.active = 0
+        self.hq_combo.insert_text(OptimizeOption.UNSUPPORTED_ASSETS, _("Unsupported assets"))
+        self.hq_combo.insert_text(OptimizeOption.ALL, _("All"))
+        self.hq_combo.props.active = OptimizeOption.UNSUPPORTED_ASSETS
         self.hq_combo.set_sensitive(False)
 
         self.help_button = Gtk.Button()
@@ -178,11 +182,11 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
         if self.app.settings.proxying_strategy == ProxyingStrategy.AUTOMATIC:
             self.hq_proxy_check.set_active(True)
             self.hq_combo.set_sensitive(True)
-            self.hq_combo.props.active = 0
+            self.hq_combo.props.active = OptimizeOption.UNSUPPORTED_ASSETS
         elif self.app.settings.proxying_strategy == ProxyingStrategy.ALL:
             self.hq_proxy_check.set_active(True)
             self.hq_combo.set_sensitive(True)
-            self.hq_combo.props.active = 1
+            self.hq_combo.props.active = OptimizeOption.ALL
 
         if self.app.settings.auto_scaling_enabled:
             self.scaled_proxy_check.set_active(True)
@@ -208,7 +212,7 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
 
     def _scaled_proxy_check_cb(self, unused_button):
         if self.scaled_proxy_check.get_active():
-            self.hq_combo.props.active = 0
+            self.hq_combo.props.active = OptimizeOption.UNSUPPORTED_ASSETS
             self.hq_proxy_check.set_active(True)
 
     def _target_res_cb(self, label_widget, unused_uri):
@@ -224,7 +228,7 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
         self.app.settings.closeImportDialog = not self.__keep_open_check.get_active()
 
         if self.hq_proxy_check.get_active():
-            if self.hq_combo.props.active == 0:
+            if self.hq_combo.props.active == OptimizeOption.UNSUPPORTED_ASSETS:
                 self.app.settings.proxying_strategy = ProxyingStrategy.AUTOMATIC
             else:
                 self.app.settings.proxying_strategy = ProxyingStrategy.ALL
