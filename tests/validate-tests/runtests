@@ -24,5 +24,6 @@ def main():
     command.extend(sys.argv[1:])
     sys.exit(subprocess.call(command))
 
+
 if __name__ == "__main__":
     main()

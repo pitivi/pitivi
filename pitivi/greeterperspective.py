@@ -170,8 +170,7 @@ class GreeterPerspective(Perspective):
             self.__recent_projects_listbox.remove(child)
 
         recent_items = [item for item in self.app.recent_manager.get_items()
-                        if item.get_display_name().endswith(self.__project_filter)
-                        and item.exists()]
+                        if item.get_display_name().endswith(self.__project_filter) and item.exists()]
 
         # If there are recent projects, display them, else display welcome screen.
         if recent_items:
