@@ -68,9 +68,6 @@ from pitivi.utils.ui import URI_TARGET_ENTRY
 SHOW_TREEVIEW = 1
 SHOW_ICONVIEW = 2
 
-class OptimizeOption(IntEnum):
-    UNSUPPORTED_ASSETS = 0
-    ALL = 1
 
 GlobalSettings.add_config_section('clip-library')
 GlobalSettings.add_config_option('lastImportFolder',
@@ -120,6 +117,11 @@ SUPPORTED_MIMETYPES = []
 for category, mime_types in SUPPORTED_FILE_FORMATS.items():
     for mime in mime_types:
         SUPPORTED_MIMETYPES.append(category + "/" + mime)
+
+
+class OptimizeOption(IntEnum):
+    UNSUPPORTED_ASSETS = 0
+    ALL = 1
 
 
 class FileChooserExtraWidget(Gtk.Box, Loggable):
