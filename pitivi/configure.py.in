@@ -32,6 +32,7 @@ def in_devel():
     """Returns whether the app is run from a git checkout."""
     return os.environ.get("PITIVI_DEVELOPMENT", "0") != "0"
 
+
 LIBDIR = '@LIBDIR@'
 PKGDATADIR = '@DATADIR@/@PACKAGE@'
 GITVERSION = '@GITVERSION@'
@@ -79,13 +80,16 @@ def get_videopresets_dir():
     """Returns our directory with Video Presets files."""
     return os.path.join(get_data_dir(), 'videopresets')
 
+
 def get_gstpresets_dir():
     """Returns our directory with Gst Presets files."""
     return os.path.join(get_data_dir(), 'gstpresets')
 
+
 def get_plugins_dir():
     """Returns our default directory to store official plugins."""
     return os.path.join(_get_root_dir(), 'plugins')
+
 
 def get_user_plugins_dir():
     """Returns our default directory to store non-official plugins."""
