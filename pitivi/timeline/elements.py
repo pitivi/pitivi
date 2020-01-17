@@ -710,9 +710,8 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
         if len(values) < 2:
             source.unset_all()
-            val = float(self.__controlled_property.default_value) / \
-                  (self.__controlled_property.maximum -
-                   self.__controlled_property.minimum)
+            values_range = self.__controlled_property.maximum - self.__controlled_property.minimum
+            val = float(self.__controlled_property.default_value) / values_range
             inpoint = self._ges_elem.props.in_point
             res = source.set(inpoint, val)
             assert res
@@ -994,6 +993,7 @@ class VideoUriSource(VideoSource):
             if spec.name == "alpha":
                 return spec
         return None
+
 
 class AudioBackground(Gtk.Box):
 

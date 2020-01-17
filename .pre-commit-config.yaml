@@ -25,6 +25,14 @@ repos:
         args:
         # http://www.pydocstyle.org/en/latest/error_codes.html
         -   --ignore=D1,D203,D213,D401,D406,D407,D413
+-   repo: https://gitlab.com/PyCQA/flake8
+    rev: 3.7.9
+    hooks:
+    -   id: flake8
+        args:
+        # http://flake8.pycqa.org/en/latest/user/error-codes.html
+        # https://pycodestyle.readthedocs.io/en/latest/intro.html#error-codes
+        -   --ignore=E402,E501,E722,F401,F841,W504
 -   repo: local
     hooks:
     -   id: pylint
