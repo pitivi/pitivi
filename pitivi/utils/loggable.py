@@ -426,10 +426,10 @@ def get_format_args(start_format, start_args, end_format, end_args, args, kwargs
         debug_args.extend(items)
     debug_args.extend(end_args)
     fmt = start_format \
-          + ', '.join(('%s', ) * len(args)) \
-          + (kwargs and ', ' or '') \
-          + ', '.join(('%s=%r', ) * len(kwargs)) \
-          + end_format
+        + ', '.join(('%s', ) * len(args)) \
+        + (kwargs and ', ' or '') \
+        + ', '.join(('%s=%r', ) * len(kwargs)) \
+        + end_format
     return fmt, debug_args
 
 
