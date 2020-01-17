@@ -900,12 +900,6 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
     def zoom_changed(self):
         self._update_thumbnails()
 
-    def set_size_request(self, width, height):
-        """Set size request, leaving space for the outline."""
-        # Take one px off the width so the thumbnails aren't drawn on
-        # top of the outline in the timeline
-        super().set_size_request(width - 1, height)
-
 
 class Thumbnail(Gtk.Image):
     """Simple widget representing a Thumbnail."""
