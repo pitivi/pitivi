@@ -26,6 +26,7 @@ from gi.repository import Gtk
 from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import SEPARATOR_HEIGHT
+from pitivi.utils.ui import URI_TARGET_ENTRY
 from tests import common
 
 THIN = LAYER_HEIGHT / 2
@@ -50,6 +51,50 @@ class BaseTestTimeline(common.TestCase):
         clips = [self.add_clip(layer, i * 10) for i in range(num_clips)]
         self.assertEqual(len(clips), num_clips)
         return clips
+
+    def test_adding_overlap_clip(self):
+        """Checks asset drag&drop on top of an existing clip."""
+        timeline_container = common.create_timeline_container()
+        timeline_ui = timeline_container.timeline
+
+        asset = GES.UriClipAsset.request_sync(
+            common.get_sample_uri("tears_of_steel.webm"))
+        layer, = timeline_ui.ges_timeline.get_layers()
+        layer.add_asset(asset, 0, 0, 10, GES.TrackType.UNKNOWN)
+
+        # Events emitted while dragging an asset over a clip in the timeline:
+        # motion, receive, motion.
+        with mock.patch.object(Gdk, "drag_status") as _drag_status_mock:
+            with mock.patch.object(Gtk, "drag_finish") as _drag_finish_mock:
+                target = mock.Mock()
+                target.name.return_value = URI_TARGET_ENTRY.target
+                timeline_ui.drag_dest_find_target = mock.Mock(return_value=target)
+                timeline_ui.drag_get_data = mock.Mock()
+                timeline_ui._drag_motion_cb(None, None, 0, 0, 0)
+                self.assertTrue(timeline_ui.drag_get_data.called)
+
+                self.assertFalse(timeline_ui.drop_data_ready)
+                selection_data = mock.Mock()
+                selection_data.get_data_type = mock.Mock(return_value=target)
+                selection_data.get_uris.return_value = [asset.props.id]
+                self.assertIsNone(timeline_ui.drop_data)
+                self.assertFalse(timeline_ui.drop_data_ready)
+                timeline_ui._drag_data_received_cb(None, None, 0, 0, selection_data, None, 0)
+                self.assertEqual(timeline_ui.drop_data, [asset.props.id])
+                self.assertTrue(timeline_ui.drop_data_ready)
+
+                timeline_ui.drag_get_data.reset_mock()
+                self.assertIsNone(timeline_ui.dragging_element)
+                self.assertFalse(timeline_ui.dropping_clips)
+
+                # Drag on the first layer.
+                def translate_coordinates_func(widget, x, y):
+                    return x, y
+                timeline_ui.translate_coordinates = translate_coordinates_func
+                timeline_ui._drag_motion_cb(timeline_ui, None, 0, SEPARATOR_HEIGHT, 0)
+                self.assertFalse(timeline_ui.drag_get_data.called)
+                self.assertIsNone(timeline_ui.dragging_element)
+                self.assertFalse(timeline_ui.dropping_clips)
 
 
 class TestLayers(BaseTestTimeline):
