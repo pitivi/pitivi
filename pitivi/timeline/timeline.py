@@ -950,6 +950,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                            clip_duration,
                                            asset.get_supported_formats())
             placement += clip_duration
+            if not ges_clip:
+                return False
             ges_clip.first_placement = True
             self._project.pipeline.commit_timeline()
 
