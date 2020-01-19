@@ -58,7 +58,7 @@ deploy:
 .build_emplate: &build_docker_image
     image: docker:latest
     services:
-        - docker:dind
+        - docker:19.03.0-dind
     script:
         - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}-sdk_3.34"
         - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.34"
@@ -70,7 +70,7 @@ deploy:
 
         - env
 
-        - docker run --privileged --name ${TMPIMAGENAME} ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${BUILDDIR}"
+        - docker run --privileged --name ${TMPIMAGENAME} -e DOCKER_TLS_CERTDIR=${DOCKER_TLS_CERTDIR} -v ${DOCKER_TLS_CERTDIR}:${DOCKER_TLS_CERTDIR}:ro ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${BUILDDIR}"
         - docker commit ${TMPIMAGENAME} ${IMAGE}
         - docker rm ${TMPIMAGENAME}
         - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
