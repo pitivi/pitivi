@@ -1334,7 +1334,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         subprocess.Popen([sys.argv[0], path])
 
     def __create_menu_model(self):
-        if self.app.proxy_manager.proxyingUnsupported:
+        if self.app.proxy_manager.proxying_unsupported:
             return None, None
 
         assets = self.get_selected_assets()
