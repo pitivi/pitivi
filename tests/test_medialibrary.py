@@ -20,12 +20,14 @@ import os
 import tempfile
 from unittest import mock
 
+from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gst
 
 from pitivi import medialibrary
 from pitivi.project import ProjectManager
 from pitivi.utils.proxy import ProxyingStrategy
+from pitivi.utils.validate import create_event
 from tests import common
 
 
@@ -447,3 +449,11 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         with common.created_project_file(asset_uri) as uri:
             self._custom_set_up(project_uri=uri)
         self.assertTrue(self.medialibrary._import_warning_infobar.props.visible)
+
+    def test_right_click_on_media_library(self):
+        self._custom_set_up()
+        mlib = self.medialibrary
+
+        # Release click
+        event = create_event(Gdk.EventType.BUTTON_RELEASE, button=3)
+        mlib._iconview_button_release_event_cb(mlib.iconview, event)
