@@ -32,6 +32,10 @@ from pitivi.utils.ui import beautify_length
 from pitivi.utils.ui import format_audiochannels
 from pitivi.utils.ui import format_audiorate
 from pitivi.utils.ui import format_framerate_value
+from pitivi.utils.ui import pack_color_32
+from pitivi.utils.ui import pack_color_64
+from pitivi.utils.ui import unpack_color_32
+from pitivi.utils.ui import unpack_color_64
 from tests import common
 
 
@@ -244,3 +248,26 @@ class TestMiscUtils(common.TestCase):
         for template, restrictions, default_values, prev_vals, expected in dataset:
             res = fixate_caps_with_default_values(template, restrictions, default_values, prev_vals)
             self.assertTrue(res.is_equal_fixed(expected), "%s != %s" % (res, expected))
+
+
+class TestColors(common.TestCase):
+
+    def test_pack_color_32(self):
+        self.assertEqual(
+            0x01020408,
+            pack_color_32(0x01FF, 0x02FF, 0x04FF, 0x08FF))
+
+    def test_pack_color_64(self):
+        self.assertEqual(
+            0x01FF02FF04FF08FF,
+            pack_color_64(0x01FF, 0x02FF, 0x04FF, 0x08FF))
+
+    def test_unpack_color_32(self):
+        self.assertEqual(
+            (0x0100, 0x0200, 0x0400, 0x0800),
+            unpack_color_32(0x01020408))
+
+    def test_unpack_color_64(self):
+        self.assertEqual(
+            (0x01FF, 0x02FF, 0x04FF, 0x08FF),
+            unpack_color_64(0x01FF02FF04FF08FF))
