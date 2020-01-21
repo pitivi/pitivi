@@ -32,7 +32,7 @@ repos:
         args:
         # http://flake8.pycqa.org/en/latest/user/error-codes.html
         # https://pycodestyle.readthedocs.io/en/latest/intro.html#error-codes
-        -   --ignore=E402,E501,E722,W504,F401,F841
+        -   --ignore=E402,E501,E722,F401,F841,W504
 -   repo: local
     hooks:
     -   id: pylint
