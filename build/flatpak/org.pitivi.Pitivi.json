@@ -29,6 +29,11 @@
         "no-debuginfo": true
     },
     "modules": [
+        "python3-ipdb.json",
+        "python3-nose2.json",
+        "python3-pre-commit.json",
+        "python3-hotdoc.json",
+        "python3-pylint.json",
         {
             "name": "numpy",
             "buildsystem": "simple",
@@ -575,11 +580,6 @@
                 }
             ]
         },
-        "python3-ipdb.json",
-        "python3-nose2.json",
-        "python3-pre-commit.json",
-        "python3-hotdoc.json",
-        "python3-pylint.json",
         {
             "name": "pitivi",
             "buildsystem": "meson",
