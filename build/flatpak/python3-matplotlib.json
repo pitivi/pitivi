@@ -1,0 +1,128 @@
+{
+    "name": "python3-matplotlib",
+    "buildsystem": "simple",
+    "build-commands": [],
+    "modules": [
+        {
+            "name": "numpy",
+            "buildsystem": "simple",
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
+            "build-commands": [
+                "mkdir -p /app/lib/python3.7/site-packages",
+                "CFLAGS='-L/usr/lib -I/usr/include -I/usr/include/python3.7m/' CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app # Working around linking issues"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.pythonhosted.org/packages/2d/80/1809de155bad674b494248bcfca0e49eb4c5d8bee58f26fe7a0dd45029e2/numpy-1.15.4.zip",
+                    "sha256": "3d734559db35aa3697dadcea492a423118c5c55d176da2f3be9c98d4803fc2a7"
+                }
+            ]
+        },
+        {
+            "name": "pyparsing",
+            "buildsystem": "simple",
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
+            "build-commands": [
+                "python3 setup.py install --prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.pythonhosted.org/packages/d0/09/3e6a5eeb6e04467b737d55f8bba15247ac0876f98fae659e58cd744430c6/pyparsing-2.3.0.tar.gz",
+                    "sha256": "f353aab21fd474459d97b709e527b5571314ee5f067441dc9f88e33eecd96592"
+                }
+            ]
+        },
+        {
+            "name": "cycler",
+            "buildsystem": "simple",
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
+            "build-commands": [
+                "python3 setup.py install --prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.pythonhosted.org/packages/c2/4b/137dea450d6e1e3d474e1d873cd1d4f7d3beed7e0dc973b06e8e10d32488/cycler-0.10.0.tar.gz",
+                    "sha256": "cd7b2d1018258d7247a71425e9f26463dfb444d411c39569972f4ce586b0c9d8"
+                }
+            ]
+        },
+        {
+            "name": "setuptools-scm",
+            "buildsystem": "simple",
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
+            "build-commands": [
+                "python3 setup.py install --prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.pythonhosted.org/packages/09/b4/d148a70543b42ff3d81d57381f33104f32b91f970ad7873f463e75bf7453/setuptools_scm-3.1.0.tar.gz",
+                    "sha256": "1191f2a136b5e86f7ca8ab00a97ef7aef997131f1f6d4971be69a1ef387d8b40"
+                }
+            ]
+        },
+        {
+            "name": "python-dateutil",
+            "buildsystem": "simple",
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
+            "build-commands": [
+                "python3 setup.py install --prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.pythonhosted.org/packages/0e/01/68747933e8d12263d41ce08119620d9a7e5eb72c876a3442257f74490da0/python-dateutil-2.7.5.tar.gz",
+                    "sha256": "88f9287c0174266bb0d8cedd395cfba9c58e87e5ad86b2ce58859bc11be3cf02"
+                }
+            ]
+        },
+        {
+            "name": "kiwisolver",
+            "buildsystem": "simple",
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
+            "build-commands": [
+                "python3 setup.py install --prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.pythonhosted.org/packages/31/60/494fcce70d60a598c32ee00e71542e52e27c978e5f8219fae0d4ac6e2864/kiwisolver-1.0.1.tar.gz",
+                    "sha256": "ce3be5d520b4d2c3e5eeb4cd2ef62b9b9ab8ac6b6fedbaa0e39cdb6f50644278"
+                }
+            ]
+        },
+        {
+            "name": "matplotlib",
+            "buildsystem": "simple",
+            "ensure-writable": [
+                "easy-install.pth",
+                "setuptools.pth"
+            ],
+            "build-commands": [
+                "CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.pythonhosted.org/packages/26/04/8b381d5b166508cc258632b225adbafec49bbe69aa9a4fa1f1b461428313/matplotlib-3.0.3.tar.gz",
+                    "sha256": "e1d33589e32f482d0a7d1957bf473d43341115d40d33f578dad44432e47df7b7"
+                }
+            ]
+        }
+    ]
+}
