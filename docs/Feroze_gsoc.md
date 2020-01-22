@@ -1,4 +1,4 @@
-# Proposal
+# 2011 ― Rendering Presets Proposal
 
 ## What is its ultimate goal?
 
@@ -39,7 +39,7 @@ Presets Suggested : iPod , iPad, PlayStation 3, DVD (NTSC, PAL), HTML5 (
 Theora + Vorbis ), Flash video (for embedding), HD (using mkv -&gt; good
 compression)
 
-Reference : http://developer.pitivi.org/design/Rendering_Profiles.html
+Reference : [design/Rendering_Profiles.md]
 
 ### 2. Upload to video services
 
