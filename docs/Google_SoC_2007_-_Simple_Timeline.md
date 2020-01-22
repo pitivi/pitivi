@@ -1,4 +1,4 @@
-# Google SoC 2007 - Simple Timeline
+# 2007 ― Simple Timeline
 
 This branch of PiTiVi has been superceded by PiTiVi 0.11, which
 incorporates many of these changes. This page is left as a record of
