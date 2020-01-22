@@ -451,10 +451,9 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         self.assertTrue(self.medialibrary._import_warning_infobar.props.visible)
 
     def test_right_click_on_media_library(self):
-        # Initialise mediallibrary widget
         self._custom_set_up()
         mlib = self.medialibrary
 
         # Release click
-        release_event = create_event(Gdk.EventType.BUTTON_RELEASE, button=3)
-        mlib._iconview_button_release_event_cb(iconview=mlib.iconview, event=release_event)
+        event = create_event(Gdk.EventType.BUTTON_RELEASE, button=3)
+        mlib._iconview_button_release_event_cb(mlib.iconview, event)
