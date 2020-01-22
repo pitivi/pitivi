@@ -112,8 +112,8 @@ Therefore, you should proceed like this:
 4.  Find a cool feature you need in Pitivi and tell us. Start making a
     design doc on how you plan to implement it. Feel free to pick
     a project from the list of [GSoC project ideas] we thought about.
-5.  Fill out the [application] and apply officially to the Google's
-    Summer of Code [website].
+5.  Fill out the [application template] and apply officially to the
+    Google's Summer of Code [website].
 
   [our official stance]: http://jeff.ecchi.ca/blog/2014/02/15/applying-for-a-gsoc-project-is-all-about-early-involvement-and-commitment/
   [Being selected as a Summer of Code student]: http://ploum.net/be-selected-student-for-soc/
@@ -121,7 +121,7 @@ Therefore, you should proceed like this:
   [development environment]: HACKING.md
   [Test suite]: Testing.md
   [small bug to fix]: https://gitlab.gnome.org/GNOME/pitivi/issues?label_name%5B%5D=4.+Newcomers
-  [application]: https://wiki.gnome.org/Outreach/SummerOfCode/Students#Fill_out_the_Application
+  [application template]: GSoC_Application.md
   [website]: https://summerofcode.withgoogle.com/
 
 ## Project ideas
