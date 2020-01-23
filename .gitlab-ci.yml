@@ -14,6 +14,10 @@ build:
   artifacts:
     paths:
       - xunit.xml
+  variables:
+    GST_DEBUG_COLOR: 'no'
+    BLACKLIST: >
+      -b tests.test_effects.EffectsPropertiesManagerTest.test_dependent_properties
   script:
     - export BUILDDIR=${HOME}/pitivi
     - export MANIFEST=${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json
@@ -29,7 +33,7 @@ build:
     - flatpak-builder ${FLATPAK_BUILDER_CACHE} --ccache --repo=${CI_PROJECT_DIR}/repo --force-clean app build/flatpak/org.pitivi.Pitivi.json --subject="Rolling update for pitivi master" --body="See ${CI_JOB_URL}"
     - ${RUN_IN_SANDBOX} meson mesonbuild/
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
-    - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH} --logs-dir=${CI_PROJECT_DIR}/tests-logs
+    - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH} --logs-dir=${CI_PROJECT_DIR}/tests-logs ${BLACKLIST}
   cache:
     paths:
     - flatpak-cache
