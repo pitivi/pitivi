@@ -618,6 +618,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.iconview.set_item_orientation(Gtk.Orientation.VERTICAL)
         self.iconview.set_property("has_tooltip", True)
         self.iconview.set_tooltip_column(COL_INFOTEXT)
+
         self.iconview.props.item_padding = PADDING / 2
         self.iconview.props.margin = PADDING / 2
         self.iconview_cursor_pos = None
@@ -625,25 +626,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         cell = Gtk.CellRendererPixbuf()
         self.iconview.pack_start(cell, False)
         self.iconview.add_attribute(cell, "pixbuf", COL_ICON_128)
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
-        cell = Gtk.CellRendererText()
-        cell.props.alignment = Pango.Alignment.CENTER
-        cell.props.xalign = 0.5
-        cell.props.yalign = 0.0
-        cell.props.xpad = 0
-        cell.props.ypad = 0
-        cell.set_property("ellipsize", Pango.EllipsizeMode.END)
-        self.iconview.pack_start(cell, False)
-        self.iconview.add_attribute(cell, "markup", COL_SEARCH_TEXT)
-        cell.set_property("visible", False)  # The Filename in Iconview by default is made invisible to make it visible change this boolean to True
->>>>>>> 3423fc9b... Filename in MediaLibrary IconView hidden
-=======
->>>>>>> 19702385... Removed Filename's in Medialibrary IconView
         self.iconview.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
-
+        
         # The _progressbar that shows up when importing clips
         self._progressbar = Gtk.ProgressBar()
         self._progressbar.set_show_text(True)
