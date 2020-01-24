@@ -636,7 +636,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         cell.set_property("ellipsize", Pango.EllipsizeMode.END)
         self.iconview.pack_start(cell, False)
         self.iconview.add_attribute(cell, "markup", COL_SEARCH_TEXT)
-        cell.set_property("visible", False)  # #The Filename in Iconview by default is made invisible to make it visible change this boolean to True
+        cell.set_property("visible", False)  # The Filename in Iconview by default is made invisible to make it visible change this boolean to True
         self.iconview.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
 
         # The _progressbar that shows up when importing clips
