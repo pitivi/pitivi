@@ -625,17 +625,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         cell = Gtk.CellRendererPixbuf()
         self.iconview.pack_start(cell, False)
         self.iconview.add_attribute(cell, "pixbuf", COL_ICON_128)
-
-        cell = Gtk.CellRendererText()
-        cell.props.alignment = Pango.Alignment.CENTER
-        cell.props.xalign = 0.5
-        cell.props.yalign = 0.0
-        cell.props.xpad = 0
-        cell.props.ypad = 0
-        cell.set_property("ellipsize", Pango.EllipsizeMode.START)
-        self.iconview.pack_start(cell, False)
-        self.iconview.add_attribute(cell, "markup", COL_SEARCH_TEXT)
-
         self.iconview.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
 
         # The _progressbar that shows up when importing clips
