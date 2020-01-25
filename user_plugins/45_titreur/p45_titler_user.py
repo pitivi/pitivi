@@ -19,6 +19,7 @@
 # Boston, MA 02110-1301, USA.from gi.repository import GObject
 import os
 import pickle
+import shutil
 
 import cairo
 from gi.repository import Gdk
@@ -37,6 +38,7 @@ from pitivi.utils.timeline import SELECT
 from pitivi.utils.ui import argb_to_gdk_rgba
 from pitivi.utils.ui import gdk_rgba_to_argb
 from pitivi.utils.user_utils import Alert
+#from pitivi.utils.user_utils import Titles_in_project_directory
 #gi.require_version('Gtk', '3.0')
 #from gi.repository import Gio
 #from gi.repository import Pango
@@ -46,7 +48,6 @@ from pitivi.utils.user_utils import Alert
 #from pitivi.utils.ui import hex_to_rgb
 #from pitivi.utils.ui import unpack_color #def dans le programme à supprimer
 #from pitivi.utils.ui import unpack_color_64
-#import shutil
 #import sys
 
 SEC_1 = Gst.SECOND  # 1000000000  # 1 second in nano seconds
@@ -99,34 +100,34 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         #  Undoing action :
         # http://developer.pitivi.org/Advanced_plugin.html#making-it-shine
         with self.app.action_log.started("titler_rt", toplevel=True):
-            self.starting()
+            self.initialize()
             self.tlc = self.app.gui.editor.timeline_ui  # timeline container
             self.timeline = self.tlc.timeline  # timeline
             clips = sorted(self.timeline.selection, key=lambda x: x.get_start())
-            print("87 Clips selected = ", clips)
+            print("106 Clips selected = ", clips)
             # create the directory of the titles if it does not exist
-            self.titoloj_dirs_create()
+#            self.titoloj_dirs_create()
             if len(clips) == 1:
                 # Copy or update a clip without background
                 clip = clips[0]
                 uri = os.path.basename(clip.get_uri()[7:])  #remove "file://"
-                print("94", clip.get_uri(), uri, uri[:7], uri[7:len(uri) - 4]) # , clip.get_uri()
+                print("113", clip.get_uri(), uri, uri[:7], uri[7:len(uri) - 4]) # , clip.get_uri()
                 name_start = uri[:7]
-                print("96 name_start", name_start)
+                print("115 name_start", name_start)
                 clip_name = clip.get_asset().props.id
-                print("98 clip name", clip_name)
+                print("117 clip name", clip_name)
                 if name_start == "Titolo_":
                     # effacer et écrire
                     self.entry_title.set_opacity(1)
                     self.title_name = name_start + uri[7:len(uri) - 4]
                     self.entry_title.set_text(self.title_name)
 #                    self.titoloj_dirs_create()
-                    print("105 dstart ", os.path.dirname(clip.get_uri()[7:]),
-                          "102 stname ", self.title_name)
+                    print("124 dstart ", os.path.dirname(clip.get_uri()[7:]),
+                          " stname ", self.title_name)
                     self.button_new.set_sensitive(False)
                     self.button_load.set_sensitive(False)
                     self.button_modif.set_sensitive(True)
-                    print("108 buttons ", self.button_new, self.button_load)
+                    print("129 buttons ", self.button_new, self.button_load)
                     self.load = os.path.dirname(clip.get_uri()[7:])
                     self.load_title(os.path.dirname(clip.get_uri()[7:]))
             elif len(clips) == 2:
@@ -141,10 +142,10 @@ class TitlerRT(GObject.Object, Peas.Activatable):
                     clip1 = clips[1]
                 uri = os.path.basename(clip.get_uri()[7:])  #remove "file://"
                 uri1 = os.path.basename(clip1.get_uri()[7:])  #remove "file://"
-                print("118", clip.get_uri(), uri, uri[:7], uri[7:len(uri) - 4]) # , clip.get_uri()
+                print("144", clip.get_uri(), uri, uri[:7], uri[7:len(uri) - 4]) # , clip.get_uri()
                 name_start = uri[:7]
                 name_start1 = uri1[:7]
-                print("121 name_start", name_start, name_start1)
+                print("147 name_start", name_start, name_start1)
 #                clip_name = clip.get_asset().props.id
 #                clip_name1 = clip1.get_asset().props.id
 #                print("98 clip name", clip_name)
@@ -154,12 +155,12 @@ class TitlerRT(GObject.Object, Peas.Activatable):
                     self.title_name = name_start + uri[7:len(uri) - 4]
                     self.entry_title.set_text(self.title_name)
 #                    self.titoloj_dirs_create()
-                    print("131 dstart ", os.path.dirname(clip.get_uri()[7:]),
+                    print("157 dstart ", os.path.dirname(clip.get_uri()[7:]),
                           "102 stname ", self.title_name)
                     self.button_new.set_sensitive(False)
                     self.button_load.set_sensitive(False)
                     self.button_modif.set_sensitive(True)
-                    print("135 buttons ", self.button_new, self.button_load)
+                    print("162 buttons ", self.button_new, self.button_load)
                     self.load = os.path.dirname(clip.get_uri()[7:])
                     self.load_title(os.path.dirname(clip.get_uri()[7:]))
                 else:
@@ -172,7 +173,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
                 dirs = os.listdir(self.titoloj_dirs)
                 add_name = 0
                 self.parcours(dirs, add_name)
-                print("117 stname ", self.title_name, self.title_name[7:])
+                print("175 stname ", self.title_name, self.title_name[7:])
                 self.entry_title.set_text(self.title_name[7:])
                 self.button_new.set_sensitive(True)
                 self.button_load.set_sensitive(True)
@@ -181,7 +182,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
                 Alert("Too clips", "You have to select only one clip.", "service-logout.oga")
 
 
-    def starting(self):
+    def initialize(self):
         # pylint: disable=attribute-defined-outside-init
         self.video_width = self.app.project_manager.current_project.videowidth
         self.video_height = self.app.project_manager.current_project.videoheight
@@ -295,6 +296,9 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         pixbuf_im = im.scale_simple(self.width_title_box, self.height, 2)
         self.pixbuf = pixbuf_im
 
+        self.titoloj_dirs_create()
+
+
     def background_image(self):
         """Exports a snapshot of the current frame as an image file."""
         # from editorperspective def  __save_frame_cb():
@@ -307,17 +311,17 @@ class TitlerRT(GObject.Object, Peas.Activatable):
     def titoloj_dirs_create(self):
         # pylint: disable=attribute-defined-outside-init
         """Create the directory of all the titles."""
-        print("Dir Titoloj", self.project_dir)
+        print("314 Dir Titoloj", self.project_dir)
         self.titoloj_dirs = os.path.join(self.project_dir, "Titoloj")
         if not os.path.isdir(self.titoloj_dirs):
             os.mkdir(self.titoloj_dirs)
-            print("251 ", self.titoloj_dirs)
+            print("318 ", self.titoloj_dirs)
 
 # pylint: disable=unused-argument
     def on_clicked_close(self, widget):
         """If exist, remove the titles non used by the project."""
         # pylint: disable=attribute-defined-outside-init
-        print("282 clicked")
+        print("324 clicked")
 #        list_clip=[]
 #        # Remove all titles of directory out of the project
 #        dirs = os.listdir(self.titoloj_dirs)
@@ -335,7 +339,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
 #                print("rm tr ", dlc, dl_path)
 #                shutil.rmtree(dl_path)
         self.cairo_background = []
-        print("self.cairo_background 288", self.cairo_background)
+        print("338 self.cairo_background ", self.cairo_background)
         self.win.destroy()
 
     def _create_cb(self, widget):
@@ -353,27 +357,27 @@ class TitlerRT(GObject.Object, Peas.Activatable):
                                              self.video_width, self.video_height)
         save_context_bg = cairo.Context(save_surface_bg)
         save_context_bg.scale(self.mult, self.mult)
-        print("316 scb ", self.cairo_background)
+        print("356 scb ", self.cairo_background)
         if self.cairo_background == []:
-            print("318 cb []")
+            print("358 cb []")
         else:
             if self.cairo_background[3] >= 0.0:
                 rgba = self.background_rgba
-            print("rgba 317", rgba)
+            print("362 rgba ", rgba)
             Gdk.cairo_set_source_rgba(save_context_bg, rgba)
             save_context_bg.paint()
         self.show_buffer_bl(self.context)
         # The text is pushed in the new surface without background
         h = self.show_buffer_bl(save_context)
-#        print("hhhhhhh ", h)
+        print("hhhhhhh 368", h)
 
         if self.title_name == "":
             self.title_name = "Titolo_0"
-        print("stn 330 ", self.title_name)
+        print("stn 376 ", self.title_name)
         self.dir_of_title = os.path.join(self.titoloj_dirs, self.title_name)
         if not os.path.isdir(self.dir_of_title):
             os.mkdir(self.dir_of_title)
-            print("334 ok ", self.dir_of_title)
+            print("380 ok ", self.dir_of_title)
 #        else:
 #            print("336 pas ok ", self.dir_of_title)
 #            # Test if the title is a modified title = has a copy
@@ -391,7 +395,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         mocefa_file = os.path.join(self.titoloj_dirs, self.dir_of_title, "titol.mcf")
         # create the directory of the title (dossier, image,
         # texte, buffer_letters, position du titre)
-        print("351 ", self.buffer_letters)
+        print("394 ", self.buffer_letters)
         with open(buf_file, "wb") as buffer_file:
             pickle.dump(self.buffer_letters, buffer_file)
         with open(im_file, "wb") as image_file:
@@ -423,15 +427,15 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         save_context_bg.scale(1, 1)
         self.clip_create(im_file, im_bg, h, rgba)
         self.cairo_background = []
-        print("self.cairo_background 405", self.cairo_background)
+        print("426 self.cairo_background ", self.cairo_background)
         self.win.destroy()
 
     def parcours(self, dirs, add_name):
         # pylint: disable=attribute-defined-outside-init
-        print("stname 390", self.title_name)
+        print("431 stname ", self.title_name)
         for d_r in dirs:
             index_t = d_r[7:]
-            print("index 393 = ", index_t, add_name)
+            print("434 index  = ", index_t, add_name)
             if index_t == self.title_name[7:]:
                 add_name += 1
                 self.title_name = self.title_name[:7] + str(add_name)
@@ -441,29 +445,29 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         add_name = 0
 
     def clip_create(self, im_file, im_bg, h, rgba):
-        print("403 Clip create")
+        print("444 Clip create")
 #        print("bl 351 ", self.buffer_letters)
 #        list_clips = []
         uri_img = "file://" + im_file
         asset = GES.UriClipAsset.request_sync(uri_img)
-        print("408 asset", asset)
+        print("449 asset", asset)
         if asset.is_image():
             dur = int(self.entry_duration.get_text())
-            print("409 dur", dur)
+            print("452 dur", dur)
             if dur > 120:
                 # The title has a duration max of 120 s
                 dur = 120
             clip_duration = dur * Gst.SECOND
-        print("413 asset ", asset, asset.get_id(), asset.get_supported_formats())
+        print("457 asset ", asset, asset.get_id(), asset.get_supported_formats())
         if len(im_bg) > 0:
-            print("415 im_bg", im_bg)
+            print("459 im_bg", im_bg)
             uri_bg = "file://" + im_bg
             asset_bg = GES.UriClipAsset.request_sync(uri_bg)
 #        if asset_bg.is_image():
 ##            Gio.AppInfo.launch_default_for_uri(asset.get_id(), None)
 #            clip_duration = self.app.settings.titleClipLength * Gst.MSECOND
         offset_t = self.timeline.layout.playhead_position
-        print("421 off dur ", offset_t, offset_t + clip_duration)
+        print("466 off dur ", offset_t, offset_t + clip_duration)
         with self.app.action_log.started("add layer 0 1",
                                          finalizing_action=CommitTimelineFinalizingAction(self.app.project_manager.current_project.pipeline)):
             layers = self.timeline.ges_timeline.get_layers()
@@ -471,19 +475,19 @@ class TitlerRT(GObject.Object, Peas.Activatable):
                 offset_t, offset_t + clip_duration)
             if intersecting_clips_0:
                 nl = self.timeline.create_layer(0)
-                print("428 nl layer", nl)
+                print("474 nl layer", nl)
             else:
                 nl = layers[0]
-                print("431 nl layer")
+                print("477 nl layer")
             if len(im_bg) > 0:
                 intersecting_clips_1 = layers[1].get_clips_in_interval(
                     offset_t, offset_t + clip_duration)
                 if intersecting_clips_1:
                     nl_bg = self.timeline.create_layer(1)
-                    print("436 nl_bg layer", nl_bg)
+                    print("483 nl_bg layer", nl_bg)
                 else:
                     nl_bg = layers[1]
-                    print("439 nl_bg layer", nl_bg)
+                    print("486 nl_bg layer", nl_bg)
         with self.app.action_log.started("add asset",
                                          finalizing_action=CommitTimelineFinalizingAction(self.app.project_manager.current_project.pipeline)):
             ges_clip = nl.add_asset(asset, offset_t, 0, clip_duration,
@@ -491,7 +495,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
             if len(im_bg) > 0:
                 ges_clip_bg = nl_bg.add_asset(asset_bg, offset_t, 0,
                                               clip_duration, track_types=asset.get_supported_formats())
-            print("443 ges_clip --------", ges_clip, ges_clip.get_uri())
+            print("494 ges_clip --------", ges_clip, ges_clip.get_uri())
 #        list_clips.append(ges_clip)
 #        self.tlc.insert_clips_on_first_layer(list_clips, position=offset_t)
 #        self.app.gui.editor.timeline_ui.insert_clips_on_first_layer
@@ -567,7 +571,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
             # On choisit un dossier déjà existant
             if response == Gtk.ResponseType.OK:
                 print("Select clicked")
-                print("526 Dossier selectionné : " + dialog.get_filename())
+                print("574 Dossier selectionné : " + dialog.get_filename())
                 # (dossier, image, texte, buffer_letters, position du titre)
                 dir_l = dialog.get_filename()
                 self.load_title(dir_l)
@@ -580,9 +584,27 @@ class TitlerRT(GObject.Object, Peas.Activatable):
 
     def load_title(self, dir_l):
         # pylint: disable=attribute-defined-outside-init
-        print("context 539", self.context, dir)
-        self.load = dir_l
+        print("context 587", self.context, dir_l)
+#        self.load = dir_l
         self.load_buffer = []
+
+        # If you reuse title of another  project
+        # the title is in the directory of the another project
+        # To maintain safe the another project, the title is copied in the open project
+        dir_w = os.path.dirname(dir_l)
+        print("595 dirw", dir_w)
+        if dir_w == self.titoloj_dirs:
+            self.load = dir_l
+        else:
+            # Give a default name to the title
+            dirs = os.listdir(self.titoloj_dirs)
+            add_name = os.path.basename(dir_l)[7:]
+            print("602 addname", add_name)
+            self.parcours(dirs, add_name)
+            print("604 titlename ", self.title_name)
+            shutil.copytree(dir_l, os.path.join(self.titoloj_dirs, self.title_name))
+            self.load = os.path.join(self.titoloj_dirs, self.title_name)
+            print("607 load ", self.load)
         # load the directory of the title (image, texte, buffer_letters,
         # position du titre, fond du titre, annexes)
         txt_file = os.path.join(dir_l, "titol.txt")
@@ -592,8 +614,8 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         mocefa_file = os.path.join(dir_l, "titol.mcf")
         with open(buf_file, "rb") as buffer_file:
             self.load_buffer = pickle.load(buffer_file)
-            print("\nsbl 582", self.buffer_letters, "\n582 ", self.load_buffer)
-        print("583 stb ", self.textbuffer.props.text)
+            print("\nsbl 596", self.buffer_letters, "\n596 ", self.load_buffer)
+        print("597 stb ", self.textbuffer.props.text)
 #        self.title_text = self.textbuffer.props.text
         with open(pos_file, "rb") as position_file:
             pos = pickle.load(position_file)
@@ -614,11 +636,11 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         self.entry_title.set_text(self.title_name[7:])
         self.entry_title.set_opacity(0.5)
         print("context 595", self.context)
-        print("\604 bl + tb + stt", self.buffer_letters,
+        print("\618 bl + tb + stt", self.buffer_letters,
               self.textbuffer.props.text, self.title_text, self.stock_text)
-        print("605 scb ", self.cairo_background)
+        print("620 scb ", self.cairo_background)
         if self.cairo_background == []:
-            print("607 cb []")
+            print("622 cb []")
         else:
             if self.cairo_background[3] >= 0.0:
                 self.background_rgba = Gdk.RGBA()
@@ -626,12 +648,13 @@ class TitlerRT(GObject.Object, Peas.Activatable):
                 self.background_rgba.green = self.cairo_background[1]
                 self.background_rgba.blue = self.cairo_background[2]
                 self.background_rgba.alpha = self.cairo_background[3]
-            print("rgba 612", self.background_rgba.red)
+            print("rgba 630", self.background_rgba.red)
+#        self.show_buffer_bl(self.context)
 
     def _modif_cb(self, widget):
         """Update the initial title."""
         # pylint: disable=attribute-defined-outside-init
-        print("600 Modif")
+        print("635 Modif")
         self.button_new.set_sensitive(True)
         self.button_load.set_sensitive(True)
 
@@ -651,13 +674,13 @@ class TitlerRT(GObject.Object, Peas.Activatable):
                                              self.video_width, self.video_height)
         save_context_bg = cairo.Context(save_surface_bg)
         save_context_bg.scale(self.mult, self.mult)
-        print("619 scb ", self.cairo_background)
+        print("654 scb ", self.cairo_background)
         if self.cairo_background == []:
-            print("621 cb []")
+            print("656 cb []")
         else:
             if self.cairo_background[3] >= 0.0:
                 rgba = self.background_rgba
-            print("rgba 625", rgba)
+            print("660 rgba ", rgba)
             Gdk.cairo_set_source_rgba(save_context_bg, rgba)
             save_context_bg.paint()
         self.show_buffer_bl(self.context)
@@ -668,9 +691,9 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         # The directory of the title is flushed
         self.dir_of_title = self.title_name
         files = os.listdir(os.path.join(self.titoloj_dirs, self.dir_of_title))
-        print("617  Files ", files)
+        print("671  Files ", files)
         for f_f in files:
-            print("619 File ", f_f)
+            print("673 File ", f_f)
             os.remove(os.path.join(self.titoloj_dirs, self.dir_of_title, f_f))
         # The  directory of the title is updated
         im_file = os.path.join(self.titoloj_dirs, self.dir_of_title, self.title_name + ".png")
@@ -681,7 +704,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         mocefa_file = os.path.join(self.titoloj_dirs, self.dir_of_title, "titol.mcf")
         # create the directory of the title (dossier,
         # image, texte, buffer_letters, position du titre)
-        print("351 ", self.buffer_letters)
+        print("684 ", self.buffer_letters)
         with open(buf_file, "wb") as buffer_file:
             pickle.dump(self.buffer_letters, buffer_file)
 #        with open(buf_file, "rb") as buffer_file:
@@ -713,24 +736,24 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         self.win.destroy()
 
     def clip_replace(self, im_file, h, rgba=None, im_bg=""):
-        print("663 Clip replace")
+        print("716 Clip replace")
         clips = sorted(self.timeline.selection, key=lambda x: x.get_start())
         if len(clips) == 1:
             clip = clips[0]
             position = clip.start
             uri_img = "file://" + im_file
         asset = GES.UriClipAsset.request_sync(uri_img)
-        print("669 asset", asset)
+        print("723 asset", asset)
         if asset.is_image():
             dur = int(self.entry_duration.get_text())
-            print("672 dur", dur)
+            print("726 dur", dur)
             if dur > 120:
                 # The title has a duration max of 120 s
                 dur = 120
             clip_duration = dur * Gst.SECOND
-        print("413 asset ", asset, asset.get_id(), asset.get_supported_formats())
+        print("731 asset ", asset, asset.get_id(), asset.get_supported_formats())
         if len(im_bg) > 0:
-            print("679 im_bg", im_bg)
+            print("733 im_bg", im_bg)
             uri_bg = "file://" + im_bg
             asset_bg = GES.UriClipAsset.request_sync(uri_bg)
 #        if asset_bg.is_image():
@@ -738,10 +761,10 @@ class TitlerRT(GObject.Object, Peas.Activatable):
 #            clip_duration = self.app.settings.titleClipLength * Gst.MSECOND
         # The image of the title is removed out the timeline
         #pylint: disable=protected-access
-        self.tlc._deleteSelected(unused_action=None, unused_parameter=None)
+        self.tlc._delete_selected(unused_action=None, unused_parameter=None)
         # Anew image is put on the timeline
         offset_t = position
-        print("421 off dur ", offset_t, offset_t + clip_duration)
+        print("744 off dur ", offset_t, offset_t + clip_duration)
         with self.app.action_log.started("add layer 0 1",
                                          finalizing_action=CommitTimelineFinalizingAction(self.app.project_manager.current_project.pipeline)):
             layers = self.timeline.ges_timeline.get_layers()
@@ -749,19 +772,19 @@ class TitlerRT(GObject.Object, Peas.Activatable):
                                                                    offset_t + clip_duration)
             if intersecting_clips_0:
                 nl = self.timeline.create_layer(0)
-                print("696 nl layer", nl)
+                print("752 nl layer", nl)
             else:
                 nl = layers[0]
-                print("699 nl layer")
+                print("755 nl layer")
             if len(im_bg) > 0:
                 intersecting_clips_1 = layers[1].get_clips_in_interval(offset_t,
                                                                        offset_t + clip_duration)
                 if intersecting_clips_1:
                     nl_bg = self.timeline.create_layer(1)
-                    print("704 nl_bg layer", nl_bg)
+                    print("761 nl_bg layer", nl_bg)
                 else:
                     nl_bg = layers[1]
-                    print("707 nl_bg layer", nl_bg)
+                    print("764 nl_bg layer", nl_bg)
         with self.app.action_log.started("add asset",
                                          finalizing_action=CommitTimelineFinalizingAction(self.app.project_manager.current_project.pipeline)):
             ges_clip = nl.add_asset(asset, offset_t, 0, clip_duration,
@@ -769,7 +792,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
             if len(im_bg) > 0:
                 ges_clip_bg = nl_bg.add_asset(asset_bg, offset_t, 0,
                                               clip_duration, track_types=asset.get_supported_formats())
-            print("713 ges_clip --------", ges_clip, ges_clip.get_uri())
+            print("772 ges_clip --------", ges_clip, ges_clip.get_uri())
         if self.credits_up:
             self.title_vup_move(ges_clip, h)
         if self.credits_down:
@@ -852,7 +875,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
     def draw_event(self, widget, ctx):
         # pylint: disable=attribute-defined-outside-init
         self.context = ctx
-        print("867 s context ", self.context)
+        print("855 s context ", self.context)
         if self.cairo_background == []:  # Image background
             Gdk.cairo_set_source_pixbuf(ctx, self.pixbuf, 0, 0)
         else: #  Color background
@@ -864,7 +887,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
 
     def _text_changed_cb(self, unused_updated_obj):
         print("text changed")
-        print("719 self.textbuffer.get_char_count",
+        print("867 self.textbuffer.get_char_count",
               self.textbuffer.get_char_count(), "stb ", self.textbuffer.props.text)
         self.analyze_text()
         print("text analyzed")
@@ -876,28 +899,28 @@ class TitlerRT(GObject.Object, Peas.Activatable):
     def analyze_text(self):
         """Search to fill the buffer."""
         # pylint: disable=attribute-defined-outside-init
-        print("851 self.textbuffer.get_char_count",\
+        print("879 self.textbuffer.get_char_count",\
               self.textbuffer.get_char_count(), "stb ", self.textbuffer.props.text)
         if self.title_text == "Titre":
             self.buffer_letters = []
             self.show_buffer_bl(self.context)
             self.title_text = ""
         if len(self.stock_text) < self.textbuffer.get_char_count():
-            print("857 Add")
+            print("886 Add")
             # add
             # search the letter name in the text buffer
             index_text = self.textbuffer.props.text.find(self.stock_text)
             if index_text == 0:
-                print("862 Add end")
+                print("891 Add end")
                 # The add is at the end
                 letter_names = self.textbuffer.props.text[len(self.stock_text):]
-                print("\n 865 letter ", letter_names)
+                print("\n 894 letter ", letter_names)
                 if self.buffer_letters == []:
                     color = self.letter_format["color"]
                     bg = self.letter_format["color"]
                     font = self.letter_format["font"]
                 else:  # Take the caracteristics of the last character ef self.stock_text
-                    print("871 len(self.stock_text)", len(self.stock_text))
+                    print("900 len(self.stock_text)", len(self.stock_text))
                     color = self.buffer_letters[len(self.stock_text) - 1]["color"]
                     bg = self.buffer_letters[len(self.stock_text) - 1]["bg"]
                     font = self.buffer_letters[len(self.stock_text) - 1]["font"]
@@ -907,29 +930,29 @@ class TitlerRT(GObject.Object, Peas.Activatable):
                     if self.load == "":  # Take the caracteristics of the last character
                         letter = {"letter_name":l_n, "color":color, "bg":bg, "font":font}
                     else:  # Load from an existant title
-#                        print("881 slb ", self.load_buffer, "i", i_slb)
+#                        print("910 slb ", self.load_buffer, "i", i_slb)
                         color = self.load_buffer[i_slb]["color"]
                         print("Color ", color)
                         bg = self.load_buffer[i_slb]["bg"]
                         font = self.load_buffer[i_slb]["font"]
                         letter = {"letter_name":l_n, "color":color, "bg":bg, "font":font}
-                        print("\n 887 letter ", letter)
+                        print("\n 916 letter ", letter)
                         i_slb += 1
                         # pylint: disable=anomalous-backslash-in-string
-                        print("\889 i", i_slb)
-                    print("\n 890 letter ", letter)
+                        print("\919 i", i_slb)
+                    print("\n 920 letter ", letter)
                     self.buffer_letters.append(letter)
                 if self.load != "":
                     self.load = ""
                 self.title_text = self.textbuffer.props.text
                 self.stock_text = self.textbuffer.props.text
-                print("896 stt", self.stock_text)
+                print("926 stt", self.stock_text)
                 self.show_buffer_bl(self.context)
             elif index_text > 0:
                 # The add is at the start
-                print("900 Add start")
+                print("930 Add start")
                 len_s = len(self.textbuffer.props.text) -len(self.stock_text)
-                print("902 len", len_s)
+                print("932 len", len_s)
                 letter_names = self.textbuffer.props.text[:len_s]
 #                letter_name = self.textbuffer.props.text[0]
                 color = self.buffer_letters[1]["color"]
@@ -938,14 +961,14 @@ class TitlerRT(GObject.Object, Peas.Activatable):
                 # add the letters to the letter buffer
                 for nl in range(len(letter_names)-1, -1, -1):
                     letter = {"letter_name":letter_names[nl], "color":color, "bg":bg, "font":font}
-                    print("letter 911", letter)
+                    print("letter 941", letter)
                     self.buffer_letters.insert(0, letter)
                 self.title_text = self.textbuffer.props.text
                 self.stock_text = self.textbuffer.props.text
                 self.show_buffer_bl(self.context)
             elif index_text == -1:
                 # The add is at the middle
-                print("918 Add middle")
+                print("948 Add middle")
                 i = 0
                 while self.stock_text[i] == self.textbuffer.props.text[i]:
                     i += 1
@@ -962,23 +985,23 @@ class TitlerRT(GObject.Object, Peas.Activatable):
                 for nl in range(i, j + 1):
                     letter = {"letter_name":self.textbuffer.props.text[nl],
                               "color":color, "bg":bg, "font":font}
-                    print("letter 934", letter)
+                    print("letter 965", letter)
                     self.buffer_letters.insert(nl, letter)
                 self.title_text = self.textbuffer.props.text
                 self.stock_text = self.textbuffer.props.text
                 self.show_buffer_bl(self.context)
         elif self.textbuffer.get_char_count() == 0:
-            print("\n937 Vide ")
+            print("\n971 Vide ")
             self.buffer_letters = []
             self.title_text = ""
             self.show_buffer_bl(self.context)
-            print("941 title_text", self.title_text)
+            print("975 title_text", self.title_text)
 #            self.title_text = self.textbuffer.props.text
 #            self.stock_text = self.textbuffer.props.text
 #            self.show_buffer_bl(self.context)
         elif len(self.stock_text) == self.textbuffer.get_char_count():
             # Replace
-            print("947 Replace")
+            print("981 Replace")
             i = 0
             while self.stock_text[i] == self.textbuffer.props.text[i]:
                 i += 1
@@ -995,7 +1018,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
             for nl in range(i, j + 1):
                 letter = {"letter_name":self.textbuffer.props.text[nl],
                           "color":color, "bg":bg, "font":font}
-                print("letter 797", letter)
+                print("letter 998", letter)
                 self.buffer_letters.insert(nl, letter)
             self.title_text = self.textbuffer.props.text
             self.stock_text = self.textbuffer.props.text
@@ -1003,21 +1026,21 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         else:
             # substract
             #  = if len(self.stock_text) > self.textbuffer.get_char_count()
-            print("971 substract")
+            print("1006 substract")
             index_end_of_start, index_start_of_end = 0, 0
 
             # Part to remove
-#            print("lettres buffer 377 = ", self.buffer_letters)
+#            print("lettres buffer 1010 = ", self.buffer_letters)
             index_end_of_start, index_start_of_end = self.part_to_remove()
-#            print("lettres buffer 459 = ", self.buffer_letters)
+#            print("lettres buffer 1012 = ", self.buffer_letters)
 
             # Remove
             if index_end_of_start == index_start_of_end:
-                print("981 index_end_of_start", index_start_of_end)
+                print("1016 index_end_of_start", index_start_of_end)
                 del self.buffer_letters[index_end_of_start]
             else:
                 del self.buffer_letters[index_end_of_start:index_start_of_end + 1]
-#            print("lettre buffer 386= ", self.buffer_letters)
+#            print("lettre buffer 1020= ", self.buffer_letters)
             self.title_text = self.textbuffer.props.text
             self.stock_text = self.textbuffer.props.text
             self.show_buffer_bl(self.context)
@@ -1031,7 +1054,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
             str_buff += i["letter_name"]
         str_text = self.textbuffer.props.text
         diff_str = self.diff_str(str_buff, str_text)
-        print("1081 diff_str", diff_str)
+        print("1034 diff_str", diff_str)
         index_start = diff_str[0]
         index_end = diff_str[1]
         return index_start, index_end
@@ -1104,7 +1127,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
                 self.buffer_letters.append(letter)
             self.stock_text = self.textbuffer.props.text
             self.show_buffer_bl(self.context)
-            print("880 b_l ", self.buffer_letters)
+            print("1107 b_l ", self.buffer_letters)
             # pylint: disable=inconsistent-return-statements
             return
 
@@ -1116,7 +1139,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
             list_x_cr = self.parcours_h_center(cr)
             list_y_cr = self.parcours_v_center(cr)
         for letter_b in self.buffer_letters:
-#            print("rd 247 ", self.buffer_letters)
+#            print("rd 1119 ", self.buffer_letters)
 #            print("col ", letter_b["color"])
             cr.set_source_rgba(letter_b["color"][0], letter_b["color"][1],
                                letter_b["color"][2], letter_b["color"][3])
@@ -1214,6 +1237,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         return line_number
 
 # ################ Modif font, color, background
+    # pylint: disable=invalid-name
     def _font_button_cb(self, widget):
         """Create the font."""
         # pylint: disable=attribute-defined-outside-init
@@ -1255,6 +1279,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
             self.letter_format["font"] = font_desc
             print("self.letter_format ", self.letter_format)
 
+    # pylint: disable=invalid-name
     def _front_text_color_button_cb(self, widget):
         """Create the color."""
         # pylint: disable=attribute-defined-outside-init
@@ -1304,6 +1329,8 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         else:
             self.letter_format["color"] = col
 
+
+    # pylint: disable=invalid-name
     def _background_color_button_cb(self, widget):
         """Create the color of the background of the title.
 
@@ -1549,7 +1576,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         source = ges_clip.find_track_element(None, GES.VideoSource)
         print("source", source)
         source.set_child_property("posy", 10)
-        print("in point out point", source.props.in_point,
+        print("1556 in point out point", source.props.in_point,
               source.props.in_point + source.props.duration)
         res, val = source.get_child_property("posy")
         print("res, val", res, val)
@@ -1639,23 +1666,3 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         keyframe_curve_t._move_keyframe(int(offsets[0][0]), inpoint, 0)
 
 # ################ End of Center move and fade
-
-
-
-    def _update_source_cb(self, updated_obj):
-        """Handles changes in the advanced property widgets at the bottom."""
-        if not self.source:
-            # Nothing to update.
-            return
-
-    def on_clear_clicked(self, widget):
-        start = self.textbuffer.get_start_iter()
-        end = self.textbuffer.get_end_iter()
-        self.textbuffer.remove_all_tags(start, end)
-
-    def argb_to_hex(self, color_int):
-        return hex(color_int)
-
-
-    def do_deactivate(self):
-        self.app.gui.editor.timeline_ui.toolbar.remove(self.button)

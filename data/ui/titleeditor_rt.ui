@@ -133,7 +133,7 @@ Else it will be created automatically</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkButton" id="button_create">
-                <property name="label" translatable="yes">New</property>
+                <property name="label" translatable="yes">Insert</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
