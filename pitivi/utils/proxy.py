@@ -120,7 +120,7 @@ class ProxyManager(GObject.Object, Loggable):
     }
 
     WHITELIST_CONTAINER_CAPS = ["video/quicktime", "application/ogg", "application/xges",
-                                "video/x-matroska", "video/webm", "image/jpeg"]
+                                "video/x-matroska", "video/webm", "image/jpeg", "video/MP2T"]  # https://tools.ietf.org/html/rfc3555#section-4.2.9
     WHITELIST_AUDIO_CAPS = ["audio/mpeg", "audio/x-vorbis",
                             "audio/x-raw", "audio/x-flac",
                             "audio/x-wav"]
@@ -272,6 +272,7 @@ class ProxyManager(GObject.Object, Loggable):
                 # TODO Be smarter about multiple streams
                 audio_stream = info.get_audio_streams()[0]
                 channels = audio_stream.get_channels()
+                print("Channels 275", channels)
                 audio_profile = [
                     profile for profile in encoding_profile.get_profiles()
                     if isinstance(profile, GstPbutils.EncodingAudioProfile)][0]
