@@ -80,7 +80,7 @@ PreferencesDialog.add_toggle_preference('ViewerCenter',
                                         label=_("Center the viewer"),
                                         description=_(
                                             "If check on, the viewer is centered in the Editor window\nafter a restart of Pitivi"))
-# End of Viewer in cent
+# End of Viewer in center
 
 class EditorPerspective(Perspective, Loggable):
     """Pitivi's Editor perspective.
