@@ -19,6 +19,7 @@ from gettext import gettext as _
 
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
+from gi.repository import Gio
 from gi.repository import GObject
 from gi.repository import Gtk
 
@@ -61,6 +62,7 @@ animation: intro-highlighted 1.5s infinite alternate;
 }
 """
 
+
 class InteractiveIntro(GObject.Object):
     """Interactive GUI intro for newcomers."""
 
@@ -72,6 +74,8 @@ class InteractiveIntro(GObject.Object):
         self.intro_button = self.create_intro_button()
         self.tips = self._create_tips()
         self.__setup_css()
+        self.intro_action = Gio.SimpleAction.new("interactive-intro", None)
+        self.intro_action.connect("activate", self.interactive_intro_cb)
 
     def _create_tips(self):
         # pylint: disable=W0212
@@ -109,10 +113,10 @@ class InteractiveIntro(GObject.Object):
         intro_button.props.no_show_all = True
         return intro_button
 
-    def toggle_playback(self):
+    def interactive_intro_cb(self, unused_action, unused_param):
         if self.running:
             self.stop_tour()
-        elif not self.running:
+        else:
             self.show_control_popover()
 
     @property
