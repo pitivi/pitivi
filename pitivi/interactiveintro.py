@@ -87,7 +87,7 @@ class InteractiveIntro(GObject.Object):
                 (self.app.gui.editor.timeline_ui.toolbar, _("Here are your timeline tools"), 3000),
                 (self.app.gui.editor.medialibrary, _("Here you can view your imported media"), 3000),
                 (self.app.gui.editor.medialibrary._import_button, _("From Here you can import your favourite media"), 4000),
-                (self.intro_button, _("For more productivity we have shortcuts for you Just press [ctrl]+F1 to see "), 3000),
+                (self.intro_button, _("For more productivity we have shortcuts for you Just press [ctrl]+F1 to see"), 3000),
                 (self.intro_button, _("For additional Help you can also refer to User Manual provided"), 3000),
                 (self.intro_button, _("Good Bye!"), 2000)
                 ]
