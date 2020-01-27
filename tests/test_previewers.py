@@ -25,6 +25,7 @@ from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import Gst
 
+from pitivi.timeline.previewers import delete_all_files_in_dir
 from pitivi.timeline.previewers import get_wavefile_location_for_uri
 from pitivi.timeline.previewers import Previewer
 from pitivi.timeline.previewers import THUMB_HEIGHT
@@ -170,3 +171,19 @@ class TestThumbnailCache(BaseTestMediaLibrary):
                 thumb_cache = ThumbnailCache(sample_uri)
                 self.assertTrue(Gst.SECOND in thumb_cache)
                 self.assertIsNotNone(thumb_cache[Gst.SECOND])
+
+
+class TestFunctions(BaseTestMediaLibrary):
+    """Tests for the standalone functions."""
+
+    def test_delete_all_files_in_dir(self):
+        """Checks whether files in sub directories are deleted."""
+        with tempfile.TemporaryDirectory() as dir_a, \
+                tempfile.NamedTemporaryFile(dir=dir_a, delete=False), \
+                tempfile.TemporaryDirectory(dir=dir_a) as dir_a_b, \
+                tempfile.NamedTemporaryFile(dir=dir_a_b) as file_a_b1:
+            self.assertEqual(len(os.listdir(dir_a)), 2)
+            self.assertEqual(len(os.listdir(dir_a_b)), 1)
+            delete_all_files_in_dir(dir_a)
+            self.assertEqual(os.listdir(dir_a), [os.path.basename(dir_a_b)])
+            self.assertEqual(os.listdir(dir_a_b), [os.path.basename(file_a_b1.name)])
