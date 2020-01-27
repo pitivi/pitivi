@@ -16,6 +16,7 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Previewers for the timeline."""
 import contextlib
+import hashlib
 import os
 import random
 import sqlite3
@@ -30,11 +31,9 @@ from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.settings import create_dir
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import hash_file
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quantize
 from pitivi.utils.misc import quote_uri
@@ -1070,6 +1069,20 @@ class ThumbnailCache(Loggable):
         """Saves the cache on disk (in the database)."""
         self._db.commit()
         self.log("Saved thumbnail cache file")
+
+
+def delete_all_files_in_dir(uri):
+    """Deletes all files in the specified directory URI."""
+    path = Gst.uri_get_location(uri)
+    for filename in os.scandir(path):
+        file_path = os.path.join(path, filename)
+        if os.path.isfile(file_path) or os.path.islink(file_path):
+            os.unlink(file_path)
+
+
+def gen_filename(uri):
+    """Generates the cache filename for the specified URI."""
+    return uri[uri.rfind("/") + 1:] + hashlib.sha256(uri.encode('utf-8')).hexdigest() + str(os.path.getmtime(uri))
 
 
 def get_wavefile_location_for_uri(uri):
