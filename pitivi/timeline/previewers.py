@@ -16,6 +16,7 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Previewers for the timeline."""
 import contextlib
+import hashlib
 import os
 import random
 import sqlite3
@@ -34,7 +35,6 @@ from pitivi.settings import create_dir
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import hash_file
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quantize
 from pitivi.utils.misc import quote_uri
@@ -1075,6 +1075,32 @@ class ThumbnailCache(Loggable):
         """Saves the cache on disk (in the database)."""
         self._db.commit()
         self.log("Saved thumbnail cache file")
+
+
+def hash_file(uri):
+    """Hashes the first 256KB of the specified file."""
+    sha256 = hashlib.sha256()
+    with open(uri, "rb") as file:
+        for unused in range(1024):
+            chunk = file.read(256)
+            if not chunk:
+                break
+            sha256.update(chunk)
+    return sha256.hexdigest()
+
+
+def delete_all_files_in_dir(path):
+    """Deletes all files in the specified directory path."""
+    print(path)
+    for filename in os.listdir(path):
+        file_path = os.path.join(path, filename)
+        if os.path.isfile(file_path) or os.path.islink(file_path):
+            os.unlink(file_path)
+
+
+def gen_filename(uri):
+    """Generate filename with format filename+hash(uri)+mtime."""
+    return uri[uri.rfind("/") + 1:] + hash_file(uri) + str(os.path.getmtime(uri))
 
 
 def get_wavefile_location_for_uri(uri):
