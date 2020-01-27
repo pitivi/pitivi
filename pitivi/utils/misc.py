@@ -468,3 +468,12 @@ def video_info_get_natural_height(video_info):
         return _get_square_width(video_info)
 
     return video_info.get_height()
+
+
+def delete_all_files_in_dir(path):
+    """Deletes all files in the directory pointed by path parameter."""
+    print(path)
+    for filename in os.listdir(path):
+        file_path = os.path.join(path, filename)
+        if os.path.isfile(file_path) or os.path.islink(file_path):
+            os.unlink(file_path)
