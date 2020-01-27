@@ -16,6 +16,7 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Previewers for the timeline."""
 import contextlib
+import hashlib
 import os
 import random
 import sqlite3
@@ -30,11 +31,9 @@ from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.settings import create_dir
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import hash_file
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quantize
 from pitivi.utils.misc import quote_uri
@@ -941,9 +940,13 @@ class ThumbnailCache(Loggable):
     @staticmethod
     def dbfile_name(uri):
         """Returns the cache file path for the specified URI."""
-        filename = hash_file(Gst.uri_get_location(uri))
-        thumbs_cache_dir = xdg_cache_home(subdir="thumbs")
-        create_dir(thumbs_cache_dir)
+        filename = gen_filename(Gst.uri_get_location(uri), "db")
+        thumbs_cache_dir = os.path.join(xdg_cache_home(), "thumbs/v1")
+
+        if not os.path.exists(thumbs_cache_dir):
+            GLib.idle_add(delete_all_files_in_dir, xdg_cache_home(subdir="thumbs"))
+            create_dir(thumbs_cache_dir)
+
         return os.path.join(thumbs_cache_dir, filename)
 
     @classmethod
@@ -1072,13 +1075,21 @@ class ThumbnailCache(Loggable):
         self.log("Saved thumbnail cache file")
 
 
+def gen_filename(uri, extension):
+    """Generates the cache filename for the specified URI."""
+    return uri[uri.rfind("/") + 1:] + hashlib.sha256(uri.encode('utf-8')).hexdigest() + str(os.path.getmtime(uri)) + "." + extension
+
+
 def get_wavefile_location_for_uri(uri):
     """Computes the URI where the wave.npy file should be stored."""
     if ProxyManager.is_proxy_asset(uri):
         uri = ProxyManager.get_target_uri(uri)
-    filename = hash_file(Gst.uri_get_location(uri)) + ".wave.npy"
-    cache_dir = xdg_cache_home(subdir="waves")
-    create_dir(cache_dir)
+    filename = gen_filename(Gst.uri_get_location(uri), "wave.npy")
+    cache_dir = os.path.join(xdg_cache_home(), "waves/v1")
+
+    if not os.path.exists(cache_dir):
+        GLib.idle_add(delete_all_files_in_dir, xdg_cache_home(subdir="waves"))
+        create_dir(cache_dir)
 
     return os.path.join(cache_dir, filename)
 

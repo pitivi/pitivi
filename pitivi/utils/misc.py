@@ -15,7 +15,6 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
-import hashlib
 import os
 import subprocess
 import threading
@@ -221,18 +220,6 @@ class PathWalker(Thread):
 
     def abort(self):
         self.stopme.set()
-
-
-def hash_file(uri):
-    """Hashes the first 256KB of the specified file."""
-    sha256 = hashlib.sha256()
-    with open(uri, "rb") as file:
-        for unused in range(1024):
-            chunk = file.read(256)
-            if not chunk:
-                break
-            sha256.update(chunk)
-    return sha256.hexdigest()
 
 
 def quantize(value, interval):
