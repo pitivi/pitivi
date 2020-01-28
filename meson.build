@@ -1,9 +1,16 @@
-project('pitivi', 'c', version : '1.90.0.1', meson_version : '>= 0.41.0')
+project('pitivi', 'c', version : '1.90.0.1', meson_version : '>= 0.46.0')
 host_system = host_machine.system()
 
-python = find_program('python3')
+pymod = import('python')
+python = pymod.find_installation(get_option('python'))
+pythonver = python.language_version()
+# Workaround for https://github.com/mesonbuild/meson/issues/5629
+# https://gitlab.freedesktop.org/gstreamer/gst-python/issues/28
+python_dep = dependency('python-@0@-embed'.format(pythonver), version: '>= 3.3', required: false)
+if not python_dep.found()
+  python_dep = python.dependency('python3', version: '>= 3.3')
+endif
 
-python_dep = dependency('python3', version : '>= 3.3')
 if get_option('build-gst')
     subproject('gst-build', default_options: ['enable_python=true',
         'disable_gstreamer_sharp=true', 'disable_rtsp_server=true',
