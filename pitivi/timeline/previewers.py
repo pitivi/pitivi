@@ -30,7 +30,7 @@ from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.settings import get_dir
+from pitivi.settings import create_dir
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
 from pitivi.utils.loggable import Loggable
