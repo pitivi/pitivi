@@ -58,18 +58,13 @@ def get_env_by_type(type_, var):
     return None
 
 
-def get_dir(path, autocreate=True):
-    if autocreate and not os.path.exists(path):
-        os.makedirs(path)
-    return path
-
-
 def xdg_config_home(*subdirs):
     """Gets the directory for storing the user's Pitivi configuration."""
     default_base = os.path.join(GLib.get_user_config_dir(), "pitivi")
     base = os.getenv("PITIVI_USER_CONFIG_DIR", default_base)
     path = os.path.join(base, *subdirs)
-    return get_dir(path, autocreate=True)
+    os.makedirs(path, exist_ok=True)
+    return path
 
 
 def xdg_data_home(*subdirs):
@@ -77,7 +72,8 @@ def xdg_data_home(*subdirs):
     default_base = os.path.join(GLib.get_user_data_dir(), "pitivi")
     base = os.getenv("PITIVI_USER_DATA_DIR", default_base)
     path = os.path.join(base, *subdirs)
-    return get_dir(path, autocreate=True)
+    os.makedirs(path, exist_ok=True)
+    return path
 
 
 def xdg_cache_home(*subdirs):
@@ -85,7 +81,8 @@ def xdg_cache_home(*subdirs):
     default_base = os.path.join(GLib.get_user_cache_dir(), "pitivi")
     base = os.getenv("PITIVI_USER_CACHE_DIR", default_base)
     path = os.path.join(base, *subdirs)
-    return get_dir(path, autocreate=True)
+    os.makedirs(path, exist_ok=True)
+    return path
 
 
 class ConfigError(Exception):
