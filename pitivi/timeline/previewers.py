@@ -30,7 +30,7 @@ from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.settings import get_dir
+from pitivi.settings import create_dir
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
 from pitivi.utils.loggable import Loggable
@@ -941,8 +941,14 @@ class ThumbnailCache(Loggable):
     @staticmethod
     def dbfile_name(uri):
         """Returns the cache file path for the specified URI."""
-        filename = hash_file(Gst.uri_get_location(uri))
-        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
+        filename = gen_filename(Gst.uri_get_location(uri))
+        thumbs_cache_dir = os.path.join(xdg_cache_home(), "thumbs", "v1")
+
+        # Cleanup if ... thumbs/v1 doesn't exist
+        if not os.path.exists(thumbs_cache_dir):
+            GLib.idle_add(delete_all_files_in_dir, os.path.join(xdg_cache_home(), "thumbs"))
+            create_dir(thumbs_cache_dir)
+
         return os.path.join(thumbs_cache_dir, filename)
 
     @classmethod
@@ -1075,8 +1081,13 @@ def get_wavefile_location_for_uri(uri):
     """Computes the URI where the wave.npy file should be stored."""
     if ProxyManager.is_proxy_asset(uri):
         uri = ProxyManager.get_target_uri(uri)
-    filename = hash_file(Gst.uri_get_location(uri)) + ".wave.npy"
-    cache_dir = get_dir(os.path.join(xdg_cache_home(), "waves"))
+    filename = gen_filename(Gst.uri_get_location(uri)) + ".wave.npy"
+    cache_dir = os.path.join(xdg_cache_home(), "waves", "v1")
+
+    # Cleanup if ... waves/v1 doesn't exist
+    if not os.path.exists(cache_dir):
+        GLib.idle_add(delete_all_files_in_dir, os.path.join(xdg_cache_home(), "waves"))
+        create_dir(cache_dir)
 
     return os.path.join(cache_dir, filename)
 

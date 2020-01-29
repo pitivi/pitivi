@@ -41,7 +41,7 @@ from pitivi.medialibrary import AssetThumbnail
 from pitivi.preset import AudioPresetManager
 from pitivi.preset import VideoPresetManager
 from pitivi.render import Encoders
-from pitivi.settings import get_dir
+from pitivi.settings import create_dir
 from pitivi.settings import xdg_cache_home
 from pitivi.timeline.previewers import Previewer
 from pitivi.timeline.previewers import ThumbnailCache
@@ -826,8 +826,8 @@ class Project(Loggable, GES.Project):
     def get_thumb_path(uri, resolution):
         """Returns path of thumbnail of specified resolution in the cache."""
         thumb_hash = md5(quote_uri(uri).encode()).hexdigest()
-        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(),
-                                                "project_thumbs", resolution))
+        thumbs_cache_dir = os.path.join(xdg_cache_home(), "project_thumbs", resolution)
+        create_dir(thumbs_cache_dir)
         return os.path.join(thumbs_cache_dir, thumb_hash) + ".png"
 
     @classmethod
