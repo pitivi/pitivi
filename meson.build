@@ -8,7 +8,7 @@ pythonver = python.language_version()
 # https://gitlab.freedesktop.org/gstreamer/gst-python/issues/28
 python_dep = dependency('python-@0@-embed'.format(pythonver), version: '>= 3.3', required: false)
 if not python_dep.found()
-  python_dep = python.dependency('python3', version: '>= 3.3')
+  python_dep = python.dependency(version: '>= 3.3')
 endif
 
 if get_option('build-gst')
