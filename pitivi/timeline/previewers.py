@@ -942,7 +942,7 @@ class ThumbnailCache(Loggable):
     def dbfile_name(uri):
         """Returns the cache file path for the specified URI."""
         filename = hash_file(Gst.uri_get_location(uri))
-        thumbs_cache_dir = os.path.join(xdg_cache_home(), "thumbs")
+        thumbs_cache_dir = xdg_cache_home(subdir="thumbs")
         create_dir(thumbs_cache_dir)
         return os.path.join(thumbs_cache_dir, filename)
 
@@ -1077,7 +1077,7 @@ def get_wavefile_location_for_uri(uri):
     if ProxyManager.is_proxy_asset(uri):
         uri = ProxyManager.get_target_uri(uri)
     filename = hash_file(Gst.uri_get_location(uri)) + ".wave.npy"
-    cache_dir = os.path.join(xdg_cache_home(), "waves")
+    cache_dir = xdg_cache_home(subdir="waves")
     create_dir(cache_dir)
 
     return os.path.join(cache_dir, filename)
