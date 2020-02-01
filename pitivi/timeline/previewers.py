@@ -1076,6 +1076,13 @@ class ThumbnailCache(Loggable):
         self.log("Saved thumbnail cache file")
 
 
+def delete_all_files_in_dir(path):
+    """Deletes all files in the specified directory path."""
+    for filename in os.scandir(path):
+        if filename.is_file() or filename.is_symlink():
+            os.unlink(filename.path)
+
+
 def gen_filename(uri, extension):
     """Generates the cache filename for the specified URI."""
     return uri[uri.rfind("/") + 1:] + hashlib.sha256(uri.encode('utf-8')).hexdigest() + str(os.path.getmtime(uri)) + "." + extension
