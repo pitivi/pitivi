@@ -39,8 +39,7 @@ class ShortcutsManager(GObject.Object):
         self.group_actions = {}
         self.default_accelerators = {}
         self.titles = {}
-        self.config_path = os.path.sep.join([xdg_config_home(),
-                                             "shortcuts.conf"])
+        self.config_path = os.path.join(xdg_config_home(), "shortcuts.conf")
         self.__loaded_actions = list(self.__load())
 
     @property
