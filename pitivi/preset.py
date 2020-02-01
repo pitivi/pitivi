@@ -425,7 +425,7 @@ class VideoPresetManager(PresetManager):
 
     def __init__(self, system):
         default_path = get_videopresets_dir()
-        user_path = os.path.join(xdg_data_home(), 'video_presets')
+        user_path = xdg_data_home("video_presets")
         PresetManager.__init__(self, default_path, user_path, system)
 
     def _deserialize_preset(self, parser):
@@ -461,7 +461,7 @@ class AudioPresetManager(PresetManager):
 
     def __init__(self, system):
         default_path = get_audiopresets_dir()
-        user_path = os.path.join(xdg_data_home(), 'audio_presets')
+        user_path = xdg_data_home("audio_presets")
         PresetManager.__init__(self, default_path, user_path, system)
 
     def _deserialize_preset(self, parser):

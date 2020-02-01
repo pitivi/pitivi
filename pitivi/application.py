@@ -32,7 +32,6 @@ from pitivi.effects import EffectsManager
 from pitivi.mainwindow import MainWindow
 from pitivi.pluginmanager import PluginManager
 from pitivi.project import ProjectManager
-from pitivi.settings import get_dir
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
 from pitivi.shortcuts import ShortcutsManager
@@ -247,7 +246,7 @@ class Pitivi(Gtk.Application, Loggable):
         if 'PITIVI_SCENARIO_FILE' in os.environ:
             scenario_path = os.environ['PITIVI_SCENARIO_FILE']
         else:
-            cache_dir = get_dir(os.path.join(xdg_cache_home(), "scenarios"))
+            cache_dir = xdg_cache_home("scenarios")
             scenario_name = str(time.strftime("%Y%m%d-%H%M%S"))
             if project_path:
                 scenario_name += os.path.splitext(project_path.replace(os.sep, "_"))[0]

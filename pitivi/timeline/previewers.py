@@ -30,7 +30,6 @@ from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.settings import get_dir
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
 from pitivi.utils.loggable import Loggable
@@ -942,7 +941,7 @@ class ThumbnailCache(Loggable):
     def dbfile_name(uri):
         """Returns the cache file path for the specified URI."""
         filename = hash_file(Gst.uri_get_location(uri))
-        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
+        thumbs_cache_dir = xdg_cache_home("thumbs")
         return os.path.join(thumbs_cache_dir, filename)
 
     @classmethod
@@ -1076,7 +1075,7 @@ def get_wavefile_location_for_uri(uri):
     if ProxyManager.is_proxy_asset(uri):
         uri = ProxyManager.get_target_uri(uri)
     filename = hash_file(Gst.uri_get_location(uri)) + ".wave.npy"
-    cache_dir = get_dir(os.path.join(xdg_cache_home(), "waves"))
+    cache_dir = xdg_cache_home("waves")
 
     return os.path.join(cache_dir, filename)
 
