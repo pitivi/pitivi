@@ -31,6 +31,7 @@ from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 
+from pitivi.settings import create_dir
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
 from pitivi.utils.loggable import Loggable
@@ -1073,6 +1074,13 @@ class ThumbnailCache(Loggable):
         """Saves the cache on disk (in the database)."""
         self._db.commit()
         self.log("Saved thumbnail cache file")
+
+
+def delete_all_files_in_dir(path):
+    """Deletes all files in the specified directory path."""
+    for filename in os.scandir(path):
+        if filename.is_file() or filename.is_symlink():
+            os.unlink(filename.path)
 
 
 def gen_filename(uri, extension):
