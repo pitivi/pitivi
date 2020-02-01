@@ -942,11 +942,11 @@ class ThumbnailCache(Loggable):
     def dbfile_name(uri):
         """Returns the cache file path for the specified URI."""
         filename = gen_filename(Gst.uri_get_location(uri))
-        thumbs_cache_dir = os.path.join(xdg_cache_home(), "thumbs", "v1")
+        thumbs_cache_dir = xdg_cache_home(subdir="thumbs/v1")
 
         # Cleanup if ... thumbs/v1 doesn't exist
         if not os.path.exists(thumbs_cache_dir):
-            GLib.idle_add(delete_all_files_in_dir, os.path.join(xdg_cache_home(), "thumbs"))
+            GLib.idle_add(delete_all_files_in_dir, xdg_cache_home(subdir="thumbs"))
             create_dir(thumbs_cache_dir)
 
         return os.path.join(thumbs_cache_dir, filename)
@@ -1082,11 +1082,11 @@ def get_wavefile_location_for_uri(uri):
     if ProxyManager.is_proxy_asset(uri):
         uri = ProxyManager.get_target_uri(uri)
     filename = gen_filename(Gst.uri_get_location(uri)) + ".wave.npy"
-    cache_dir = os.path.join(xdg_cache_home(), "waves", "v1")
+    cache_dir = xdg_cache_home(subdir="waves/v1")
 
     # Cleanup if ... waves/v1 doesn't exist
     if not os.path.exists(cache_dir):
-        GLib.idle_add(delete_all_files_in_dir, os.path.join(xdg_cache_home(), "waves"))
+        GLib.idle_add(delete_all_files_in_dir, xdg_cache_home(subdir="waves"))
         create_dir(cache_dir)
 
     return os.path.join(cache_dir, filename)

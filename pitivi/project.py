@@ -826,7 +826,7 @@ class Project(Loggable, GES.Project):
     def get_thumb_path(uri, resolution):
         """Returns path of thumbnail of specified resolution in the cache."""
         thumb_hash = md5(quote_uri(uri).encode()).hexdigest()
-        thumbs_cache_dir = os.path.join(xdg_cache_home(), "project_thumbs", resolution)
+        thumbs_cache_dir = xdg_cache_home(subdir="project_thumbs/{}".format(resolution))
         create_dir(thumbs_cache_dir)
         return os.path.join(thumbs_cache_dir, thumb_hash) + ".png"
 
