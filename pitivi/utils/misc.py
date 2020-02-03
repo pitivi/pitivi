@@ -169,6 +169,8 @@ def quote_uri(uri):
 
     Does not touch the file:/// part.
     """
+    uri = uri.replace('%00', '')
+
     # Split off the "file:///" part, if present.
     parts = urlsplit(uri, allow_fragments=False)
     # Make absolutely sure the string is unquoted before quoting again!
