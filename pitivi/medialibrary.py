@@ -1364,6 +1364,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         if len(assets) == len(image_assets):
             return menu_model, action_group
 
+        video_streams = []
+        for asset in assets:
+            video_streams += [
+                stream_info
+                for stream_info in asset.get_info().get_stream_list()
+                if isinstance(stream_info, GstPbutils.DiscovererVideoInfo)]
+
         proxies = [asset.get_proxy_target() for asset in assets
                    if self.app.proxy_manager.is_proxy_asset(asset)]
         hq_proxies = [asset.get_proxy_target() for asset in assets
@@ -1449,14 +1456,15 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             menu_model.append(text, "assets.%s" %
                               action.get_name().replace(" ", "."))
 
-            action = Gio.SimpleAction.new("use-scaled-proxies", None)
-            action.connect("activate", self.__use_scaled_proxies_cb)
-            action_group.insert(action)
-            text = ngettext("Use Scaled Proxy for selected asset",
-                            "Use Scaled Proxies for selected assets", len(assets))
+            if len(video_streams) != 0:
+                action = Gio.SimpleAction.new("use-scaled-proxies", None)
+                action.connect("activate", self.__use_scaled_proxies_cb)
+                action_group.insert(action)
+                text = ngettext("Use Scaled Proxy for selected asset",
+                                "Use Scaled Proxies for selected assets", len(assets))
 
-            menu_model.append(text, "assets.%s" %
-                              action.get_name().replace(" ", "."))
+                menu_model.append(text, "assets.%s" %
+                                  action.get_name().replace(" ", "."))
 
         return menu_model, action_group
 
