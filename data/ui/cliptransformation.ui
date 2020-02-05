@@ -3,6 +3,18 @@
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkActionGroup" id="actiongroup1"/>
+  <object class="GtkAdjustment" id="duration_adjustment">
+    <property name="lower">-9999999999</property>
+    <property name="upper">9999999999</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="end_adjustment">
+    <property name="lower">-9999999999</property>
+    <property name="upper">9999999999</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkAdjustment" id="height_adjustment">
     <property name="lower">-9999999999</property>
     <property name="upper">9999999999</property>
@@ -21,6 +33,12 @@
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="position_y_adjustment">
+    <property name="lower">-9999999999</property>
+    <property name="upper">9999999999</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="start_adjustment">
     <property name="lower">-9999999999</property>
     <property name="upper">9999999999</property>
     <property name="step_increment">1</property>
@@ -246,6 +264,7 @@
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="halign">end</property>
+        <property name="adjustment">start_adjustment</property>
         <property name="numeric">True</property>
       </object>
       <packing>
@@ -282,6 +301,7 @@
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="halign">end</property>
+        <property name="adjustment">end_adjustment</property>
         <property name="numeric">True</property>
       </object>
       <packing>
@@ -295,6 +315,7 @@
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="halign">end</property>
+        <property name="adjustment">duration_adjustment</property>
         <property name="numeric">True</property>
       </object>
       <packing>
