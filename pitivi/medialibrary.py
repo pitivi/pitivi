@@ -1456,7 +1456,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             menu_model.append(text, "assets.%s" %
                               action.get_name().replace(" ", "."))
 
-            if len(video_streams) != 0:
+            if video_streams:
                 action = Gio.SimpleAction.new("use-scaled-proxies", None)
                 action.connect("activate", self.__use_scaled_proxies_cb)
                 action_group.insert(action)
