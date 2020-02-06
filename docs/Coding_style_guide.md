@@ -6,14 +6,20 @@ short-description: Writing code that looks consistent
 
 The code must be easy to understand, so it should look consistent.
 
-When entering the development environment, a git
-[pre-commit hook](https://gitlab.gnome.org/GNOME/pitivi/blob/master/pre-commit.hook)
-is set up on your local repo. When you create a commit, the hook
-performs some
-[lightweight checks](https://gitlab.gnome.org/GNOME/pitivi/blob/master/.pre-commit-config.yaml)
-and at the end runs
-[pylint](https://gitlab.gnome.org/GNOME/pitivi/blob/master/pylint.rc)
-in the sandbox to check for all kinds of errors.
+When entering the development environment, a [git pre-commit
+hook](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) is set
+up on your local repo. When you create a commit, the
+[hook](https://gitlab.gnome.org/GNOME/pitivi/blob/master/pre-commit.hook)
+runs the `pre-commit` tool which:
+
+- performs some [lightweight
+checks](https://gitlab.gnome.org/GNOME/pitivi/blob/master/.pre-commit-config.yaml)
+
+- runs [flake8](https://gitlab.com/pycqa/flake8) to check the code style
+
+- runs
+[pylint](https://gitlab.gnome.org/GNOME/pitivi/blob/master/pylint.rc) in
+the sandbox to check for all kinds of errors.
 
 We rely on the [Python Style Guide PEP-8](https://www.python.org/dev/peps/pep-0008/)
 
