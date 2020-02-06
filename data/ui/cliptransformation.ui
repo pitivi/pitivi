@@ -297,7 +297,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkSpinButton">
+      <object class="GtkSpinButton" id="end_spinbtn">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="halign">end</property>
@@ -311,7 +311,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkSpinButton">
+      <object class="GtkSpinButton" id="duration_spinbtn">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="halign">end</property>
