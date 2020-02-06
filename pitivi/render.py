@@ -26,6 +26,7 @@ from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
+from gi.repository.GES import Effect
 
 from pitivi import configure
 from pitivi.check import MISSING_SOFT_DEPS
@@ -952,6 +953,15 @@ class RenderDialog(Loggable):
         except GLib.Error as e:
             self.warning("GSound failed to play: %s", e)
 
+    def __remove_preview_effect_values(self):
+        for clip in self.project.ges_timeline.ui.clips():
+            for entry in clip.get_children(False):
+                if (isinstance(entry, Effect) and entry.get_property("bin-description") == "frei0r-filter-3-point-color-balance"):
+                    entry.set_child_property("split-preview", False)
+                    # We expect only on instance of this effect per clip,
+                    # so will break since we found it.
+                    break
+
     def _asset_replacement(self, clip):
         if not isinstance(clip, GES.UriClip):
             return None
@@ -1024,6 +1034,7 @@ class RenderDialog(Loggable):
     def _render_button_clicked_cb(self, unused_button):
         """Starts the rendering process."""
         self.__replace_proxies()
+        self.__remove_preview_effect_values()
         self.outfile = os.path.join(self.filebutton.get_uri(),
                                     self.fileentry.get_text())
         self.progress = RenderingProgressDialog(self.app, self)
