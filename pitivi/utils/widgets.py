@@ -1115,6 +1115,12 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 return self.properties[prop]
         return None
 
+    def get_widget_of_uncontrolled_prop(self, prop_name):
+        for prop in self.uncontrolled_properties:
+            if prop.name == prop_name:
+                return prop, self.uncontrolled_properties[prop]
+        return None, None
+
 
 class GstElementSettingsDialog(Loggable):
     """Dialog window for viewing/modifying properties of a Gst.Element."""
