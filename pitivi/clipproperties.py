@@ -80,6 +80,10 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         transformation_expander.set_vexpand(False)
         vbox.pack_start(transformation_expander, False, False, 0)
 
+        trimming_expander = TrimmingProperties(app)
+        trimming_expander.set_vexpand(False)
+        vbox.pack_start(trimming_expander, False, False, 0)
+
         self.effect_expander = EffectProperties(app, self)
         self.effect_expander.set_vexpand(False)
         vbox.pack_start(self.effect_expander, False, False, 0)
@@ -819,6 +823,340 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 return
         else:
             with self.app.action_log.started("Transformation property change",
+                                             finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                             toplevel=True):
+                self.source.set_child_property(prop, value)
+
+    def __setup_spin_button(self, widget_name, property_name):
+        """Creates a SpinButton for editing a property value."""
+        spinbtn = self.builder.get_object(widget_name)
+        handler_id = spinbtn.connect("value-changed", self._on_value_changed_cb, property_name)
+        disable_scroll(spinbtn)
+        self.spin_buttons[property_name] = spinbtn
+        self.spin_buttons_handler_ids[property_name] = handler_id
+
+    def _on_value_changed_cb(self, spinbtn, prop):
+        if not self.source:
+            return
+
+        value = spinbtn.get_value()
+
+        res, cvalue = self.__get_source_property(prop)
+        if not res:
+            return
+
+        if value != cvalue:
+            self.__set_prop(prop, value)
+            self.app.gui.editor.viewer.overlay_stack.update(self.source)
+
+    def __set_source(self, source):
+        if self.source:
+            try:
+                self.source.disconnect_by_func(self.__source_property_changed_cb)
+                disconnect_all_by_func(self.source, self._control_bindings_changed)
+            except TypeError:
+                pass
+        self.source = source
+        if self.source:
+            self.__update_control_bindings()
+            for prop in self.spin_buttons:
+                self.__update_spin_btn(prop)
+            self.__update_keyframes_ui()
+            self.source.connect("deep-notify", self.__source_property_changed_cb)
+            self.source.connect("control-binding-added", self._control_bindings_changed)
+            self.source.connect("control-binding-removed", self._control_bindings_changed)
+
+    def _selection_changed_cb(self, unused_timeline):
+        if len(self._selection) == 1:
+            clip = list(self._selection)[0]
+            source = clip.find_track_element(None, GES.VideoSource)
+            if source:
+                self._selected_clip = clip
+                self.__set_source(source)
+                self.app.gui.editor.viewer.overlay_stack.select(source)
+                self.show()
+                return
+
+        # Deselect
+        if self._selected_clip:
+            self._selected_clip = None
+            self._project.pipeline.commit_timeline()
+        self.__set_source(None)
+        self.hide()
+
+
+class TrimmingProperties(Gtk.Expander, Loggable):
+    """Widget for configuring the placement and size of the clip."""
+
+    __signals__ = {
+        'selection-changed': []}
+
+    def __init__(self, app):
+        Gtk.Expander.__init__(self)
+        Loggable.__init__(self)
+        self.app = app
+        self._project = None
+        self._selection = None
+        self.source = None
+        self._selected_clip = None
+        self.spin_buttons = {}
+        self.spin_buttons_handler_ids = {}
+        self.set_label(_("Trimming"))
+
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(os.path.join(get_ui_dir(),
+                                                "cliptrimming.ui"))
+        self.__control_bindings = {}
+        # Used to make sure self.__control_bindings_changed doesn't get called
+        # when bindings are changed from this class
+        self.__own_bindings_change = False
+        # self.add(self.builder.get_object("trimming_box"))
+        self._init_buttons()
+        self.show_all()
+        self.hide()
+
+        self.app.project_manager.connect_after(
+            "new-project-loaded", self._new_project_loaded_cb)
+        self.app.project_manager.connect_after(
+            "project-closed", self.__project_closed_cb)
+
+    def _new_project_loaded_cb(self, unused_app, project):
+        if self._selection is not None:
+            self._selection.disconnect_by_func(self._selection_changed_cb)
+            self._selection = None
+        if self._project:
+            self._project.pipeline.disconnect_by_func(self._position_cb)
+
+        self._project = project
+        if project:
+            self._selection = project.ges_timeline.ui.selection
+            self._selection.connect('selection-changed', self._selection_changed_cb)
+            self._project.pipeline.connect("position", self._position_cb)
+
+    def __project_closed_cb(self, unused_project_manager, unused_project):
+        self._project = None
+
+    def _init_buttons(self):
+        clear_button = self.builder.get_object("clear_button")
+        clear_button.connect("clicked", self._default_values_cb)
+
+        self._activate_keyframes_btn = self.builder.get_object("activate_keyframes_button")
+        self._activate_keyframes_btn.connect("toggled", self.__show_keyframes_toggled_cb)
+
+        self._next_keyframe_btn = self.builder.get_object("next_keyframe_button")
+        self._next_keyframe_btn.connect("clicked", self.__go_to_keyframe_cb, True)
+        self._next_keyframe_btn.set_sensitive(False)
+
+        self._prev_keyframe_btn = self.builder.get_object("prev_keyframe_button")
+        self._prev_keyframe_btn.connect("clicked", self.__go_to_keyframe_cb, False)
+        self._prev_keyframe_btn.set_sensitive(False)
+
+        self.__setup_spin_button("xpos_spinbtn", "posx")
+        self.__setup_spin_button("ypos_spinbtn", "posy")
+
+        self.__setup_spin_button("width_spinbtn", "width")
+        self.__setup_spin_button("height_spinbtn", "height")
+
+    def __get_keyframes_timestamps(self):
+        keyframes_ts = []
+        for prop in ["posx", "posy", "width", "height"]:
+            prop_keyframes = self.__control_bindings[prop].props.control_source.get_all()
+            keyframes_ts.extend([keyframe.timestamp for keyframe in prop_keyframes])
+
+        return sorted(set(keyframes_ts))
+
+    def __go_to_keyframe_cb(self, unused_button, next_keyframe):
+        assert self.__control_bindings
+        start = self.source.props.start
+        in_point = self.source.props.in_point
+        pipeline = self._project.pipeline
+        position = pipeline.get_position() - start + in_point
+        keyframes_ts = self.__get_keyframes_timestamps()
+        if next_keyframe:
+            i = bisect.bisect_right(keyframes_ts, position)
+        else:
+            i = bisect.bisect_left(keyframes_ts, position) - 1
+        i = max(0, min(i, len(keyframes_ts) - 1))
+        seekval = keyframes_ts[i] + start - in_point
+        pipeline.simple_seek(seekval)
+
+    def __show_keyframes_toggled_cb(self, unused_button):
+        if self._activate_keyframes_btn.props.active:
+            self.__set_control_bindings()
+        self.__update_keyframes_ui()
+
+    def __update_keyframes_ui(self):
+        if self.__source_uses_keyframes():
+            self._activate_keyframes_btn.props.label = "◆"
+        else:
+            self._activate_keyframes_btn.props.label = "◇"
+            self._activate_keyframes_btn.props.active = False
+
+        if not self._activate_keyframes_btn.props.active:
+            self._prev_keyframe_btn.set_sensitive(False)
+            self._next_keyframe_btn.set_sensitive(False)
+            if self.__source_uses_keyframes():
+                self._activate_keyframes_btn.set_tooltip_text(_("Show keyframes"))
+            else:
+                self._activate_keyframes_btn.set_tooltip_text(_("Activate keyframes"))
+            self.source.ui_element.show_default_keyframes()
+        else:
+            self._prev_keyframe_btn.set_sensitive(True)
+            self._next_keyframe_btn.set_sensitive(True)
+            self._activate_keyframes_btn.set_tooltip_text(_("Hide keyframes"))
+            self.source.ui_element.show_multiple_keyframes(
+                list(self.__control_bindings.values()))
+
+    def __update_control_bindings(self):
+        self.__control_bindings = {}
+        if self.__source_uses_keyframes():
+            self.__set_control_bindings()
+
+    def __source_uses_keyframes(self):
+        if self.source is None:
+            return False
+
+        for prop in ["posx", "posy", "width", "height"]:
+            binding = self.source.get_control_binding(prop)
+            if binding is None:
+                return False
+
+        return True
+
+    def __remove_control_bindings(self):
+        for propname, binding in self.__control_bindings.items():
+            control_source = binding.props.control_source
+            # control_source.unset_all() can't be used here as it doesn't emit
+            # the 'value-removed' signal, so the undo system wouldn't notice
+            # the removed keyframes
+            keyframes_ts = [keyframe.timestamp for keyframe in control_source.get_all()]
+            for ts in keyframes_ts:
+                control_source.unset(ts)
+            self.__own_bindings_change = True
+            self.source.remove_control_binding(propname)
+            self.__own_bindings_change = False
+        self.__control_bindings = {}
+
+    def __set_control_bindings(self):
+        adding_kfs = not self.__source_uses_keyframes()
+
+        if adding_kfs:
+            self.app.action_log.begin("Trimming properties keyframes activate",
+                                      toplevel=True)
+
+        for prop in ["posx", "posy", "width", "height"]:
+            binding = self.source.get_control_binding(prop)
+
+            if not binding:
+                control_source = GstController.InterpolationControlSource()
+                control_source.props.mode = GstController.InterpolationMode.LINEAR
+                self.__own_bindings_change = True
+                self.source.set_control_source(control_source, prop, "direct-absolute")
+                self.__own_bindings_change = False
+                self.__set_default_keyframes_values(control_source, prop)
+
+                binding = self.source.get_control_binding(prop)
+            self.__control_bindings[prop] = binding
+
+        if adding_kfs:
+            self.app.action_log.commit("Trimming properties keyframes activate")
+
+    def __set_default_keyframes_values(self, control_source, prop):
+        res, val = self.source.get_child_property(prop)
+        assert res
+        control_source.set(self.source.props.in_point, val)
+        control_source.set(self.source.props.in_point + self.source.props.duration, val)
+
+    def _default_values_cb(self, unused_widget):
+        with self.app.action_log.started("Trimming properties reset default",
+                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                         toplevel=True):
+            if self.__source_uses_keyframes():
+                self.__remove_control_bindings()
+
+            for prop in ["posx", "posy", "width", "height"]:
+                self.source.set_child_property(prop, self.source.ui.default_position[prop])
+
+        self.__update_keyframes_ui()
+
+    def __get_source_property(self, prop):
+        if self.__source_uses_keyframes():
+            try:
+                position = self._project.pipeline.get_position()
+                start = self.source.props.start
+                in_point = self.source.props.in_point
+                duration = self.source.props.duration
+
+                # If the position is outside of the clip, take the property
+                # value at the start/end (whichever is closer) of the clip.
+                source_position = max(0, min(position - start, duration - 1)) + in_point
+                value = self.__control_bindings[prop].get_value(source_position)
+                res = value is not None
+                return res, value
+            except PipelineError:
+                pass
+
+        return self.source.get_child_property(prop)
+
+    def _position_cb(self, unused_pipeline, unused_position):
+        if not self.__source_uses_keyframes():
+            return
+        for prop in ["posx", "posy", "width", "height"]:
+            self.__update_spin_btn(prop)
+        # Keep the overlay stack in sync with the spin buttons values
+        self.app.gui.editor.viewer.overlay_stack.update(self.source)
+
+    def __source_property_changed_cb(self, unused_source, unused_element, param):
+        self.__update_spin_btn(param.name)
+
+    def __update_spin_btn(self, prop):
+        assert self.source
+
+        try:
+            spin = self.spin_buttons[prop]
+            spin_handler_id = self.spin_buttons_handler_ids[prop]
+        except KeyError:
+            return
+
+        res, value = self.__get_source_property(prop)
+        assert res
+        if spin.get_value() != value:
+            # Make sure self._on_value_changed_cb doesn't get called here. If that
+            # happens, we might have unintended keyframes added.
+            with spin.handler_block(spin_handler_id):
+                spin.set_value(value)
+
+    def _control_bindings_changed(self, unused_track_element, unused_binding):
+        if self.__own_bindings_change:
+            # Do nothing if the change occurred from this class
+            return
+
+        self.__update_control_bindings()
+        self.__update_keyframes_ui()
+
+    def __set_prop(self, prop, value):
+        assert self.source
+
+        if self.__source_uses_keyframes():
+            try:
+                position = self._project.pipeline.get_position()
+                start = self.source.props.start
+                in_point = self.source.props.in_point
+                duration = self.source.props.duration
+                if position < start or position > start + duration:
+                    return
+                source_position = position - start + in_point
+
+                with self.app.action_log.started(
+                        "Trimming property change",
+                        finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                        toplevel=True):
+                    self.__control_bindings[prop].props.control_source.set(source_position, value)
+            except PipelineError:
+                self.warning("Could not get pipeline position")
+                return
+        else:
+            with self.app.action_log.started("Trimming property change",
                                              finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                              toplevel=True):
                 self.source.set_child_property(prop, value)
