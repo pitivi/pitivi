@@ -58,31 +58,31 @@ def get_env_by_type(type_, var):
     return None
 
 
-def get_dir(path, autocreate=True):
-    if autocreate and not os.path.exists(path):
-        os.makedirs(path)
+def xdg_config_home(*subdirs):
+    """Gets the directory for storing the user's Pitivi configuration."""
+    default_base = os.path.join(GLib.get_user_config_dir(), "pitivi")
+    base = os.getenv("PITIVI_USER_CONFIG_DIR", default_base)
+    path = os.path.join(base, *subdirs)
+    os.makedirs(path, exist_ok=True)
     return path
 
 
-def xdg_config_home(autocreate=True):
-    """Gets the directory for storing the user's Pitivi configuration."""
-    default = os.path.join(GLib.get_user_config_dir(), "pitivi")
-    path = os.getenv("PITIVI_USER_CONFIG_DIR", default)
-    return get_dir(path, autocreate)
-
-
-def xdg_data_home(autocreate=True):
+def xdg_data_home(*subdirs):
     """Gets the directory for storing the user's data: presets, plugins, etc."""
-    default = os.path.join(GLib.get_user_data_dir(), "pitivi")
-    path = os.getenv("PITIVI_USER_DATA_DIR", default)
-    return get_dir(path, autocreate)
+    default_base = os.path.join(GLib.get_user_data_dir(), "pitivi")
+    base = os.getenv("PITIVI_USER_DATA_DIR", default_base)
+    path = os.path.join(base, *subdirs)
+    os.makedirs(path, exist_ok=True)
+    return path
 
 
-def xdg_cache_home(autocreate=True):
+def xdg_cache_home(*subdirs):
     """Gets the Pitivi cache directory."""
-    default = os.path.join(GLib.get_user_cache_dir(), "pitivi")
-    path = os.getenv("PITIVI_USER_CACHE_DIR", default)
-    return get_dir(path, autocreate)
+    default_base = os.path.join(GLib.get_user_cache_dir(), "pitivi")
+    base = os.getenv("PITIVI_USER_CACHE_DIR", default_base)
+    path = os.path.join(base, *subdirs)
+    os.makedirs(path, exist_ok=True)
+    return path
 
 
 class ConfigError(Exception):
