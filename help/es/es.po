@@ -5,13 +5,13 @@
 # Jorge González <jorgegonz@svn.gnome.org>, 2011.
 # Sylvia Sánchez <LailahFSF@gmail.com>, 2011.
 # Milagros Alessandra Infante Montero <maim92@gmail.com>, 2012, 2013, 2014.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011-2019.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011-2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2019-08-29 08:01+0000\n"
-"PO-Revision-Date: 2019-08-29 10:04+0200\n"
+"POT-Creation-Date: 2020-01-27 13:32+0000\n"
+"PO-Revision-Date: 2020-02-05 15:39+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -19,13 +19,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 3.32.1\n"
+"X-Generator: Gtranslator 3.34.0\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
 msgid "translator-credits"
 msgstr ""
-"Daniel Mustieles <daniel.mustieles@gmail.com>, 2011 - 2019\n"
+"Daniel Mustieles <daniel.mustieles@gmail.com>, 2011 - 2020\n"
 "Milagros Alessandra Infante Montero <maim92@gmail.com>, 2012, 2013"
 
 #. (itstool) path: credit/name
@@ -36,7 +36,7 @@ msgstr ""
 #: C/presets.page:9 C/rendering.page:7 C/savescreenshot.page:7
 #: C/selectiongrouping.page:11 C/splitting.page:7 C/sysreq.page:7
 #: C/transitions.page:11 C/trimming.page:7 C/usingclips.page:7
-#: C/usingeffects.page:11 C/welcomedialog.page:7 C/workwithprojects.page:7
+#: C/usingeffects.page:11 C/workwithprojects.page:7
 msgid "Jean-François Fortin Tam"
 msgstr "Jean-François Fortin Tam"
 
@@ -63,8 +63,7 @@ msgstr ""
 #: C/movearoundtimeline.page:26 C/presets.page:20 C/rendering.page:22
 #: C/savescreenshot.page:11 C/selectiongrouping.page:22 C/splitting.page:22
 #: C/sysreq.page:22 C/transitions.page:22 C/trimming.page:22
-#: C/usingclips.page:22 C/usingeffects.page:16 C/welcomedialog.page:18
-#: C/workwithprojects.page:22
+#: C/usingclips.page:22 C/usingeffects.page:16 C/workwithprojects.page:22
 msgid "Creative Commons Share Alike 3.0"
 msgstr "Creative Commons Compartir Igual 3.0"
 
@@ -293,8 +292,7 @@ msgstr "<key>Ctrl</key>+arrastrar: edición de desplazamiento."
 #: C/mainwindow.page:13 C/medialibrary.page:15 C/movearoundtimeline.page:19
 #: C/presets.page:13 C/rendering.page:15 C/selectiongrouping.page:7
 #: C/splitting.page:15 C/sysreq.page:15 C/transitions.page:7 C/trimming.page:15
-#: C/usingclips.page:15 C/usingeffects.page:7 C/welcomedialog.page:11
-#: C/workwithprojects.page:15
+#: C/usingclips.page:15 C/usingeffects.page:7 C/workwithprojects.page:15
 msgid "Tomáš Karger"
 msgstr "Tomáš Karger"
 
@@ -451,9 +449,6 @@ msgstr "Para quitar un efecto:"
 
 #. (itstool) path: item/p
 #: C/effects.page:42
-#| msgid ""
-#| "Select the effect you want to remove in the <guiseq><gui>middle pane</"
-#| "gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>"
 msgid ""
 "Select the effect you want to remove in the <guiseq><gui>middle pane</"
 "gui><gui>Clip</gui><gui>Effects</gui></guiseq>"
@@ -473,11 +468,6 @@ msgstr "Activar y desactivar efectos"
 
 #. (itstool) path: section/p
 #: C/effects.page:51
-#| msgid ""
-#| "If you want to temporarily disable an effect (to compare with and without "
-#| "the effect, or for performance reasons), click the corresponding checkbox "
-#| "in the <guiseq><gui>middle pane</gui><gui>Clip configuration</"
-#| "gui><gui>Effects</gui></guiseq>."
 msgid ""
 "If you want to temporarily disable an effect (to compare with and without "
 "the effect, or for performance reasons), click the corresponding checkbox in "
@@ -785,11 +775,73 @@ msgstr ""
 
 #. (itstool) path: section/title
 #: C/importing.page:39
+msgid "How to work with unsupported media"
+msgstr "Cómo trabajar con medios no soportados"
+
+#. (itstool) path: section/p
+#: C/importing.page:40
+msgid "The following media containers and formats are officially supported:"
+msgstr ""
+"Los siguientes contenedores y formatos de medios están oficialmente "
+"soportados:"
+
+#. (itstool) path: item/p
+#: C/importing.page:42
+msgid "Containers: MJPEG, Matroska, Ogg, QuickTime, WebM"
+msgstr "Contenedores: MJPEG, Matroska, Ogg, QuickTime, WebM"
+
+#. (itstool) path: item/p
+#: C/importing.page:43
+msgid "Audio formats: FLAC, MPEG, Raw, Vorbis, WAV"
+msgstr "Formatos de sonido: FLAC, MPEG, Raw, Vorbis, WAV"
+
+#. (itstool) path: item/p
+#: C/importing.page:44
+msgid "Video formats: H.264, JPEG, Raw, Theora, VP8"
+msgstr "Formatos de vídeo: H.264, JPEG, Raw, Theora, VP8"
+
+#. (itstool) path: section/p
+#: C/importing.page:46
+msgid ""
+"Working with other containers and formats is slow and lacks precision. "
+"Fortunately most of the time the unsupported media can still be played. "
+"Taking advantage of this, <app>Pitivi</app> allows transcoding the "
+"unsupported media into a supported format. The result is a separate file "
+"placed in the same folder. The automatic creation of <em>optimized media</"
+"em> is controlled with the <gui>Optimize</gui> checkbox at the bottom of the "
+"<gui>file chooser dialog</gui>. The <em>optimized media</em> can be managed "
+"at any time with the <link xref=\"medialibrary\">media library</link>."
+msgstr ""
+"Trabajar con otros contenedores y formatos es lento y carece de precisión. "
+"Por suerte, la mayor parte de las veces los medios no soportados sep ueden "
+"reproducir. Tomando esto como ventaja, <app>Pitivi</app> permite "
+"transcodificar los medios no soportados a un formato que sí lo esté. El "
+"resultado es un archivo nuevo situado en la misma carpeta. La creación de "
+"<em>medios optimizados</em> se controla con la casilla <gui>Optimizar</gui> "
+"en la parte inferior del <gui>diálogo selector de archivos</gui>. El "
+"<em>medio optimizado</em> se puede gestionar en cualquier momento con la "
+"<link xref=\"medialibrary\">biblioteca de medios</link>."
+
+#. (itstool) path: note/p
+#: C/importing.page:48
+msgid ""
+"Most of the cameras nowadays create <code>.mts</code> and <code>.m2ts</code> "
+"files which use the MPEG Transport Stream container. This container is not "
+"optimal for video editing. This media is not supported as such and must be "
+"<em>optimized</em> for a smooth editing experience."
+msgstr ""
+"La mayoría de las cámaras modernas crean archivos <code>.mts</code> y <code>."
+"m2ts</code> que usan elcontenedor MPEG Transport Stream. Este contenedor no "
+"es óptimo para edición de vídeo. Es un medio no soportado y se debe "
+"<em>optimizar</em> para una mejor experiencia de edición."
+
+#. (itstool) path: section/title
+#: C/importing.page:52
 msgid "Importing files using drag and drop"
 msgstr "Importar archivos usando arrastrar y soltar"
 
 #. (itstool) path: section/p
-#: C/importing.page:40
+#: C/importing.page:53
 msgid ""
 "The concept of drag and drop is a well-established method of bridging the "
 "gap between software applications. Simply select the files you want to "
@@ -804,12 +856,12 @@ msgstr ""
 "<gui>Biblioteca de Medios</gui> de <app>Pitivi</app>."
 
 #. (itstool) path: section/p
-#: C/importing.page:41
+#: C/importing.page:54
 msgid "This feature can be used to:"
 msgstr "Esta característica se puede usar para:"
 
 #. (itstool) path: item/p
-#: C/importing.page:44
+#: C/importing.page:57
 msgid ""
 "Easily import music or video clips from a media player (such as "
 "<app>Rhythmbox</app> or <app>Totem</app>)."
@@ -818,7 +870,7 @@ msgstr ""
 "(tal como <app>Rhythmbox</app> o <app>Totem</app>)."
 
 #. (itstool) path: item/p
-#: C/importing.page:47
+#: C/importing.page:60
 msgid ""
 "Allow using a full-fledged file manager (such as <app>Nautilus</app>, "
 "<app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of "
@@ -829,13 +881,13 @@ msgstr ""
 "del diálogo del selector de archivos."
 
 #. (itstool) path: item/p
-#: C/importing.page:50
+#: C/importing.page:63
 msgid "Import a combination of multiple files and folders at the same time."
 msgstr ""
 "Importar una combinación de varios archivos y carpetas al mismo tiempo."
 
 #. (itstool) path: item/p
-#: C/importing.page:53
+#: C/importing.page:66
 msgid ""
 "Leverage the searching capability of another application (such as <app>GNOME "
 "Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, "
@@ -863,9 +915,12 @@ msgstr "Manual de inicio rápido de Pitivi"
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/index.page:19
+#| msgctxt "_"
+#| msgid ""
+#| "external ref='figures/logo.png' md5='fe64746d2b62fdda1bf1be2c930d3796'"
 msgctxt "_"
-msgid "external ref='figures/logo.png' md5='fe64746d2b62fdda1bf1be2c930d3796'"
-msgstr "external ref='figures/logo.png' md5='fe64746d2b62fdda1bf1be2c930d3796'"
+msgid "external ref='figures/logo.png' md5='fff855c13ab53690ef39bd41670bb519'"
+msgstr "external ref='figures/logo.png' md5='fff855c13ab53690ef39bd41670bb519'"
 
 #. (itstool) path: page/title
 #: C/index.page:19
@@ -1872,12 +1927,6 @@ msgstr "Modos de vistas"
 
 #. (itstool) path: section/p
 #: C/medialibrary.page:43
-#| msgid ""
-#| "The <gui>Media Library</gui> can display your clips in a list or in an "
-#| "icon view. The default mode is icon view because it display more clips "
-#| "without needing to scroll down. However, the list view mode shows more "
-#| "details about each clip. To activate/deactivate it, click on the "
-#| "<gui>Show clips as a detailed list</gui> button next to the search bar."
 msgid ""
 "The <gui>Media Library</gui> can display your clips in a list or in an icon "
 "view. The default mode is icon view because it display more clips without "
@@ -2898,10 +2947,6 @@ msgstr ""
 
 #. (itstool) path: note/p
 #: C/sysreq.page:44
-#| msgid ""
-#| "You can track the state of proxy editing in <app>Pitivi</app> through "
-#| "<link href=\"https://phabricator.freedesktop.org/T2455\">task T2455</"
-#| "link>."
 msgid ""
 "You can track the state of proxy editing in <app>Pitivi</app> through <link "
 "href=\"https://gitlab.gnome.org/GNOME/pitivi/issues/743\">task 743</link>."
@@ -3695,12 +3740,6 @@ msgstr "Configurar efectos"
 
 #. (itstool) path: section/p
 #: C/usingeffects.page:27
-#| msgid ""
-#| "To configure an effect, simply select it in the <guiseq><gui>middle pane</"
-#| "gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>. The "
-#| "properties that can be adjusted will appear below in the same tab. Each "
-#| "variable can be put back to its original value by clicking the "
-#| "corresponding <gui>Reset to default value</gui> button."
 msgid ""
 "To configure an effect, simply select it in the <guiseq><gui>middle pane</"
 "gui><gui>Clip</gui><gui>Effects</gui></guiseq>. The properties that can be "
@@ -3721,15 +3760,6 @@ msgstr "Animar efectos con fotogramas"
 
 #. (itstool) path: section/p
 #: C/usingeffects.page:31
-#| msgid ""
-#| "The effect properties which can be controlled using keyframe curves have "
-#| "a <gui>Show keyframes for this property</gui> button. When you click it, "
-#| "the keyframe curves on the clip start controlling the respective "
-#| "property. You can now edit the keyframes to achieve the desired effect. "
-#| "Once you are done with editing, you can click the button again and the "
-#| "keyframe curve disappears from the clip. However, the effect property is "
-#| "still controlled by the adjusted keyframe curve (which is indicated by "
-#| "the filled shape on the button)."
 msgid ""
 "The effect properties which can be controlled using keyframe curves have a "
 "<gui>Show keyframes for this property</gui> button in diamond shape. When "
@@ -3773,83 +3803,6 @@ msgid ""
 msgstr ""
 "Si no aparece el botón <gui>Mostrar fotogramas para este valor</gui> junto a "
 "la variable de efecto no se puede controlar con fotogramas."
-
-#. (itstool) path: info/desc
-#: C/welcomedialog.page:14
-msgid "Creating new projects and opening recent projects on startup"
-msgstr "Crear proyectos nuevos y abrir proyectos recientes al iniciar"
-
-#. (itstool) path: page/title
-#: C/welcomedialog.page:21
-msgid "The welcome dialog"
-msgstr "Diálogo de bienvenida"
-
-#. (itstool) path: page/p
-#: C/welcomedialog.page:22
-msgid ""
-"When you launch <app>Pitivi</app>, a startup assistant appears, allowing you "
-"to create a new project or open an existing project in a few clicks. If you "
-"want to skip this dialog, press the <key>Escape</key> key on your keyboard "
-"or click the window's close button. Skipping the dialog will open a new "
-"project with default settings."
-msgstr ""
-"Cuando ejecuta <app>Pitivi</app>, aparece un asistente de inicio que le "
-"permite crear un proyecto nuevo o abrir un proyecto existente pulsando unas "
-"pocas veces. Si quiere omitir este diálogo, pulse la tecla <key>Escape</key> "
-"de su teclado o pulse en el botón de cerrar de la ventana. Saltarse el "
-"diálogo abrirá un nuevo proyecto con las configuraciones predeterminadas."
-
-#. (itstool) path: page/p
-#: C/welcomedialog.page:23
-msgid ""
-"The dialog offers you projects that are found among the recently used files. "
-"Double-click one of them to load it or use one of the following buttons:"
-msgstr ""
-"El diálogo ofrece proyectos que se encuentran entre los archivos utilizados "
-"recientemente. Pulse dos veces en uno de ellos para cargarlo o usar uno de "
-"los siguientes botones:"
-
-#. (itstool) path: item/p
-#: C/welcomedialog.page:26
-msgid "<gui>New</gui> opens a new project with the default settings."
-msgstr ""
-"<gui>Nuevo</gui> abre un proyecto nuevo con la configuración predeterminada."
-
-#. (itstool) path: item/p
-#: C/welcomedialog.page:29
-msgid ""
-"<gui>Browse projects...</gui> opens file chooser in the last used directory."
-msgstr ""
-"<gui>Explorar proyectos…</gui> abre un selector de archivos en la última "
-"carpeta usada."
-
-#. (itstool) path: item/p
-#: C/welcomedialog.page:32
-#| msgid "<gui>Help</gui> opens the user documenation on the index page."
-msgid "<gui>Help</gui> opens the user documentation on the index page."
-msgstr ""
-"<gui>Ayuda</gui> abre la documentación de usuario en la página del índice."
-
-#. (itstool) path: item/p
-#: C/welcomedialog.page:35
-msgid ""
-"<gui>Keyboard shortcuts</gui> opens the user documentation on the Keyboard "
-"shortcuts and cheatsheet page."
-msgstr ""
-"<gui>Atajos de teclado</gui> abre la documentación de usuario en los atajos "
-"de teclado y la página de trucos."
-
-#. (itstool) path: note/p
-#: C/welcomedialog.page:39
-msgid ""
-"By right-clicking the individual projects offered by the <gui>Welcome "
-"dialog</gui> you can get more options: copy project's location, remove "
-"project from the list, clear the list, or show private resources."
-msgstr ""
-"Pulsando el botón derecho en los proyectos individuales ofrecidos por el "
-"<gui>Diálogo de bienvenida</gui> puede obtener más opciones: la ubicación "
-"del proyecto de copia, eliminar el proyecto de la lista, vaciar la lista, o "
-"mostrar recursos privados."
 
 #. (itstool) path: info/desc
 #: C/workwithprojects.page:18
@@ -3933,18 +3886,23 @@ msgstr "Editar la configuración del proyecto"
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:42
+#| msgid ""
+#| "The project settings define mainly how the video appears while you edit "
+#| "the project. The video resolution and aspect ratio affect the appearance "
+#| "of the previewer. If the resolution and aspect ratio do not match those "
+#| "of your footage, the video may look squished or letterboxed. These "
+#| "settings can be changed at any time by using <guiseq><gui>App menu</"
+#| "gui><gui>Project Settings</gui></guiseq>."
 msgid ""
 "The project settings define mainly how the video appears while you edit the "
-"project. The video resolution and aspect ratio affect the appearance of the "
-"previewer. If the resolution and aspect ratio do not match those of your "
-"footage, the video may look squished or letterboxed. These settings can be "
-"changed at any time by using <guiseq><gui>App menu</gui><gui>Project "
-"Settings</gui></guiseq>."
+"project. The video resolution affects how much detail the previewer can "
+"show. If the resolution of the project does not match that of your footage, "
+"the video may look letterboxed. These settings can be changed at any time by "
+"using <guiseq><gui>App menu</gui><gui>Project Settings</gui></guiseq>."
 msgstr ""
 "La configuración del proyecto define principalmente cómo aparece el vídeo "
-"mientras edita el proyecto. La resolución del vídeo y la proporción del "
-"aspecto afectarán a la apariencia de la vista previa. Si no configura la "
-"resolución y la proporción del aspecto para que coincidan con los de sus "
+"mientras edita el proyecto. La resolución del vídeo afectará a la apariencia "
+"de la vista previa. Si la resolución del proyecto no coincide con las de sus "
 "imágenes, el vídeo puede verse aplastado o encajado. Esta configuración se "
 "puede cambiar en cualquier momento usando <guiseq><gui>Menú de aplicación</"
 "gui><gui>Configuración del proyecto</gui></guiseq>."
@@ -3960,58 +3918,115 @@ msgstr ""
 "ajusta automáticamente para que coincida. Consulte los detalles en <link "
 "xref=\"importing\">Obtener medios</link>."
 
-#. (itstool) path: section/title
-#: C/workwithprojects.page:48
-msgid "Pixel aspect ratio vs display aspect ratio"
-msgstr ""
-"Proporción del aspecto en píxeles frente a proporción del aspecto "
-"visualizado "
+#~ msgid "Creating new projects and opening recent projects on startup"
+#~ msgstr "Crear proyectos nuevos y abrir proyectos recientes al iniciar"
 
-#. (itstool) path: section/p
-#: C/workwithprojects.page:49
-msgid ""
-"Digital images are composed of a grid of <link href=\"http://en.wikipedia."
-"org/wiki/Pixel\">pixels</link>, which may or may not be square. In some "
-"cases, you may need to set the <link href=\"http://en.wikipedia.org/wiki/"
-"Pixel_aspect_ratio\">pixel aspect ratio</link> (PAR) for the image to "
-"display correctly. On the other hand, <link href=\"http://en.wikipedia.org/"
-"wiki/Display_aspect_ratio\">display aspect ratio</link> (DAR) is the "
-"mathematical ratio of width:height for the whole image."
-msgstr ""
-"Las imágenes digitales están compuestas de una cuadrícula de <link href="
-"\"http://en.wikipedia.org/wiki/Pixel\">píxeles</link>, que puede ser o no un "
-"cuadrado. En algunos casos, podría necesitar configurar la <link href="
-"\"http://en.wikipedia.org/wiki/Pixel_aspect_ratio\">proporción del aspecto "
-"en píxeles</link> (PAR) para que la imagen se muestre correctamente. Por "
-"otro lado la, <link href=\"http://en.wikipedia.org/wiki/Display_aspect_ratio"
-"\">proporción del aspecto visualizado</link> (DAR) es la proporción "
-"matemática de anchura:altura para la imagen completa."
+#~ msgid "The welcome dialog"
+#~ msgstr "Diálogo de bienvenida"
 
-#. (itstool) path: section/p
-#: C/workwithprojects.page:50
-msgid ""
-"In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are "
-"related to each other through video resolution (width and height). Once your "
-"resolution is set, setting the DAR will influence the PAR and vice versa. "
-"You can use either DAR or PAR, whichever you are most comfortable with."
-msgstr ""
-"En <app>Pitivi</app>, la proporción de aspecto en píxeles y la proporción "
-"del aspecto visualizado están relacionadas la una con la otra por la "
-"resolución del vídeo (ancho y altura). Una vez que su resolución se "
-"configura, configurar el DAR influenciará en el PAR y viceversa. Puede usar "
-"DAR o PAR, con la que esté más cómodo."
+#~ msgid ""
+#~ "When you launch <app>Pitivi</app>, a startup assistant appears, allowing "
+#~ "you to create a new project or open an existing project in a few clicks. "
+#~ "If you want to skip this dialog, press the <key>Escape</key> key on your "
+#~ "keyboard or click the window's close button. Skipping the dialog will "
+#~ "open a new project with default settings."
+#~ msgstr ""
+#~ "Cuando ejecuta <app>Pitivi</app>, aparece un asistente de inicio que le "
+#~ "permite crear un proyecto nuevo o abrir un proyecto existente pulsando "
+#~ "unas pocas veces. Si quiere omitir este diálogo, pulse la tecla "
+#~ "<key>Escape</key> de su teclado o pulse en el botón de cerrar de la "
+#~ "ventana. Saltarse el diálogo abrirá un nuevo proyecto con las "
+#~ "configuraciones predeterminadas."
 
-#. (itstool) path: note/p
-#: C/workwithprojects.page:52
-msgid ""
-"You can use the ratios already provided in the combo boxes, or input a "
-"custom aspect ratio in the text entry below (using a syntax such as \"4:3\" "
-"or \"1.3333\", although the decimal version is less precise)."
-msgstr ""
-"Puede usar las proporciones ya dadas en los cuadros combinados, o introducir "
-"una proporción del aspecto en la entrada de texto a continuación (usando una "
-"sintaxis tal como «4:3» o «1.3333», aunque la versión decimal es menos "
-"precisa)."
+#~ msgid ""
+#~ "The dialog offers you projects that are found among the recently used "
+#~ "files. Double-click one of them to load it or use one of the following "
+#~ "buttons:"
+#~ msgstr ""
+#~ "El diálogo ofrece proyectos que se encuentran entre los archivos "
+#~ "utilizados recientemente. Pulse dos veces en uno de ellos para cargarlo o "
+#~ "usar uno de los siguientes botones:"
+
+#~ msgid "<gui>New</gui> opens a new project with the default settings."
+#~ msgstr ""
+#~ "<gui>Nuevo</gui> abre un proyecto nuevo con la configuración "
+#~ "predeterminada."
+
+#~ msgid ""
+#~ "<gui>Browse projects...</gui> opens file chooser in the last used "
+#~ "directory."
+#~ msgstr ""
+#~ "<gui>Explorar proyectos…</gui> abre un selector de archivos en la última "
+#~ "carpeta usada."
+
+#~| msgid "<gui>Help</gui> opens the user documenation on the index page."
+#~ msgid "<gui>Help</gui> opens the user documentation on the index page."
+#~ msgstr ""
+#~ "<gui>Ayuda</gui> abre la documentación de usuario en la página del índice."
+
+#~ msgid ""
+#~ "<gui>Keyboard shortcuts</gui> opens the user documentation on the "
+#~ "Keyboard shortcuts and cheatsheet page."
+#~ msgstr ""
+#~ "<gui>Atajos de teclado</gui> abre la documentación de usuario en los "
+#~ "atajos de teclado y la página de trucos."
+
+#~ msgid ""
+#~ "By right-clicking the individual projects offered by the <gui>Welcome "
+#~ "dialog</gui> you can get more options: copy project's location, remove "
+#~ "project from the list, clear the list, or show private resources."
+#~ msgstr ""
+#~ "Pulsando el botón derecho en los proyectos individuales ofrecidos por el "
+#~ "<gui>Diálogo de bienvenida</gui> puede obtener más opciones: la ubicación "
+#~ "del proyecto de copia, eliminar el proyecto de la lista, vaciar la lista, "
+#~ "o mostrar recursos privados."
+
+#~ msgid "Pixel aspect ratio vs display aspect ratio"
+#~ msgstr ""
+#~ "Proporción del aspecto en píxeles frente a proporción del aspecto "
+#~ "visualizado "
+
+#~ msgid ""
+#~ "Digital images are composed of a grid of <link href=\"http://en.wikipedia."
+#~ "org/wiki/Pixel\">pixels</link>, which may or may not be square. In some "
+#~ "cases, you may need to set the <link href=\"http://en.wikipedia.org/wiki/"
+#~ "Pixel_aspect_ratio\">pixel aspect ratio</link> (PAR) for the image to "
+#~ "display correctly. On the other hand, <link href=\"http://en.wikipedia."
+#~ "org/wiki/Display_aspect_ratio\">display aspect ratio</link> (DAR) is the "
+#~ "mathematical ratio of width:height for the whole image."
+#~ msgstr ""
+#~ "Las imágenes digitales están compuestas de una cuadrícula de <link href="
+#~ "\"http://en.wikipedia.org/wiki/Pixel\">píxeles</link>, que puede ser o no "
+#~ "un cuadrado. En algunos casos, podría necesitar configurar la <link href="
+#~ "\"http://en.wikipedia.org/wiki/Pixel_aspect_ratio\">proporción del "
+#~ "aspecto en píxeles</link> (PAR) para que la imagen se muestre "
+#~ "correctamente. Por otro lado la, <link href=\"http://en.wikipedia.org/"
+#~ "wiki/Display_aspect_ratio\">proporción del aspecto visualizado</link> "
+#~ "(DAR) es la proporción matemática de anchura:altura para la imagen "
+#~ "completa."
+
+#~ msgid ""
+#~ "In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are "
+#~ "related to each other through video resolution (width and height). Once "
+#~ "your resolution is set, setting the DAR will influence the PAR and vice "
+#~ "versa. You can use either DAR or PAR, whichever you are most comfortable "
+#~ "with."
+#~ msgstr ""
+#~ "En <app>Pitivi</app>, la proporción de aspecto en píxeles y la proporción "
+#~ "del aspecto visualizado están relacionadas la una con la otra por la "
+#~ "resolución del vídeo (ancho y altura). Una vez que su resolución se "
+#~ "configura, configurar el DAR influenciará en el PAR y viceversa. Puede "
+#~ "usar DAR o PAR, con la que esté más cómodo."
+
+#~ msgid ""
+#~ "You can use the ratios already provided in the combo boxes, or input a "
+#~ "custom aspect ratio in the text entry below (using a syntax such as "
+#~ "\"4:3\" or \"1.3333\", although the decimal version is less precise)."
+#~ msgstr ""
+#~ "Puede usar las proporciones ya dadas en los cuadros combinados, o "
+#~ "introducir una proporción del aspecto en la entrada de texto a "
+#~ "continuación (usando una sintaxis tal como «4:3» o «1.3333», aunque la "
+#~ "versión decimal es menos precisa)."
 
 #, fuzzy
 #~| msgid ""
