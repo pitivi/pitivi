@@ -910,7 +910,7 @@ class TrimmingProperties(Gtk.Expander, Loggable):
         # Used to make sure self.__control_bindings_changed doesn't get called
         # when bindings are changed from this class
         self.__own_bindings_change = False
-        # self.add(self.builder.get_object("trimming_box"))
+        self.add(self.builder.get_object("trimming_box"))
         self._init_buttons()
         self.show_all()
         self.hide()
@@ -951,11 +951,11 @@ class TrimmingProperties(Gtk.Expander, Loggable):
         self._prev_keyframe_btn.connect("clicked", self.__go_to_keyframe_cb, False)
         self._prev_keyframe_btn.set_sensitive(False)
 
-        self.__setup_spin_button("xpos_spinbtn", "posx")
-        self.__setup_spin_button("ypos_spinbtn", "posy")
+        # self.__setup_spin_button("xpos_spinbtn", "posx")
+        # self.__setup_spin_button("ypos_spinbtn", "posy")
 
-        self.__setup_spin_button("width_spinbtn", "width")
-        self.__setup_spin_button("height_spinbtn", "height")
+        # self.__setup_spin_button("width_spinbtn", "width")
+        # self.__setup_spin_button("height_spinbtn", "height")
 
     def __get_keyframes_timestamps(self):
         keyframes_ts = []
