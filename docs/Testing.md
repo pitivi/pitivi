@@ -12,27 +12,46 @@ you want to test more thoroughly.
 
 ## Unit tests
 
-You can run the unit tests with one of:
+You can run the tests with `ptvtests` alias created when you enter the
+[development environment](HACKING.md):
+
+```
+$ alias ptvtests
+ptvtests='ptvenv gst-validate-launcher /.../pitivi-dev/pitivi/tests/ptv_testsuite.py'
+```
+
+NOTE: If you are on macOS or Windows, replace `ptvtests` with
+`gst-validate-launcher tests/ptv_testsuite.py`.
+
+Run the entire unit tests suite:
 
 ```
 $ ptvtests
 ```
 
-If you want to run only one particular unit test, use (assuming you are in
-our flatpak based development environment):
+Run only the tests in a particular file:
 
 ```
-$ ptvtests -t tests.test_project.TestProjectManager.testLoadProjectFailedUnknownFormat
+$ ptvtests -t test_project
 ```
 
-Listing tests:
+Run only one particular unit test:
+
+```
+$ ptvtests -t tests.test_project.TestProjectManager.test_loading_missing_project_file
+```
+
+Normally it should work to use just the name of the test method:
+
+```
+$ ptvtests -t test_loading_missing_project_file
+```
+
+To lists all the available tests, run:
 
 ```
 $ ptvtests -L
 ```
-
-NOTE: If you are not in our dev env, replace `ptvtests` with
-`gst-validate-launcher tests/ptv_testsuite.py`.
 
 ### Writing unit tests
 
@@ -41,10 +60,13 @@ as it's now integrated into
 [Python3](http://docs.python.org/dev/library/unittest.mock) which we use
 as of [0.94](releases/0.94.md).
 
+We use the `unittest.mock` module extensively for writing unit tests for
+the UI.
+
 If you're curious about our unit tests, the best way to get to know them
 is to write a few Pitivi unit tests and have us review them. Check out
-[how to set up your dev env](HACKING.md) and
-come in our [IRC channel](http://www.pitivi.org/?go=contact)!
+[how to set up your dev env](HACKING.md) and come in our [IRC channel or
+Matrix room](http://www.pitivi.org/?go=contact)!
 
 ## Integration tests
 
