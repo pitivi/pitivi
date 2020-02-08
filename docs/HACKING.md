@@ -4,53 +4,20 @@ short-description: Using the Pitivi development environment
 
 # Hacking on Pitivi
 
-There are two ways to set up a flatpak sandbox with all the
-dependencies required to run and develop Pitivi. We recommend
-the advanced way, but if you want something quick, go ahead with
-the easy way.
+To develop Pitivi on Linux you need to set up a development environment,
+as described below. For [other platforms](crossplatform.md), get in
+touch with us.
 
-## The easy way
+By setting up a development environment, you create a
+[flatpak](https://flatpak.org) sandbox containing all the Pitivi
+dependencies. The sandbox is then used to run Pitivi and the unittests,
+without messing your system.
 
-The easy way to setup the development environment is to follow the
-[GNOME Newcomers guide](https://wiki.gnome.org/Newcomers/).
+Start by installing **both** [flatpak](http://flatpak.org/getting.html)
+and `flatpak-builder` on your system.
 
-This implies using GNOME Builder to manage the dependencies sandbox.
-
-Clone the `https://gitlab.gnome.org/GNOME/pitivi.git` git repository
-in GNOME Builder.
-
-To run the unittests, click in Builder: Unittests > pitivi > Pitivi unit tests.
-Make sure they all pass, or tell us about any failures.
-
-To be able to use our pre-commit git hook, run:
-
-```
-$ cd ~/Projects/pitivi
-$ ln -s ../../pre-commit.hook .git/hooks/pre-commit
-```
-
-When creating commits, for the pre-commit git hook to work properly
-it has to run in the sandbox. This is possible only by running `git`
-in a Build Terminal in GNOME Builder. You might want to
-`export EDITOR=nano` if you get "error: unable to start editor 'vi'"
-when you have to enter a commit message.
-
-
-## Setting up the advanced development environment
-
-> NOTE: This way of setting the development environment is sensibly more complex
-> but also more flexible than the one for newcomers. If you are a  beginner
-> or if you usually use [GNOME Builder](https://wiki.gnome.org/Apps/Builder)
-> as your main IDE, follow, as previously advised, the
-> [GNOME Newcomers guide](https://wiki.gnome.org/Newcomers/)
-
-The official way of getting your environment up and running is by using
-[flatpak](http://flatpak.org/). For this you need to
-[install flatpak](http://flatpak.org/getting.html) on your system,
-along with flatpak-builder. Note flatpak-builder might be provided by an
-additional package on some distributions (such as Archlinux).
-
-Create a development environment folder and get the [Pitivi source code](http://gitlab.gnome.org/GNOME/pitivi) into it:
+Create a development environment folder and get the [Pitivi source
+code](http://gitlab.gnome.org/GNOME/pitivi) into it:
 
 ```
 $ mkdir pitivi-dev
@@ -58,7 +25,9 @@ $ cd pitivi-dev
 $ git clone https://gitlab.gnome.org/GNOME/pitivi.git
 ```
 
-Whenever you want to hack on Pitivi, enter the development environment:
+Whenever you want to hack on Pitivi, start a new terminal and enter the
+development environment:
+
 ```
 $ cd pitivi-dev/pitivi && source bin/pitivi-env
 -> Setting up the prefix for the sandbox...
@@ -68,19 +37,17 @@ Running in sandbox: echo Prefix ready
 Prefix ready
 ```
 
-This can take a while when creating the sandbox from scratch. Note the
-prompt changes:
+When creating the sandbox from scratch it can take up to a few hours,
+depending on your internet connection speed and the CPU. Note the prompt
+changes:
+
 ```
 (ptv-flatpak) $
 ```
 
 By entering the development environment, you get:
 - a [Flatpak sandbox](http://docs.flatpak.org/en/latest/working-with-the-sandbox.html)
-for the dependencies, in `pitivi-dev/pitivi-prefix`
-- a [Python virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/)
-with development tools, such as
-[pre-commit](http://pre-commit.com),
-in `pitivi-dev/pitivi/build/flatpak/pyvenv`
+with dependencies and some development tools, in `pitivi-dev/pitivi-prefix`
 - the [Meson build directory](http://mesonbuild.com/Quick-guide.html),
 in `pitivi-dev/pitivi/mesonbuild`
 - some aliases for the build tools, such as `ninja`, so they are executed in the sandbox.
