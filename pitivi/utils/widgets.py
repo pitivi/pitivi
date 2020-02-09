@@ -458,10 +458,10 @@ class ToggleWidget(Gtk.Box, DynamicWidget):
             self.set_widget_to_default()
 
     def connect_value_changed(self, callback, *args):
-        def callback_wrapper(switch_button, unused_state):
+        def callback_wrapper(switch_button):
             callback(switch_button, *args)
 
-        self.switch_button.connect("state-set", callback_wrapper)
+        self.switch_button.connect("toggled", callback_wrapper)
 
     def set_widget_value(self, value):
         self.switch_button.set_active(value)
@@ -642,7 +642,7 @@ def make_widget_wrapper(prop, widget):
         widget_lower = widget_adjustment.props.lower
         widget_upper = widget_adjustment.props.upper
         return NumericWidget(upper=widget_upper, lower=widget_lower, adjustment=widget_adjustment, default=prop.default_value)
-    elif isinstance(widget, Gtk.Switch):
+    elif isinstance(widget, (Gtk.Switch, Gtk.CheckButton)):
         return ToggleWidget(prop.default_value, widget)
     else:
         Loggable().fixme("%s has not been wrapped into a Dynamic Widget", widget)

@@ -326,41 +326,6 @@ def create_3point_color_balance_widget(effect_prop_manager, element_setting_widg
 
     element.connect("deep-notify", property_changed_cb)
 
-    def uncontrolled_property_changed_cb(unused_effect, gst_element, pspec):
-        """Handles the change of a GObject property."""
-        if gst_element.get_control_binding(pspec.name):
-            Loggable().log("%s controlled, not displaying value", pspec.name)
-            return
-
-        widget = element_setting_widget.uncontrolled_properties.get(pspec)
-        if not widget:
-            return
-
-        res, value = element_setting_widget.element.get_child_property(pspec.name)
-        assert res
-
-        if pspec.name in ("split-preview", "source-image-on-left-side"):
-            print(value)
-
-            from pitivi.undo.timeline import CommitTimelineFinalizingAction
-            pipeline = effect_prop_manager.app.project_manager.current_project.pipeline
-            action_log = effect_prop_manager.app.action_log
-            with action_log.started("Effect property change",
-                                    finalizing_action=CommitTimelineFinalizingAction(pipeline),
-                                    toplevel=True):
-                element_setting_widget.element.set_child_property(pspec.name, widget.get_active())
-            if pspec.name == "split-preview":
-                if widget.get_active():
-                    source_image_on_left_side.set_sensitive(True)
-                else:
-                    source_image_on_left_side.set_sensitive(False)
-
-    myProp, split_preview = element_setting_widget.get_widget_of_uncontrolled_prop("split-preview")
-    split_preview.connect("toggled", uncontrolled_property_changed_cb, element_setting_widget.element, myProp)
-    split_preview.set_active(True)
-    myProp, source_image_on_left_side = element_setting_widget.get_widget_of_uncontrolled_prop("source-image-on-left-side")
-    source_image_on_left_side.connect("toggled", uncontrolled_property_changed_cb, element_setting_widget.element, myProp)
-    source_image_on_left_side.set_active(True)
     shadows_reset_button = builder.get_object("shadows_reset_button")
     midtones_reset_button = builder.get_object("midtones_reset_button")
     highlights_reset_button = builder.get_object("highlights_reset_button")
