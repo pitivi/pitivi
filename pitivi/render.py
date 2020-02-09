@@ -952,6 +952,13 @@ class RenderDialog(Loggable):
         except GLib.Error as e:
             self.warning("GSound failed to play: %s", e)
 
+    def __unset_effect_preview_props(self):
+        for clip in self.project.ges_timeline.ui.clips():
+            for effect in clip.get_top_effects():
+                effect_name = effect.get_property("bin-description")
+                if effect_name == "frei0r-filter-3-point-color-balance":
+                    effect.set_child_property("split-preview", False)
+
     def _asset_replacement(self, clip):
         if not isinstance(clip, GES.UriClip):
             return None
@@ -1024,6 +1031,7 @@ class RenderDialog(Loggable):
     def _render_button_clicked_cb(self, unused_button):
         """Starts the rendering process."""
         self.__replace_proxies()
+        self.__unset_effect_preview_props()
         self.outfile = os.path.join(self.filebutton.get_uri(),
                                     self.fileentry.get_text())
         self.progress = RenderingProgressDialog(self.app, self)
@@ -1044,8 +1052,7 @@ class RenderDialog(Loggable):
         self.project.pipeline.connect("position", self._update_position_cb)
         # Force writing the config now, or the path will be reset
         # if the user opens the rendering dialog again
-        self.app.settings.lastExportFolder = self.filebutton.get_current_folder(
-        )
+        self.app.settings.lastExportFolder = self.filebutton.get_current_folder()
         self.app.settings.store_settings()
 
     def _close_button_clicked_cb(self, unused_button):
