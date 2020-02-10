@@ -174,10 +174,11 @@ class ProxyManager(GObject.Object, Loggable):
             return
 
     def _scale_asset_resolution(self, asset, max_width, max_height):
-        stream = asset.get_info().get_video_streams()[0]
-        width = stream.get_width()
-        height = stream.get_height()
-        aspect_ratio = Fraction(width, height)
+        if asset.get_info().get_video_streams():
+            stream = asset.get_info().get_video_streams()[0]
+            width = stream.get_width()
+            height = stream.get_height()
+            aspect_ratio = Fraction(width, height)
 
         if aspect_ratio.numerator >= width or aspect_ratio.denominator >= height:
             self.log("Unscalable aspect ratio.")
@@ -365,14 +366,17 @@ class ProxyManager(GObject.Object, Loggable):
 
     def asset_matches_target_res(self, asset):
         """Returns whether the asset's size <= the scaled proxy size."""
-        stream = asset.get_info().get_video_streams()[0]
+        if asset.get_info().get_video_streams():
+            stream = asset.get_info().get_video_streams()[0]
 
-        asset_res = (stream.get_width(), stream.get_height())
-        target_res = self._scale_asset_resolution(asset,
-                                                  self.app.project_manager.current_project.scaled_proxy_width,
-                                                  self.app.project_manager.current_project.scaled_proxy_height)
+            asset_res = (stream.get_width(), stream.get_height())
+            target_res = self._scale_asset_resolution(asset,
+                                                      self.app.project_manager.current_project.scaled_proxy_width,
+                                                      self.app.project_manager.current_project.scaled_proxy_height)
 
-        return asset_res == target_res
+            return asset_res == target_res
+
+        return None
 
     def __asset_needs_transcoding(self, asset, scaled=False):
         if self.proxying_unsupported:
@@ -723,7 +727,8 @@ class ProxyManager(GObject.Object, Loggable):
                 return
 
         proxy_uri = self.get_proxy_uri(asset, scaled)
-        if Gio.File.new_for_uri(proxy_uri).query_exists(None):
+        if asset.get_info().get_video_streams() and \
+                Gio.File.new_for_uri(proxy_uri).query_exists(None):
             self.debug("Using proxy already generated: %s", proxy_uri)
             GES.Asset.request_async(GES.UriClip,
                                     proxy_uri, None,
@@ -734,7 +739,7 @@ class ProxyManager(GObject.Object, Loggable):
         self.debug("Creating a proxy for %s (strategy: %s, force: %s, scaled: %s)",
                    asset.get_id(), self.app.settings.proxying_strategy,
                    force_proxying, scaled)
-        if scaled:
+        if scaled and asset.get_info().get_video_streams():
             project = self.app.project_manager.current_project
             w = project.scaled_proxy_width
             h = project.scaled_proxy_height
