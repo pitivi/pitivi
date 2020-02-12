@@ -5,13 +5,13 @@
 # Jorge González <jorgegonz@svn.gnome.org>, 2011.
 # Sylvia Sánchez <LailahFSF@gmail.com>, 2011.
 # Milagros Alessandra Infante Montero <maim92@gmail.com>, 2012, 2013, 2014.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011-2019.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011-2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2019-07-05 01:30+0000\n"
-"PO-Revision-Date: 2019-08-29 09:59+0200\n"
+"POT-Creation-Date: 2020-01-27 13:12+0000\n"
+"PO-Revision-Date: 2020-02-12 12:17+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -19,13 +19,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 3.32.1\n"
+"X-Generator: Gtranslator 3.34.0\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
 msgid "translator-credits"
 msgstr ""
-"Daniel Mustieles <daniel.mustieles@gmail.com>, 2011 - 2019\n"
+"Daniel Mustieles <daniel.mustieles@gmail.com>, 2011 - 2020\n"
 "Milagros Alessandra Infante Montero <maim92@gmail.com>, 2012, 2013"
 
 #. (itstool) path: credit/name
@@ -1452,9 +1452,9 @@ msgid ""
 "gui>, <gui>Project settings</gui> or <gui>Preferences</gui>."
 msgstr ""
 "La barra de cabecera es un lugar donde fácilmente puede acceder a funciones "
-"básicas tales como <gui>Deshacer</gui>, <gui>Rehacer, <gui>Grabar</gui>, o "
-"<gui>Renderizar</gui>. Ésta barra contiene también el <gui>botón de menú</"
-"gui> principal donde puede encontrar otras funciones tales como "
+"básicas tales como <gui>Deshacer</gui>, <gui>Rehacer</gui>, <gui>Grabar</"
+"gui>, o <gui>Renderizar</gui>. Ésta barra contiene también el <gui>botón de "
+"menú</gui> principal donde puede encontrar otras funciones tales como "
 "<gui>Proyecto nuevo</gui>, <gui>Abrir proyecto</gui>, <gui>Ajustes del "
 "Proyecto</gui> o <gui>Preferencias</gui>."
 
@@ -2885,10 +2885,6 @@ msgstr ""
 
 #. (itstool) path: note/p
 #: C/sysreq.page:44
-#| msgid ""
-#| "Other types of transitions (such as wipes) are not yet implemented (see "
-#| "<link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">bug "
-#| "#609353</link>)."
 msgid ""
 "You can track the state of proxy editing in <app>Pitivi</app> through <link "
 "href=\"https://phabricator.freedesktop.org/T2455\">task T2455</link>."
