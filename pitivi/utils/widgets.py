@@ -443,33 +443,6 @@ class FractionWidget(TextWidget, DynamicWidget):
         return Gst.Fraction(num, denom)
 
 
-class CheckButtonWidget(Gtk.Box, DynamicWidget):
-    """Widget for entering an on/off value."""
-
-    def __init__(self, default=None, switch_button=None):
-        Gtk.Box.__init__(self)
-        DynamicWidget.__init__(self, default)
-        if switch_button is None:
-            self.switch_button = Gtk.Switch()
-            self.pack_start(self.switch_button, expand=False, fill=False, padding=0)
-            self.switch_button.show()
-        else:
-            self.switch_button = switch_button
-            self.set_widget_to_default()
-
-    def connect_value_changed(self, callback, *args):
-        def callback_wrapper(switch_button):
-            callback(switch_button, *args)
-
-        self.switch_button.connect("toggled", callback_wrapper)
-
-    def set_widget_value(self, value):
-        self.switch_button.set_active(value)
-
-    def get_widget_value(self):
-        return self.switch_button.get_active()
-
-
 class ToggleWidget(Gtk.Box, DynamicWidget):
     """Widget for entering an on/off value."""
 
@@ -669,7 +642,7 @@ def make_widget_wrapper(prop, widget):
         widget_lower = widget_adjustment.props.lower
         widget_upper = widget_adjustment.props.upper
         return NumericWidget(upper=widget_upper, lower=widget_lower, adjustment=widget_adjustment, default=prop.default_value)
-    elif isinstance(widget, (Gtk.Switch, Gtk.CheckButton)):
+    elif isinstance(widget, Gtk.Switch):
         return ToggleWidget(prop.default_value, widget)
     else:
         Loggable().fixme("%s has not been wrapped into a Dynamic Widget", widget)
