@@ -956,17 +956,11 @@ class RenderDialog(Loggable):
     def __remove_preview_effect_values(self):
         for clip in self.project.ges_timeline.ui.clips():
             for entry in clip.get_children(False):
-                # FIX-ME: Changing the value here triggers the callback to update the UI checkbox.
-                # Need to block the signals, however, this is causing the UI to freeze.
-
-                # try:
-                # entry.block_signals()
                 if (isinstance(entry, Effect) and entry.get_property("bin-description") == "frei0r-filter-3-point-color-balance"):
                     entry.set_child_property("split-preview", False)
+                    # We expect only on instance of this effect per clip,
+                    # so will break since we found it.
                     break
-
-                # finally:
-                #   entry.unblock_signals()
 
     def _asset_replacement(self, clip):
         if not isinstance(clip, GES.UriClip):
