@@ -587,6 +587,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
             "project-closed", self.__project_closed_cb)
 
     def _new_project_loaded_cb(self, unused_app, project):
+
         if self._selection is not None:
             self._selection.disconnect_by_func(self._selection_changed_cb)
             self._selection = None
