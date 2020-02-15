@@ -24,8 +24,8 @@ To create a detailed proposal, use [GNOME's GSoC application template](https://w
  * Mentor: Mathieu Duponchelle
 
 ## Closing credits
-* Brief explanation: For [end credits](https://en.wikipedia.org/wiki/Closing_credits) and other advanced text display, we could use the new [GStreamer WPE](https://www.youtube.com/watch?v=no7rvUk8GqM) element in [gst-plugins-bad](https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/tree/master/ext/wpe), which can display an HTML page as a video element. The first task would be to create a scroll mechanism by extending the GStreamer navigation event API with a scroll event type, and adding support in GstWPE. As GstWPE is a live source it does not allow seeking (getting frames at random positions), so the second task would be to add logic in Pitivi for creating an HQ proxy file out of the page being scrolled, which can be used in the project timeline as any other video clip. The third part would be a simple UI in Pitivi for easily creating the closing credits HTML, and managing the proxy file.
-* Requirements: C, Python. Minimal experience contributing to Pitivi.
+* Brief explanation: For [end credits](https://en.wikipedia.org/wiki/Closing_credits) and other advanced text display, we could use the new [GStreamer WPE](https://www.youtube.com/watch?v=no7rvUk8GqM) element in [gst-plugins-bad](https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/tree/master/ext/wpe), which can display an HTML page as a video element. As GstWPE is a live source it does not allow seeking (getting frames at random positions), we have to add logic in Pitivi for seamlessly creating a video file out of an animated HTML page. The resulting file can be used in the project timeline as any other video clip. You'd have to extend the UI with a new [perspective](https://gitlab.gnome.org/GNOME/pitivi/blob/master/pitivi/perspective.py) for managing the closing credits HTML, and the corresponding video files.
+* Requirements: Python. Minimal experience contributing to Pitivi.
 * Mentor: Philippe Normand
 
 ## Media Library improvements
