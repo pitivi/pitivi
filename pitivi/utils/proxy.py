@@ -174,11 +174,10 @@ class ProxyManager(GObject.Object, Loggable):
             return
 
     def _scale_asset_resolution(self, asset, max_width, max_height):
-        if asset.get_info().get_video_streams():
-            stream = asset.get_info().get_video_streams()[0]
-            width = stream.get_width()
-            height = stream.get_height()
-            aspect_ratio = Fraction(width, height)
+        stream = asset.get_info().get_video_streams()[0]
+        width = stream.get_width()
+        height = stream.get_height()
+        aspect_ratio = Fraction(width, height)
 
         if aspect_ratio.numerator >= width or aspect_ratio.denominator >= height:
             self.log("Unscalable aspect ratio.")
@@ -366,8 +365,9 @@ class ProxyManager(GObject.Object, Loggable):
 
     def asset_matches_target_res(self, asset):
         """Returns whether the asset's size <= the scaled proxy size."""
-        if asset.get_info().get_video_streams():
-            stream = asset.get_info().get_video_streams()[0]
+        asset_stream = asset.get_info().get_video_streams()
+        if asset_stream:
+            stream = asset_stream[0]
 
             asset_res = (stream.get_width(), stream.get_height())
             target_res = self._scale_asset_resolution(asset,
@@ -376,7 +376,7 @@ class ProxyManager(GObject.Object, Loggable):
 
             return asset_res == target_res
 
-        return None
+        return False
 
     def __asset_needs_transcoding(self, asset, scaled=False):
         if self.proxying_unsupported:
