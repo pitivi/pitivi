@@ -691,8 +691,9 @@ class ProxyManager(GObject.Object, Loggable):
                 to shadow a scaled proxy.
         """
         force_proxying = asset.force_proxying
+        streams = asset.get_info().get_video_streams()
         # Handle Automatic scaling
-        if self.app.settings.auto_scaling_enabled and not force_proxying \
+        if streams and self.app.settings.auto_scaling_enabled and not force_proxying \
                 and not shadow and not self.asset_matches_target_res(asset):
             scaled = True
 
@@ -723,7 +724,7 @@ class ProxyManager(GObject.Object, Loggable):
                 return
 
         proxy_uri = self.get_proxy_uri(asset, scaled)
-        if Gio.File.new_for_uri(proxy_uri).query_exists(None):
+        if streams and Gio.File.new_for_uri(proxy_uri).query_exists(None):
             self.debug("Using proxy already generated: %s", proxy_uri)
             GES.Asset.request_async(GES.UriClip,
                                     proxy_uri, None,
@@ -734,7 +735,7 @@ class ProxyManager(GObject.Object, Loggable):
         self.debug("Creating a proxy for %s (strategy: %s, force: %s, scaled: %s)",
                    asset.get_id(), self.app.settings.proxying_strategy,
                    force_proxying, scaled)
-        if scaled:
+        if scaled and streams:
             project = self.app.project_manager.current_project
             w = project.scaled_proxy_width
             h = project.scaled_proxy_height

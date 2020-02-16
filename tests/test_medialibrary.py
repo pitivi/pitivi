@@ -91,10 +91,12 @@ class BaseTestMediaLibrary(common.TestCase):
                 common.get_sample_uri(sample_name), GES.UriClip)
 
     def check_import(self, samples, proxying_strategy=ProxyingStrategy.ALL,
-                     check_no_transcoding=False):
+                     check_no_transcoding=False, auto_scaling_enabled=False):
+        """Simulates the user importing an asset."""
         self._custom_set_up(proxying_strategy=proxying_strategy,
                             num_transcoding_jobs=4,
-                            last_clip_view=medialibrary.SHOW_TREEVIEW)
+                            last_clip_view=medialibrary.SHOW_TREEVIEW,
+                            auto_scaling_enabled=auto_scaling_enabled)
         self.check_no_transcoding = check_no_transcoding
 
         self.medialibrary._progressbar.connect(
@@ -106,6 +108,7 @@ class BaseTestMediaLibrary(common.TestCase):
 
     def check_add_proxy(self, asset, scaled=False, w=160, h=120,
                         check_progress=True):
+        """Simulates the user requesting an asset to be proxied."""
         self.assertFalse(self.app.proxy_manager.is_proxy_asset(asset))
 
         # Check the inital state of the asset, nothing should be going on.
@@ -157,11 +160,13 @@ class BaseTestMediaLibrary(common.TestCase):
                 medialibrary.AssetThumbnail.PROXIED)
 
         proxy = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
-        stream = proxy.get_info().get_video_streams()[0]
-        resolution = [stream.get_width(), stream.get_height()]
-        self.assertEqual(proxy.props.proxy_target.props.id, asset.props.id)
-        if scaled:
-            self.assertEqual(resolution, [w, h])
+        # Check if the asset is video or not
+        if w:
+            stream = proxy.get_info().get_video_streams()[0]
+            resolution = [stream.get_width(), stream.get_height()]
+            self.assertEqual(proxy.props.proxy_target.props.id, asset.props.id)
+            if scaled:
+                self.assertEqual(resolution, [w, h])
 
         return proxy
 
@@ -447,3 +452,8 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         with common.created_project_file(asset_uri) as uri:
             self._custom_set_up(project_uri=uri)
         self.assertTrue(self.medialibrary._import_warning_infobar.props.visible)
+
+    def test_import_scaled_audio(self):
+        sample = "mp3_sample.mp3"
+        with common.cloned_sample(sample):
+            self.check_import([sample], auto_scaling_enabled=True)
