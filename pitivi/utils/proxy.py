@@ -29,10 +29,10 @@ from gi.repository import GstTranscoder
 
 from pitivi.configure import get_gstpresets_dir
 from pitivi.dialogs.prefs import PreferencesDialog
-from pitivi.utils.misc import ASSET_DURATION_META
-from pitivi.utils.misc import asset_get_duration
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import ASSET_DURATION_META
+from pitivi.utils.misc import asset_get_duration
 
 # Make sure gst knowns about our own GstPresets
 Gst.preset_set_app_dir(get_gstpresets_dir())
@@ -468,8 +468,8 @@ class ProxyManager(GObject.Object, Loggable):
             duration = min(asset_duration, proxy_duration)
 
             self.info("Reseting %s duration from %s to %s as"
-                " new proxy has a different duration",
-                asset.props.id, Gst.TIME_ARGS(asset_duration), Gst.TIME_ARGS(duration))
+                      " new proxy has a different duration",
+                      asset.props.id, Gst.TIME_ARGS(asset_duration), Gst.TIME_ARGS(duration))
             asset.set_uint64(ASSET_DURATION_META, duration)
             proxy.set_uint64(ASSET_DURATION_META, duration)
             target_uri = self.get_target_uri(asset)
@@ -480,15 +480,15 @@ class ProxyManager(GObject.Object, Loggable):
                         new_duration = duration - clip.props.in_point
                         if new_duration > 0:
                             self.warning("%s reseting duration to %s as"
-                                " new proxy has a shorter duration",
-                                clip, Gst.TIME_ARGS(new_duration))
+                                         " new proxy has a shorter duration",
+                                         clip, Gst.TIME_ARGS(new_duration))
                             clip.set_duration(new_duration)
                         else:
                             new_inpoint = new_duration - clip.props.in_point
                             self.error("%s reseting duration to %s"
-                                " and inpoint to %s as the proxy"
-                                " is shorter",
-                                clip, Gst.TIME_ARGS(new_duration), Gst.TIME_ARGS(new_inpoint))
+                                       " and inpoint to %s as the proxy"
+                                       " is shorter",
+                                       clip, Gst.TIME_ARGS(new_duration), Gst.TIME_ARGS(new_inpoint))
                             clip.set_inpoint(new_inpoint)
                             clip.set_duration(duration - new_inpoint)
                         clip.set_max_duration(duration)
@@ -717,60 +717,76 @@ class ProxyManager(GObject.Object, Loggable):
                 to shadow a scaled proxy.
         """
         force_proxying = asset.force_proxying
-        # Handle Automatic scaling
-        if self.app.settings.auto_scaling_enabled and not force_proxying \
-                and not shadow and not self.asset_matches_target_res(asset):
-            scaled = True
+        video_streams = asset.get_info().get_video_streams()
+        if video_streams:
+            # Handle Automatic scaling
+            if self.app.settings.auto_scaling_enabled and not force_proxying \
+                    and not shadow and not self.asset_matches_target_res(asset):
+                scaled = True
 
-        # Create shadow proxies for unsupported assets
-        if not self.is_asset_format_well_supported(asset) and not \
-                self.app.settings.proxying_strategy == ProxyingStrategy.NOTHING \
-                and not shadow and scaled:
-            hq_uri = self.app.proxy_manager.get_proxy_uri(asset)
-            if not Gio.File.new_for_uri(hq_uri).query_exists(None):
-                self.add_job(asset, shadow=True)
+            # Create shadow proxies for unsupported assets
+            if not self.is_asset_format_well_supported(asset) and not \
+                    self.app.settings.proxying_strategy == ProxyingStrategy.NOTHING \
+                    and not shadow and scaled:
+                hq_uri = self.app.proxy_manager.get_proxy_uri(asset)
+                if not Gio.File.new_for_uri(hq_uri).query_exists(None):
+                    self.add_job(asset, shadow=True)
 
-        if scaled:
-            if self.is_asset_queued(asset, optimisation=False):
-                self.log("Asset already queued for scaling: %s", asset)
+            if scaled:
+                if self.is_asset_queued(asset, optimisation=False):
+                    self.log("Asset already queued for scaling: %s", asset)
+                    return
+            else:
+                if self.is_asset_queued(asset, scaling=False):
+                    self.log("Asset already queued for optimization: %s", asset)
+                    return
+
+            if not force_proxying:
+                if not self.__asset_needs_transcoding(asset, scaled):
+                    self.debug("Not proxying asset (proxying disabled: %s)",
+                               self.proxying_unsupported)
+                    # Make sure to notify we do not need a proxy for that asset.
+                    self.emit("proxy-ready", asset, None)
+                    return
+
+            proxy_uri = self.get_proxy_uri(asset, scaled)
+            if Gio.File.new_for_uri(proxy_uri).query_exists(None):
+                self.debug("Using proxy already generated: %s", proxy_uri)
+                GES.Asset.request_async(GES.UriClip,
+                                        proxy_uri, None,
+                                        self.__asset_loaded_cb, asset,
+                                        None)
                 return
 
+            self.debug("Creating a proxy for %s (strategy: %s, force: %s, scaled: %s)",
+                       asset.get_id(), self.app.settings.proxying_strategy,
+                       force_proxying, scaled)
+
+            if scaled:
+                project = self.app.project_manager.current_project
+                w = project.scaled_proxy_width
+                h = project.scaled_proxy_height
+                if not project.has_scaled_proxy_size():
+                    project.scaled_proxy_width = w
+                    project.scaled_proxy_height = h
+                t_width, t_height = self._scale_asset_resolution(asset, w, h)
+                self.__create_transcoder(asset, width=t_width, height=t_height, shadow=shadow)
+            else:
+                self.__create_transcoder(asset, shadow=shadow)
         else:
+            if not force_proxying:
+                if not self.__asset_needs_transcoding(asset, scaled):
+                    self.debug("Not proxying asset (proxying disabled: %s)",
+                               self.proxying_unsupported)
+                    # Make sure to notify we do not need a proxy for that asset.
+                    self.emit("proxy-ready", asset, None)
+                    return
+
             if self.is_asset_queued(asset, scaling=False):
                 self.log("Asset already queued for optimization: %s", asset)
                 return
 
-        if not force_proxying:
-            if not self.__asset_needs_transcoding(asset, scaled):
-                self.debug("Not proxying asset (proxying disabled: %s)",
-                           self.proxying_unsupported)
-                # Make sure to notify we do not need a proxy for that asset.
-                self.emit("proxy-ready", asset, None)
-                return
-
-        proxy_uri = self.get_proxy_uri(asset, scaled)
-        if Gio.File.new_for_uri(proxy_uri).query_exists(None):
-            self.debug("Using proxy already generated: %s", proxy_uri)
-            GES.Asset.request_async(GES.UriClip,
-                                    proxy_uri, None,
-                                    self.__asset_loaded_cb, asset,
-                                    None)
-            return
-
-        self.debug("Creating a proxy for %s (strategy: %s, force: %s, scaled: %s)",
-                   asset.get_id(), self.app.settings.proxying_strategy,
-                   force_proxying, scaled)
-        if scaled:
-            project = self.app.project_manager.current_project
-            w = project.scaled_proxy_width
-            h = project.scaled_proxy_height
-            if not project.has_scaled_proxy_size():
-                project.scaled_proxy_width = w
-                project.scaled_proxy_height = h
-            t_width, t_height = self._scale_asset_resolution(asset, w, h)
-            self.__create_transcoder(asset, width=t_width, height=t_height, shadow=shadow)
-        else:
-            self.__create_transcoder(asset, shadow=shadow)
+            self.__create_transcoder(asset)
 
 
 def get_proxy_target(obj):

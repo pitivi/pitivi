@@ -22,16 +22,15 @@ from unittest import mock
 
 from gi.repository import Gdk
 from gi.repository import GES
-from gi.repository import GObject
 from gi.repository import Gst
 
 from pitivi import medialibrary
 from pitivi.project import ProjectManager
+from pitivi.utils.misc import ASSET_DURATION_META
+from pitivi.utils.misc import asset_get_duration
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.validate import create_event
 from tests import common
-from pitivi.utils.misc import asset_get_duration
-from pitivi.utils.misc import ASSET_DURATION_META
 
 
 class BaseTestMediaLibrary(common.TestCase):
@@ -96,10 +95,12 @@ class BaseTestMediaLibrary(common.TestCase):
                 common.get_sample_uri(sample_name), GES.UriClip)
 
     def check_import(self, samples, proxying_strategy=ProxyingStrategy.ALL,
-                     check_no_transcoding=False):
+                     check_no_transcoding=False, auto_scaling_enabled=False):
+        """Simulates the user importing an asset."""
         self._custom_set_up(proxying_strategy=proxying_strategy,
                             num_transcoding_jobs=4,
-                            last_clip_view=medialibrary.SHOW_TREEVIEW)
+                            last_clip_view=medialibrary.SHOW_TREEVIEW,
+                            auto_scaling_enabled=auto_scaling_enabled)
         self.check_no_transcoding = check_no_transcoding
 
         self.medialibrary._progressbar.connect(
@@ -111,6 +112,7 @@ class BaseTestMediaLibrary(common.TestCase):
 
     def check_add_proxy(self, asset, scaled=False, w=160, h=120,
                         check_progress=True):
+        """Simulates the user requesting an asset to be proxied."""
         self.assertFalse(self.app.proxy_manager.is_proxy_asset(asset))
 
         # Check the inital state of the asset, nothing should be going on.
@@ -162,11 +164,13 @@ class BaseTestMediaLibrary(common.TestCase):
                 medialibrary.AssetThumbnail.PROXIED)
 
         proxy = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
-        stream = proxy.get_info().get_video_streams()[0]
-        resolution = [stream.get_width(), stream.get_height()]
         self.assertEqual(proxy.props.proxy_target.props.id, asset.props.id)
-        if scaled:
-            self.assertEqual(resolution, [w, h])
+        # Check if the asset is video or not
+        if w:
+            stream = proxy.get_info().get_video_streams()[0]
+            resolution = [stream.get_width(), stream.get_height()]
+            if scaled:
+                self.assertEqual(resolution, [w, h])
 
         return proxy
 
@@ -469,6 +473,11 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         with common.cloned_sample(sample):
             self.check_import([sample], check_no_transcoding=True,
                               proxying_strategy=ProxyingStrategy.AUTOMATIC)
+
+    def test_import_supported_forced_scaled_audio(self):
+        sample = "mp3_sample.mp3"
+        with common.cloned_sample(sample):
+            self.check_import([sample], auto_scaling_enabled=True)
 
     def test_missing_uri_displayed(self):
         asset_uri = common.get_sample_uri("image-which-does-not-exist.png")
