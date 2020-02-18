@@ -465,8 +465,6 @@
             <property name="name">test</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="tooltip_text" translatable="yes">thid d
-</property>
             <property name="margin_top">4</property>
           </object>
           <packing>
@@ -480,7 +478,7 @@
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="margin_left">19</property>
-            <property name="label" translatable="yes">Split-preview</property>
+            <property name="label" translatable="yes">Split preview</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -493,7 +491,7 @@
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="margin_left">19</property>
-            <property name="label" translatable="yes">Source image on Left</property>
+            <property name="label" translatable="yes">Source image on left</property>
             <property name="xalign">0.5</property>
           </object>
           <packing>
