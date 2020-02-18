@@ -2,37 +2,27 @@
 
 Welcome, testers!
 
-To report a bug/problem in the software, or request a new
-feature/enhancement, [create an
-issue](https://gitlab.gnome.org/GNOME/pitivi/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=).
-
 Bug reporting and feature requests are managed with GNOME's
 [GitLab](https://gitlab.gnome.org/). You need to create
-an account to file issues and comment on them. Take a look at the
+an account to file issues and comment on them. Take a quick look at the
 [existing list of bugs and feature
 requests](https://gitlab.gnome.org/GNOME/pitivi/issues) to see if
 your problem has already been reported.
+
+To report a bug/problem in the software, [create an
+issue](https://gitlab.gnome.org/GNOME/pitivi/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=).
+Ideally you can describe exactly the steps *anyone* can follow to
+reproduce the bug. The more details, the better.
 
 # Providing debugging information
 
 ## Sharing sample files, projects, and “scenarios”
 
-In some cases we might ask you to share **sample media files** with us
-to debug a particular issue. If you don't have your own hosting space,
-we have a FTP account with unlimited space available for this purpose,
-provided by [idmark.ca](http://idmark.ca).
-
-1.  Using a FTP client (such as FileZilla, available on most Linux
-    distributions), connect to “idmark.ca” using the username
-    “pitivisamples@idmark.ca” (@idmark.ca is part of the username). Ask
-    [us](The_people.md) for the password on IRC.
-2.  Please follow our simple naming convention and put your files in a
-    folder called with the ID of the bug report (eg. T3553) so we can
-    find it easily.
-3.  Your uploaded files will be in a private staging folder (only
-    visible through FTP); once reviewed, we may move your uploaded files
-    to <http://pitivi.ecchi.ca/user-contributed-samples/> for ease of
-    access.
+To be able to reproduce an issue, we might ask you to share **sample
+media files** with us. If the file is too large to attach to the GitLab
+issue, you can use for example [Dropbox](https://www.dropbox.com/),
+[Google Drive](https://drive.google.com/), [MEGA](https://mega.nz/) or
+other service to share such media.
 
 You can also share in a similar way a **project archive** containing the
 project and all the media is uses:
@@ -40,7 +30,7 @@ project and all the media is uses:
 1.  Use the “Select unused clips” feature to easily remove unused media
     from your project, this will help you save space (and upload time).
 2.  Click the menu button top-right and choose the “Export project as
-    tarball...” menu item. Save the .xges\_tar file somewhere. It will
+    tarball...” menu item. Save the `.xges_tar` file somewhere. It will
     contain your project file and its associated media.
 3.  Upload it as described above.
 
