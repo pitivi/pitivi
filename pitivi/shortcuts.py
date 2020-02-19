@@ -73,7 +73,7 @@ class ShortcutsManager(GObject.Object):
                     accels = ",".join(self.app.get_accels_for_action(action))
                     conf_file.write(action + ":" + accels + "\n")
 
-    def add(self, action, accelerators, title=None, group=None):
+    def add(self, action, accelerators, title, group=None):
         """Adds an action to be displayed.
 
         Args:
@@ -83,7 +83,7 @@ class ShortcutsManager(GObject.Object):
                 the action. They are set as the accelerators of the action
                 only if no accelerators have been loaded from the config file
                 initially, when the current manager instance has been created.
-            title (Optional(str)): The title of the action.
+            title (str): The title of the action.
             group (Optional[str]): The group id registered with `register_group`
                 to be used instead of that extracted from `action`.
         """
@@ -92,11 +92,8 @@ class ShortcutsManager(GObject.Object):
         if action not in self.__loaded_actions:
             self.app.set_accels_for_action(action, accelerators)
 
-        if title:
-            action_prefix = group or action.split(".")[0]
-            if action_prefix not in self.group_actions:
-                self.group_actions[action_prefix] = []
-            self.group_actions[action_prefix].append((action, title))
+        action_prefix = group or action.split(".")[0]
+        self.group_actions[action_prefix].append((action, title))
 
     def set(self, action, accelerators):
         """Sets accelerators for a shortcut.
@@ -157,6 +154,7 @@ class ShortcutsManager(GObject.Object):
         """
         assert action_prefix not in self.group_titles
         self.group_titles[action_prefix] = title
+        self.group_actions[action_prefix] = []
         self.__groups.append((position, action_prefix))
         self.__groups.sort()
 
@@ -198,9 +196,13 @@ class ShortcutsWindow(Gtk.ShortcutsWindow):
         section = Gtk.ShortcutsSection()
         section.show()
         for group_id in self.app.shortcuts.groups:
+            actions = self.app.shortcuts.group_actions.get(group_id)
+            if not actions:
+                continue
+
             group = Gtk.ShortcutsGroup(title=self.app.shortcuts.group_titles[group_id])
             group.show()
-            for action, title in self.app.shortcuts.group_actions[group_id]:
+            for action, title in actions:
                 # Show only the first accelerator which is the main one.
                 # Don't bother with the others, to keep the dialog pretty.
                 try:
