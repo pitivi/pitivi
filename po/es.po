@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-02-18 04:47+0000\n"
-"PO-Revision-Date: 2020-02-18 11:10+0100\n"
+"POT-Creation-Date: 2020-02-18 21:52+0000\n"
+"PO-Revision-Date: 2020-02-19 11:45+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -257,18 +257,14 @@ msgstr "Tonos medios"
 msgid "Highlights"
 msgstr "Puntos de luz"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:468
-msgid "thid d\n"
-msgstr ""
-
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:483
-#| msgid "Split preview"
-msgid "Split-preview"
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:481
+#| msgid "Split-preview"
+msgid "Split preview"
 msgstr "Dividir vista previa"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:496
-#| msgid "Source image on left"
-msgid "Source image on Left"
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:494
+#| msgid "Source image on Left"
+msgid "Source image on left"
 msgstr "Imagen fuente a la izquierda"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:303
