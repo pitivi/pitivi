@@ -65,7 +65,7 @@ class TestShortcutsManager(common.TestCase):
             manager = ShortcutsManager(app)
             # Test the add is calling set_accels_for_action(),
             # since there is no shortcuts.conf in the directory.
-            manager.register_group("general", "General group", position=0)
+            manager.register_group("prefix", "General group", position=0)
             manager.add("prefix.action1", ["<Primary>P"], "Action one")
             self.assertEqual(app.set_accels_for_action.call_count, 1)
             # Save the shortcut to the config file.
@@ -76,6 +76,7 @@ class TestShortcutsManager(common.TestCase):
             # Previously saved shortcut is read from the config file
             # and 'set_accels_for_action' is called.
             self.assertEqual(app.set_accels_for_action.call_count, 1)
+            manager2.register_group("prefix", "General group", position=0)
             manager2.register_group("other", "Other group", position=0)
             app.set_accels_for_action.reset_mock()
             manager2.add("prefix.action1", ["<Primary>P"], "Action one")
