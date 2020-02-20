@@ -22,6 +22,7 @@ data/ui/renderingdialog.ui
 data/ui/renderingprogress.ui
 data/ui/timelinetoolbar.ui
 data/ui/titleeditor.ui
+pitivi/action_search_bar.py
 pitivi/application.py
 pitivi/check.py
 pitivi/clipproperties.py
