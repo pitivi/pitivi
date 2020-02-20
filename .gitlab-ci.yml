@@ -1,3 +1,4 @@
+---
 stages:
   - docker_image
   - build
@@ -8,43 +9,88 @@ variables:
   DBUS_ID: org.pitivi.Pitivi
   XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
 
+
+.docker_image_template:
+  tags:
+    - flatpak
+    - privileged
+  image: docker:latest
+  script:
+    - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}-sdk_3.34"
+    - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.34"
+    - export TMPIMAGENAME="tmp-pitivi-${BRANCH}-sdk_3.34"
+    - export BUILDDIR="\${HOME}/pitivi"
+    - export CLONE_PITIVI="git clone ${CI_PROJECT_URL}.git --single-branch \${HOME}/pitivi -b ${CI_COMMIT_REF_NAME}"
+    - export BUILD_PITIVI="flatpak-builder --user -disable-rofiles-fuse ${BUILDDIR}/app ${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json --state-dir=\${HOME}/flatpak-cache --ccache"
+
+    - env
+
+    - docker run --privileged --name ${TMPIMAGENAME} ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${BUILDDIR}"
+    - docker commit ${TMPIMAGENAME} ${IMAGE}
+    - docker rm ${TMPIMAGENAME}
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker push ${IMAGE}
+  only:
+    - triggers
+    - schedules
+  retry: 1
+
+pitivi:master:
+  stage: docker_image
+  extends: .docker_image_template
+  before_script:
+    # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
+    - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
+    - export BRANCH=master
+
+pitivi:1.0:
+  stage: docker_image
+  extends: .docker_image_template
+  before_script:
+    # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
+    - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
+    - export BRANCH=1.0
+
+
 build:
-  image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_3.34
   stage: build
-  artifacts:
-    paths:
-      - xunit.xml
+  tags:
+    - flatpak
+  image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_3.34
   variables:
-    GST_DEBUG_COLOR: 'no'
     BLACKLIST: >
       -b tests.test_effects.EffectsPropertiesManagerTest.test_dependent_properties
   script:
     - export BUILDDIR=${HOME}/pitivi
     - export MANIFEST=${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json
-    - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --run app ${MANIFEST}"
+    - export RUN_IN_SANDBOX="flatpak-builder --disable-rofiles-fuse --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --env=GST_DEBUG_COLOR=no --run app ${MANIFEST}"
+    - export FLATPAK_BUILDER_CACHE="--state-dir=${HOME}/flatpak-cache"
+
+    - env
 
     # Working around the fact that flatpak-builder *requires* the cache dir
     # to be on the same filesystem as the build dir
-    - export FLATPAK_BUILDER_CACHE="--state-dir=${HOME}/flatpak-cache"
     - mv ${CI_PROJECT_DIR} ${BUILDDIR}
     - mkdir -p ${CI_PROJECT_DIR}
 
     - cd ${BUILDDIR}
-    - flatpak-builder ${FLATPAK_BUILDER_CACHE} --ccache --repo=${CI_PROJECT_DIR}/repo --force-clean app build/flatpak/org.pitivi.Pitivi.json --subject="Rolling update for pitivi master" --body="See ${CI_JOB_URL}"
+    - flatpak-builder --user --disable-rofiles-fuse ${FLATPAK_BUILDER_CACHE} --disable-download --ccache --repo=${CI_PROJECT_DIR}/repo --force-clean app build/flatpak/org.pitivi.Pitivi.json --subject="Rolling update for pitivi master" --body="See ${CI_JOB_URL}"
     - ${RUN_IN_SANDBOX} meson mesonbuild/
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
     - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH} --logs-dir=${CI_PROJECT_DIR}/tests-logs ${BLACKLIST}
   cache:
     paths:
-    - flatpak-cache
+      - flatpak-cache
   artifacts:
     expire_in: 30 days
     paths:
-    - repo/
-    - tests-logs/
+      - xunit.xml
+      - repo/
+      - tests-logs/
     reports:
       junit:
         - ${XUNIT_PATH}
+
 
 deploy:
   tags:
@@ -56,49 +102,3 @@ deploy:
     - master@GNOME/pitivi
     - 1.0@GNOME/pitivi
     - thiblahute/sdk3.34@GNOME/pitivi
-
-# Not using a Dockerfile because we need the container to be privileged to run flatpak inside of it
-# and it is not possible to use a privileged `docker build`.
-.build_emplate: &build_docker_image
-    image: docker:latest
-    variables:
-        DOCKER_DRIVER: overlay2
-        DOCKER_TLS_CERTDIR: ""
-    services:
-        - docker:19.03.0-dind
-    script:
-        - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}-sdk_3.34"
-        - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.34"
-        - export TMPIMAGENAME="tmp-pitivi-${BRANCH}-sdk_3.34"
-        - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
-        - export BUILDDIR="\${HOME}/pitivi"
-        - export CLONE_PITIVI="git clone ${CI_PROJECT_URL}.git --single-branch \${HOME}/pitivi -b ${CI_COMMIT_REF_NAME}"
-        - export BUILD_PITIVI="flatpak-builder ${BUILDDIR}/app ${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json --state-dir=\${HOME}/flatpak-cache --ccache"
-
-        - env
-
-        - docker run --privileged --name ${TMPIMAGENAME} ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${BUILDDIR}"
-        - docker commit ${TMPIMAGENAME} ${IMAGE}
-        - docker rm ${TMPIMAGENAME}
-        - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-        - docker push ${IMAGE}
-    only:
-        - triggers
-        - schedules
-    retry: 1
-
-pitivi:master:
-    stage: docker_image
-    before_script:
-        # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
-        - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
-        - export BRANCH=master
-    <<: *build_docker_image
-
-pitivi:1.0:
-    stage: docker_image
-    before_script:
-        # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
-        - export BRANCH=1.0
-        - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
-    <<: *build_docker_image
