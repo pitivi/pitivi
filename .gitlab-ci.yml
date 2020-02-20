@@ -9,6 +9,8 @@ variables:
   XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
 
 build:
+  tags:
+    - privileged
   image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_3.34
   stage: build
   artifacts:
@@ -60,6 +62,8 @@ deploy:
 # Not using a Dockerfile because we need the container to be privileged to run flatpak inside of it
 # and it is not possible to use a privileged `docker build`.
 .build_emplate: &build_docker_image
+    tags:
+        - privileged
     image: docker:latest
     variables:
         DOCKER_DRIVER: overlay2
