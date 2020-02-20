@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-02-19 20:53+0000\n"
-"PO-Revision-Date: 2020-02-20 12:27+0100\n"
+"POT-Creation-Date: 2020-02-20 12:30+0000\n"
+"PO-Revision-Date: 2020-02-20 16:44+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -793,6 +793,11 @@ msgstr "Horizontal:"
 #: data/ui/titleeditor.ui:292
 msgid "Vertical:"
 msgstr "Vertical:"
+
+#: pitivi/action_search_bar.py:46
+#| msgid "Section"
+msgid "Search Action"
+msgstr "Acción de búsqueda"
 
 #: pitivi/application.py:158
 msgid "General"
@@ -2568,9 +2573,6 @@ msgstr ""
 
 #~ msgid "Close this message"
 #~ msgstr "Cerrar este mensaje"
-
-#~ msgid "Section"
-#~ msgstr "Sección"
 
 #~ msgid "Custom"
 #~ msgstr "Personalizado"
