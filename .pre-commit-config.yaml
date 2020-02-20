@@ -1,42 +1,58 @@
+---
 repos:
--   repo: https://github.com/pre-commit/pre-commit.git
+  - repo: https://github.com/pre-commit/pre-commit.git
     rev: v1.20.0
     hooks:
-    -   id: validate_manifest
--   repo: https://github.com/pre-commit/pre-commit-hooks.git
+      - id: validate_manifest
+  - repo: https://github.com/pre-commit/pre-commit-hooks.git
     rev: v2.4.0
     hooks:
-    # Hooks able to fix small things.
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
+      - id: check-yaml
+      # Hooks able to fix small things.
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
         exclude: ".svg$|.po$"
-    -   id: fix-encoding-pragma
-    # Hooks doing lightweight Python checks.
-    -   id: check-docstring-first
-    -   id: debug-statements
--   repo: https://github.com/asottile/reorder_python_imports.git
+      - id: fix-encoding-pragma
+      # Hooks doing lightweight Python checks.
+      - id: check-docstring-first
+      - id: debug-statements
+  - repo: https://github.com/asottile/reorder_python_imports.git
     rev: v1.8.0
     hooks:
-    -   id: reorder-python-imports
--   repo: https://github.com/pycqa/pydocstyle
+      - id: reorder-python-imports
+  - repo: https://github.com/pycqa/pydocstyle
     rev: 5.0.1
     hooks:
-    -   id: pydocstyle
+      - id: pydocstyle
         args:
-        # http://www.pydocstyle.org/en/latest/error_codes.html
-        -   --ignore=D1,D203,D213,D401,D406,D407,D413
--   repo: https://gitlab.com/PyCQA/flake8
+          # http://www.pydocstyle.org/en/latest/error_codes.html
+          - --ignore=D1,D203,D213,D401,D406,D407,D413
+  - repo: https://gitlab.com/PyCQA/flake8
     rev: 3.7.9
     hooks:
-    -   id: flake8
+      - id: flake8
         args:
-        # http://flake8.pycqa.org/en/latest/user/error-codes.html
-        # https://pycodestyle.readthedocs.io/en/latest/intro.html#error-codes
-        -   --ignore=E402,E501,E722,F401,F841,W504
--   repo: local
+          # http://flake8.pycqa.org/en/latest/user/error-codes.html
+          # https://pycodestyle.readthedocs.io/en/latest/intro.html#error-codes
+          - --ignore=E402,E501,E722,F401,F841,W504
+  - repo: local
     hooks:
-    -   id: pylint
+      - id: pylint
         name: pylint
         entry: python3 -m pylint.__main__ --rcfile=pylint.rc
         language: system
         types: [python]
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.20.0
+    hooks:
+      - id: yamllint
+        args:
+          - -d
+          - "{extends: default, rules: {line-length: disable}}"
+  - repo: https://gitlab.com/devopshq/gitlab-ci-linter
+    rev: v1.0.0
+    hooks:
+      - id: gitlab-ci-linter
+        args:
+          - '--server'
+          - 'https://gitlab.gnome.org'
