@@ -9,12 +9,6 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="end_adjustment">
-    <property name="lower">-9999999999</property>
-    <property name="upper">9999999999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
   <object class="GtkAdjustment" id="height_adjustment">
     <property name="lower">-9999999999</property>
     <property name="upper">9999999999</property>
@@ -25,6 +19,12 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">edit-clear-all-symbolic</property>
+  </object>
+  <object class="GtkAdjustment" id="in_adjustment">
+    <property name="lower">-9999999999</property>
+    <property name="upper">9999999999</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="position_x_adjustment">
     <property name="lower">-9999999999</property>
@@ -85,7 +85,7 @@
       <object class="GtkLabel">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="label" translatable="yes">End:</property>
+        <property name="label" translatable="yes">In Point:</property>
         <property name="xalign">0</property>
       </object>
       <packing>
@@ -105,12 +105,12 @@
       </packing>
     </child>
     <child>
-      <object class="GtkSpinButton" id="end_spinbtn">
+      <object class="GtkSpinButton" id="inpoint_spinbtn">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="halign">end</property>
         <property name="progress_pulse_step">1</property>
-        <property name="adjustment">end_adjustment</property>
+        <property name="adjustment">in_adjustment</property>
         <property name="numeric">True</property>
       </object>
       <packing>

@@ -762,7 +762,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 return res, value
             except PipelineError:
                 pass
-
+        print(self.source.get_child_property(prop))
         return self.source.get_child_property(prop)
 
     def _position_cb(self, unused_pipeline, unused_position):
@@ -952,15 +952,13 @@ class TrimmingProperties(Gtk.Expander, Loggable):
         self._prev_keyframe_btn.connect("clicked", self.__go_to_keyframe_cb, False)
         self._prev_keyframe_btn.set_sensitive(False)
 
-        # self.__setup_spin_button("xpos_spinbtn", "posx")
-        # self.__setup_spin_button("ypos_spinbtn", "posy")
-
-        # self.__setup_spin_button("width_spinbtn", "width")
-        # self.__setup_spin_button("height_spinbtn", "height")
+        self.__setup_spin_button("start_spinbtn", "start")
+        self.__setup_spin_button("inpoint_spinbtn", "inpoint")
+        self.__setup_spin_button("duration_spinbtn", "duration")
 
     def __get_keyframes_timestamps(self):
         keyframes_ts = []
-        for prop in ["posx", "posy", "width", "height"]:
+        for prop in ["start", "inpoint", "duration"]:
             prop_keyframes = self.__control_bindings[prop].props.control_source.get_all()
             keyframes_ts.extend([keyframe.timestamp for keyframe in prop_keyframes])
 
@@ -1017,7 +1015,7 @@ class TrimmingProperties(Gtk.Expander, Loggable):
         if self.source is None:
             return False
 
-        for prop in ["posx", "posy", "width", "height"]:
+        for prop in ["start", "inpoint", "duration"]:
             binding = self.source.get_control_binding(prop)
             if binding is None:
                 return False
@@ -1045,7 +1043,7 @@ class TrimmingProperties(Gtk.Expander, Loggable):
             self.app.action_log.begin("Trimming properties keyframes activate",
                                       toplevel=True)
 
-        for prop in ["posx", "posy", "width", "height"]:
+        for prop in ["start", "inpoint", "duration"]:
             binding = self.source.get_control_binding(prop)
 
             if not binding:
@@ -1063,7 +1061,7 @@ class TrimmingProperties(Gtk.Expander, Loggable):
             self.app.action_log.commit("Trimming properties keyframes activate")
 
     def __set_default_keyframes_values(self, control_source, prop):
-        res, val = self.source.get_child_property(prop)
+        res, val = self.__get_source_property(prop)
         assert res
         control_source.set(self.source.props.in_point, val)
         control_source.set(self.source.props.in_point + self.source.props.duration, val)
@@ -1075,7 +1073,7 @@ class TrimmingProperties(Gtk.Expander, Loggable):
             if self.__source_uses_keyframes():
                 self.__remove_control_bindings()
 
-            for prop in ["posx", "posy", "width", "height"]:
+            for prop in ["start", "inpoint", "duration"]:
                 self.source.set_child_property(prop, self.source.ui.default_position[prop])
 
         self.__update_keyframes_ui()
@@ -1096,19 +1094,24 @@ class TrimmingProperties(Gtk.Expander, Loggable):
                 return res, value
             except PipelineError:
                 pass
-
-        return self.source.get_child_property(prop)
+        return True, getattr(self.source, prop)
 
     def _position_cb(self, unused_pipeline, unused_position):
         if not self.__source_uses_keyframes():
             return
-        for prop in ["posx", "posy", "width", "height"]:
+        for prop in ["start", "inpoint", "duration"]:
             self.__update_spin_btn(prop)
         # Keep the overlay stack in sync with the spin buttons values
         self.app.gui.editor.viewer.overlay_stack.update(self.source)
 
     def __source_property_changed_cb(self, unused_source, unused_element, param):
         self.__update_spin_btn(param.name)
+        if self.source:
+            print(dir(self.source))
+            print(f"Duration: {self.source.get_duration()}")
+            print(f"Start: {self.source.get_start()}")
+            print(f"Inpoint: {self.source.get_inpoint()}")
+            print(f"Max Duration: {self.source.maxduration}")
 
     def __update_spin_btn(self, prop):
         assert self.source
@@ -1160,6 +1163,7 @@ class TrimmingProperties(Gtk.Expander, Loggable):
             with self.app.action_log.started("Trimming property change",
                                              finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                              toplevel=True):
+                # TODO Change this to use the setattr method
                 self.source.set_child_property(prop, value)
 
     def __setup_spin_button(self, widget_name, property_name):
