@@ -251,7 +251,12 @@ class AssetThumbnail(GObject.Object, Loggable):
     EMBLEMS = {}
     PROXIED = "asset-proxied"
     SCALED = "asset-scaled"
-    NO_PROXY = "no-proxy"
+    # Select sources in timeline ----------------
+    NO_PROXY = "asset-no-proxy" # original no-proxy
+    OK_TIMELINE = "asset-in-timeline"
+    DIFF_TIMELINE = "asset-diff-timeline"
+    # End of Select sources in timeline ---------------
+#    NO_PROXY = "no-proxy"
     IN_PROGRESS = "asset-proxy-in-progress"
     ASSET_PROXYING_ERROR = "asset-proxying-error"
     UNSUPPORTED = "asset-unsupported"
@@ -260,13 +265,31 @@ class AssetThumbnail(GObject.Object, Loggable):
 
     icons_by_name = {}
 
-    for status in [PROXIED, SCALED, IN_PROGRESS, ASSET_PROXYING_ERROR, UNSUPPORTED]:
+    # original
+#    for status in [PROXIED, SCALED, IN_PROGRESS, ASSET_PROXYING_ERROR, UNSUPPORTED]:
+#        EMBLEMS[status] = GdkPixbuf.Pixbuf.new_from_file_at_size(
+#            os.path.join(get_pixmap_dir(), "%s.svg" % status), 64, 64)
+
+    # Select sources in timeline --------------------------
+    for status in [PROXIED, SCALED, IN_PROGRESS, ASSET_PROXYING_ERROR, UNSUPPORTED, OK_TIMELINE, DIFF_TIMELINE]:
         EMBLEMS[status] = GdkPixbuf.Pixbuf.new_from_file_at_size(
             os.path.join(get_pixmap_dir(), "%s.svg" % status), 64, 64)
+    # End of Select sources in timeline -----------------------
 
-    def __init__(self, asset, proxy_manager):
+    # Select sources in timeline --------------------------
+    # project used to read the files of the timeline
+    def __init__(self, asset, proxy_manager, project=None):
+    # End of Select sources in timeline -----------------------
+
+#    def __init__(self, asset, proxy_manager):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
+#        # Select sources in timeline --------------------------
+        self.project = project
+        self.ok_timeline = False
+        self.diff_timeline = False
+#        print("287 project ", self.project)
+#        # End of Select sources in timeline ------------------------
         self.__asset = asset
         self.proxy_manager = proxy_manager
         self.__previewer = None
@@ -306,6 +329,7 @@ class AssetThumbnail(GObject.Object, Loggable):
             if not small_thumb:
                 if self.__asset.is_image():
                     path = Gst.uri_get_location(real_uri)
+                    print("330 path", path)
                     try:
                         pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
                         width = pixbuf.props.width
@@ -416,9 +440,41 @@ class AssetThumbnail(GObject.Object, Loggable):
             icon = icon_theme.load_icon("dialog-question", size, 0)
         return icon
 
+    # Find sources in timeline ----------------------------------------------------------
+    def find_used_sources(self):
+        """Find the assets used by any clip in the project's timeline."""
+        clips_timeline = []
+        self.ok_timeline = False
+        self.diff_timeline = False
+        layers = self.project.ges_timeline.get_layers()
+#        print("447 __asset ", self.__asset.get_id())
+        for layer in layers:
+#            print("446 layer", layer, layer.get_clips())
+            for clip in layer.get_clips():
+                clips_timeline.append(clip.get_asset().props.id)
+#        print("452 clips in tl ", clips_timeline)
+        if self.__asset.get_id() in clips_timeline:
+            self.ok_timeline = True
+#            print("455 __asset ", self.__asset.get_id())
+            return
+#        else:
+#            for clip in clips_timeline:
+#                clip_proxy = clip.split(".")
+#                print("458 clip_proxy ", clip_proxy)
+#                if clip_proxy[-2] == "proxy":
+#                    del clip_proxy[-3:]
+#                    clip_proxy = ".".join(clip_proxy)
+#                    print("462 DEL clip_proxy ", clip_proxy)
+#                    if self.__asset.get_id() == clip_proxy:
+#                        self.diff_timeline = True
+    # End of Find sources in timeline ---------------------------------
+
     def _set_state(self):
         # pylint: disable=attribute-defined-outside-init
         asset = self.__asset
+        # Find sources in timeline ---------------------------------------
+        self.find_used_sources()
+        # End of Find sources in timeline ---------------------------------
         target = asset.get_proxy_target()
         target_is_valid = target and not target.get_error()
         if self.proxy_manager.is_scaled_proxy(asset) and target_is_valid:
@@ -441,6 +497,10 @@ class AssetThumbnail(GObject.Object, Loggable):
         if self.state == self.NO_PROXY:
             self.small_thumb = self.src_small
             self.large_thumb = self.src_large
+#            # Select sources in timeline -----------------------------
+            for thumb in [self.small_thumb, self.large_thumb]:
+                self.source_in_timeline(thumb)
+#            # End of Select sources in timeline -----------------------------
             return
 
         self.small_thumb = self.src_small.copy()
@@ -469,6 +529,45 @@ class AssetThumbnail(GObject.Object, Loggable):
                              scale_x=1.0, scale_y=1.0,
                              interp_type=GdkPixbuf.InterpType.BILINEAR,
                              overall_alpha=self.DEFAULT_ALPHA)
+            # Select sources in timeline -----------------------
+            self.source_in_timeline(thumb)
+
+
+    def source_in_timeline(self, thumb):
+        if self.ok_timeline is True:
+#            print("\n542 tl True")
+            emblem1 = self.EMBLEMS[self.OK_TIMELINE]
+#            print("emblem1 ", emblem1)
+#        elif self.diff_timeline is True:
+#            print("\n542 tl True")
+#            emblem1 = self.EMBLEMS[self.DIFF_TIMELINE]
+#            print("emblem1 ", emblem1)
+        else:
+#            print("565 no emblem1")
+            return
+
+        if thumb.get_height() < emblem1.get_height() or \
+                thumb.get_width() < emblem1.get_width():
+            width = min(emblem1.get_width(), thumb.get_width())
+            height = min(emblem1.get_height(), thumb.get_height())
+            # Crop the emblem1 to fit the thumbnail.
+            emblem1 = emblem1.new_subpixbuf(0, emblem1.get_height() - height,
+                                            width, height)
+
+        # The dest_* arguments define the area of thumb to change.
+        # The offset_* arguments define the emblem1 offset so its
+        # bottom-left corner matches the thumb's bottom-left corner.
+        emblem1.composite(thumb,
+                          dest_x=0,
+                          dest_y=thumb.get_height() - emblem1.get_height(),
+                          dest_width=emblem1.get_width(),
+                          dest_height=emblem1.get_height(),
+                          offset_x=0,
+                          offset_y=thumb.get_height() - emblem1.get_height(),
+                          scale_x=1.0, scale_y=1.0,
+                          interp_type=GdkPixbuf.InterpType.BILINEAR,
+                          overall_alpha=self.DEFAULT_ALPHA)
+        # End of Select sources in timeline -----------------------------
 
 
 class MediaLibraryWidget(Gtk.Box, Loggable):
@@ -628,6 +727,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         cell.props.xpad = 0
         cell.props.ypad = 0
         cell.set_property("ellipsize", Pango.EllipsizeMode.START)
+        cell.props.foreground_set = True # -------------------------
+#        cell.props.foreground = "green" # -------------------------
+        cell.set_property("foreground", "green") # -------------------------
         self.iconview.pack_start(cell, False)
         self.iconview.add_attribute(cell, "markup", COL_SEARCH_TEXT)
 
@@ -921,7 +1023,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def _flush_pending_assets(self):
         self.debug("Flushing %d pending model rows", len(self._pending_assets))
         for asset in self._pending_assets:
-            thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
+#            thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
+            # Select sources in timeline -----------------------
+            # project used to read the files of the timeline
+            thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager, project=self._project)
+            # End of Select sources in timeline -----------------------
             name = info_name(asset)
 
             self.storemodel.append((thumbs_decorator.small_thumb,
@@ -1152,6 +1258,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         for layer in layers:
             for clip in layer.get_clips():
                 if clip.get_asset() == asset:
+                    print("1255 asset", asset)
                     return True
         return False
 
@@ -1304,8 +1411,21 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def __stop_using_proxy_cb(self, unused_action, unused_parameter):
         prefer_original = self.app.settings.proxying_strategy == ProxyingStrategy.NOTHING
+#        self._project.disable_proxies_for_assets(self.get_selected_assets(), delete_proxy_file=True,
+#                                                 hq_proxy=False)
         self._project.disable_proxies_for_assets(self.get_selected_assets(),
                                                  hq_proxy=not prefer_original)
+#        timeline_container = self.app.gui.editor.timeline_ui # -------------------------------------------
+#        for asset in self.get_selected_assets():
+        print("1311 assets ", self.get_selected_assets()) # asset.get_proxy_target())
+##            timeline_container.update_clips_asset(asset, asset.get_proxy_target())
+#            for clip in timeline_container.timeline.clips():
+#                clip_name = clip.ges_clip.get_asset().props.id
+#                if not isinstance(clip, GES.UriClip):
+#                    continue
+#                if get_proxy_target(clip) == asset:
+#                    clip.set_asset(clip_name)
+#            self._project.pipeline.commit_timeline()
 
     def __use_proxies_cb(self, unused_action, unused_parameter):
         self._project.use_proxies_for_assets(self.get_selected_assets())
@@ -1726,6 +1846,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def get_selected_assets(self):
         """Gets the selected assets."""
+        print("1842s  a ", [self.model_filter[path][COL_ASSET] for path in self.get_selected_paths()])
         if self._dragged_paths:
             return [self.model_filter[path][COL_ASSET]
                     for path in self._dragged_paths]
