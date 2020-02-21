@@ -1127,10 +1127,12 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
 
     def _start_levels_discovery(self):
         filename = get_wavefile_location_for_uri(self._uri)
+#        print("filename ", filename)
         if os.path.exists(filename):
             with open(filename, "rb") as samples:
                 self.samples = self._scale_samples(numpy.load(samples))
             self.queue_draw()
+#            print("samples ", self.samples)
         else:
             self.wavefile = filename
             self._launch_pipeline()
