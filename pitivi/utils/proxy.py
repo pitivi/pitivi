@@ -94,6 +94,7 @@ ENCODING_FORMAT_PRORES = "prores-raw-in-matroska.gep"
 ENCODING_FORMAT_JPEG = "jpeg-raw-in-matroska.gep"
 
 
+
 def create_encoding_profile_simple(container_caps, audio_caps, video_caps):
     container_profile = GstPbutils.EncodingContainerProfile.new(None, None,
                                                                 Gst.Caps(container_caps),
@@ -118,9 +119,8 @@ class ProxyManager(GObject.Object, Loggable):
         "asset-preparing-cancelled": (GObject.SignalFlags.RUN_LAST, None, (object,)),
         "error-preparing-asset": (GObject.SignalFlags.RUN_LAST, None, (object, object, object)),
     }
-
     WHITELIST_CONTAINER_CAPS = ["video/quicktime", "application/ogg", "application/xges",
-                                "video/x-matroska", "video/webm", "image/jpeg", "video/MP2T"]  # https://tools.ietf.org/html/rfc3555#section-4.2.9
+                                "video/x-matroska", "video/webm", "image/jpeg",]
     WHITELIST_AUDIO_CAPS = ["audio/mpeg", "audio/x-vorbis",
                             "audio/x-raw", "audio/x-flac",
                             "audio/x-wav"]
@@ -171,7 +171,6 @@ class ProxyManager(GObject.Object, Loggable):
 
         if not self.__encoding_profile:
             self.proxying_unsupported = True
-
             self.error("Not supporting any proxy formats!")
             return
 
@@ -236,7 +235,6 @@ class ProxyManager(GObject.Object, Loggable):
         encoding_target = GstPbutils.EncodingTarget.load_from_file(
             os.path.join(get_gstpresets_dir(), encoding_target_file))
         encoding_profile = encoding_target.get_profile("default")
-
         if not encoding_profile:
             return None
 
@@ -272,12 +270,11 @@ class ProxyManager(GObject.Object, Loggable):
                 # TODO Be smarter about multiple streams
                 audio_stream = info.get_audio_streams()[0]
                 channels = audio_stream.get_channels()
-                print("Channels 275", channels)
                 audio_profile = [
                     profile for profile in encoding_profile.get_profiles()
                     if isinstance(profile, GstPbutils.EncodingAudioProfile)][0]
                 audio_profile.set_restriction(Gst.Caps.from_string(
-                    "audio/x-raw,channels=%d" % channels))
+                    "audio/x-raw,channels=%d" %channels))
             except IndexError:
                 pass
 
@@ -460,7 +457,10 @@ class ProxyManager(GObject.Object, Loggable):
 
             del transcoder
 
-        if asset.get_info().get_duration() != proxy.get_info().get_duration():
+        video_streams = asset.get_info().get_video_streams()
+        framerate = video_streams[0].get_framerate_num()
+        delta = asset.get_info().get_duration() - proxy.get_info().get_duration()
+        if delta > Gst.SECOND/framerate or delta < -Gst.SECOND/framerate:
             self.error(
                 "Asset %s (duration=%s) and created proxy %s (duration=%s) do not"
                 " have the same duration this should *never* happen, please file"
@@ -672,6 +672,7 @@ class ProxyManager(GObject.Object, Loggable):
                           transcoder.__grefcount__)
                 self.__running_transcoders.remove(transcoder)
                 self.emit("asset-preparing-cancelled", asset)
+                return # ---------------------------------------------
 
         for transcoder in self.__pending_transcoders:
             if asset.props.id == transcoder.props.src_uri:
@@ -682,6 +683,7 @@ class ProxyManager(GObject.Object, Loggable):
                 # here, which means it will be stopped.
                 self.__pending_transcoders.remove(transcoder)
                 self.emit("asset-preparing-cancelled", asset)
+                return
 
     def add_job(self, asset, scaled=False, shadow=False):
         """Adds a transcoding job for the specified asset if needed.
