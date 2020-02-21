@@ -80,9 +80,9 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         transformation_expander.set_vexpand(False)
         vbox.pack_start(transformation_expander, False, False, 0)
 
-        trimming_expander = TrimmingProperties(app)
-        trimming_expander.set_vexpand(False)
-        vbox.pack_start(trimming_expander, False, False, 0)
+        timing_expander = TimingProperties(app)
+        timing_expander.set_vexpand(False)
+        vbox.pack_start(timing_expander, False, False, 0)
 
         self.effect_expander = EffectProperties(app, self)
         self.effect_expander.set_vexpand(False)
@@ -886,7 +886,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.hide()
 
 
-class TrimmingProperties(Gtk.Expander, Loggable):
+class TimingProperties(Gtk.Expander, Loggable):
     """Widget for configuring the placement and size of the clip."""
 
     __signals__ = {
@@ -902,16 +902,16 @@ class TrimmingProperties(Gtk.Expander, Loggable):
         self._selected_clip = None
         self.spin_buttons = {}
         self.spin_buttons_handler_ids = {}
-        self.set_label(_("Trimming"))
+        self.set_label(_("Timing"))
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(),
-                                                "cliptrimming.ui"))
+                                                "cliptiming.ui"))
         self.__control_bindings = {}
         # Used to make sure self.__control_bindings_changed doesn't get called
         # when bindings are changed from this class
         self.__own_bindings_change = False
-        self.add(self.builder.get_object("trimming_box"))
+        self.add(self.builder.get_object("timing_box"))
         self._init_buttons()
         self.show_all()
         self.hide()
@@ -938,8 +938,8 @@ class TrimmingProperties(Gtk.Expander, Loggable):
         self._project = None
 
     def _init_buttons(self):
-        clear_button = self.builder.get_object("clear_button")
-        clear_button.connect("clicked", self._default_values_cb)
+        # clear_button = self.builder.get_object("clear_button")
+        # clear_button.connect("clicked", self._default_values_cb)
 
         self._activate_keyframes_btn = self.builder.get_object("activate_keyframes_button")
         self._activate_keyframes_btn.connect("toggled", self.__show_keyframes_toggled_cb)
@@ -1107,11 +1107,11 @@ class TrimmingProperties(Gtk.Expander, Loggable):
     def __source_property_changed_cb(self, unused_source, unused_element, param):
         self.__update_spin_btn(param.name)
         if self.source:
-            print(dir(self.source))
-            print(f"Duration: {self.source.get_duration()}")
-            print(f"Start: {self.source.get_start()}")
-            print(f"Inpoint: {self.source.get_inpoint()}")
-            print(f"Max Duration: {self.source.maxduration}")
+            # print(dir(self.source))
+            print(f"Duration: {self._selected_clip.get_duration()}")
+            print(f"Start: {self._selected_clip.get_start()}")
+            print(f"Inpoint: {self._selected_clip.get_inpoint()}")
+            print(f"Max Duration: {self._selected_clip.maxduration}")
 
     def __update_spin_btn(self, prop):
         assert self.source
