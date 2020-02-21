@@ -65,8 +65,14 @@ class Alert(GObject.Object):
 #    #            winsound.MessageBeep()
         if sys.platform.startswith("linux"):
             dir_sound = os.path.abspath('..')
-            file_sound = os.path.join(dir_sound,
-                                      "pitivi-prefix/files/share/sounds/freedesktop/stereo/" + file)
+            # development version
+            prepath = "pitivi-prefix/files/share/sounds"
+#            # production version
+#            prepath = "usr/share/sounds"
+            file_sound = os.path.join(dir_sound, prepath,
+                                      "freedesktop/stereo/" + file)
+#            file_sound = os.path.join(dir_sound,
+#                                      "pitivi-prefix/files/share/sounds/freedesktop/stereo/" + file)
             if os.path.isfile(file_sound):
                 sound_alert = Gst.ElementFactory.make("playbin", "player")
                 sound_alert.set_property('uri', 'file://' + file_sound)
@@ -96,6 +102,64 @@ class ChoiceWin(GObject.Object):
             if response == Gtk.ResponseType.OK:
                 print("OK button")
                 self.result = "OK"
+            elif response == Gtk.ResponseType.CANCEL:
+                print("CANCEL button")
+                self.result = "CANCEL"
+            self.m_d.destroy()
+        else:
+            self.m_d.destroy()
+            print("pass")
+
+# pylint: disable=no-self-use
+    def sound(self, file):
+        import sys
+#        if sys.platform.startswith("win32"): # Non tested
+#            import winsound
+#            winsound.PlaySound("xxxxxxxx.wav", winsound.SND_FILENAME)
+#    #            winsound.MessageBeep()
+        if sys.platform.startswith("linux"):
+            dir_sound = os.path.abspath('..')
+            file_sound = os.path.join(dir_sound,
+                                      "pitivi-prefix/files/share/sounds/freedesktop/stereo/" + file)
+            if os.path.isfile(file_sound):
+                sound_alert = Gst.ElementFactory.make("playbin", "player")
+                sound_alert.set_property('uri', 'file://' + file_sound)
+                sound_alert.set_state(Gst.State.PLAYING)
+
+class ChoiceWin1(GObject.Object):
+    """Show a window with title and question ; emit a sound if there is a sound file parameter."""
+
+    def __init__(self, message="", title="", type_choice="", file_sound=""):
+
+        GObject.Object.__init__(self)
+        self.item_type = {"Information": Gtk.MessageType.INFO, "Warning": Gtk.MessageType.WARNING, \
+                        "Question": Gtk.MessageType.QUESTION, "Error": Gtk.MessageType.ERROR}
+        self.type = type_choice
+        self.result = ""
+        self.sound(file_sound)
+        self.dialog(title, message)
+
+    def dialog(self, title, message):
+        self.m_d = Gtk.MessageDialog(None, 0, self.item_type.get(self.type),
+                                     Gtk.ButtonsType.CANCEL, "Remove but clip(s) on another layer(s)")
+        text_tooltip = "between the start and the end of all selected clips"+\
+                    " or selection of non adjacent clips:\n\n" +\
+                    "\nClip layer : the layer will not be in sync with other layers" + \
+                    "\nAll : all layers are in sync but you delete them (or a part of)"
+        self.m_d.format_secondary_text(message)
+        self.m_d.add_button("Clip layer\nrippled only", 40)
+        self.m_d.add_button("All layers\nrippled", 50)
+        self.m_d.set_title(title)
+        self.m_d.set_tooltip_text(text_tooltip)
+
+        if self.type in self.item_type.keys():
+            response = self.m_d.run()
+            if response == 40:
+                print("148 Clip")
+                self.result = "CLIP"
+            elif response == 50:
+                print("151 ALL")
+                self.result = "ALL"
             elif response == Gtk.ResponseType.CANCEL:
                 print("CANCEL button")
                 self.result = "CANCEL"
