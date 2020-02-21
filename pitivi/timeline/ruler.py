@@ -35,6 +35,7 @@ from pitivi.utils.ui import PLAYHEAD_COLOR
 from pitivi.utils.ui import PLAYHEAD_WIDTH
 from pitivi.utils.ui import set_cairo_color
 from pitivi.utils.ui import time_to_string
+
 # Position playhead with the left button mouse on ruler only
 
 # Position playhead with the left button mouse on ruler only
@@ -224,6 +225,17 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             if button == 1:
                 self.debug("button pressed at x:%d", event.x)
                 position = self.pixel_to_ns(event.x + self.pixbuf_offset)
+                # Position the playhead at start of the frame
+                # where the the click has put it
+#                print("229 press position", position)
+#                print(" self.ns_per_frame ", self.ns_per_frame)
+                duration_frame = self.ns_per_frame
+#                print("duration_frame", duration_frame)
+                n_frames = int(position/duration_frame)
+#                print("position", position, n_frames)
+                position = n_frames * duration_frame
+#                print("position", position, n_frames)
+                # End of Position the playhead at start of the frame
                 self._pipeline.simple_seek(position)
                 self.__set_tooltip_text(position, True)
             return False
@@ -245,6 +257,17 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
                 self.debug("button released at x:%d", event.x)
                 self.app.gui.editor.focus_ruler()
                 position = self.pixel_to_ns(event.x + self.pixbuf_offset)
+                # Position the playhead at start of the frame
+                # where the the click has put it
+#                print("\n261 release position", position)
+#                print(" self.ns_per_frame ", self.ns_per_frame)
+                duration_frame = self.ns_per_frame
+#                print("duration_frame", duration_frame)
+                n_frames = int(position/duration_frame)
+#                print("position", position, n_frames)
+                position = n_frames * duration_frame
+#                print("position", position, n_frames)
+                # End of Position the playhead at start of the frame
                 self.__set_tooltip_text(position)
             return False
         # End of Position playhead with the left button mouse on ruler only
@@ -261,6 +284,18 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             return False
 
         position = self.pixel_to_ns(event.x + self.pixbuf_offset)
+        # -------------------------------------------------------------
+        # Position the playhead at start of the frame
+        # where the the click has put it
+#        print("289 notify position", position)
+#        print(" self.ns_per_frame ", self.ns_per_frame)
+        duration_frame = self.ns_per_frame
+#        print("duration_frame", duration_frame)
+        n_frames = int(position/duration_frame)
+#        print("position", position, n_frames)
+        position = n_frames * duration_frame
+#        print("position", position, n_frames)
+        # End of Position the playhead at start of the frame
 
         # Position playhead with the left button mouse on ruler only
         if self.app.settings.PlayheadOnRuler:
@@ -276,6 +311,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             self.debug("motion at event.x %d", event.x)
             self._pipeline.simple_seek(position)
         self.__set_tooltip_text(position, seeking)
+
 
         return False
 
