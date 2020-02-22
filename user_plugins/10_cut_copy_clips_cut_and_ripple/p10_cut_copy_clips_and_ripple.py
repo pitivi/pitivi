@@ -31,7 +31,10 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.timeline import SELECT
 from pitivi.utils.user_utils import Alert
-from pitivi.utils.user_utils import ChoiceWin
+from pitivi.utils.user_utils import ChoiceWin1
+#from pitivi.utils.user_utils import OverlappingWin
+#from pitivi.utils.user_utils import MultiButtonsWin
+
 
 
 class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
@@ -55,7 +58,7 @@ class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
         if  os.path.isfile(dir_img):
             im = GdkPixbuf.Pixbuf.new_from_file(dir_img)
             image = Gtk.Image.new_from_pixbuf(im)
-            print("im", image)
+#            print("im", image)
         self.button = Gtk.ToolButton.new(icon_widget=image)
         self.button.set_tooltip_text("copy and cut the selected clips\n\
         and ripple all the clips after in all the layers\n\
@@ -98,21 +101,25 @@ class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
                     if not found_overlapping:
                         self.operate_slide()
                     else:
-                        title = "Overlapping Error"
+                        title = "Overlapping"
                         text = ""
                         for l_o in self.list_over:
                             file_m = os.path.basename(l_o.get_asset().props.id)
                             text += file_m+"\n"  # .split(".")[0]
-                        message = " Caution\n\
-                    Clip(s) on another layer or selection on non adjacent clips\n \
-                    between the start and the end of all selected clips :\n\n\
-                    " + text + "\nDo you want to delete (or a part of) it or them ?"
+                        message = text
                         type_m = "Warning"
-                        file_sound = "service-logout.oga"
-                        choice = ChoiceWin(message, title, type_m, file_sound)
+                        file_sound = "window-attention.oga"
+                        choice = ChoiceWin1(message, title, type_m, file_sound)
                         print("choice = ", choice.result)
-                        if choice.result == "OK":
+                        if choice.result == "ALL":
+                            self.one_clip = False
                             self.delete_overlapping(self.start_sel, self.end_sel)
+                            self.operate_slide()
+                            self.timeline.selection.set_selection([], SELECT)
+                            self.app.gui.editor.focus_timeline()
+                        elif choice.result == "CLIP":
+                            print("clip choosed")
+                            self.one_clip = True
                             self.operate_slide()
                             self.timeline.selection.set_selection([], SELECT)
                             self.app.gui.editor.focus_timeline()
@@ -190,7 +197,12 @@ class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
             layer.remove_clip(clip)
         # now shift everything following cut time
         shift_by = self.end_sel - self.start_sel
-        for layer in self.timeline.ges_timeline.layers:
+        if self.one_clip is False:
+            for layer in self.timeline.ges_timeline.layers:
+                for clip in layer.get_clips():
+                    if clip.start >= self.end_sel:
+                        clip.set_start(clip.start - shift_by)
+        else:
             for clip in layer.get_clips():
                 if clip.start >= self.end_sel:
                     clip.set_start(clip.start - shift_by)
@@ -215,7 +227,14 @@ class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
 #        tlc.__copyClipsCb
 
     def verif(self):
-        # Verify
+        # Verify : the position is counted in multiple of a frame duration else seek() crashes
+        frame_rate = self.app.project_manager.current_project.videorate
+        duration_frame = float(Gst.SECOND / frame_rate)
+#        print("duration_frame", duration_frame)
+        n_frames = int(self.start_sel/duration_frame)
+#        print("position", position, n_frames)
+        # pylint: disable=attribute-defined-outside-init
+        self.start_sel = (n_frames -1) * duration_frame # On the start of the frame position
         if self.start_sel >= 2 * Gst.SECOND:
             self.app.project_manager.current_project.pipeline.simple_seek(self.start_sel - 2 * Gst.SECOND)
         else:
