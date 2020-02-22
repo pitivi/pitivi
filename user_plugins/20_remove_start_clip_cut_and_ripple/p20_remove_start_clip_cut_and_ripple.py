@@ -27,7 +27,7 @@ from gi.repository import Peas
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.timeline import SELECT
 from pitivi.utils.user_utils import Alert
-from pitivi.utils.user_utils import ChoiceWin
+from pitivi.utils.user_utils import ChoiceWin1
 
 class StartClipRemoverCutAndSlide(GObject.Object, Peas.Activatable):
     # pylint: disable=attribute-defined-outside-init
@@ -87,21 +87,25 @@ class StartClipRemoverCutAndSlide(GObject.Object, Peas.Activatable):
                         # pylint: disable=chained-comparison
                         self.operate_slide()
                     else:
-                        title = "Overlapping Error"
+                        title = "Overlapping"
                         text = ""
                         for l_o in self.list_over:
                             file_m = os.path.basename(l_o.get_asset().props.id)
                             text += file_m+"\n"  # .split(".")[0]
-                        message = " Caution\n\
-                    Clip(s) on another layer or selection on non adjacent clips\n \
-                    between the start and the end of all selected clips :\n\n\
-                    " + text + "\nDo you want to delete (or a part of) it or them ?"
+                        message = text
                         type_m = "Warning"
-                        file_sound = "service-logout.oga"
-                        choice = ChoiceWin(message, title, type_m, file_sound)
+                        file_sound = "window-attention.oga"
+                        choice = ChoiceWin1(message, title, type_m, file_sound)
                         print("choice = ", choice.result)
-                        if choice.result == "OK":
-                            self.delete_overlapping(self.start, self.position)
+                        if choice.result == "ALL":
+                            self.one_clip = False
+                            self.delete_overlapping(self.start, self.end)
+                            self.operate_slide()
+                            self.timeline.selection.set_selection([], SELECT)
+                            self.app.gui.editor.focus_timeline()
+                        elif choice.result == "CLIP":
+                            print("clip choosed")
+                            self.one_clip = True
                             self.operate_slide()
                             self.timeline.selection.set_selection([], SELECT)
                             self.app.gui.editor.focus_timeline()
@@ -197,12 +201,12 @@ class StartClipRemoverCutAndSlide(GObject.Object, Peas.Activatable):
         # End of Slide the clips after the playhead position
 
     def verif(self):
-        """Play after the remove of the clip start.
-
-        The playhead goes back two seconds or at timeline start
-        """
-        # Verify
-        if self.position >= 2 * Gst.SECOND:
+        # Verify : the position is counted in multiple of a frame duration else seek() crashes
+        frame_rate = self.app.project_manager.current_project.videorate
+        duration_frame = float(Gst.SECOND / frame_rate)
+        n_frames = int(self.start/duration_frame)
+        self.start = (n_frames -1) * duration_frame # On the start of the frame position
+        if self.start >= 2 * Gst.SECOND:
             self.app.project_manager.current_project.pipeline.simple_seek(self.start - 2 * Gst.SECOND)
         else:
             self.app.project_manager.current_project.pipeline.simple_seek(0)
