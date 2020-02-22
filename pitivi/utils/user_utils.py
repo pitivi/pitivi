@@ -144,8 +144,10 @@ class ChoiceWin1(GObject.Object):
                                      Gtk.ButtonsType.CANCEL, "Remove but clip(s) on another layer(s)")
         text_tooltip = "between the start and the end of all selected clips"+\
                     " or selection of non adjacent clips:\n\n" +\
+                    "           The clips at the right are rippled" + \
                     "\nClip layer : the layer will not be in sync with other layers" + \
-                    "\nAll : all layers are in sync but you delete them (or a part of)"
+                    "\nAll : all layers are in sync but you delete them (or a part of)" + \
+                    "\nClick on [x], remains the clip selected ; Click on [Undo] deselect the clip."
         self.m_d.format_secondary_text(message)
         self.m_d.add_button("Clip layer\nrippled only", 40)
         self.m_d.add_button("All layers\nrippled", 50)
