@@ -25,6 +25,7 @@ from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import Gtk
 
+from pitivi.check import MISSING_SOFT_DEPS
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.browseprojects import BrowseProjectsDialog
 from pitivi.perspective import Perspective
@@ -104,6 +105,7 @@ class GreeterPerspective(Perspective):
         self.__cancel_button = None
         self.__new_project_button = None
         self.__open_project_button = None
+        self.__warnings_button = None
 
         # Projects selected for removal.
         self.__selected_projects = []
@@ -236,10 +238,15 @@ class GreeterPerspective(Perspective):
         self.__cancel_button = Gtk.Button.new_with_label(_("Cancel"))
         self.__cancel_button.connect("clicked", self.__cancel_clicked_cb)
 
+        self.__warnings_button = Gtk.Button.new_from_icon_name("warning-symbolic", Gtk.IconSize.BUTTON)
+        self.__warnings_button.props.relief = Gtk.ReliefStyle.NONE
+        self.__warnings_button.connect("clicked", self.__warnings_clicked_cb)
+
         self.menu_button = self.__create_menu()
 
         headerbar.pack_start(self.__new_project_button)
         headerbar.pack_start(self.__open_project_button)
+        headerbar.pack_end(self.__warnings_button)
         headerbar.pack_end(self.menu_button)
         headerbar.pack_end(self.__selection_button)
         headerbar.pack_end(self.__cancel_button)
@@ -255,6 +262,11 @@ class GreeterPerspective(Perspective):
         self.__selection_button.set_visible(projects)
         self.menu_button.set_visible(welcome or projects)
         self.headerbar.set_show_close_button(welcome or projects)
+
+        if MISSING_SOFT_DEPS:
+            self.__warnings_button.set_visible(welcome or projects)
+        else:
+            self.__warnings_button.hide()
 
         if selection:
             self.headerbar.get_style_context().add_class("selection-mode")
@@ -410,6 +422,9 @@ class GreeterPerspective(Perspective):
     def __cancel_clicked_cb(self, unused_button):
         self.refresh()
 
+    def __warnings_clicked_cb(self, unused_button):
+        WarningsDialog(self.app)
+
     def __project_selected_cb(self, check_button, project):
         if check_button.get_active():
             self.__selected_projects.append(project)
@@ -422,3 +437,39 @@ class GreeterPerspective(Perspective):
         for project in self.__selected_projects:
             self.app.recent_manager.remove_item(project.uri)
         self.refresh()
+
+
+class WarningsDialog:
+    """Manages a dialog listing missing soft dependencies."""
+
+    def __init__(self, app, parent_window=None):
+        self.app = app
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(
+            os.path.join(get_ui_dir(), "warningsdialog.ui"))
+        self.builder.connect_signals(self)
+        self.window = self.builder.get_object("window1")
+        self.window.set_modal(True)
+        if parent_window:
+            self.window.set_transient_for(parent_window)
+        else:
+            self.window.set_transient_for(self.app.gui)
+        # Same hack as in the rendering progress dialog,
+        # to prevent GTK3 from eating a crazy amount of vertical space:
+        self.window.set_resizable(False)
+
+        self._set_deps_label()
+        self.window.show()
+
+    def _on_close_button_clicked_cb(self, unused_button):
+        """Hides the dialog."""
+        self.window.hide()
+
+    def _set_deps_label(self):
+        """Updates the UI to display the list of missing dependencies."""
+        label_contents = ""
+        for depname, dep in MISSING_SOFT_DEPS.items():
+            label_contents += "• %s (%s)\n" % (
+                dep.modulename, dep.additional_message)
+            print(depname)
+        self.builder.get_object("pkg_list").set_text(label_contents)
