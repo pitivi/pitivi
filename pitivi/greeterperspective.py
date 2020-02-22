@@ -25,8 +25,10 @@ from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import Gtk
 
+from pitivi.check import MISSING_SOFT_DEPS
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.browseprojects import BrowseProjectsDialog
+from pitivi.dialogs.depsmanager import DepsManager
 from pitivi.perspective import Perspective
 from pitivi.project import Project
 from pitivi.utils.ui import beautify_last_updated_timestamp
@@ -104,6 +106,7 @@ class GreeterPerspective(Perspective):
         self.__cancel_button = None
         self.__new_project_button = None
         self.__open_project_button = None
+        self.__warnings_button = None
 
         # Projects selected for removal.
         self.__selected_projects = []
@@ -236,10 +239,14 @@ class GreeterPerspective(Perspective):
         self.__cancel_button = Gtk.Button.new_with_label(_("Cancel"))
         self.__cancel_button.connect("clicked", self.__cancel_clicked_cb)
 
+        self.__warnings_button = Gtk.Button.new_with_label(_("!"))
+        self.__warnings_button.connect("clicked", self.__display_warnings_log)
+
         self.menu_button = self.__create_menu()
 
         headerbar.pack_start(self.__new_project_button)
         headerbar.pack_start(self.__open_project_button)
+        headerbar.pack_start(self.__warnings_button)
         headerbar.pack_end(self.menu_button)
         headerbar.pack_end(self.__selection_button)
         headerbar.pack_end(self.__cancel_button)
@@ -255,6 +262,11 @@ class GreeterPerspective(Perspective):
         self.__selection_button.set_visible(projects)
         self.menu_button.set_visible(welcome or projects)
         self.headerbar.set_show_close_button(welcome or projects)
+
+        if MISSING_SOFT_DEPS:
+            self.__warnings_button.set_visible(welcome or projects)
+        else:
+            self.__warnings_button.hide()
 
         if selection:
             self.headerbar.get_style_context().add_class("selection-mode")
@@ -409,6 +421,9 @@ class GreeterPerspective(Perspective):
 
     def __cancel_clicked_cb(self, unused_button):
         self.refresh()
+
+    def __display_warnings_log(self, unused_button):
+        DepsManager(self.app)
 
     def __project_selected_cb(self, check_button, project):
         if check_button.get_active():
