@@ -988,12 +988,13 @@ class Project(Loggable, GES.Project):
         profile.set_restriction(restriction)
         return True
 
-    def _set_video_restriction(self, name, value):
+    def _set_video_restriction(self, name, value, sync_caps=True):
         res = Project._set_restriction(self.video_profile, name, value)
         if res:
             self.emit("video-size-changed")
             self._has_default_video_settings = False
-            self.update_restriction_caps()
+            if sync_caps:
+                self.update_restriction_caps()
         return res
 
     def _set_audio_restriction(self, name, value):
@@ -1029,6 +1030,15 @@ class Project(Loggable, GES.Project):
     def videorate(self, value):
         if self._set_video_restriction("framerate", value):
             self._emit_change("videorate")
+
+    def set_video_properties(self, width, height, framerate):
+        changed = False
+        for p, v in {"width": width, "height": height, "framerate": framerate}.items():
+            if self._set_video_restriction(p, v, sync_caps=False):
+                changed = True
+
+        if changed:
+            self.update_restriction_caps()
 
     @property
     def audiochannels(self):
@@ -2235,9 +2245,10 @@ class ProjectSettingsDialog:
             self.project.author = self.author_entry.get_text()
             self.project.year = str(self.year_spinbutton.get_value_as_int())
 
-            self.project.videowidth = int(self.width_spinbutton.get_value())
-            self.project.videoheight = int(self.height_spinbutton.get_value())
-            self.project.videorate = self.frame_rate_fraction_widget.get_widget_value()
+            self.project.set_video_properties(
+                int(self.width_spinbutton.get_value()),
+                int(self.height_spinbutton.get_value()),
+                self.frame_rate_fraction_widget.get_widget_value())
 
             self.project.audiochannels = get_combo_value(self.channels_combo)
             self.project.audiorate = get_combo_value(self.sample_rate_combo)
