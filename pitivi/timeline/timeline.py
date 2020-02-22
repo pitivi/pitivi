@@ -924,6 +924,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                     not self.__clicked_handle:
                 # Don't allow dragging a transition.
                 return False
+#            if isinstance(self.dragging_element, TransitionClip): #-----------------------------
+#                # Don't allow dragging a transition.
+#                return False
 
             state = event.get_state()
             if isinstance(state, tuple):
@@ -1051,6 +1054,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return True
 
     def _drag_motion_cb(self, widget, context, x, y, timestamp):
+        print("1060") # drag from medialibrary ---------------------------------------------------------------------
         target = self.drag_dest_find_target(context, None)
         if not target:
             Gdk.drag_status(context, 0, timestamp)
@@ -1136,6 +1140,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def _drag_data_received_cb(self, unused_widget, unused_context, unused_x,
                                unused_y, selection_data, unused_info, timestamp):
         data_type = selection_data.get_data_type().name()
+        print("tl1146")
         if not self.drop_data_ready:
             self.__last_clips_on_leave = None
             if data_type == URI_TARGET_ENTRY.target:
@@ -2056,7 +2061,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.c_p = self.__copied_group  # Variable readable outside this class c_p =  __copied_group
         if self.ges_timeline:
             with Previewer.manager.paused():
-                with self.app.action_log.started("delete clip",
+                with self.app.action_log.started("cut and delete clip",
                                                  finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                                  toplevel=True):
                     for clip in self.timeline.selection:
