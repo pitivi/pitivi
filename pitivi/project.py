@@ -993,7 +993,6 @@ class Project(Loggable, GES.Project):
         if res:
             self.emit("video-size-changed")
             self._has_default_video_settings = False
-            self.update_restriction_caps()
         return res
 
     def _set_audio_restriction(self, name, value):
@@ -1010,6 +1009,7 @@ class Project(Loggable, GES.Project):
     @videowidth.setter
     def videowidth(self, value):
         if self._set_video_restriction("width", int(value)):
+            self.update_restriction_caps()
             self._emit_change("width")
 
     @property
@@ -1019,6 +1019,7 @@ class Project(Loggable, GES.Project):
     @videoheight.setter
     def videoheight(self, value):
         if self._set_video_restriction("height", int(value)):
+            self.update_restriction_caps()
             self._emit_change("height")
 
     @property
@@ -1028,7 +1029,29 @@ class Project(Loggable, GES.Project):
     @videorate.setter
     def videorate(self, value):
         if self._set_video_restriction("framerate", value):
+            self.update_restriction_caps()
             self._emit_change("videorate")
+
+    def set_video_properties(self, width, height, framerate):
+        """
+        Sets new video properties in one operation
+
+        This should be called when several properties can be changed at once,
+        giving a chance for GES to reposition all sources when the video size
+        has changed.
+
+        Args:
+            width (int): The new project width
+            height (int): The new project height
+            framerate (Gst.Fraction): The new project framerate
+        """
+        changed = False
+        for p, v in {"width": width, "height": height, "framerate": framerate}.items():
+            if self._set_video_restriction(p, v):
+                changed = True
+
+        if changed:
+            self.update_restriction_caps()
 
     @property
     def audiochannels(self):
@@ -2235,9 +2258,10 @@ class ProjectSettingsDialog:
             self.project.author = self.author_entry.get_text()
             self.project.year = str(self.year_spinbutton.get_value_as_int())
 
-            self.project.videowidth = int(self.width_spinbutton.get_value())
-            self.project.videoheight = int(self.height_spinbutton.get_value())
-            self.project.videorate = self.frame_rate_fraction_widget.get_widget_value()
+            self.project.set_video_properties(
+                int(self.width_spinbutton.get_value()),
+                int(self.height_spinbutton.get_value()),
+                self.frame_rate_fraction_widget.get_widget_value())
 
             self.project.audiochannels = get_combo_value(self.channels_combo)
             self.project.audiorate = get_combo_value(self.sample_rate_combo)
