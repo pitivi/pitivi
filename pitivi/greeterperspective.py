@@ -25,14 +25,18 @@ from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import Gtk
 
+from pitivi.check import MISSING_SOFT_DEPS
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.browseprojects import BrowseProjectsDialog
 from pitivi.perspective import Perspective
 from pitivi.project import Project
 from pitivi.utils.ui import beautify_last_updated_timestamp
 from pitivi.utils.ui import beautify_project_path
+from pitivi.utils.ui import BinWithNaturalWidth
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import GREETER_PERSPECTIVE_CSS
+from pitivi.utils.ui import PADDING
+from pitivi.utils.ui import SPACING
 from pitivi.utils.ui import URI_TARGET_ENTRY
 
 MAX_RECENT_PROJECTS = 10
@@ -104,6 +108,7 @@ class GreeterPerspective(Perspective):
         self.__cancel_button = None
         self.__new_project_button = None
         self.__open_project_button = None
+        self.__warnings_button = None
 
         # Projects selected for removal.
         self.__selected_projects = []
@@ -236,6 +241,10 @@ class GreeterPerspective(Perspective):
         self.__cancel_button = Gtk.Button.new_with_label(_("Cancel"))
         self.__cancel_button.connect("clicked", self.__cancel_clicked_cb)
 
+        self.__warnings_button = Gtk.MenuButton.new()
+        self.__warnings_button.props.image = Gtk.Image.new_from_icon_name("warning-symbolic", Gtk.IconSize.BUTTON)
+        self.__warnings_button.set_popover(self.__create_warnings_popover())
+
         self.menu_button = self.__create_menu()
 
         headerbar.pack_start(self.__new_project_button)
@@ -243,6 +252,7 @@ class GreeterPerspective(Perspective):
         headerbar.pack_end(self.menu_button)
         headerbar.pack_end(self.__selection_button)
         headerbar.pack_end(self.__cancel_button)
+        headerbar.pack_end(self.__warnings_button)
         headerbar.show()
 
         return headerbar
@@ -255,6 +265,7 @@ class GreeterPerspective(Perspective):
         self.__selection_button.set_visible(projects)
         self.menu_button.set_visible(welcome or projects)
         self.headerbar.set_show_close_button(welcome or projects)
+        self.__warnings_button.set_visible((welcome or projects) and MISSING_SOFT_DEPS)
 
         if selection:
             self.headerbar.get_style_context().add_class("selection-mode")
@@ -422,3 +433,46 @@ class GreeterPerspective(Perspective):
         for project in self.__selected_projects:
             self.app.recent_manager.remove_item(project.uri)
         self.refresh()
+
+    def __create_warnings_popover(self):
+        """Creates a popover listing missing soft dependencies."""
+        popover = Gtk.Popover()
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, margin=PADDING * 3)
+
+        label = Gtk.Label(_("To enable additional features, please install the following packages and restart Pitivi:"))
+        label.props.halign = Gtk.Align.START
+        label.props.wrap = True
+        label.props.xalign = 0
+        box.pack_start(label, False, False, 0)
+
+        grid = Gtk.Grid()
+        grid.props.row_spacing = SPACING
+        grid.props.column_spacing = PADDING
+        grid.props.margin_left = SPACING
+        grid.props.margin_top = SPACING * 2
+
+        for row_index, dep in enumerate(MISSING_SOFT_DEPS.values()):
+            name_label = Gtk.Label(dep.modulename)
+            name_label.props.selectable = True
+            name_label.props.can_focus = False
+            name_label.props.xalign = 0
+            name_label.props.valign = Gtk.Align.START
+            grid.attach(name_label, 0, row_index, 1, 1)
+
+            mdash_label = Gtk.Label("―")
+            mdash_label.props.xalign = 0
+            mdash_label.props.valign = Gtk.Align.START
+            grid.attach(mdash_label, 1, row_index, 1, 1)
+
+            description_label = Gtk.Label(dep.additional_message)
+            description_label.props.wrap = True
+            description_label.props.xalign = 0
+            description_label.props.yalign = Gtk.Align.START
+            grid.attach(description_label, 2, row_index, 1, 1)
+
+        box.pack_start(grid, False, False, 0)
+
+        wrapper_bin = BinWithNaturalWidth(box, width=500)
+        wrapper_bin.show_all()
+        popover.add(wrapper_bin)
+        return popover
