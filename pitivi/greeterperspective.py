@@ -25,6 +25,7 @@ from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import Gtk
 
+from pitivi.check import MISSING_SOFT_DEPS
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.browseprojects import BrowseProjectsDialog
 from pitivi.perspective import Perspective
@@ -104,6 +105,7 @@ class GreeterPerspective(Perspective):
         self.__cancel_button = None
         self.__new_project_button = None
         self.__open_project_button = None
+        self.__warnings_button = None
 
         # Projects selected for removal.
         self.__selected_projects = []
@@ -236,6 +238,10 @@ class GreeterPerspective(Perspective):
         self.__cancel_button = Gtk.Button.new_with_label(_("Cancel"))
         self.__cancel_button.connect("clicked", self.__cancel_clicked_cb)
 
+        self.__warnings_button = Gtk.MenuButton.new()
+        self.__warnings_button.props.image = Gtk.Image.new_from_icon_name("warning-symbolic", Gtk.IconSize.BUTTON)
+        self.__warnings_button.set_popover(self.__create_warnings_popover())
+
         self.menu_button = self.__create_menu()
 
         headerbar.pack_start(self.__new_project_button)
@@ -243,6 +249,7 @@ class GreeterPerspective(Perspective):
         headerbar.pack_end(self.menu_button)
         headerbar.pack_end(self.__selection_button)
         headerbar.pack_end(self.__cancel_button)
+        headerbar.pack_end(self.__warnings_button)
         headerbar.show()
 
         return headerbar
@@ -255,6 +262,7 @@ class GreeterPerspective(Perspective):
         self.__selection_button.set_visible(projects)
         self.menu_button.set_visible(welcome or projects)
         self.headerbar.set_show_close_button(welcome or projects)
+        self.__warnings_button.set_visible(welcome or projects and MISSING_SOFT_DEPS)
 
         if selection:
             self.headerbar.get_style_context().add_class("selection-mode")
@@ -422,3 +430,20 @@ class GreeterPerspective(Perspective):
         for project in self.__selected_projects:
             self.app.recent_manager.remove_item(project.uri)
         self.refresh()
+
+    def __create_warnings_popover(self):
+        """Creates a popover listing missing soft dependencies."""
+        popover = Gtk.Popover()
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, margin=18)
+        text = [_("To enable additional features, please install the following packages and restart Pitivi:")]
+        for depname, dep in MISSING_SOFT_DEPS.items():
+            text += ["• %s (%s)" % (
+                dep.modulename, dep.additional_message)]
+            print(depname)
+        label = Gtk.Label("\n\n".join(text))
+        label.props.wrap = True
+        label.props.max_width_chars = 60
+        box.pack_start(label, False, False, 0)
+        box.show_all()
+        popover.add(box)
+        return popover
