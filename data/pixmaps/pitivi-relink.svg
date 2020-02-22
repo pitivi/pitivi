@@ -14,10 +14,10 @@
    height="24"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:modified="true"
    version="1.0"
-   sodipodi:docname="pitivi-relink-24.svg"
+   sodipodi:docname="pitivi-relink.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    inkscape:export-filename="/home/luisbg/development/pitivi/git/pitivi/pixmaps/pitivi-relink-24.png"
    inkscape:export-xdpi="120.65119"
@@ -571,19 +571,19 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="42.378728"
-     inkscape:cx="18.069319"
-     inkscape:cy="12.4858"
+     inkscape:cx="12.814188"
+     inkscape:cy="13.805715"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="svg2"
      width="48px"
      height="48px"
      borderlayer="true"
      inkscape:showpageshadow="false"
      showgrid="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1158"
+     inkscape:window-width="1680"
+     inkscape:window-height="993"
      inkscape:window-x="0"
-     inkscape:window-y="19"
+     inkscape:window-y="25"
      inkscape:snap-grids="false"
      inkscape:window-maximized="1">
     <inkscape:grid
@@ -602,14 +602,15 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:label="Calque 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     style="display:inline">
     <g
        id="g3851">
       <rect
@@ -621,7 +622,7 @@
          height="7.9991751"
          width="10.001671"
          id="rect2964-6"
-         style="fill:url(#linearGradient3892);fill-opacity:1;stroke:#4e9a06;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+         style="fill:url(#linearGradient3892);fill-opacity:1;stroke:#4e9a06;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          rx="0"
          transform="matrix(0.99999985,5.4353198e-4,-5.1882404e-4,0.99999987,0,0)"
@@ -631,7 +632,7 @@
          height="7.9944663"
          width="9.9997597"
          id="rect2964"
-         style="fill:url(#linearGradient3889);fill-opacity:1;stroke:#204a87;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+         style="fill:url(#linearGradient3889);fill-opacity:1;stroke:#204a87;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          rx="0"
          transform="matrix(0.99999985,5.4543096e-4,-5.1701767e-4,0.99999987,0,0)"
@@ -641,7 +642,7 @@
          height="3.9925082"
          width="6.0030284"
          id="rect2964-7-7"
-         style="fill:#ffffff;fill-opacity:1;stroke:#4e9a06;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+         style="fill:#ffffff;fill-opacity:1;stroke:#4e9a06;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          rx="0"
          transform="matrix(0.99999985,5.4891252e-4,-5.1373842e-4,0.99999987,0,0)"
@@ -651,7 +652,7 @@
          height="3.9868016"
          width="5.9895978"
          id="rect2964-7"
-         style="fill:#ffffff;fill-opacity:1;stroke:#204a87;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+         style="fill:#ffffff;fill-opacity:1;stroke:#204a87;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="matrix(0.99999991,4.2743668e-4,-6.5974089e-4,0.99999978,0,0)"
          ry="0.67705905"
@@ -660,7 +661,49 @@
          height="2.0034456"
          width="11.004829"
          id="rect2964-2"
-         style="fill:url(#linearGradient3884);fill-opacity:1;stroke:#2e3436;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+         style="fill:url(#linearGradient3884);fill-opacity:1;stroke:#2e3436;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
   </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Calque 3"
+     style="display:none" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Calque 2"
+     style="display:none"
+     sodipodi:insensitive="true">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:16px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#00ff00;fill-opacity:1;stroke:none"
+       x="10.760115"
+       y="6.963151"
+       id="text3948"><tspan
+         sodipodi:role="line"
+         id="tspan3946"
+         x="10.760115"
+         y="21.1194" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:29.33333397px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#00ff00;fill-opacity:1;stroke:none"
+       x="2.1001103"
+       y="22.230244"
+       id="text3956"><tspan
+         sodipodi:role="line"
+         id="tspan3954"
+         x="2.1001103"
+         y="22.230244">P</tspan></text>
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:12px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+     x="10.972486"
+     y="22.39542"
+     id="text3961"><tspan
+       sodipodi:role="line"
+       id="tspan3959"
+       x="10.972486"
+       y="33.012608"></tspan></text>
 </svg>
