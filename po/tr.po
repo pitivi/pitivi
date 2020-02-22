@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-02-07 15:42+0000\n"
-"PO-Revision-Date: 2020-02-13 23:34+0300\n"
+"POT-Creation-Date: 2020-02-20 12:30+0000\n"
+"PO-Revision-Date: 2020-02-20 23:19+0300\n"
 "Last-Translator: Emin Tufan Çetin <libreajans@gmail.com>\n"
 "Language-Team: Turkish <gnome-turk@gnome.org>\n"
 "Language: tr\n"
@@ -122,7 +122,7 @@ msgstr "Otomatik Hizalama Başlatılıyor"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Otomatik Hizalama Yapılıyor</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1160
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1167
 msgid "Estimating..."
 msgstr "Tahmin ediliyor..."
 
@@ -235,37 +235,37 @@ msgstr "Renk seç"
 msgid "Blue"
 msgstr "Mavi"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:218
-msgid "Split preview"
-msgstr "Bölünmüş önizleme"
-
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:232
-msgid "Source image on left"
-msgstr "Kaynak görüntü solda"
-
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:253
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:225
 msgid "R"
 msgstr "R"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:266
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:238
 msgid "G"
 msgstr "G"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:279
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:251
 msgid "B"
 msgstr "B"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:448
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:420
 msgid "Shadows"
 msgstr "Gölgeler"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:459
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:431
 msgid "Midtones"
 msgstr "Orta tonlar"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:470
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:442
 msgid "Highlights"
 msgstr "Vurgular"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:481
+msgid "Split preview"
+msgstr "Bölünmüş önizleme"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:494
+msgid "Source image on left"
+msgstr "Kaynak görüntü solda"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:303
 msgid "Shape:"
@@ -364,8 +364,8 @@ msgstr "Güzel, güçlü ve sezgisel film düzenleyicisi"
 msgid "Save the current project under a new name or a different location"
 msgstr "Var olan projeyi yeni ad altında veya farklı konuma kaydet"
 
-#: data/ui/mainmenubutton.ui:25 pitivi/editorperspective.py:706
-#: pitivi/editorperspective.py:760
+#: data/ui/mainmenubutton.ui:25 pitivi/editorperspective.py:708
+#: pitivi/editorperspective.py:762
 msgid "Save As..."
 msgstr "Farklı Kaydet..."
 
@@ -404,7 +404,7 @@ msgid "Project Settings"
 msgstr "Proje Ayarları"
 
 #: data/ui/mainmenubutton.ui:148 data/ui/preferences.ui:7
-#: pitivi/mainwindow.py:212
+#: pitivi/mainwindow.py:216
 msgid "Preferences"
 msgstr "Tercihler"
 
@@ -420,7 +420,7 @@ msgstr "Kullanıcı Kılavuzu"
 msgid "About Pitivi"
 msgstr "Pitivi Hakkında"
 
-#: data/ui/medialibrary.ui:14 pitivi/editorperspective.py:384
+#: data/ui/medialibrary.ui:14 pitivi/editorperspective.py:386
 msgid "Add media files to your project"
 msgstr "Projeye medya dosyası ekle"
 
@@ -499,9 +499,9 @@ msgid "Some changes will not take effect until you restart Pitivi"
 msgstr "Bazı değişiklikler Pitivi'yi yeniden başlatmadan aktif olmayacak"
 
 #: data/ui/projectsettings.ui:61 data/ui/renderingprogress.ui:41
-#: pitivi/editorperspective.py:529 pitivi/editorperspective.py:661
-#: pitivi/editorperspective.py:709 pitivi/editorperspective.py:762
-#: pitivi/greeterperspective.py:236 pitivi/medialibrary.py:857
+#: pitivi/editorperspective.py:531 pitivi/editorperspective.py:663
+#: pitivi/editorperspective.py:711 pitivi/editorperspective.py:764
+#: pitivi/greeterperspective.py:236 pitivi/medialibrary.py:859
 #: pitivi/dialogs/browseprojects.py:38 pitivi/dialogs/missingasset.py:46
 msgid "Cancel"
 msgstr "İptal"
@@ -677,7 +677,7 @@ msgid "Pause"
 msgstr "Duraklat"
 
 #: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:728
-#: pitivi/timeline/timeline.py:1753
+#: pitivi/timeline/timeline.py:1777
 msgid "Play"
 msgstr "Oynat"
 
@@ -721,19 +721,19 @@ msgstr "Sil"
 
 #: data/ui/timelinetoolbar.ui:45
 msgid "Group clips"
-msgstr "Klipleri grupla"
+msgstr "Klipleri kümele"
 
 #: data/ui/timelinetoolbar.ui:47
 msgid "Group"
-msgstr "Grupla"
+msgstr "Kümele"
 
 #: data/ui/timelinetoolbar.ui:60
 msgid "Ungroup clips"
-msgstr "Klip grubunu dağıt"
+msgstr "Klip kümesini dağıt"
 
 #: data/ui/timelinetoolbar.ui:62
 msgid "Ungroup"
-msgstr "Gruplamayı kaldır"
+msgstr "Kümelemeyi kaldır"
 
 #: data/ui/timelinetoolbar.ui:75
 msgid "Copy clips"
@@ -781,7 +781,7 @@ msgstr "Bir metin rengi seçin"
 
 #: data/ui/titleeditor.ui:191
 msgid "Pick a background color"
-msgstr "Arkaplan rengi seçin"
+msgstr "Arka plan rengi seçin"
 
 #: data/ui/titleeditor.ui:232
 msgid "Alignment"
@@ -794,6 +794,10 @@ msgstr "Yatay:"
 #: data/ui/titleeditor.ui:292
 msgid "Vertical:"
 msgstr "Dikey:"
+
+#: pitivi/action_search_bar.py:46
+msgid "Search Action"
+msgstr "Eylem Ara"
 
 #: pitivi/application.py:158
 msgid "General"
@@ -811,7 +815,7 @@ msgstr "En son eylemi yinele"
 msgid "Quit"
 msgstr "Çık"
 
-#: pitivi/application.py:183
+#: pitivi/application.py:184
 msgid "Show the Shortcuts Window"
 msgstr "Kısayollar Penceresini Göster"
 
@@ -848,7 +852,7 @@ msgstr "HATA - Şu katı bağımlılıklar karşılanamadı:"
 
 #: pitivi/check.py:307
 msgid "Missing soft dependency:"
-msgstr "Eksik bağımlılık:"
+msgstr "Eksik yumuşak bağımlılık:"
 
 #: pitivi/check.py:314
 msgid ""
@@ -931,27 +935,19 @@ msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "İlişkili efektlerini yapılandırmak için zaman çizelgesinde bir klip seçin"
 
-#: pitivi/clipproperties.py:242
-msgid "Clip Effects"
-msgstr "Klip Efektleri"
-
-#: pitivi/clipproperties.py:248
-msgid "Remove the selected effect"
-msgstr "Seçilen efekti kaldır"
-
-#: pitivi/clipproperties.py:566
+#: pitivi/clipproperties.py:564
 msgid "Transformation"
 msgstr "Dönüşüm"
 
-#: pitivi/clipproperties.py:661
+#: pitivi/clipproperties.py:659
 msgid "Show keyframes"
 msgstr "Anahtar kareleri göster"
 
-#: pitivi/clipproperties.py:663
+#: pitivi/clipproperties.py:661
 msgid "Activate keyframes"
 msgstr "Anahtar kareleri etkinleştir"
 
-#: pitivi/clipproperties.py:668
+#: pitivi/clipproperties.py:666
 msgid "Hide keyframes"
 msgstr "Anahtar kareleri gizle"
 
@@ -980,9 +976,9 @@ msgid "Undo"
 msgstr "Geri Al"
 
 #. pylint: disable=attribute-defined-outside-init
-#: pitivi/editorperspective.py:315 pitivi/editorperspective.py:521
-#: pitivi/editorperspective.py:662 pitivi/editorperspective.py:710
-#: pitivi/editorperspective.py:763 pitivi/preset.py:114 pitivi/project.py:193
+#: pitivi/editorperspective.py:315 pitivi/editorperspective.py:523
+#: pitivi/editorperspective.py:664 pitivi/editorperspective.py:712
+#: pitivi/editorperspective.py:765 pitivi/preset.py:114 pitivi/project.py:193
 msgid "Save"
 msgstr "Kaydet"
 
@@ -994,41 +990,41 @@ msgstr "Projenizi tamamlanmış bir film olarak dışa aktarın"
 msgid "Save the current project"
 msgstr "Geçerli projeyi kaydet"
 
-#: pitivi/editorperspective.py:362
+#: pitivi/editorperspective.py:363
 msgid "Save the current project as"
 msgstr "Geçerli projeyi farklı kaydet"
 
-#: pitivi/editorperspective.py:493
+#: pitivi/editorperspective.py:495
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "\"%s\" projesi kaydedilemiyor"
 
-#: pitivi/editorperspective.py:523 pitivi/project.py:192
+#: pitivi/editorperspective.py:525 pitivi/project.py:192
 msgid "Save as..."
 msgstr "Farklı kaydet..."
 
-#: pitivi/editorperspective.py:526
+#: pitivi/editorperspective.py:528
 msgid "Close without saving"
 msgstr "Kayetmeden kapat"
 
-#: pitivi/editorperspective.py:536
+#: pitivi/editorperspective.py:538
 msgid "Save changes to the current project before closing?"
 msgstr "Geçerli projeyi kapatmadan önce değişiklikler kaydedilsin mi?"
 
-#: pitivi/editorperspective.py:545
+#: pitivi/editorperspective.py:547
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr "Eğer kaydetmezseniz, son %s değişiklikleri kaybolacak."
 
-#: pitivi/editorperspective.py:549
+#: pitivi/editorperspective.py:551
 msgid "If you don't save, your changes will be lost."
 msgstr "Eğer kaydetmezseniz, yaptığınız değişiklikler kaybolacak."
 
-#: pitivi/editorperspective.py:593
+#: pitivi/editorperspective.py:595
 msgid "Revert to saved project version?"
 msgstr "Projenin kayıtlı haline geri dönülsün mü?"
 
-#: pitivi/editorperspective.py:598
+#: pitivi/editorperspective.py:600
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
 "Bu, geçerli projeyi yeniden yükler. Kaydedilmemiş tüm değişiklikler "
@@ -1037,7 +1033,7 @@ msgstr ""
 #. Signal the project loading failure.
 #. You have to do this *after* successfully creating a blank project,
 #. or the startupwizard will still be connected to that signal too.
-#: pitivi/editorperspective.py:629
+#: pitivi/editorperspective.py:631
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -1048,32 +1044,32 @@ msgstr ""
 "\n"
 "Pitivi henüz kısmi projeleri desteklemiyor."
 
-#: pitivi/editorperspective.py:658
+#: pitivi/editorperspective.py:660
 msgid "Export To..."
 msgstr "Aktar..."
 
-#: pitivi/editorperspective.py:675
+#: pitivi/editorperspective.py:677
 msgid "Tar archive"
 msgstr "Tar arşivi"
 
-#: pitivi/editorperspective.py:679 pitivi/editorperspective.py:725
+#: pitivi/editorperspective.py:681 pitivi/editorperspective.py:727
 msgid "Detect automatically"
 msgstr "Otomatik bul"
 
-#: pitivi/editorperspective.py:719 pitivi/editorperspective.py:766
+#: pitivi/editorperspective.py:721 pitivi/editorperspective.py:768
 #: pitivi/project.py:71 pitivi/render.py:436
 msgid "Untitled"
 msgstr "Başlıksız"
 
-#: pitivi/editorperspective.py:768
+#: pitivi/editorperspective.py:770
 msgid "PNG image"
 msgstr "PNG görüntüsü"
 
-#: pitivi/editorperspective.py:769
+#: pitivi/editorperspective.py:771
 msgid "JPEG image"
 msgstr "JPEG görüntüsü"
 
-#: pitivi/editorperspective.py:810
+#: pitivi/editorperspective.py:812
 msgid "Preview"
 msgstr "Önizle"
 
@@ -1122,7 +1118,7 @@ msgstr "Tüm efektler"
 msgid "New"
 msgstr "Yeni"
 
-#: pitivi/greeterperspective.py:224 pitivi/greeterperspective.py:278
+#: pitivi/greeterperspective.py:224 pitivi/greeterperspective.py:279
 msgid "Create a new project"
 msgstr "Yeni bir proje oluştur"
 
@@ -1146,11 +1142,11 @@ msgstr "Seçmek için ögeye tıkla"
 msgid "Select a Project"
 msgstr "Proje Seç"
 
-#: pitivi/greeterperspective.py:284
+#: pitivi/greeterperspective.py:286
 msgid "Open a project"
 msgstr "Proje aç"
 
-#: pitivi/greeterperspective.py:352
+#: pitivi/greeterperspective.py:354
 #, python-format
 msgid "Pitivi %s is available."
 msgstr "Pitivi %s kullanılabilir durumda."
@@ -1167,19 +1163,19 @@ msgstr "Karanlık temanın kullanılıp kullanılmayacağı"
 msgid "Project"
 msgstr "Proje"
 
-#: pitivi/mainwindow.py:194
+#: pitivi/mainwindow.py:195
 msgid "Help"
 msgstr "Yardım"
 
-#: pitivi/mainwindow.py:200
+#: pitivi/mainwindow.py:202
 msgid "About"
 msgstr "Hakkında"
 
-#: pitivi/mainwindow.py:206
+#: pitivi/mainwindow.py:209
 msgid "Show the menu button content"
 msgstr "Menü düğmesi içeriğini göster"
 
-#: pitivi/mainwindow.py:257
+#: pitivi/mainwindow.py:261
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "\"%s\" projesi yüklenemiyor"
@@ -1203,7 +1199,7 @@ msgstr "<b>Çözünürlük</b>: %d×%d"
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Süre</b>: %s"
 
-#: pitivi/mediafilespreviewer.py:461 pitivi/medialibrary.py:1218
+#: pitivi/mediafilespreviewer.py:461 pitivi/medialibrary.py:1220
 msgid "Error while analyzing a file"
 msgid_plural "Error while analyzing files"
 msgstr[0] "Dosyayı analiz ederken hata"
@@ -1234,7 +1230,7 @@ msgstr "Tümü"
 msgid "Scale assets larger than %s×%s px."
 msgstr "%s×%s px değerinden geniş varlıkları ölçekle."
 
-#: pitivi/medialibrary.py:506 pitivi/medialibrary.py:1077
+#: pitivi/medialibrary.py:506 pitivi/medialibrary.py:1079
 msgid "Unknown"
 msgstr "Bilinmeyen"
 
@@ -1246,27 +1242,27 @@ msgstr "Simge"
 msgid "Information"
 msgstr "Bilgi"
 
-#: pitivi/medialibrary.py:664
+#: pitivi/medialibrary.py:665
 msgid "Remove the selected assets"
 msgstr "Seçilen varlıkları kaldır"
 
-#: pitivi/medialibrary.py:670
+#: pitivi/medialibrary.py:672
 msgid "Insert selected assets at the end of the timeline"
 msgstr "Seçili varlıkları zaman çizelgesinin sonuna ekle"
 
-#: pitivi/medialibrary.py:854
+#: pitivi/medialibrary.py:856
 msgid "Select One or More Files"
 msgstr "Bir yada Daha Dazla Dosya Seç"
 
-#: pitivi/medialibrary.py:858
+#: pitivi/medialibrary.py:860
 msgid "Add"
 msgstr "Ekle"
 
-#: pitivi/medialibrary.py:873
+#: pitivi/medialibrary.py:875
 msgid "Supported file formats"
 msgstr "Desteklenen dosya biçimleri"
 
-#: pitivi/medialibrary.py:885 pitivi/dialogs/missingasset.py:117
+#: pitivi/medialibrary.py:887 pitivi/dialogs/missingasset.py:117
 msgid "All files"
 msgstr "Tüm dosyalar"
 
@@ -1276,69 +1272,69 @@ msgstr "Tüm dosyalar"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals)
-#: pitivi/medialibrary.py:984
+#: pitivi/medialibrary.py:986
 #, python-format
 msgid "Transcoding %d asset: %d%% (About %s left)"
 msgid_plural "Transcoding %d assets: %d%% (About %s left)"
 msgstr[0] "%d varlık kodlanıyor: %d%% (Yaklaşık %s kaldı)"
 
-#: pitivi/medialibrary.py:1089
+#: pitivi/medialibrary.py:1091
 msgid "View error"
 msgid_plural "View errors"
 msgstr[0] "Hatayı görüntüle"
 
 #. Translators: {0:d} is just like %d (integer number variable)
-#: pitivi/medialibrary.py:1091
+#: pitivi/medialibrary.py:1093
 #, python-brace-format
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
 msgstr[0] "İçe aktarırken {0:d} hata oluştu."
 
-#: pitivi/medialibrary.py:1107
+#: pitivi/medialibrary.py:1109
 #, python-format
 msgid "The project settings have been set to match file '%s'"
 msgstr "Proje ayarları dosyayla eşleşecek biçimde ayarlandı '%s'"
 
-#: pitivi/medialibrary.py:1221
+#: pitivi/medialibrary.py:1223
 msgid "The following file can not be used with Pitivi."
 msgid_plural "The following files can not be used with Pitivi."
 msgstr[0] "Aşağıdaki dosya Pitivi ile birlikte kullanılamaz."
 
-#: pitivi/medialibrary.py:1347
+#: pitivi/medialibrary.py:1349
 msgid "Open containing folder"
 msgstr "Dosyayı içeren klasörü aç"
 
-#: pitivi/medialibrary.py:1354
+#: pitivi/medialibrary.py:1356
 msgid "Edit"
 msgstr "Düzenle"
 
-#: pitivi/medialibrary.py:1383
+#: pitivi/medialibrary.py:1385
 msgid "Do not use Optimised Proxy for selected asset"
 msgid_plural "Do not use Optimised Proxies for selected assets"
 msgstr[0] "Seçili varlıklar için Eniyilenmiş Vekilleri kullanma"
 
-#: pitivi/medialibrary.py:1394 pitivi/medialibrary.py:1416
-#: pitivi/medialibrary.py:1438
+#: pitivi/medialibrary.py:1396 pitivi/medialibrary.py:1418
+#: pitivi/medialibrary.py:1440
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
 msgstr[0] "İlgili vekil dosyasını sil"
 
-#: pitivi/medialibrary.py:1405
+#: pitivi/medialibrary.py:1407
 msgid "Do not use Proxy for selected asset"
 msgid_plural "Do not use Proxies for selected assets"
 msgstr[0] "Seçili varlık için Vekilleri kullanma"
 
-#: pitivi/medialibrary.py:1427
+#: pitivi/medialibrary.py:1429
 msgid "Do not use Scaled Proxy for selected asset"
 msgid_plural "Do not use Scaled Proxies for selected assets"
 msgstr[0] "Seçili varlık için Ölçeklenmiş Vekilleri kullanma"
 
-#: pitivi/medialibrary.py:1449
+#: pitivi/medialibrary.py:1451
 msgid "Use Optimised Proxy for selected asset"
 msgid_plural "Use Optimised Proxies for selected assets"
 msgstr[0] "Seçilen varlık için Eniyilenmiş Vekilleri kullan"
 
-#: pitivi/medialibrary.py:1459
+#: pitivi/medialibrary.py:1461
 msgid "Use Scaled Proxy for selected asset"
 msgid_plural "Use Scaled Proxies for selected assets"
 msgstr[0] "Seçilen varlık için Ölçeklenmiş Vekilleri kullan"
@@ -1395,10 +1391,10 @@ msgstr ""
 "sorundan kurtulamadı. Bu durumda yapılabilecek tek şey <b>Pitivi'yi yeniden "
 "başlat</b>.\n"
 "\n"
-"Bu nadir görünen ciddi bir hata türüdür. Lütfen <a href=\"http://"
-"developer.pitivi.org/Bug_reporting.html\">hata raporlama kılavuzu</a>na bakın ve "
-"bunu bildirmek için zaman ayırın! Bu hatayı düzeltmek ve gelecekteki "
-"sürümlerde yeniden oluşmamasını sağlamaktan çok mutlu olacağız.\n"
+"Bu nadir görünen ciddi bir hata türüdür. Lütfen <a href=\"http://developer."
+"pitivi.org/Bug_reporting.html\">hata raporlama kılavuzu</a>na bakın ve bunu "
+"bildirmek için zaman ayırın! Bu hatayı düzeltmek ve gelecekteki sürümlerde "
+"yeniden oluşmamasını sağlamaktan çok mutlu olacağız.\n"
 "Pitivi'yi kapatmadan önce, değişiklikleri var olan proje dosyasına veya ayrı "
 "bir proje dosyası olarak kaydedebilirsiniz."
 
@@ -1527,11 +1523,11 @@ msgstr ""
 "Sorun giderme kılavuzumuzu denetlemek veya hata raporu vermek "
 "isteyebilirsiniz. GStreamer hatası şudur:"
 
-#: pitivi/render.py:1108 pitivi/render.py:1109 pitivi/render.py:1115
+#: pitivi/render.py:1115 pitivi/render.py:1116 pitivi/render.py:1122
 msgid "Render complete"
 msgstr "Hazırlama tamamlandı"
 
-#: pitivi/render.py:1113
+#: pitivi/render.py:1120
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "\"%s\" hazırlanması tamamlandı."
@@ -1712,11 +1708,11 @@ msgstr "Katman %d"
 msgid "Frame #%d"
 msgstr "Kare #%d"
 
-#: pitivi/timeline/timeline.py:79
+#: pitivi/timeline/timeline.py:80
 msgid "Snap distance"
 msgstr "Yapış mesafesi"
 
-#: pitivi/timeline/timeline.py:80
+#: pitivi/timeline/timeline.py:81
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1724,11 +1720,11 @@ msgstr ""
 "Sürüklerken veya kırparken iki klibin birbirine yapıştırılacağı eşik değer "
 "(piksel cinsinden)."
 
-#: pitivi/timeline/timeline.py:92
+#: pitivi/timeline/timeline.py:93
 msgid "Image clip duration"
 msgstr "Resim klip süresi"
 
-#: pitivi/timeline/timeline.py:94
+#: pitivi/timeline/timeline.py:95
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
@@ -1736,92 +1732,97 @@ msgstr ""
 "Zaman çizelgesine eklerken görüntülerin varsayılan klip uzunluğu (milisaniye "
 "cinsinden)."
 
-#: pitivi/timeline/timeline.py:105
+#: pitivi/timeline/timeline.py:106
 msgid "Left click also seeks"
 msgstr "Sol tıklamada ara"
 
-#: pitivi/timeline/timeline.py:107
+#: pitivi/timeline/timeline.py:108
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
-"Sol tıklamanın klipleri seçip düzenlemenin yanı sıra ileri geri sarma için kullanılması."
+"Sol tıklamanın klipleri seçip düzenlemenin yanı sıra ileri geri sarma için "
+"kullanılması."
 
-#: pitivi/timeline/timeline.py:336 pitivi/timeline/timeline.py:1693
+#: pitivi/timeline/timeline.py:337 pitivi/timeline/timeline.py:1708
 msgid "Add layer"
-msgstr "Katmak ekle"
+msgstr "Katman ekle"
 
-#: pitivi/timeline/timeline.py:1650 pitivi/dialogs/prefs.py:60
+#: pitivi/timeline/timeline.py:1651 pitivi/dialogs/prefs.py:60
 msgid "Timeline"
 msgstr "Zaman çizgisi"
 
-#: pitivi/timeline/timeline.py:1657
+#: pitivi/timeline/timeline.py:1658
+msgid "Action Search"
+msgstr "Eylem Ara"
+
+#: pitivi/timeline/timeline.py:1666
 msgid "Delete selected clips"
 msgstr "Seçilen klipleri sil"
 
-#: pitivi/timeline/timeline.py:1663
+#: pitivi/timeline/timeline.py:1673
 msgid "Delete selected clips and shift following ones"
 msgstr "Seçili klipleri sil ve aşağıdaki klipleri değiştir"
 
-#: pitivi/timeline/timeline.py:1669
+#: pitivi/timeline/timeline.py:1680
 msgid "Group selected clips together"
 msgstr "Seçili klipleri kümele"
 
-#: pitivi/timeline/timeline.py:1675
+#: pitivi/timeline/timeline.py:1687
 msgid "Ungroup selected clips"
 msgstr "Seçili klipleri kümeden çıkar"
 
-#: pitivi/timeline/timeline.py:1681
+#: pitivi/timeline/timeline.py:1694
 msgid "Copy selected clips"
 msgstr "Seçili klipleri kopyala"
 
-#: pitivi/timeline/timeline.py:1687
+#: pitivi/timeline/timeline.py:1701
 msgid "Paste selected clips"
 msgstr "Seçili klipleri yapıştır"
 
-#: pitivi/timeline/timeline.py:1699
+#: pitivi/timeline/timeline.py:1715
 msgid "Seeks to the first clip edge after the playhead."
 msgstr "Oynatma başından sonraki ilk klip kenarına sarar."
 
-#: pitivi/timeline/timeline.py:1705
+#: pitivi/timeline/timeline.py:1722
 msgid "Seeks to the first clip edge before the playhead."
 msgstr "Oynatma başından önceki ilk klip kenarına sarar."
 
-#: pitivi/timeline/timeline.py:1718
+#: pitivi/timeline/timeline.py:1735
 msgid "Split the clip at the position"
 msgstr "Klibi geçerli konumda böl"
 
-#: pitivi/timeline/timeline.py:1724
+#: pitivi/timeline/timeline.py:1742
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Seçilen klibin anahtar karesi eğrisine anahtar karesi ekle"
 
-#: pitivi/timeline/timeline.py:1729
+#: pitivi/timeline/timeline.py:1747
 msgid "Timeline Navigation"
 msgstr "Zaman Çizelgesi Gezintisi"
 
-#: pitivi/timeline/timeline.py:1736
+#: pitivi/timeline/timeline.py:1755
 msgid "Zoom in"
 msgstr "Yakınlaş"
 
-#: pitivi/timeline/timeline.py:1742
+#: pitivi/timeline/timeline.py:1763
 msgid "Zoom out"
 msgstr "Uzaklaş"
 
-#: pitivi/timeline/timeline.py:1748
+#: pitivi/timeline/timeline.py:1771
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Projeyi pencereye sığdırmak için yakınlaştırmayı ayarla"
 
-#: pitivi/timeline/timeline.py:1759
+#: pitivi/timeline/timeline.py:1784
 msgid "Seek backward one frame"
 msgstr "Bir kare geriye git"
 
-#: pitivi/timeline/timeline.py:1765
+#: pitivi/timeline/timeline.py:1791
 msgid "Seek forward one frame"
 msgstr "Bir kare ileri git"
 
-#: pitivi/timeline/timeline.py:1772
+#: pitivi/timeline/timeline.py:1799
 msgid "Seek backward one second"
 msgstr "Bir saniye geri git"
 
-#: pitivi/timeline/timeline.py:1779
+#: pitivi/timeline/timeline.py:1807
 msgid "Seek forward one second"
 msgstr "Bir saniye ileri git"
 
@@ -1941,8 +1942,8 @@ msgid ""
 "This resolution will be used as the default target resolution for new "
 "projects and projects missing scaled proxy meta-data."
 msgstr ""
-"Bu çözünürlük, yeni projeler ve ölçeklendirilmiş vekil üst verileri "
-"eksik olan projeler için öntanımlı hedef çözünürlük olarak kullanılacak."
+"Bu çözünürlük, yeni projeler ve ölçeklendirilmiş vekil üst verileri eksik "
+"olan projeler için öntanımlı hedef çözünürlük olarak kullanılacak."
 
 #: pitivi/dialogs/prefs.py:344
 msgid "Initial proxy size for new projects"
@@ -2002,8 +2003,8 @@ msgid ""
 "This key combination is already used by <b>%s</b>. Press Replace to use it "
 "for <b>%s</b> instead."
 msgstr ""
-"Bu tuş birleştirmesi zaten <b>%s</b> tarafından kullanılıyor. Bunun yerine <b>"
-"%s</b> kullanmak için Değiştir düğmesine basın."
+"Bu tuş birleştirmesi zaten <b>%s</b> tarafından kullanılıyor. Bunun yerine "
+"<b>%s</b> kullanmak için Değiştir düğmesine basın."
 
 #: pitivi/dialogs/prefs.py:733
 msgid "No description available."
@@ -2258,9 +2259,13 @@ msgstr "Daha çok bilgi için \"{help}(<command>)\" yazınız."
 #, python-brace-format
 msgid ""
 "Not possible to override {key}, because shortcuts commands are read-only."
-msgstr ""
-"{key} tuşunu geçersiz kılınamaz, çünkü kısayol komutları salt "
-"okunur."
+msgstr "{key} tuşunu geçersiz kılınamaz, çünkü kısayol komutları salt okunur."
+
+#~ msgid "Clip Effects"
+#~ msgstr "Klip Efektleri"
+
+#~ msgid "Remove the selected effect"
+#~ msgstr "Seçilen efekti kaldır"
 
 #~ msgid "Frame Rate:"
 #~ msgstr "Kare Hızı:"
@@ -2366,9 +2371,6 @@ msgstr ""
 
 #~ msgid "Close this message"
 #~ msgstr "Bu iletiyi kapat"
-
-#~ msgid "Section"
-#~ msgstr "Bölüm"
 
 #~ msgid "Standard (4:3)"
 #~ msgstr "Standart (4:3)"
