@@ -46,7 +46,7 @@ class AdjustClipSVolume(GObject.Object, Peas.Activatable):
         dir_img = os.path.join(get_pixmap_dir(), "one_volume.svg")
         image = Gtk.Image.new_from_file(dir_img)
         self.button = Gtk.ToolButton.new(icon_widget=image)
-        print("im", self.button.get_icon_widget())
+#        print("im", self.button.get_icon_widget())
         self.button.set_tooltip_text("Adjust the volume of the selected clips\nto the same value")
         self.button.show_all()
 #        self.button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_INDENT)
