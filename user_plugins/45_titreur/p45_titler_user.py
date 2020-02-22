@@ -70,7 +70,7 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         # pylint: disable=attribute-defined-outside-init
         self.app = self.object.app
         self.project = self.app.project_manager.current_project
-        dir_img = os.path.join(get_pixmap_dir(), "pitivi-alin.svg")
+        dir_img = os.path.join(get_pixmap_dir(), "titler_rt.svg")
         image = Gtk.Image.new_from_file(dir_img)
         self.button = Gtk.ToolButton.new(icon_widget=image)
 #        print("im", self.button.get_icon_widget())
@@ -1379,6 +1379,11 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         self.context.paint()
         self.show_buffer_bl(self.context)
 
+    def argb_to_hex(self, color_int):
+        return hex(color_int)
+
+
+
 # ################ End of Modif font, color, background
 
 # ################ Center move and fade
@@ -1666,3 +1671,6 @@ class TitlerRT(GObject.Object, Peas.Activatable):
         keyframe_curve_t._move_keyframe(int(offsets[0][0]), inpoint, 0)
 
 # ################ End of Center move and fade
+
+    def do_deactivate(self):
+        self.app.gui.editor.timeline_ui.toolbar.remove(self.button)
