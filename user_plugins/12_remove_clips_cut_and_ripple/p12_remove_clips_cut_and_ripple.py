@@ -2,7 +2,7 @@
 # Pitivi video editor
 # Copyright (c) 2019 Pitivi project
 # Author Jean-Paul Favier
-# Tested with Pitivi 1.90.0.1
+# Tested with Pitivi 0.98-827-gdd262c24
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -29,16 +29,16 @@ from gi.repository import Peas
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.timeline import SELECT
 from pitivi.utils.user_utils import Alert
-from pitivi.utils.user_utils import ChoiceWin
+from pitivi.utils.user_utils import ChoiceWin1
 #from pitivi.configure import get_pixmap_dir
 
-FRAMERATE = 25
+framerate = 25
+
 
 class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
     """Select the clips and click on the toolbar button.
 
-    The clips are removed. The next clips on all the layers are also moved
-    to keep the relative positions
+    The clips are removed. The next clips on all the layers are also moved to keep the relative positions
     Like Shortcut : Shift + Del which doesnt work as I want
     The playhead comes back for 3 seconds before the start of the clip
     The play starts to verify the result
@@ -78,8 +78,7 @@ class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
             # Undoing action :
             # http://developer.pitivi.org/Advanced_plugin.html#making-it-shine
             with self.app.action_log.started("delete clip and shift",\
-            finalizing_action=CommitTimelineFinalizingAction(
-                    self.app.project_manager.current_project.pipeline), \
+            finalizing_action=CommitTimelineFinalizingAction(self.app.project_manager.current_project.pipeline), \
              toplevel=True):
                 start = []
                 end = []
@@ -88,17 +87,17 @@ class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
                     if isinstance(clip, GES.TransitionClip):
                         continue
                     start.append(clip.start)
-                    print(start)
+#                    print(start)
                     end.append(clip.start + clip.duration)
                 if start:
                     self.start_sel = min(start)
-                    print("start ", self.start_sel)
+#                    print("start ", self.start_sel)
                     self.end_sel = max(end)
-                    print("end ", self.end_sel)
+#                    print("end ", self.end_sel)
                     found_overlapping = False
                     # check if any other clips occur during that period
                     found_overlapping = self.test_overlapping()
-                    print("found_overlapping = ", found_overlapping)
+#                    print("found_overlapping = ", found_overlapping)
                     if not found_overlapping:
                         self.operate_slide()
                     else:
@@ -107,16 +106,20 @@ class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
                         for l_o in self.list_over:
                             file_m = os.path.basename(l_o.get_asset().props.id)
                             text += file_m+"\n"  # .split(".")[0]
-                        message = " Caution\n\
-                    Clip(s) on another layer or selection on non adjacent clips\n \
-                    between the start and the end of all selected clips :\n\n\
-                    " + text + "\nDo you want to delete (or a part of) it or them ?"
-                        type_choice = "Warning"
-                        file_sound = "service-logout.oga"
-                        choice = ChoiceWin(message, title, type_choice, file_sound)
-                        print("choice = ", choice.result)
-                        if choice.result == "OK":
+                        message = text
+                        type_m = "Warning"
+                        file_sound = "window-attention.oga"
+                        choice = ChoiceWin1(message, title, type_m, file_sound)
+#                        print("choice = ", choice.result)
+                        if choice.result == "ALL":
+                            self.one_clip = False
                             self.delete_overlapping(self.start_sel, self.end_sel)
+                            self.operate_slide()
+                            self.timeline.selection.set_selection([], SELECT)
+                            self.app.gui.editor.focus_timeline()
+                        elif choice.result == "CLIP":
+#                            print("clip choosed")
+                            self.one_clip = True
                             self.operate_slide()
                             self.timeline.selection.set_selection([], SELECT)
                             self.app.gui.editor.focus_timeline()
@@ -132,14 +135,14 @@ class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
 
         and list the clips in ovelapping
         """
-        # pylint: disable=attribute-defined-outside-init
         # pylint: disable=chained-comparison
+        # pylint: disable=attribute-defined-outside-init
         found_overlapping = False
         self.list_over = []
         for layer_e in self.timeline.ges_timeline.layers:
-            print("Layer = ", layer_e)
+#            print("Layer = ", layer_e)
             for clip in layer_e.get_clips():
-                print("clip = ", clip.name)
+#                print("clip = ", clip.name)
                 # The timeline selection is not tested
                 if clip in self.timeline.selection:
                     continue
@@ -148,7 +151,7 @@ class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
                 if clip_end > self.start_sel and clip.start < self.end_sel:
                     found_overlapping = True
                     self.list_over.append(clip)
-                    print("bk", self.end_sel, clip.start, "---", self.start_sel, clip_end)
+#                    print("bk", self.end_sel, clip.start, "---", self.start_sel, clip_end)
         return found_overlapping
 
     def delete_overlapping(self, start_delet, end_delet):
@@ -202,12 +205,15 @@ class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
 
     def verif(self):
         # Verify
+        frame_rate = self.app.project_manager.current_project.videorate
+        duration_frame = float(Gst.SECOND / frame_rate)
+#        print("duration_frame", duration_frame)
+        n_frames = int(self.start_sel/duration_frame)
+#        print("position", position, n_frames)
+        # pylint: disable=attribute-defined-outside-init
+        self.start_sel = (n_frames -1) * duration_frame # On the start of the frame position
         if self.start_sel >= 2 * Gst.SECOND:
-            delay_start = self.start_sel - 2 * Gst.SECOND
-#            print("d = ", d)
-#            d = int(d*FRAMERATE/Gst.SECOND)*Gst.SECOND/FRAMERATE + Gst.SECOND/FRAMERATE
-#            print("d1 = ", d)
-            self.app.project_manager.current_project.pipeline.simple_seek(delay_start)
+            self.app.project_manager.current_project.pipeline.simple_seek(self.start_sel - 2 * Gst.SECOND)
         else:
             self.app.project_manager.current_project.pipeline.simple_seek(0)
         # Play to easily verify the cut
