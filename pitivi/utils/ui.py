@@ -771,7 +771,7 @@ def set_combo_value(combo, value):
     if len(found) != 1:
         do_log(INFO, None, "utils",
                "Could not set value %s, possible values: %s",
-               (value, [v[0] for v in combo.props.model]))
+               (value, [v[1] for v in combo.props.model]))
         return False
 
     return True
