@@ -2086,11 +2086,11 @@ class ProjectSettingsDialog:
         self.widgets_group = RippleUpdateGroup()
         self.widgets_group.add_vertex(self.frame_rate_combo,
                                       signal="changed",
-                                      update_func=self._update_combo_func,
+                                      update_func=self._update_frame_rate_combo_func,
                                       update_func_args=(self.frame_rate_fraction_widget,))
         self.widgets_group.add_vertex(self.frame_rate_fraction_widget,
                                       signal="value-changed",
-                                      update_func=self._update_fraction_func,
+                                      update_func=self._update_frame_rate_fraction_func,
                                       update_func_args=(self.frame_rate_combo,))
         self.widgets_group.add_vertex(self.width_spinbutton, signal="value-changed")
         self.widgets_group.add_vertex(self.height_spinbutton, signal="value-changed")
@@ -2133,15 +2133,13 @@ class ProjectSettingsDialog:
 
         # Bind the widgets in the Video tab to the Video Presets Manager.
         self.bind_spinbutton(self.video_presets, "width", self.width_spinbutton)
-        self.bind_spinbutton(
-            self.video_presets, "height", self.height_spinbutton)
+        self.bind_spinbutton(self.video_presets, "height", self.height_spinbutton)
         self.bind_fraction_widget(
             self.video_presets, "frame-rate", self.frame_rate_fraction_widget)
 
         # Bind the widgets in the Audio tab to the Audio Presets Manager.
         self.bind_combo(self.audio_presets, "channels", self.channels_combo)
-        self.bind_combo(
-            self.audio_presets, "sample-rate", self.sample_rate_combo)
+        self.bind_combo(self.audio_presets, "sample-rate", self.sample_rate_combo)
 
         self.widgets_group.add_edge(
             self.frame_rate_fraction_widget, self.video_preset_menubutton)
@@ -2155,9 +2153,10 @@ class ProjectSettingsDialog:
         mgr.bind_widget(name, widget.set_widget_value, widget.get_widget_value)
 
     def bind_combo(self, mgr, name, widget):
-        mgr.bind_widget(name,
-                        lambda x: set_combo_value(widget, x),
-                        lambda: get_combo_value(widget))
+        def setter(value):
+            res = set_combo_value(widget, value)
+            assert res, value
+        mgr.bind_widget(name, setter, lambda: get_combo_value(widget))
 
     def bind_spinbutton(self, mgr, name, widget):
         mgr.bind_widget(name,
@@ -2170,11 +2169,14 @@ class ProjectSettingsDialog:
     def proxy_res_linked(self):
         return self.proxy_res_linked_check.props.active
 
-    def _update_fraction_func(self, unused, fraction, combo):
-        fraction.set_widget_value(get_combo_value(combo))
+    def _update_frame_rate_fraction_func(self, unused, fraction_widget, combo_widget):
+        """Updates the fraction_widget to match the combo_widget."""
+        fraction_widget.set_widget_value(get_combo_value(combo_widget))
 
-    def _update_combo_func(self, unused, combo, fraction):
-        set_combo_value(combo, fraction.get_widget_value())
+    def _update_frame_rate_combo_func(self, unused, combo_widget, fraction_widget):
+        """Updates the combo_widget to match the fraction_widget."""
+        # This can fail when there is no corresponding value in combo's model.
+        set_combo_value(combo_widget, fraction_widget.get_widget_value())
 
     def __video_preset_loaded_cb(self, unused_mgr):
         self.sar = self.get_sar()
@@ -2230,8 +2232,11 @@ class ProjectSettingsDialog:
             self.video_presets_combo.set_active_id(matching_video_preset)
 
         # Audio
-        set_combo_value(self.channels_combo, self.project.audiochannels)
-        set_combo_value(self.sample_rate_combo, self.project.audiorate)
+        res = set_combo_value(self.channels_combo, self.project.audiochannels)
+        assert res, self.project.audiochannels
+
+        res = set_combo_value(self.sample_rate_combo, self.project.audiorate)
+        assert res, self.project.audiorate
 
         matching_audio_preset = self.audio_presets.matching_preset(self.project)
         if matching_audio_preset:
