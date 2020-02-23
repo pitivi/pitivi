@@ -2155,7 +2155,8 @@ class ProjectSettingsDialog:
         fraction.set_widget_value(get_combo_value(combo))
 
     def _update_combo_func(self, unused, combo, fraction):
-        set_combo_value(combo, fraction.get_widget_value())
+        widget_res = set_combo_value(combo, fraction.get_widget_value())
+        assert widget_res, fraction.get_widget_value()
 
     def __video_preset_loaded_cb(self, unused_mgr):
         self.sar = self.get_sar()
@@ -2211,8 +2212,11 @@ class ProjectSettingsDialog:
             self.video_presets_combo.set_active_id(matching_video_preset)
 
         # Audio
-        set_combo_value(self.channels_combo, self.project.audiochannels)
-        set_combo_value(self.sample_rate_combo, self.project.audiorate)
+        audio_channels_res = set_combo_value(self.channels_combo, self.project.audiochannels)
+        assert audio_channels_res, self.project.audiochannels
+
+        audio_rate_res = set_combo_value(self.sample_rate_combo, self.project.audiorate)
+        assert audio_rate_res, self.project.audiorate
 
         matching_audio_preset = self.audio_presets.matching_preset(self.project)
         if matching_audio_preset:
