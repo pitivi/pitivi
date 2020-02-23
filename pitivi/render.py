@@ -637,12 +637,16 @@ class RenderDialog(Loggable):
         return model
 
     def _display_settings(self):
-        """Displays the settings also in the ProjectSettingsDialog."""
+        """Applies the project settings to the UI."""
         # Video settings
-        set_combo_value(self.frame_rate_combo, self.project.videorate)
+        video_rate_res = set_combo_value(self.frame_rate_combo, self.project.videorate)
+        assert video_rate_res, self.project.videorate
         # Audio settings
-        set_combo_value(self.channels_combo, self.project.audiochannels)
-        set_combo_value(self.sample_rate_combo, self.project.audiorate)
+        audio_channels_res = set_combo_value(self.channels_combo, self.project.audiochannels)
+        assert audio_channels_res, self.project.audiochannels
+
+        audio_rate_res = set_combo_value(self.sample_rate_combo, self.project.audiorate)
+        assert audio_rate_res, self.project.audiorate
 
     def _update_audio_widgets_sensitivity(self):
         active = self.audio_output_checkbutton.get_active()
@@ -669,8 +673,9 @@ class RenderDialog(Loggable):
         self.scale_spinbutton.set_value(self.project.render_scale)
         # Muxer settings
         # This will trigger an update of the codec comboboxes.
-        set_combo_value(self.muxer_combo,
-                        Encoders().factories_by_name.get(self.project.muxer))
+        if not set_combo_value(self.muxer_combo,
+                               Encoders().factories_by_name.get(self.project.muxer)):
+            self.muxer_combo.set_active(0)
 
     def _check_filename(self):
         """Displays a warning if the file path already exists."""
@@ -763,7 +768,10 @@ class RenderDialog(Loggable):
             reduced_model.append(value)
         combo.set_model(reduced_model)
 
-        set_combo_value(combo, combo_value)
+        if not set_combo_value(combo, combo_value):
+            combo.set_active(combo_value)
+            self.warning("%s returns false when %s passed to it!", set_combo_value, combo_value)
+
         if get_combo_value(combo) != combo_value:
             combo.set_active(len(reduced_model) - 1)
             self.warning("%s in %s not supported, setting: %s",
@@ -822,8 +830,10 @@ class RenderDialog(Loggable):
             # A preference exists, pick it if it can be found in
             # the current model of the combobox.
             encoder = Encoders().factories_by_name.get(preferred_encoder)
-            set_combo_value(encoder_combo, encoder)
-        if not preferred_encoder or not get_combo_value(encoder_combo):
+            if set_combo_value(encoder_combo, encoder):
+                return
+
+        if not get_combo_value(encoder_combo):
             # No preference exists or it is not available,
             # pick the first encoder from the combobox's model.
             first = encoder_combo.props.model.get_iter_first()
