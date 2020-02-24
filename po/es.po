@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-02-20 12:30+0000\n"
-"PO-Revision-Date: 2020-02-20 16:44+0100\n"
+"POT-Creation-Date: 2020-02-23 10:37+0000\n"
+"PO-Revision-Date: 2020-02-24 13:19+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -362,8 +362,8 @@ msgstr "Un editor de vídeo bonito, potente e intuitivo"
 msgid "Save the current project under a new name or a different location"
 msgstr "Guardar el proyecto actual con un nombre nuevo en otra ubicación"
 
-#: data/ui/mainmenubutton.ui:25 pitivi/editorperspective.py:708
-#: pitivi/editorperspective.py:762
+#: data/ui/mainmenubutton.ui:25 pitivi/editorperspective.py:717
+#: pitivi/editorperspective.py:771
 msgid "Save As..."
 msgstr "Guardar como…"
 
@@ -414,11 +414,19 @@ msgstr "Atajo del teclado"
 msgid "User Manual"
 msgstr "Manual del usuario"
 
-#: data/ui/mainmenubutton.ui:196
+#: data/ui/mainmenubutton.ui:193
+msgid "Start the intro to Pitivi for new users"
+msgstr "Mostrar la introducción para usuarios nuevos de Pitivi"
+
+#: data/ui/mainmenubutton.ui:197
+msgid "Interactive Intro"
+msgstr "Introducción interactiva"
+
+#: data/ui/mainmenubutton.ui:213
 msgid "About Pitivi"
 msgstr "Acerca de Pitivi"
 
-#: data/ui/medialibrary.ui:14 pitivi/editorperspective.py:386
+#: data/ui/medialibrary.ui:14 pitivi/editorperspective.py:395
 msgid "Add media files to your project"
 msgstr "Añadir archivos multimedia a su proyecto"
 
@@ -497,8 +505,8 @@ msgid "Some changes will not take effect until you restart Pitivi"
 msgstr "Algunos cambios no tendrán efecto hasta que reinicie Pitivi"
 
 #: data/ui/projectsettings.ui:61 data/ui/renderingprogress.ui:41
-#: pitivi/editorperspective.py:531 pitivi/editorperspective.py:663
-#: pitivi/editorperspective.py:711 pitivi/editorperspective.py:764
+#: pitivi/editorperspective.py:540 pitivi/editorperspective.py:672
+#: pitivi/editorperspective.py:720 pitivi/editorperspective.py:773
 #: pitivi/greeterperspective.py:236 pitivi/medialibrary.py:859
 #: pitivi/dialogs/browseprojects.py:38 pitivi/dialogs/missingasset.py:46
 msgid "Cancel"
@@ -576,7 +584,7 @@ msgid "Proxy"
 msgstr "Proxy"
 
 #: data/ui/renderingdialog.ui:20 data/ui/renderingdialog.ui:55
-#: pitivi/editorperspective.py:321
+#: pitivi/editorperspective.py:325
 msgid "Render"
 msgstr "Renderizar"
 
@@ -795,7 +803,6 @@ msgid "Vertical:"
 msgstr "Vertical:"
 
 #: pitivi/action_search_bar.py:46
-#| msgid "Section"
 msgid "Search Action"
 msgstr "Acción de búsqueda"
 
@@ -956,80 +963,85 @@ msgstr "Activar fotogramas"
 msgid "Hide keyframes"
 msgstr "Ocultar fotogramas"
 
-#: pitivi/editorperspective.py:199 pitivi/medialibrary.py:658
+#: pitivi/editorperspective.py:200 pitivi/medialibrary.py:658
 msgid "Media Library"
 msgstr "Biblioteca multimedia"
 
-#: pitivi/editorperspective.py:201
+#: pitivi/editorperspective.py:202
 msgid "Effect Library"
 msgstr "Biblioteca de efectos"
 
-#: pitivi/editorperspective.py:212
+#: pitivi/editorperspective.py:213
 msgid "Clip"
 msgstr "Vídeo"
 
-#: pitivi/editorperspective.py:214
+#: pitivi/editorperspective.py:215
 msgid "Transition"
 msgstr "Transición"
 
-#: pitivi/editorperspective.py:216
+#: pitivi/editorperspective.py:217
 msgid "Title"
 msgstr "Título"
 
-#: pitivi/editorperspective.py:304
+#: pitivi/editorperspective.py:308
 msgid "Undo"
 msgstr "Deshacer"
 
 #. pylint: disable=attribute-defined-outside-init
-#: pitivi/editorperspective.py:315 pitivi/editorperspective.py:523
-#: pitivi/editorperspective.py:664 pitivi/editorperspective.py:712
-#: pitivi/editorperspective.py:765 pitivi/preset.py:114 pitivi/project.py:193
+#: pitivi/editorperspective.py:319 pitivi/editorperspective.py:532
+#: pitivi/editorperspective.py:673 pitivi/editorperspective.py:721
+#: pitivi/editorperspective.py:774 pitivi/preset.py:114 pitivi/project.py:193
 msgid "Save"
 msgstr "Guardar"
 
-#: pitivi/editorperspective.py:323
+#: pitivi/editorperspective.py:327
 msgid "Export your project as a finished movie"
 msgstr "Exportar su proyecto como película terminada"
 
-#: pitivi/editorperspective.py:355
+#: pitivi/editorperspective.py:360
 msgid "Save the current project"
 msgstr "Guardar el proyecto actual"
 
-#: pitivi/editorperspective.py:363
+#: pitivi/editorperspective.py:368
 msgid "Save the current project as"
 msgstr "Guardar el proyecto actual como"
 
-#: pitivi/editorperspective.py:495
+#: pitivi/editorperspective.py:388
+#| msgid "Welcome to Pitivi"
+msgid "Quick intros to Pitivi"
+msgstr "Introducción rápida a Pitivi"
+
+#: pitivi/editorperspective.py:504
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "No se pudo guardar el proyecto «%s»"
 
-#: pitivi/editorperspective.py:525 pitivi/project.py:192
+#: pitivi/editorperspective.py:534 pitivi/project.py:192
 msgid "Save as..."
 msgstr "Guardar como…"
 
-#: pitivi/editorperspective.py:528
+#: pitivi/editorperspective.py:537
 msgid "Close without saving"
 msgstr "Cerrar sin guardar"
 
-#: pitivi/editorperspective.py:538
+#: pitivi/editorperspective.py:547
 msgid "Save changes to the current project before closing?"
 msgstr "¿Guardar el proyecto actual antes de cerrar?"
 
-#: pitivi/editorperspective.py:547
+#: pitivi/editorperspective.py:556
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr "Si no guarda se perderán sus cambios desde el último %s."
 
-#: pitivi/editorperspective.py:551
+#: pitivi/editorperspective.py:560
 msgid "If you don't save, your changes will be lost."
 msgstr "Si no guarda sus cambios se perderán"
 
-#: pitivi/editorperspective.py:595
+#: pitivi/editorperspective.py:604
 msgid "Revert to saved project version?"
 msgstr "¿Revertir a una versión guardad del proyecto?"
 
-#: pitivi/editorperspective.py:600
+#: pitivi/editorperspective.py:609
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
 "Esto recargará el proyecto actual. Se perderán todos los cambios sin guardar."
@@ -1037,7 +1049,7 @@ msgstr ""
 #. Signal the project loading failure.
 #. You have to do this *after* successfully creating a blank project,
 #. or the startupwizard will still be connected to that signal too.
-#: pitivi/editorperspective.py:631
+#: pitivi/editorperspective.py:640
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -1048,32 +1060,32 @@ msgstr ""
 "\n"
 "Actualmente, Pitivi no soporta proyectos parciales."
 
-#: pitivi/editorperspective.py:660
+#: pitivi/editorperspective.py:669
 msgid "Export To..."
 msgstr "Exportar a…"
 
-#: pitivi/editorperspective.py:677
+#: pitivi/editorperspective.py:686
 msgid "Tar archive"
 msgstr "Archivador tar"
 
-#: pitivi/editorperspective.py:681 pitivi/editorperspective.py:727
+#: pitivi/editorperspective.py:690 pitivi/editorperspective.py:736
 msgid "Detect automatically"
 msgstr "Detectar automáticamente"
 
-#: pitivi/editorperspective.py:721 pitivi/editorperspective.py:768
+#: pitivi/editorperspective.py:730 pitivi/editorperspective.py:777
 #: pitivi/project.py:71 pitivi/render.py:436
 msgid "Untitled"
 msgstr "Sin título"
 
-#: pitivi/editorperspective.py:770
+#: pitivi/editorperspective.py:779
 msgid "PNG image"
 msgstr "Imagen PNG"
 
-#: pitivi/editorperspective.py:771
+#: pitivi/editorperspective.py:780
 msgid "JPEG image"
 msgstr "Imagen JPEG"
 
-#: pitivi/editorperspective.py:812
+#: pitivi/editorperspective.py:821
 msgid "Preview"
 msgstr "Previsualizar"
 
@@ -1154,6 +1166,43 @@ msgstr "Abrir un proyecto"
 #, python-format
 msgid "Pitivi %s is available."
 msgstr "Pitivi %s está disponible."
+
+#. pylint: disable=attribute-defined-outside-init
+#: pitivi/interactiveintro.py:154
+msgid "Start Overview"
+msgstr "Iniciar vista general"
+
+#: pitivi/interactiveintro.py:212
+#| msgid "Welcome to Pitivi"
+msgid "Welcome to Pitivi!"
+msgstr "Bienvenido a Pitivi"
+
+#: pitivi/interactiveintro.py:214
+msgid "Drag files here to import them"
+msgstr "Arrastre archivos aquí para importarlos"
+
+#: pitivi/interactiveintro.py:216
+msgid "Drag clips in the timeline to arrange them"
+msgstr "Arrastre vídeos en la línea de tiempo para reordenarlos"
+
+#: pitivi/interactiveintro.py:218
+msgid "Right-click anywhere to move the playhead"
+msgstr ""
+"Pulse con el botón derecho en cualquier parte para mover la posición actual"
+
+#: pitivi/interactiveintro.py:220
+msgid "Preview with the play button"
+msgstr "Vista previa con el botón de reproducción"
+
+#: pitivi/interactiveintro.py:222
+#| msgid "Export your project as a finished movie"
+msgid "Export your project to share it"
+msgstr "Exporte su proyecto para compartirlo"
+
+#: pitivi/interactiveintro.py:224
+#| msgid "Keyboard shortcuts"
+msgid "See all the keyboard shortcuts"
+msgstr "Ver todos los atajos del teclado"
 
 #: pitivi/mainwindow.py:74
 msgid "Dark Theme"
@@ -2398,9 +2447,6 @@ msgstr ""
 
 #~ msgid "Browse projects..."
 #~ msgstr "Examinar proyectos…"
-
-#~ msgid "Keyboard shortcuts"
-#~ msgstr "Atajo de teclado"
 
 #~ msgid "Missing dependencies..."
 #~ msgstr "Dependencias faltantes…"
