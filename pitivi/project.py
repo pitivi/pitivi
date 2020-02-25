@@ -37,6 +37,7 @@ from gi.repository import GstVideo
 from gi.repository import Gtk
 
 from pitivi.configure import get_ui_dir
+from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.medialibrary import AssetThumbnail
 from pitivi.preset import AudioPresetManager
 from pitivi.preset import VideoPresetManager
@@ -2208,6 +2209,11 @@ class ProjectSettingsDialog:
         width = int(self.scaled_proxy_width_spin.get_value())
         height = int(self.scaled_proxy_height_spin.get_value())
         self.proxy_aspect_ratio = Gst.Fraction(width, height)
+
+    def proxy_settings_label_cb(self, unused_widget, unused_parm):
+        prefs_dialog = PreferencesDialog(self.app)
+        prefs_dialog.stack.set_visible_child_name(("_proxies"))
+        prefs_dialog.run()
 
     def update_scaled_proxy_width(self):
         height = int(self.scaled_proxy_height_spin.get_value())
