@@ -68,6 +68,11 @@ build:
     - export FLATPAK_BUILDER_CACHE="--state-dir=${HOME}/flatpak-cache"
     - mv ${CI_PROJECT_DIR} ${BUILDDIR}
     - mkdir -p ${CI_PROJECT_DIR}
+    - pwd
+    - ls
+    - ls ${HOME}/flatpak-cache
+    - ls ${CI_PROJECT_DIR}
+    - ls ${BUILDDIR}
 
     - cd ${BUILDDIR}
     - ${RUN_IN_SANDBOX} meson mesonbuild/
