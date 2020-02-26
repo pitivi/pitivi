@@ -283,7 +283,8 @@ class ProjectManager(GObject.Object, Loggable):
             time_diff (int): The difference, in seconds, between file mtimes.
         """
         dialog = Gtk.MessageDialog(title="", transient_for=None)
-        ignore_backup_btn = dialog.add_button(_("Ignore Backup"),Gtk.ResponseType.REJECT)
+        ignore_backup_btn = dialog.add_button(_("Ignore backup"),Gtk.ResponseType.REJECT)
+        ignore_backup_btn.get_style_context().add_class("destructive-action")
         dialog.add_button(_("Restore from backup"), Gtk.ResponseType.YES)
         # Even though we set the title to an empty string when creating dialog,
         # seems we really have to do it once more so it doesn't show
@@ -294,7 +295,6 @@ class ProjectManager(GObject.Object, Loggable):
         dialog.set_modal(True)
         dialog.set_default_response(Gtk.ResponseType.YES)
         dialog.get_accessible().set_name("restore from backup dialog")
-        ignore_backup_btn.get_style_context().add_class("destructive-action")
 
         primary = Gtk.Label()
         primary.set_line_wrap(True)
