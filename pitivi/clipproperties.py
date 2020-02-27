@@ -932,7 +932,8 @@ class TimingProperties(Gtk.Expander, Loggable):
             clip_timing_input = ClipTimingWidget(self.app, property_name)
             self.get_child().attach(clip_timing_input, left=2, top=property_index, width=3, height=1)
 
-    def __selection_changed_cb(self, unused_timeline):
+    def __selection_changed_cb(self, selection):
+        self.__selection = selection
         # If a clip isn't selected, we need to hide
         if len(self.__selection) == 1:
             self.show()
@@ -987,14 +988,16 @@ class ClipTimingWidget(TimeWidget):
         property_value = getattr(self.__selected_clip, self.input_property)
         super().set_widget_value(property_value, send_signal=False)
 
-    def __selection_changed_cb(self, unused_timeline):
+    def __selection_changed_cb(self, selection):
+        self.__selection = selection
+
+        # Disconnect our listeners from the old clip
+        if self.__selected_clip:
+            self.__selected_clip.disconnect_by_func(self.__clip_model_updated_cb)
+
         # If there is at least one thing selected
         if len(self.__selection) == 1:
-            clip = list(self.__selection)[0]
-
-            # Disconnect our listeners from the old clip
-            if self.__selected_clip:
-                self.__selected_clip.disconnect_by_func(self.__clip_model_updated_cb)
+            clip = selection.get_single_clip(GES.Clip)
 
             self.__selected_clip = clip
             # For some reason there is a special case were the event is named poorly and doesn't match the property,
