@@ -273,7 +273,7 @@ on GitLab, indicating:
 
 ## Test Split
 
-1. Start with at least one clip in thee timeline.
+1. Start with at least one clip in the timeline.
     -   Make sure you are somewhat familiar with it, so that you can spot problems during playback.
 2. Click the razor tool
     -   a vertical trimming bar should appear across the timeline at the horizontal mouse position.
@@ -330,6 +330,16 @@ on GitLab, indicating:
     -   try to locate a specific frame using only the keyboard
 
 ## Test Preferences
+
+## Test Clip Timing
+1. Start with one clip in the project and timeline.
+2. Place the clip at 10 seconds in the timeline.
+3. Manually move the in point 1 second.
+4. Select the clip.
+5. Expand the "Timing" expanding in the Clip panel.
+    -   Check that the "Start" field in the "Timing" expander displays 10 seconds.
+    -   Check that the "In Point" field displays 1 second.
+    -   Check that the "Duration" field displays the duration of the clip in the timeline.
 
 # User provided Scenarios
 
