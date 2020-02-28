@@ -889,7 +889,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
 
 class TimingProperty(Enum):
-    """TODO Add docstrings to this."""
+    """These are used to represent the different types of properties that can be modified for the clip."""
 
     START = 'start'
     INPOINT = 'inpoint'
@@ -1003,8 +1003,6 @@ class ClipTimingWidget(TimeWidget):
             return
         value = time_input.get_widget_value()
 
-        print(f"Trying to change {self.timing_property.value} to {value}")
-
         # TODO Adjust the EditingMode to use the multi-select component
         editing_context = EditingContext(
             focus=self.__selected_clip,
@@ -1028,7 +1026,6 @@ class ClipTimingWidget(TimeWidget):
         else:
             # TODO: Error state, need to do some sort of error logging here
             pass
-        print(f"Adjusted position would be {position}")
         # This sets the clip's new values
         editing_context.edit_to(position, self.__selected_clip.get_layer())
         editing_context.finish()
