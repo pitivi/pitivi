@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.20.0 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkActionGroup" id="actiongroup1"/>
-  <object class="GtkAdjustment" id="duration_adjustment">
-    <property name="lower">-9999999999</property>
-    <property name="upper">9999999999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="end_adjustment">
-    <property name="lower">-9999999999</property>
-    <property name="upper">9999999999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
   <object class="GtkAdjustment" id="height_adjustment">
     <property name="lower">-9999999999</property>
     <property name="upper">9999999999</property>
@@ -38,12 +26,6 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="start_adjustment">
-    <property name="lower">-9999999999</property>
-    <property name="upper">9999999999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
   <object class="GtkAdjustment" id="width_adjustment">
     <property name="lower">-9999999999</property>
     <property name="upper">9999999999</property>
@@ -58,8 +40,8 @@
     <property name="margin_left">12</property>
     <property name="margin_top">6</property>
     <property name="margin_bottom">6</property>
-    <property name="row_spacing">5</property>
-    <property name="column_spacing">20</property>
+    <property name="row_spacing">6</property>
+    <property name="column_spacing">6</property>
     <property name="column_homogeneous">True</property>
     <child>
       <object class="GtkLabel" id="label11">
@@ -179,7 +161,7 @@
         <property name="layout_style">expand</property>
         <child>
           <object class="GtkButton" id="prev_keyframe_button">
-            <property name="label">&lt;</property>
+            <property name="label" translatable="no">&lt;</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="focus_on_click">False</property>
@@ -195,7 +177,7 @@
         </child>
         <child>
           <object class="GtkButton" id="next_keyframe_button">
-            <property name="label">&gt;</property>
+            <property name="label" translatable="no">&gt;</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="focus_on_click">False</property>
@@ -211,7 +193,7 @@
         </child>
         <child>
           <object class="GtkToggleButton" id="activate_keyframes_button">
-            <property name="label">◇</property>
+            <property name="label" translatable="no">◇</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="focus_on_click">False</property>
