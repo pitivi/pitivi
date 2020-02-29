@@ -1001,31 +1001,36 @@ class ClipTimingWidget(TimeWidget):
     def __on_input_cb(self, time_input):
         if not self.__selected_clip:
             return
-        value = time_input.get_widget_value()
-
-        # TODO Adjust the EditingMode to use the multi-select component
-        editing_context = EditingContext(
-            focus=self.__selected_clip,
-            timeline=self.__timeline,
-            mode=GES.EditMode.EDIT_NORMAL,
-            edge=self.__editing_edge_type,
-            app=self.app,
-            log_actions=True
-        )
+        new_value = time_input.get_widget_value()
+        current_value = getattr(self.__selected_clip, self.timing_property.value)
 
         # All of the parts of a clip are measured in relation to where they would sit on the
         # timeline, so we have to adjust inpoint and duration positions to take into account
         # parts of the timeline before them.
         position = None
+        editing_mode = None
         if self.timing_property is TimingProperty.START:
-            position = value
+            editing_mode = GES.EditMode.EDIT_NORMAL
+            position = new_value
         elif self.timing_property is TimingProperty.INPOINT:
-            position = value + self.__selected_clip.get_start()
+            editing_mode = GES.EditMode.EDIT_TRIM
+            position = new_value + (self.__selected_clip.get_start() - current_value)
         elif self.timing_property is TimingProperty.DURATION:
-            position = value + self.__selected_clip.get_start() + self.__selected_clip.get_inpoint()
+            editing_mode = GES.EditMode.EDIT_TRIM
+            position = new_value + self.__selected_clip.get_start() + self.__selected_clip.get_inpoint()
         else:
             # TODO: Error state, need to do some sort of error logging here
             pass
+
+        # TODO Adjust the EditingMode to use the multi-select component
+        editing_context = EditingContext(
+            focus=self.__selected_clip,
+            timeline=self.__timeline,
+            mode=editing_mode,
+            edge=self.__editing_edge_type,
+            app=self.app,
+            log_actions=True
+        )
         # This sets the clip's new values
         editing_context.edit_to(position, self.__selected_clip.get_layer())
         editing_context.finish()
