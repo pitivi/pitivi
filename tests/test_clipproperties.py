@@ -18,12 +18,17 @@
 # pylint: disable=protected-access,no-self-use
 from unittest import mock
 
+from gi.repository import GES
 from gi.repository import Gtk
-
-from pitivi.clipproperties import EffectProperties
-from pitivi.clipproperties import TransformationProperties
 from tests import common
 from tests.test_timeline_timeline import BaseTestTimeline
+
+from pitivi.clipproperties import ClipTimingWidget
+from pitivi.clipproperties import EffectProperties
+from pitivi.clipproperties import TimingProperties
+from pitivi.clipproperties import TimingProperty
+from pitivi.clipproperties import TransformationProperties
+from pitivi.utils.timeline import EditingContext
 
 
 class EffectPropertiesTest(common.TestCase):
@@ -323,3 +328,71 @@ class TransformationPropertiesTest(BaseTestTimeline):
             ret, value = source.get_child_property(prop)
             self.assertTrue(ret)
             self.assertEqual(value, source.ui.default_position[prop])
+
+
+class TimingPropertiesTest(BaseTestTimeline):
+    """Tests for the TimingProperties widget."""
+
+    @staticmethod
+    def setup_transformation_box():
+        """Creates a TimingProperty widget."""
+        timeline_container = common.create_timeline_container()
+        app = timeline_container.app
+        timing_properties_widget = TimingProperties(app)
+        project = timeline_container._project
+        timing_properties_widget.__new_project_loaded_cb(None, project)
+
+        return timing_properties_widget
+
+    # def test_visibility_from_clip_select(self):
+    #     timing_properties_widget
+        # timeline.selection.set_selection(SELECTED_ITEMS, Selection Mode (Select, Unselect, and Selection Add)
+
+
+class ClipTimingWidgetTest(BaseTestTimeline):
+    """Tests the ClipTimining widget."""
+
+    @staticmethod
+    def create_clip_timing_widget(timing_property, editing_edge_type):
+        timeline_container = common.create_timeline_container()
+        app = timeline_container.app
+        timing_properties_widget = ClipTimingWidget(app, timing_property, editing_edge_type)
+        project = timeline_container._project
+        timing_properties_widget._project_loaded_cb(None, project)
+
+        return timing_properties_widget, project.ges_timeline
+
+    def test_input_value_loads_model_value(self):
+        """Checks that this time input's value updates when the model is changed."""
+        # Create transformation box
+        timing_property = TimingProperty.START
+        editing_edge = GES.Edge.EDGE_NONE
+        editing_mode = GES.EditMode.EDIT_NORMAL
+        # This value needs to be convertible to >= 1 ms or the time widget will round it to zero
+        new_value = 5000000
+
+        timing_input, ges_timeline = self.create_clip_timing_widget(timing_property, editing_edge)
+        timeline = timing_input.app.gui.editor.timeline_ui.timeline
+
+        # Add a clip and select it
+        clip = self.add_clips_simple(timeline, 1)[0]
+        ges_timeline.ui.selection.select([clip])
+
+        # Checks that the time input loaded the initial value from the clip
+        self.assertEqual(timing_input.get_widget_value(), getattr(clip, timing_property.value))
+
+        # Checks that if the clip property changes somewhere else if the value in the
+        # time input correctly updates.
+        editing_context = EditingContext(
+            focus=clip,
+            timeline=ges_timeline,
+            mode=editing_mode,
+            edge=editing_edge,
+            app=timing_input.app,
+            log_actions=True
+        )
+        editing_context.edit_to(new_value, clip.get_layer())
+        editing_context.finish()
+
+        self.assertEqual(getattr(clip, timing_property.value), new_value)
+        self.assertEqual(timing_input.get_widget_value(), new_value)

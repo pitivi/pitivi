@@ -979,12 +979,12 @@ class ClipTimingWidget(TimeWidget):
         self.__selected_clip = None
 
         self.app.project_manager.connect_after(
-            'new-project-loaded', self.__project_loaded_cb)
+            'new-project-loaded', self._project_loaded_cb)
 
         # Setting up the event handlers
         self.connect_value_changed(self.__on_input_cb)
 
-    def __project_loaded_cb(self, unused_project_manager, project):
+    def _project_loaded_cb(self, unused_project_manager, project):
         if self.__selection is not None:
             self.__selection.disconnect_by_func(self.__selection_changed_cb)
             self.__selection = None
