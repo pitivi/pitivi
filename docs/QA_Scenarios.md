@@ -331,18 +331,10 @@ on GitLab, indicating:
 
 ## Test Preferences
 
-## Test Clip Timing
-1. Start with one clip in the project and timeline.
-2. Place the clip at 10 seconds in the timeline.
-3. Manually move the in point 1 second.
-4. Select the clip.
-5. Expand the "Timing" expanding in the Clip panel.
-    -   Check that the "Start" field in the "Timing" expander displays 10 seconds.
-    -   Check that the "In Point" field displays 1 second.
-    -   Check that the "Duration" field displays the duration of the clip in the timeline.
-
 # User provided Scenarios
 
 If you want to propose a QA Scenario, Create a page (Called
 '`User QA Scenario ##`') and link it here. After reviewing of the steps
 and expected behaviours, it will be moved in the above category.
+
+[User QA Scenario Timing Expander in the Clip Panel](QA_Scenarios_clip_panel.md)
