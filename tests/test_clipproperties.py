@@ -364,7 +364,7 @@ class ClipTimingWidgetTest(BaseTestTimeline):
 
     def test_input_value_loads_model_value(self):
         """Checks that this time input's value updates when the model is changed."""
-        # Create transformation box
+        # Create the clip_timing_input
         timing_property = TimingProperty.START
         editing_edge = GES.Edge.EDGE_NONE
         editing_mode = GES.EditMode.EDIT_NORMAL
@@ -396,3 +396,79 @@ class ClipTimingWidgetTest(BaseTestTimeline):
 
         self.assertEqual(getattr(clip, timing_property.value), new_value)
         self.assertEqual(timing_input.get_widget_value(), new_value)
+
+    def test_input_value_changing_updates_model(self):
+        """Checks that the model is updated properly when the time input field's value is changed."""
+        # Create the clip_timing_input
+        timing_property = TimingProperty.START
+        editing_edge = GES.Edge.EDGE_NONE
+        # This value needs to be convertible to >= 1 ms or the time widget will round it to zero
+        new_value = 5000000
+
+        timing_input, _ = self.create_clip_timing_widget(timing_property, editing_edge)
+        timeline = timing_input.app.gui.editor.timeline_ui.timeline
+
+        # Add a clip and select it
+        clip = self.add_clips_simple(timeline, 1)[0]
+        timeline.selection.select([clip])
+
+        # Checks that the starting value for the input field is not what we're setting it
+        # to and that the clip doesn't already equal our new value.
+        self.assertNotEqual(getattr(clip, timing_property.value), new_value)
+        self.assertNotEqual(timing_input.get_widget_value(), new_value)
+
+        # Checks that the time input loaded the initial value from the clip
+        self.assertEqual(timing_input.get_widget_value(), getattr(clip, timing_property.value))
+
+        # Mock the TimeWidget receiving user input
+        timing_input.set_widget_value(new_value, send_signal=True)
+
+        # The model was updated to match the value that the time input widget was changed to,
+        # and the widget's value remains the same.
+        self.assertEqual(getattr(clip, timing_property.value), new_value)
+        self.assertEqual(timing_input.get_widget_value(), new_value)
+
+    def test_loading_clip_value_changed_while_unselected(self):
+        """Tests that the value from the clips is correctly read when updated while unselected."""
+        # Create the clip_timing_input
+        timing_property = TimingProperty.START
+        editing_edge = GES.Edge.EDGE_NONE
+        editing_mode = GES.EditMode.EDIT_NORMAL
+
+        # This value needs to be convertible to >= 1 ms or the time widget will round it to zero
+        new_value = 5000000
+
+        timing_input, ges_timeline = self.create_clip_timing_widget(timing_property, editing_edge)
+        timeline = timing_input.app.gui.editor.timeline_ui.timeline
+
+        # Add a clip and select it
+        clip = self.add_clips_simple(timeline, 1)[0]
+        timeline.selection.select([clip])
+
+        # Checks that the time input loaded the initial value from the clip
+        self.assertEqual(timing_input.get_widget_value(), getattr(clip, timing_property.value))
+        self.assertNotEqual(timing_input.get_widget_value(), new_value)
+        self.assertNotEqual(getattr(clip, timing_property.value), new_value)
+
+        # Deselecting the clip
+        timeline.selection.unselect([clip])
+
+        # Updating the clip while unselected
+        editing_context = EditingContext(
+            focus=clip,
+            timeline=ges_timeline,
+            mode=editing_mode,
+            edge=editing_edge,
+            app=timing_input.app,
+            log_actions=True
+        )
+        editing_context.edit_to(new_value, clip.get_layer())
+        editing_context.finish()
+        self.assertEqual(getattr(clip, timing_property.value), new_value)
+        # While unselected it shouldn't have received the update, so the old value should remain
+        self.assertNotEqual(timing_input.get_widget_value(), new_value)
+
+        # Reselecting the clip and checking that the correct value was loaded
+        timeline.selection.select([clip])
+        self.assertEqual(getattr(clip, timing_property.value), new_value)
+        self.assertEqual(timing_input.get_widget_value(), getattr(clip, timing_property.value))
