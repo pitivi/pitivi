@@ -410,8 +410,9 @@ class ClipTimingWidgetTest(BaseTestTimeline):
 
         # Add a clip and select it
         layer = timeline.ges_timeline.append_layer()
-        initial_start = 0 * 1000000
         initial_inpoint = 0 * 1000000
+        # Start always includes the value from input, so we add it on here.
+        initial_start = 0 * 1000000 + initial_inpoint
         initial_duration = 5 * 1000000
 
         clip = self.add_clip(layer, initial_start, initial_inpoint, initial_duration)
@@ -452,8 +453,9 @@ class ClipTimingWidgetTest(BaseTestTimeline):
 
         # Add a clip and select it
         layer = timeline.ges_timeline.append_layer()
-        initial_start = 0 * 1000000
         initial_inpoint = 0 * 1000000
+        # Start always includes the value from input, so we add it on here.
+        initial_start = 0 * 1000000 + initial_inpoint
         initial_duration = 5 * 1000000
 
         clip = self.add_clip(layer, initial_start, initial_inpoint, initial_duration)
@@ -486,6 +488,53 @@ class ClipTimingWidgetTest(BaseTestTimeline):
         self.assertEqual(clip.start, new_start)
         self.assertEqual(clip.duration, new_duration)
 
+    def test_input_value_changing_updates_model_for_inpoint_to_zero(self):
+        """Tests that a bug related to trying to set the inpoint to a lower value is fixed."""
+        # Create the clip_timing_input
+        timing_property = TimingProperty.INPOINT
+        editing_edge = GES.Edge.EDGE_START
+
+        timing_input, _ = self.create_clip_timing_widget(timing_property, editing_edge)
+        timeline = timing_input.app.gui.editor.timeline_ui.timeline
+
+        # Add a clip and select it
+        layer = timeline.ges_timeline.append_layer()
+        # Setting the inpoint to a higher value so we can test reseting it.
+        initial_inpoint = 5 * 1000000
+        # Start always includes the value from input, so we add it on here.
+        initial_start = 0 * 1000000 + initial_inpoint
+        initial_duration = 5 * 1000000
+
+        clip = self.add_clip(layer, initial_start, initial_inpoint, initial_duration)
+
+        timeline.selection.select([clip])
+
+        # This value needs to be convertible to >= 1 ms or the time widget will round it to zero
+        new_inpoint = 2 * 1000000
+        # This will automatically be set, but we should test it anyways
+        new_start = initial_start - initial_inpoint + new_inpoint
+        new_duration = initial_duration - (new_inpoint - initial_inpoint)
+
+        # Checks that the starting value for the input field is not what we're setting it
+        # to and that the clip doesn't already equal our new value.
+        self.assertNotEqual(clip.inpoint, new_inpoint)
+        self.assertNotEqual(timing_input.get_widget_value(), new_inpoint)
+
+        # Checks that the time input loaded the initial value from the clip
+        self.assertEqual(timing_input.get_widget_value(), clip.inpoint)
+
+        # Mock the TimeWidget receiving user input
+        timing_input.set_widget_value(new_inpoint, send_signal=True)
+
+        # The model was updated to match the value that the time input widget was changed to,
+        # and the widget's value remains the same.
+        # self.assertEqual(clip.inpoint, new_inpoint)
+        self.assertEqual(timing_input.get_widget_value(), new_inpoint)
+        self.assertEqual(timing_input.get_widget_value(), clip.inpoint)
+        # Now we check that the start time was also correctly updated, automatically
+        self.assertEqual(clip.start, new_start)
+        self.assertEqual(clip.duration, new_duration)
+
     def test_input_value_changing_updates_model_for_duration(self):
         """Checks that the model is updated properly when the time input field's value is changed."""
         # Create the clip_timing_input
@@ -497,8 +546,9 @@ class ClipTimingWidgetTest(BaseTestTimeline):
 
         # Add a clip and select it
         layer = timeline.ges_timeline.append_layer()
-        initial_start = 0 * 1000000
         initial_inpoint = 0 * 1000000
+        # Start always includes the value from input, so we add it on here.
+        initial_start = 0 * 1000000 + initial_inpoint
         initial_duration = 5 * 1000000
 
         clip = self.add_clip(layer, initial_start, initial_inpoint, initial_duration)
