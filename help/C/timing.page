@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="timing">
+  <info>
+    <link type="guide" xref="index#timeline"/>
+    <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
+    <credit type="author">
+      <name>Emma Hubka</name>
+      <email>emma.hubka@huskers.unl.edu</email>
+    </credit>
+    <credit type="contributor">
+      <name>Michael Kovar</name>
+      <email>mkovar@huskers.unl.edu</email>
+    </credit>
+    <desc>
+    Explaining how timing works within the timeline.
+    </desc>
+  </info>
+  <title>Understanding timing</title>
+  <p>In the Clips panel, there are settings to change the start time of a clip, the in point of a clip, and the duration of a clip. Edit the start time to change where in the timeline the clip begins. Edit the in point to change where within the clip playback starts. To edit the duration to change the length of the clip. When the duration is changed it removed from the end of the clip. </p>
+</page>

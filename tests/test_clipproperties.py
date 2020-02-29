@@ -18,12 +18,17 @@
 # pylint: disable=protected-access,no-self-use
 from unittest import mock
 
+from gi.repository import GES
 from gi.repository import Gtk
-
-from pitivi.clipproperties import EffectProperties
-from pitivi.clipproperties import TransformationProperties
 from tests import common
 from tests.test_timeline_timeline import BaseTestTimeline
+
+from pitivi.clipproperties import ClipTimingWidget
+from pitivi.clipproperties import EffectProperties
+from pitivi.clipproperties import TimingProperties
+from pitivi.clipproperties import TimingProperty
+from pitivi.clipproperties import TransformationProperties
+from pitivi.utils.timeline import EditingContext
 
 
 class EffectPropertiesTest(common.TestCase):
@@ -323,3 +328,297 @@ class TransformationPropertiesTest(BaseTestTimeline):
             ret, value = source.get_child_property(prop)
             self.assertTrue(ret)
             self.assertEqual(value, source.ui.default_position[prop])
+
+
+# TODO Should this be BestTestTimeline or TestCase?
+class TimingPropertiesTest(BaseTestTimeline):
+    """Tests for the TimingProperties widget."""
+
+    @staticmethod
+    def setup_transformation_box():
+        """Creates a TimingProperty widget."""
+        timeline_container = common.create_timeline_container()
+        app = timeline_container.app
+        timing_properties_widget = TimingProperties(app)
+        project = timeline_container._project
+        timing_properties_widget.__new_project_loaded_cb(None, project)
+
+        return timing_properties_widget
+
+    # def test_visibility_from_clip_select(self):
+    #     timing_properties_widget
+        # timeline.selection.set_selection(SELECTED_ITEMS, Selection Mode (Select, Unselect, and Selection Add)
+
+
+class ClipTimingWidgetTest(BaseTestTimeline):
+    """Tests the ClipTimining widget."""
+
+    @staticmethod
+    def create_clip_timing_widget(timing_property, editing_edge_type):
+        timeline_container = common.create_timeline_container()
+        app = timeline_container.app
+        timing_properties_widget = ClipTimingWidget(app, timing_property, editing_edge_type)
+        project = timeline_container._project
+        timing_properties_widget._project_loaded_cb(None, project)
+
+        return timing_properties_widget, project.ges_timeline
+
+    def test_input_value_loads_model_value(self):
+        """Checks that this time input's value updates when the model is changed."""
+        # Create the clip_timing_input
+        timing_property = TimingProperty.START
+        editing_edge = GES.Edge.EDGE_NONE
+        editing_mode = GES.EditMode.EDIT_NORMAL
+        # This value needs to be convertible to >= 1 ms or the time widget will round it to zero
+        new_start = 5 * 1000000
+
+        timing_input, ges_timeline = self.create_clip_timing_widget(timing_property, editing_edge)
+        timeline = timing_input.app.gui.editor.timeline_ui.timeline
+
+        # Add a clip and select it
+        clip = self.add_clips_simple(timeline, 1)[0]
+        ges_timeline.ui.selection.select([clip])
+
+        # Checks that the time input loaded the initial value from the clip
+        self.assertEqual(timing_input.get_widget_value(), clip.start)
+
+        # Checks that if the clip property changes somewhere else if the value in the
+        # time input correctly updates.
+        editing_context = EditingContext(
+            focus=clip,
+            timeline=ges_timeline,
+            mode=editing_mode,
+            edge=editing_edge,
+            app=timing_input.app,
+            log_actions=True
+        )
+        editing_context.edit_to(new_start, clip.get_layer())
+        editing_context.finish()
+
+        self.assertEqual(clip.start, new_start)
+        self.assertEqual(timing_input.get_widget_value(), new_start)
+        self.assertEqual(timing_input.get_widget_value(), clip.start)
+
+    def test_input_value_changing_updates_model_for_start(self):
+        """Checks that the model is updated properly when the time input field's value is changed."""
+        # Create the clip_timing_input
+        timing_property = TimingProperty.START
+        editing_edge = GES.Edge.EDGE_NONE
+
+        timing_input, _ = self.create_clip_timing_widget(timing_property, editing_edge)
+        timeline = timing_input.app.gui.editor.timeline_ui.timeline
+
+        # Add a clip and select it
+        layer = timeline.ges_timeline.append_layer()
+        initial_inpoint = 0 * 1000000
+        # Start always includes the value from input, so we add it on here.
+        initial_start = 0 * 1000000 + initial_inpoint
+        initial_duration = 5 * 1000000
+
+        clip = self.add_clip(layer, initial_start, initial_inpoint, initial_duration)
+
+        timeline.selection.select([clip])
+
+        # This value needs to be convertible to >= 1 ms or the time widget will round it to zero
+        new_start = 2 * 1000000
+
+        # Checks that the starting value for the input field is not what we're setting it
+        # to and that the clip doesn't already equal our new value.
+        self.assertNotEqual(clip.start, new_start)
+        self.assertNotEqual(timing_input.get_widget_value(), new_start)
+
+        # Checks that the time input loaded the initial value from the clip
+        self.assertEqual(timing_input.get_widget_value(), clip.start)
+
+        # Mock the TimeWidget receiving user input
+        timing_input.set_widget_value(new_start, send_signal=True)
+
+        # The model was updated to match the value that the time input widget was changed to,
+        # and the widget's value remains the same.
+        self.assertEqual(clip.start, new_start)
+        self.assertEqual(timing_input.get_widget_value(), new_start)
+        self.assertEqual(timing_input.get_widget_value(), clip.start)
+        # Now we check that the start time was also correctly updated, automatically
+        self.assertEqual(clip.inpoint, initial_inpoint)
+        self.assertEqual(clip.duration, initial_duration)
+
+    def test_input_value_changing_updates_model_for_inpoint(self):
+        """Checks that the model is updated properly when the time input field's value is changed."""
+        # Create the clip_timing_input
+        timing_property = TimingProperty.INPOINT
+        editing_edge = GES.Edge.EDGE_START
+
+        timing_input, _ = self.create_clip_timing_widget(timing_property, editing_edge)
+        timeline = timing_input.app.gui.editor.timeline_ui.timeline
+
+        # Add a clip and select it
+        layer = timeline.ges_timeline.append_layer()
+        initial_inpoint = 0 * 1000000
+        # Start always includes the value from input, so we add it on here.
+        initial_start = 0 * 1000000 + initial_inpoint
+        initial_duration = 5 * 1000000
+
+        clip = self.add_clip(layer, initial_start, initial_inpoint, initial_duration)
+
+        timeline.selection.select([clip])
+
+        # This value needs to be convertible to >= 1 ms or the time widget will round it to zero
+        new_inpoint = 2 * 1000000
+        # This will automatically be set, but we should test it anyways
+        new_start = initial_start - initial_inpoint + new_inpoint
+        new_duration = initial_duration - (new_inpoint - initial_inpoint)
+
+        # Checks that the starting value for the input field is not what we're setting it
+        # to and that the clip doesn't already equal our new value.
+        self.assertNotEqual(clip.inpoint, new_inpoint)
+        self.assertNotEqual(timing_input.get_widget_value(), new_inpoint)
+
+        # Checks that the time input loaded the initial value from the clip
+        self.assertEqual(timing_input.get_widget_value(), clip.inpoint)
+
+        # Mock the TimeWidget receiving user input
+        timing_input.set_widget_value(new_inpoint, send_signal=True)
+
+        # The model was updated to match the value that the time input widget was changed to,
+        # and the widget's value remains the same.
+        self.assertEqual(clip.inpoint, new_inpoint)
+        self.assertEqual(timing_input.get_widget_value(), new_inpoint)
+        self.assertEqual(timing_input.get_widget_value(), clip.inpoint)
+        # Now we check that the start time was also correctly updated, automatically
+        self.assertEqual(clip.start, new_start)
+        self.assertEqual(clip.duration, new_duration)
+
+    def test_input_value_changing_updates_model_for_inpoint_to_zero(self):
+        """Tests that a bug related to trying to set the inpoint to a lower value is fixed."""
+        # Create the clip_timing_input
+        timing_property = TimingProperty.INPOINT
+        editing_edge = GES.Edge.EDGE_START
+
+        timing_input, _ = self.create_clip_timing_widget(timing_property, editing_edge)
+        timeline = timing_input.app.gui.editor.timeline_ui.timeline
+
+        # Add a clip and select it
+        layer = timeline.ges_timeline.append_layer()
+        # Setting the inpoint to a higher value so we can test reseting it.
+        initial_inpoint = 5 * 1000000
+        # Start always includes the value from input, so we add it on here.
+        initial_start = 0 * 1000000 + initial_inpoint
+        initial_duration = 5 * 1000000
+
+        clip = self.add_clip(layer, initial_start, initial_inpoint, initial_duration)
+
+        timeline.selection.select([clip])
+
+        # This value needs to be convertible to >= 1 ms or the time widget will round it to zero
+        new_inpoint = 2 * 1000000
+        # This will automatically be set, but we should test it anyways
+        new_start = initial_start - initial_inpoint + new_inpoint
+        new_duration = initial_duration - (new_inpoint - initial_inpoint)
+
+        # Checks that the starting value for the input field is not what we're setting it
+        # to and that the clip doesn't already equal our new value.
+        self.assertNotEqual(clip.inpoint, new_inpoint)
+        self.assertNotEqual(timing_input.get_widget_value(), new_inpoint)
+
+        # Checks that the time input loaded the initial value from the clip
+        self.assertEqual(timing_input.get_widget_value(), clip.inpoint)
+
+        # Mock the TimeWidget receiving user input
+        timing_input.set_widget_value(new_inpoint, send_signal=True)
+
+        # The model was updated to match the value that the time input widget was changed to,
+        # and the widget's value remains the same.
+        # self.assertEqual(clip.inpoint, new_inpoint)
+        self.assertEqual(timing_input.get_widget_value(), new_inpoint)
+        self.assertEqual(timing_input.get_widget_value(), clip.inpoint)
+        # Now we check that the start time was also correctly updated, automatically
+        self.assertEqual(clip.start, new_start)
+        self.assertEqual(clip.duration, new_duration)
+
+    def test_input_value_changing_updates_model_for_duration(self):
+        """Checks that the model is updated properly when the time input field's value is changed."""
+        # Create the clip_timing_input
+        timing_property = TimingProperty.DURATION
+        editing_edge = GES.Edge.EDGE_END
+
+        timing_input, _ = self.create_clip_timing_widget(timing_property, editing_edge)
+        timeline = timing_input.app.gui.editor.timeline_ui.timeline
+
+        # Add a clip and select it
+        layer = timeline.ges_timeline.append_layer()
+        initial_inpoint = 0 * 1000000
+        # Start always includes the value from input, so we add it on here.
+        initial_start = 0 * 1000000 + initial_inpoint
+        initial_duration = 5 * 1000000
+
+        clip = self.add_clip(layer, initial_start, initial_inpoint, initial_duration)
+
+        timeline.selection.select([clip])
+
+        # This value needs to be convertible to >= 1 ms or the time widget will round it to zero
+        new_duration = 2 * 1000000
+
+        # Checks that the starting value for the input field is not what we're setting it
+        # to and that the clip doesn't already equal our new value.
+        self.assertNotEqual(clip.duration, new_duration)
+        self.assertNotEqual(timing_input.get_widget_value(), new_duration)
+
+        # Checks that the time input loaded the initial value from the clip
+        self.assertEqual(timing_input.get_widget_value(), clip.duration)
+
+        # Mock the TimeWidget receiving user input
+        timing_input.set_widget_value(new_duration, send_signal=True)
+
+        # The model was updated to match the value that the time input widget was changed to,
+        # and the widget's value remains the same.
+        self.assertEqual(clip.duration, new_duration)
+        self.assertEqual(timing_input.get_widget_value(), new_duration)
+        self.assertEqual(timing_input.get_widget_value(), clip.duration)
+        # Nothing else should have changed
+        self.assertEqual(clip.start, initial_start)
+        self.assertEqual(clip.inpoint, initial_inpoint)
+
+    def test_loading_clip_value_changed_while_unselected(self):
+        """Tests that the value from the clips is correctly read when updated while unselected."""
+        # Create the clip_timing_input
+        timing_property = TimingProperty.START
+        editing_edge = GES.Edge.EDGE_NONE
+        editing_mode = GES.EditMode.EDIT_NORMAL
+
+        # This value needs to be convertible to >= 1 ms or the time widget will round it to zero
+        new_value = 5 * 1000000
+
+        timing_input, ges_timeline = self.create_clip_timing_widget(timing_property, editing_edge)
+        timeline = timing_input.app.gui.editor.timeline_ui.timeline
+
+        # Add a clip and select it
+        clip = self.add_clips_simple(timeline, 1)[0]
+        timeline.selection.select([clip])
+
+        # Checks that the time input loaded the initial value from the clip
+        self.assertEqual(timing_input.get_widget_value(), getattr(clip, timing_property.value))
+        self.assertNotEqual(timing_input.get_widget_value(), new_value)
+        self.assertNotEqual(getattr(clip, timing_property.value), new_value)
+
+        # Deselecting the clip
+        timeline.selection.unselect([clip])
+
+        # Updating the clip while unselected
+        editing_context = EditingContext(
+            focus=clip,
+            timeline=ges_timeline,
+            mode=editing_mode,
+            edge=editing_edge,
+            app=timing_input.app,
+            log_actions=True
+        )
+        editing_context.edit_to(new_value, clip.get_layer())
+        editing_context.finish()
+        self.assertEqual(getattr(clip, timing_property.value), new_value)
+        # While unselected it shouldn't have received the update, so the old value should remain
+        self.assertNotEqual(timing_input.get_widget_value(), new_value)
+
+        # Reselecting the clip and checking that the correct value was loaded
+        timeline.selection.select([clip])
+        self.assertEqual(getattr(clip, timing_property.value), new_value)
+        self.assertEqual(timing_input.get_widget_value(), getattr(clip, timing_property.value))

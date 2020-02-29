@@ -17,6 +17,7 @@
 """Widgets to control clips properties."""
 import bisect
 import os
+from enum import Enum
 from gettext import gettext as _
 
 from gi.repository import Gdk
@@ -34,11 +35,13 @@ from pitivi.utils.custom_effect_widgets import setup_custom_effect_widgets
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.pipeline import PipelineError
+from pitivi.utils.timeline import EditingContext
 from pitivi.utils.ui import disable_scroll
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
+from pitivi.utils.widgets import TimeWidget
 
 (COL_ACTIVATED,
  COL_TYPE,
@@ -79,6 +82,10 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         transformation_expander = TransformationProperties(app)
         transformation_expander.set_vexpand(False)
         vbox.pack_start(transformation_expander, False, False, 0)
+
+        timing_expander = TimingProperties(app)
+        timing_expander.set_vexpand(False)
+        vbox.pack_start(timing_expander, False, False, 0)
 
         self.effect_expander = EffectProperties(app, self)
         self.effect_expander.set_vexpand(False)
@@ -581,6 +588,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
             "project-closed", self.__project_closed_cb)
 
     def _new_project_loaded_cb(self, unused_app, project):
+
         if self._selection is not None:
             self._selection.disconnect_by_func(self._selection_changed_cb)
             self._selection = None
@@ -755,7 +763,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 return res, value
             except PipelineError:
                 pass
-
         return self.source.get_child_property(prop)
 
     def _position_cb(self, unused_pipeline, unused_position):
@@ -877,3 +884,187 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self._project.pipeline.commit_timeline()
         self.__set_source(None)
         self.hide()
+
+
+class TimingProperty(Enum):
+    """These are used to represent the different types of properties that can be modified for the clip."""
+
+    START = 'start'
+    INPOINT = 'inpoint'
+    DURATION = 'duration'
+
+
+class TimingProperties(Gtk.Expander, Loggable):
+    """Widget for configuring the timing of the clip."""
+
+    def __init__(self, app):
+        Gtk.Expander.__init__(self)
+        Loggable.__init__(self)
+        self.app = app
+
+        self.set_label(_("Timing"))
+
+        # This handles the object that represents a selection. We store it so that we can hide this expander when
+        # nothing is selected
+        self.__selection = None
+
+        self.__create_ui()
+
+        self.app.project_manager.connect_after(
+            'new-project-loaded', self.__project_loaded_cb)
+
+        self.show_all()
+        # TODO Figure out why we do this. Does this mean that we have all of our child components always showing
+        #  but we hide the parent, so it's the only one that has to toggle it's visibility?
+        self.hide()
+
+    def __project_loaded_cb(self, unused_project_manager, project):
+        # If we have something selected, deselect it
+        if self.__selection is not None:
+            self.__selection.disconnect_by_func(self.__selection_changed_cb)
+            self.__selection = None
+        if project:
+            self.__selection = project.ges_timeline.ui.selection
+            self.__selection.connect('selection-changed', self.__selection_changed_cb)
+
+    def __create_ui(self):
+        builder = Gtk.Builder()
+        builder.add_from_file(os.path.join(get_ui_dir(), 'cliptiming.ui'))
+        self.add(builder.get_object("timing_box"))
+
+        # EDGE_START refers to the start of the clip in the timeline, so it's actually used
+        # for the inpoint instead of the start, which refers to the clip's position in the
+        # timeline.
+        self.__setup_timing_input(TimingProperty.START, GES.Edge.EDGE_NONE, 0)
+        self.__setup_timing_input(TimingProperty.INPOINT, GES.Edge.EDGE_START, 1)
+        self.__setup_timing_input(TimingProperty.DURATION, GES.Edge.EDGE_END, 2)
+
+    def __setup_timing_input(self, property_name, editing_edge_type, row_index):
+        clip_timing_input = ClipTimingWidget(self.app, property_name, editing_edge_type)
+        self.get_child().attach(clip_timing_input, left=2, top=row_index, width=3, height=1)
+
+    def __selection_changed_cb(self, selection):
+        self.__selection = selection
+        # If a clip isn't selected, we need to hide
+        if len(self.__selection) == 1:
+            self.show()
+        else:
+            self.hide()
+
+
+class ClipTimingWidget(TimeWidget):
+    """Encapsulates all of the logic and components required to allow users to modify a given clip property.
+
+    Args:
+        app (PitiviApp): The Pitivi app
+        timing_property (TimingProperty): The property involved in timing that this input will handle
+        editing_edge_type (GES.Edge): The edge type that is required to change the given timing property
+    """
+
+    def __init__(self, app, timing_property, editing_edge_type):
+        super().__init__()
+        self.app = app
+        # This is the property that will be handled by this widget
+        self.timing_property = timing_property
+        # This is the type of edge that will be used by GES when we're editing the clip.
+        # Basically it acts as what part of the clip will be the anchor for movements.
+        self.__editing_edge_type = editing_edge_type
+
+        # This represents the user's current selection widget
+        self.__selection = None
+        self.__timeline = None
+
+        self.__selected_clip = None
+
+        self.app.project_manager.connect_after(
+            'new-project-loaded', self._project_loaded_cb)
+
+        # Setting up the event handlers
+        self.connect_value_changed(self.__on_input_cb)
+
+    def _project_loaded_cb(self, unused_project_manager, project):
+        if self.__selection is not None:
+            self.__selection.disconnect_by_func(self.__selection_changed_cb)
+            self.__selection = None
+
+        self.__timeline = project.ges_timeline
+
+        if project:
+            self.__selection = project.ges_timeline.ui.selection
+            self.__selection.connect('selection-changed', self.__selection_changed_cb)
+
+            super().set_framerate(project.videorate)
+
+    # This updates the model to match the input widget
+    def __on_input_cb(self, time_input):
+        if not self.__selected_clip:
+            return
+        new_value = time_input.get_widget_value()
+        current_value = getattr(self.__selected_clip, self.timing_property.value)
+
+        # All of the parts of a clip are measured in relation to where they would sit on the
+        # timeline, so we have to adjust inpoint and duration positions to take into account
+        # parts of the timeline before them.
+        position = None
+        editing_mode = None
+        if self.timing_property is TimingProperty.START:
+            editing_mode = GES.EditMode.EDIT_NORMAL
+            position = new_value
+        elif self.timing_property is TimingProperty.INPOINT:
+            editing_mode = GES.EditMode.EDIT_TRIM
+            position = new_value + (self.__selected_clip.get_start() - current_value)
+        elif self.timing_property is TimingProperty.DURATION:
+            editing_mode = GES.EditMode.EDIT_TRIM
+            position = new_value + self.__selected_clip.get_start() + self.__selected_clip.get_inpoint()
+        else:
+            # TODO: Error state, need to do some sort of error logging here
+            pass
+
+        # TODO Adjust the EditingMode to use the multi-select component
+        editing_context = EditingContext(
+            focus=self.__selected_clip,
+            timeline=self.__timeline,
+            mode=editing_mode,
+            edge=self.__editing_edge_type,
+            app=self.app,
+            log_actions=True
+        )
+        # This sets the clip's new values
+        editing_context.edit_to(position, self.__selected_clip.get_layer())
+        editing_context.finish()
+
+    # This is the callback for updating the input widget when the model is changed.
+    def __clip_model_updated_cb(self, clip, property_type):
+        assert self.__selected_clip == clip, f"{self.__selected_clip} doesn't match {clip}"
+        assert property_type.name == 'in-point' if self.timing_property.value == 'inpoint' else self.timing_property.value
+
+        self.__update_input_value_from_clip()
+
+    # This updates the input widget when the model is changed.
+    def __update_input_value_from_clip(self):
+        property_value = getattr(self.__selected_clip, self.timing_property.value)
+        super().set_widget_value(property_value, send_signal=False)
+
+    def __selection_changed_cb(self, selection):
+        self.__selection = selection
+
+        # Disconnect our listeners from the old clip, no matter if we're selecting a new one
+        # or deselecting all clips.
+        if self.__selected_clip:
+            self.__selected_clip.disconnect_by_func(self.__clip_model_updated_cb)
+
+        # If there is at least one thing selected
+        if len(self.__selection) == 1:
+            clip = self.__selection.get_single_clip(GES.Clip)
+
+            self.__selected_clip = clip
+            # For some reason there is a special case were the event is named poorly and doesn't match the property,
+            # so we have to have a special case for inpoint.
+            self.__selected_clip.connect(
+                f"notify::{'in-point' if self.timing_property.value == 'inpoint' else self.timing_property.value}",
+                self.__clip_model_updated_cb)
+            # Load the starting data from the new clip selection in our input field.
+            self.__update_input_value_from_clip()
+        else:
+            # Deselect
+            self.__selected_clip = None

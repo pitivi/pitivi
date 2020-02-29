@@ -273,7 +273,7 @@ on GitLab, indicating:
 
 ## Test Split
 
-1. Start with at least one clip in thee timeline.
+1. Start with at least one clip in the timeline.
     -   Make sure you are somewhat familiar with it, so that you can spot problems during playback.
 2. Click the razor tool
     -   a vertical trimming bar should appear across the timeline at the horizontal mouse position.
@@ -336,3 +336,5 @@ on GitLab, indicating:
 If you want to propose a QA Scenario, Create a page (Called
 '`User QA Scenario ##`') and link it here. After reviewing of the steps
 and expected behaviours, it will be moved in the above category.
+
+[User QA Scenario Timing Expander in the Clip Panel](QA_Scenarios_clip_panel.md)
