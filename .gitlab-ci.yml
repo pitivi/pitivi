@@ -82,6 +82,10 @@ build:
     - ${RUN_IN_SANDBOX} meson mesonbuild/
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
     - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH} --logs-dir=${CI_PROJECT_DIR}/tests-logs ${BLACKLIST}
+
+    # For some reason GitLab fails to upload directories
+    - tar czf tests-logs.tar.gz tests-logs/
+    - cd ${CI_PROJECT_DIR}/ && tar cf repo.tar repo/
   cache:
     paths:
       - flatpak-cache
@@ -89,8 +93,8 @@ build:
     expire_in: 30 days
     paths:
       - xunit.xml
-      - repo/
-      - tests-logs/
+      - repo.tar
+      - tests-logs.tar.gz
     reports:
       junit:
         - ${XUNIT_PATH}
@@ -101,6 +105,7 @@ deploy:
     - PitiviBuildMachine
   stage: deploy
   script:
+    - tar xf repo.tar
     - flatpak build-commit-from --src-repo=repo /srv/http --timestamp=NOW --gpg-sign=739E841A
   only:
     - master@GNOME/pitivi
