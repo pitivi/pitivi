@@ -69,6 +69,7 @@ build:
     - export MANIFEST=${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json
     - export RUN_IN_SANDBOX="flatpak-builder --disable-rofiles-fuse --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --env=GST_DEBUG_COLOR=no --run app ${MANIFEST}"
     - export FLATPAK_BUILDER_CACHE="--state-dir=${HOME}/flatpak-cache"
+    - export FLATPAK_REPO="${CI_PROJECT_DIR}/flatpak_repo"
 
     - env
 
@@ -78,10 +79,15 @@ build:
     - mkdir -p ${CI_PROJECT_DIR}
 
     - cd ${BUILDDIR}
-    - flatpak-builder --user --disable-rofiles-fuse ${FLATPAK_BUILDER_CACHE} --disable-download --ccache --repo=${CI_PROJECT_DIR}/repo --force-clean app build/flatpak/org.pitivi.Pitivi.json --subject="Rolling update for pitivi master" --body="See ${CI_JOB_URL}"
+    - flatpak-builder --user --disable-rofiles-fuse ${FLATPAK_BUILDER_CACHE} --disable-download --ccache --repo=${FLATPAK_REPO} --force-clean app build/flatpak/org.pitivi.Pitivi.json --subject="Rolling update for pitivi master" --body="See ${CI_JOB_URL}"
     - ${RUN_IN_SANDBOX} meson mesonbuild/
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
     - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH} --logs-dir=${CI_PROJECT_DIR}/tests-logs ${BLACKLIST}
+
+    # For some reason GitLab fails to upload directories
+    - cd ${CI_PROJECT_DIR}/
+    - tar czf tests-logs.tar.gz tests-logs/
+    - tar cf flatpak_repo.tar flatpak_repo/
   cache:
     paths:
       - flatpak-cache
@@ -89,8 +95,8 @@ build:
     expire_in: 30 days
     paths:
       - xunit.xml
-      - repo/
-      - tests-logs/
+      - flatpak_repo.tar
+      - tests-logs.tar.gz
     reports:
       junit:
         - ${XUNIT_PATH}
@@ -101,7 +107,8 @@ deploy:
     - PitiviBuildMachine
   stage: deploy
   script:
-    - flatpak build-commit-from --src-repo=repo /srv/http --timestamp=NOW --gpg-sign=739E841A
+    - tar xf flatpak_repo.tar
+    - flatpak build-commit-from --src-repo=flatpak_repo /srv/http --timestamp=NOW --gpg-sign=739E841A
   only:
     - master@GNOME/pitivi
     - 1.0@GNOME/pitivi
