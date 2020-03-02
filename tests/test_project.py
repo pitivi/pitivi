@@ -551,7 +551,7 @@ class TestProjectSettings(common.TestCase):
         project = timeline.app.project_manager.current_project
         project.add_uris([common.get_sample_uri("mp3_sample.mp3")])
 
-        audio_track = [t for t in project.ges_timeline.tracks if isinstance(t, GES.AudioTrack)][0]
+        audio_track = [t for t in project.ges_timeline.get_tracks() if isinstance(t, GES.AudioTrack)][0]
         mainloop = common.create_main_loop()
 
         def progress_cb(project, progress, estimated_time):
