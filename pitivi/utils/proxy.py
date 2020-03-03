@@ -699,7 +699,7 @@ class ProxyManager(GObject.Object, Loggable):
         # Create shadow proxies for unsupported assets
         if not self.is_asset_format_well_supported(asset) and not \
                 self.app.settings.proxying_strategy == ProxyingStrategy.NOTHING \
-                and not shadow:
+                and not shadow and scaled:
             hq_uri = self.app.proxy_manager.get_proxy_uri(asset)
             if not Gio.File.new_for_uri(hq_uri).query_exists(None):
                 self.add_job(asset, shadow=True)
