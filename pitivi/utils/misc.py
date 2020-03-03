@@ -26,6 +26,7 @@ from urllib.parse import urlsplit
 
 from gi.repository import GdkPixbuf
 from gi.repository import GLib
+from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk
 
@@ -33,6 +34,9 @@ import pitivi.utils.loggable as log
 from pitivi.configure import APPMANUALURL_OFFLINE
 from pitivi.configure import APPMANUALURL_ONLINE
 from pitivi.utils.threads import Thread
+
+
+ASSET_DURATION_META = "pitivi:asset-duration"
 
 
 def scale_pixbuf(pixbuf, width, height):
@@ -455,3 +459,12 @@ def video_info_get_natural_height(video_info):
         return _get_square_width(video_info)
 
     return video_info.get_height()
+
+def asset_get_duration(asset):
+    assert isinstance(asset, GES.UriClipAsset)
+
+    res, duration = asset.get_uint64(ASSET_DURATION_META)
+    if res:
+        return duration
+
+    return asset.get_duration()

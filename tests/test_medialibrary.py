@@ -22,6 +22,7 @@ from unittest import mock
 
 from gi.repository import Gdk
 from gi.repository import GES
+from gi.repository import GObject
 from gi.repository import Gst
 
 from pitivi import medialibrary
@@ -29,6 +30,8 @@ from pitivi.project import ProjectManager
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.validate import create_event
 from tests import common
+from pitivi.utils.misc import asset_get_duration
+from pitivi.utils.misc import ASSET_DURATION_META
 
 
 class BaseTestMediaLibrary(common.TestCase):
@@ -358,6 +361,30 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             # Enable and delete HQ proxy
             proxy = self.check_add_proxy(asset, check_progress=False)
             self.check_disable_proxy(proxy, asset, delete=True)
+
+    def test_proxy_duration_mismatch(self):
+        sample_name = "30fps_numeroted_frames_red.mkv"
+        with common.cloned_sample(sample_name):
+            self.check_import([sample_name], proxying_strategy=ProxyingStrategy.NOTHING)
+            timeline = self.app.project_manager.current_project.ges_timeline
+
+            asset = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+            clip = timeline.append_layer().add_asset(asset, 0, 0, Gst.CLOCK_TIME_NONE, GES.TrackType.VIDEO)
+
+            duration = 2.5 * Gst.SECOND
+            fake_duration = 3 * Gst.SECOND
+
+            asset.set_uint64(ASSET_DURATION_META, fake_duration)
+            clip.props.max_duration = fake_duration
+            clip.props.duration = fake_duration
+
+            self.assertEqual(clip.props.duration, fake_duration)
+            proxy = self.check_add_proxy(asset)
+
+            self.assertEqual(asset_get_duration(asset), duration)
+            self.assertEqual(asset_get_duration(proxy), duration)
+            self.assertEqual(clip.props.duration, duration)
+            self.assertEqual(clip.props.max_duration, duration)
 
     def test_regenerate_scaled_proxy(self):
         sample_name = "30fps_numeroted_frames_red.mkv"
