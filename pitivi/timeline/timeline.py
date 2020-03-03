@@ -42,6 +42,7 @@ from pitivi.timeline.previewers import Previewer
 from pitivi.timeline.ruler import ScaleRuler
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import asset_get_duration
 from pitivi.utils.proxy import get_proxy_target
 from pitivi.utils.timeline import EditingContext
 from pitivi.utils.timeline import SELECT
@@ -915,6 +916,26 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         for ges_layer in self.ges_timeline.get_layers():
             ges_layer.ui.update_position()
 
+    def add_clip_to_layer(self, ges_layer, asset, start):
+        if asset.is_image():
+            clip_duration = self.app.settings.imageClipLength * \
+                Gst.SECOND / 1000.0
+            max_duration = 0
+        else:
+            max_duration = clip_duration = asset_get_duration(asset)
+
+        ges_clip = ges_layer.add_asset(asset, start, 0, clip_duration,
+                                        asset.get_supported_formats())
+        if not ges_clip:
+            return ges_clip
+
+        # Tell GES that the max duration is our newly compute max duration
+        # so it has the proper information when doing timeline editing.
+        if max_duration and ges_clip.props.max_duration > max_duration:
+            ges_clip.props.max_duration = max_duration
+        return ges_clip
+
+
     def __create_clips(self, x, y):
         """Creates the clips for an asset drag operation.
 
@@ -932,11 +953,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         ges_clips = []
         for asset in assets:
-            if asset.is_image():
-                clip_duration = self.app.settings.imageClipLength * \
-                    Gst.SECOND / 1000.0
-            else:
-                clip_duration = asset.get_duration()
 
             ges_layer, unused_on_sep = self.get_layer_at(y)
             if not placement:
@@ -945,15 +961,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             self.debug("Creating %s at %s", asset.props.id, Gst.TIME_ARGS(placement))
 
-            ges_clip = ges_layer.add_asset(asset,
-                                           placement,
-                                           0,
-                                           clip_duration,
-                                           asset.get_supported_formats())
+            ges_clip = self.add_clip_to_layer(ges_layer, asset, placement)
             if not ges_clip:
                 return False
 
-            placement += clip_duration
+            placement += ges_clip.props.duration
             ges_clip.first_placement = True
             self._project.pipeline.commit_timeline()
 
@@ -1486,17 +1498,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     layer.add_clip(obj)
                     duration = obj.get_duration()
                 elif isinstance(obj, GES.Asset):
-                    if obj.is_image():
-                        duration = self.app.settings.imageClipLength * \
-                            Gst.SECOND / 1000.0
-                    else:
-                        duration = obj.get_duration()
-
-                    layer.add_asset(obj,
-                                    start=clip_position,
-                                    inpoint=0,
-                                    duration=duration,
-                                    track_types=obj.get_supported_formats())
+                    ges_clip = self.timeline.add_clip_to_layer(layer, obj, clip_position)
+                    duration = ges_clip.props.duration
                 else:
                     raise TimelineError("Cannot insert: %s" % type(obj))
                 clip_position += duration
