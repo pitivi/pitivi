@@ -113,10 +113,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.pixbuf_offset_painted = 0
 
         self.position = 0  # In nanoseconds
-        self.frame_rate = Gst.Fraction(1 / 1)
-        self.ns_per_frame = float(1 / self.frame_rate) * Gst.SECOND
-
-        self.scales = SCALES
 
     def _hadj_value_changed_cb(self, hadj):
         """Handles the adjustment value change."""
@@ -236,12 +232,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
     def do_scroll_event(self, event):
         self.timeline.timeline.do_scroll_event(event)
 
-    def set_project_frame_rate(self, rate):
-        """Sets the lowest scale based on the specified project framerate."""
-        self.frame_rate = rate
-        self.ns_per_frame = float(Gst.SECOND / self.frame_rate)
-        self.scales = (2 / rate, 5 / rate, 10 / rate) + SCALES
-
     def __set_tooltip_text(self, position, seeking=False):
         """Updates the tooltip."""
         if seeking:
@@ -249,7 +239,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             if position > timeline_duration:
                 position = timeline_duration
         human_time = beautify_length(position)
-        cur_frame = int(position / self.ns_per_frame) + 1
+        cur_frame = self.timeline.ges_timeline.get_frame_at(position) + 1
         self.set_tooltip_text(human_time + "\n" + _("Frame #%d") % cur_frame)
 
 # Drawing methods
@@ -374,7 +364,11 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         These are based on the project's framerate settings, not the actual
         frames on the assets.
         """
-        frame_width = self.ns_to_pixel(self.ns_per_frame)
+        if not self.timeline.ges_timeline:
+            # Timeline not set yet
+            return
+
+        frame_width = self.ns_to_pixel(self.timeline.ges_timeline.get_frame_time(1))
         if not frame_width >= FRAME_MIN_WIDTH_PIXELS:
             return
 
@@ -382,13 +376,11 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         height = context.get_target().get_height()
         y = int(height - FRAME_HEIGHT_PIXELS)
 
-        frame_num = int(
-            self.pixel_to_ns(self.pixbuf_offset) * float(self.frame_rate) / Gst.SECOND)
+        frame_num = self.timeline.ges_timeline.get_frame_at(self.pixel_to_ns(self.pixbuf_offset))
         paintpos = self.pixbuf_offset - offset
         max_pos = context.get_target().get_width() + self.pixbuf_offset
         while paintpos < max_pos:
-            paintpos = self.ns_to_pixel(
-                1 / float(self.frame_rate) * Gst.SECOND * frame_num)
+            paintpos = self.ns_to_pixel(self.timeline.ges_timeline.get_frame_time(frame_num))
             if frame_num % 2:
                 set_cairo_color(context, self._color_frame)
                 context.rectangle(

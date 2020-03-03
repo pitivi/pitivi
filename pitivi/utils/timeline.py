@@ -320,6 +320,17 @@ class EditingContext(GObject.Object, Loggable):
         self.new_position = position
         self.new_priority = priority
 
+        if self.with_video:
+            frame = self.timeline.get_frame_at(position)
+            time = self.timeline.get_frame_time(frame)
+            if position != time:
+                frame_dur = self.timeline.get_frame_time(1)
+                next_time = self.timeline.get_frame_time(frame + 1)
+                if abs(position - next_time) < frame_dur / 2:
+                    position = next_time
+                else:
+                    position = time
+
         res = self.focus.edit([], priority, self.mode, self.edge, int(position))
         self.app.write_action("edit-container",
                               container_name=self.focus.get_name(),

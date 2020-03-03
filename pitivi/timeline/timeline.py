@@ -926,7 +926,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             max_duration = clip_duration
 
         ges_clip = ges_layer.add_asset(asset, start, 0, clip_duration,
-                                        asset.get_supported_formats())
+                                       asset.get_supported_formats())
         if not ges_clip:
             return ges_clip
 
@@ -935,7 +935,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if max_duration and ges_clip.props.max_duration > max_duration:
             ges_clip.props.max_duration = max_duration
         return ges_clip
-
 
     def __create_clips(self, x, y):
         """Creates the clips for an asset drag operation.
@@ -1537,14 +1536,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def set_project(self, project):
         """Connects to the project's timeline and pipeline."""
         if self._project:
-            self._project.disconnect_by_func(self._rendering_settings_changed_cb)
             self.markers.markers_container = None
 
         self._project = project
 
         if project:
-            project.connect("rendering-settings-changed",
-                            self._rendering_settings_changed_cb)
             self.ges_timeline = project.ges_timeline
         else:
             self.ges_timeline = None
@@ -1554,7 +1550,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if project:
             self.ruler.set_pipeline(project.pipeline)
             self.ruler.zoom_changed()
-            self.ruler.set_project_frame_rate(project.videorate)
 
             self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
             self.timeline.update_snapping_distance()
@@ -1597,7 +1592,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.ruler = ScaleRuler(self)
         self.ruler.props.hexpand = True
-        self.ruler.set_project_frame_rate(24.)
 
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "timelinetoolbar.ui"))
@@ -2118,11 +2112,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def do_focus_out_event(self, unused_event):
         self.log("Timeline has lost focus")
         self.update_actions()
-
-    def _rendering_settings_changed_cb(self, project, item):
-        """Handles Project metadata changes."""
-        if item == "videorate" or item is None:
-            self.ruler.set_project_frame_rate(project.videorate)
 
     def __timeline_size_allocate_cb(self, unused_widget, allocation):
         fits = self.timeline.layout.props.height <= allocation.height
