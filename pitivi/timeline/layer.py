@@ -16,14 +16,17 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import os
 import re
 from gettext import gettext as _
 
 from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import Gtk
 
+from pitivi.configure import get_pixmap_dir
 from pitivi.timeline import elements
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
@@ -32,6 +35,10 @@ from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SEPARATOR_HEIGHT
 from pitivi.utils.user_utils import Alert
+# Solo buttons 2020 02 jep_f
+# End of Solo buttons 2020 02 jep_f
+# Solo buttons 2020 02 jep_f
+# End of Solo buttons 2020 02 jep_f
 
 
 class SpacedSeparator(Gtk.EventBox):
@@ -118,6 +125,19 @@ class LayerControls(Gtk.EventBox, Loggable):
 #        self.mute_video_button.connect("clicked", self.__mute_video_cb)
 #        name_row.pack_start(self.mute_video_button, False, False, 0)
         # End of  Mute video button 2019 06  jep_f
+
+        # Solo audio button 2020 03  jep_f
+        # At the opening of the project the layers are not solo and unmuted
+        self.solo_audio_button = Gtk.Button()
+        self.solo_l = False  # If True this layer is solo
+        self.mute_l = False  # If True this layer is muted
+        self.image_solo(self.solo_l)
+        self.solo_audio_button.props.valign = Gtk.Align.CENTER
+        self.solo_audio_button.props.relief = Gtk.ReliefStyle.NORMAL
+        self.solo_audio_button.set_tooltip_text("Solo audio")
+        self.solo_audio_button.connect("clicked", self.__solo_audio_cb)
+        name_row.pack_start(self.solo_audio_button, False, False, 0)
+        # End of Solo audio button 2020 03 jep_f
 
         self.menubutton = Gtk.MenuButton.new()
         self.menubutton.props.valign = Gtk.Align.CENTER
@@ -297,8 +317,133 @@ class LayerControls(Gtk.EventBox, Loggable):
 #                    break
         if alert is True and mute_b is True:  # No alert when we unmute
             Alert("Warning", "No audio in this layer", "service-logout.oga")
+            self.mute_audio_button.set_active(False)
         self.app.gui.editor.focus_timeline()
 
+    # Solo buttons 2020 03 jep_f
+    # Audio
+    # TODO update icons
+    def __solo_audio_cb(self, widget):
+        # When the layer mute button is clicked
+        if self.solo_l is True:
+#            print("327 ssol ", self.solo_l)
+            self.__solo_audio_action_cb(False)
+        else:
+#            print("332 Un-solo audio")
+            self.__solo_audio_action_cb(True)
+
+    def __solo_audio_action_cb(self, solo_b):
+        # Case self.solo_l True and self.mute_l True : solo and mute is not possible
+        test_l1 = self.solo_l and not self.mute_l  # layer solo and not muted : cancel a solo
+        test_l2 = not self.solo_l and self.mute_l  # layer not solo and muted : solo on another layer
+        test_l3 = not self.solo_l and not self.mute_l  # layer not solo and not muted : at start, no solo
+        ges_clips = self.ges_layer.get_clips()
+
+        # Test if the layer has not audio
+        if self.audio_layer_test(ges_clips) is False:
+            Alert("Warning", "No audio in this layer", "service-logout.oga")
+            if self.solo_l is True:
+                self.solo_l = not self.solo_l
+                self.image_solo(False)
+        else:
+            if test_l1:
+                print("l1")
+                for layer_s in self.ges_timeline.layers:
+                    if layer_s == self.ges_layer:
+                        self.mute_l = False
+                        self.solo_l = False
+                        self.image_solo(False)
+                        ges_clips = layer_s.get_clips()
+                        self.mute_solo_layers(ges_clips, self.mute_l)
+                    else:
+                        control_layer = layer_s.control_ui # In timeline.py _add_layer()
+                        control_layer.mute_l = False
+                        control_layer.solo_l = False
+                        control_layer.image_solo(False)
+                        ges_clips = layer_s.get_clips()
+                        control_layer.mute_solo_layers(ges_clips, control_layer.mute_l)
+
+            elif test_l2:
+                print("l2")
+                for layer_s in self.ges_timeline.layers:
+                    if layer_s == self.ges_layer:
+                        self.mute_l = False
+                        self.solo_l = True
+                        self.image_solo(True)
+                        ges_clips = layer_s.get_clips()
+                        self.mute_solo_layers(ges_clips, self.mute_l)
+                    else:
+                        control_layer = layer_s.control_ui # In timeline.py _add_layer()
+                        control_layer.mute_l = True
+                        control_layer.solo_l = False
+                        control_layer.image_solo(False)
+                        ges_clips = layer_s.get_clips()
+                        control_layer.mute_solo_layers(ges_clips, control_layer.mute_l)
+            elif test_l3:
+                print("l3")
+                for layer_s in self.ges_timeline.layers:
+                    if layer_s == self.ges_layer:
+                        self.mute_l = False
+                        self.solo_l = True
+                        self.image_solo(True)
+                        ges_clips = layer_s.get_clips()
+                        self.mute_solo_layers(ges_clips, self.mute_l)
+                    else:
+                        control_layer = layer_s.control_ui # In timeline.py _add_layer()
+                        control_layer.mute_l = True
+                        control_layer.solo_l = False
+                        control_layer.image_solo(False)
+                        ges_clips = layer_s.get_clips()
+                        control_layer.mute_solo_layers(ges_clips, control_layer.mute_l)
+
+        self.app.gui.editor.focus_timeline()
+
+    def mute_solo_layers(self, ges_clips, mute_b):
+        for ges_clip in ges_clips:
+            for child in ges_clip.get_children(False):
+                track = child.get_track()
+                if not track:
+                    continue
+                media_type = track.props.track_type
+                if media_type == GES.TrackType.AUDIO:
+                    # On transition, there is not child.get_child_property("mute")
+                    try:
+                        ges_clip.get_child_property("mute")
+                    # pylint: disable=bare-except
+                    except:
+                        break
+                    else:
+                        ges_clip.set_child_property("mute", mute_b)
+                        print("431 mute audio = ", ges_clip, ges_clip.get_child_property("mute"))
+                    # Cannot find more types than these.
+                    break
+
+    def image_solo(self, state):
+        if state is True:
+            solo_image_file = os.path.join(get_pixmap_dir(), "solo.svg")
+        else:
+            solo_image_file = os.path.join(get_pixmap_dir(), "unsolo.svg")
+        if  os.path.isfile(solo_image_file):
+            im = GdkPixbuf.Pixbuf.new_from_file(solo_image_file)
+            im = im.scale_simple(10, 10, GdkPixbuf.InterpType.BILINEAR)
+            image = Gtk.Image.new_from_pixbuf(im)
+            self.solo_audio_button.set_image(image)
+
+    def audio_layer_test(self, ges_clips):
+        if ges_clips == []: # No clip in the layer
+            return False
+        for ges_clip in ges_clips:
+            for child in ges_clip.get_children(False):
+                track = child.get_track()
+                if not track:
+                    continue
+                media_type = track.props.track_type
+                return media_type == GES.TrackType.AUDIO
+#                if media_type == GES.TrackType.AUDIO:
+#                    return True
+#                else:
+#                    return False
+    # End of Solo buttons 2020 03 jep_f
     # End of Audio
 
     # Video
@@ -352,16 +497,13 @@ class LayerControls(Gtk.EventBox, Loggable):
             # The layer has video or is empty.
             icon = "video-x-generic-symbolic"
 #        # Hide the audio mute button
-#        elif not (media_types & GES.TrackType.AUDIO) and media_types & GES.TrackType.VIDEO:
-#            icon = "video-x-generic-symbolic"
-#            self.mute_audio_button.hide()
-#            # End of Hide the audio mute button
+        elif not (media_types & GES.TrackType.AUDIO) and media_types & GES.TrackType.VIDEO:
+            icon = "video-x-generic-symbolic"
+            self.mute_audio_button.hide()
+            # End of Hide the audio mute button
         else:
             # The layer has audio and nothing else.
             icon = "audio-x-generic-symbolic"
-            # Hide the video mute button
-#            self.mute_video_button.hide()
-            # End of Hide the video mute button
 
         if icon != self.__icon:
             image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
