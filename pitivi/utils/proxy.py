@@ -90,8 +90,8 @@ GlobalSettings.add_config_option("default_scaled_proxy_height",
                                  default=1080,
                                  notify=True)
 
-ENCODING_FORMAT_PRORES = "prores-raw-in-matroska.gep"
-ENCODING_FORMAT_JPEG = "jpeg-raw-in-matroska.gep"
+ENCODING_FORMAT_PRORES = "prores-raw-in-qt.gep"
+ENCODING_FORMAT_JPEG = "jpeg-raw-in-qt.gep"
 
 
 def create_encoding_profile_simple(container_caps, audio_caps, video_caps):
@@ -139,8 +139,8 @@ class ProxyManager(GObject.Object, Loggable):
         a = GstPbutils.EncodingAudioProfile.new(Gst.Caps(audio), None, None, 0)
         WHITELIST_FORMATS.append(a)
 
-    hq_proxy_extension = "proxy.mkv"
-    scaled_proxy_extension = "scaledproxy.mkv"
+    hq_proxy_extension = "proxy.mov"
+    scaled_proxy_extension = "scaledproxy.mov"
     # Suffix for filenames of proxies being created.
     part_suffix = ".part"
 
