@@ -63,13 +63,13 @@ class TestProxyManager(common.TestCase):
 
     def test_get_target_uri(self):
         """Checks the get_target_uri method."""
-        self._check_get_target_uri("file:///home/filename.ext.size.scaled_res.scaledproxy.mkv",
+        self._check_get_target_uri("file:///home/filename.ext.size.scaled_res.scaledproxy.mov",
                                    "file:///home/filename.ext")
-        self._check_get_target_uri("file:///home/filename.ext.size.proxy.mkv",
+        self._check_get_target_uri("file:///home/filename.ext.size.proxy.mov",
                                    "file:///home/filename.ext")
-        self._check_get_target_uri("file:///home/file.name.mp4.1927006.1280x720.scaledproxy.mkv",
+        self._check_get_target_uri("file:///home/file.name.mp4.1927006.1280x720.scaledproxy.mov",
                                    "file:///home/file.name.mp4")
-        self._check_get_target_uri("file:///home/file.name.mp4.1927006.proxy.mkv",
+        self._check_get_target_uri("file:///home/file.name.mp4.1927006.proxy.mov",
                                    "file:///home/file.name.mp4")
 
     def _check_get_proxy_uri(self, asset_uri, expected_uri, size=10, scaled=False, scaled_res=(1280, 720)):
@@ -90,9 +90,9 @@ class TestProxyManager(common.TestCase):
     def test_get_proxy_uri(self):
         """Checks the get_proxy_uri method."""
         self._check_get_proxy_uri("file:///home/file.name.mp4",
-                                  "file:///home/file.name.mp4.10.proxy.mkv")
+                                  "file:///home/file.name.mp4.10.proxy.mov")
         self._check_get_proxy_uri("file:///home/file.name.mp4",
-                                  "file:///home/file.name.mp4.10.1280x720.scaledproxy.mkv",
+                                  "file:///home/file.name.mp4.10.1280x720.scaledproxy.mov",
                                   scaled=True)
 
     def test_asset_matches_target_res(self):
