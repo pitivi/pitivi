@@ -195,11 +195,11 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         mlib = self.medialibrary
 
         # Test HQ Proxies are filtered
-        mock_filter.uri = "file:///home/user/Videos/video.mp4.2360382.proxy.mkv"
+        mock_filter.uri = "file:///home/user/Videos/video.mp4.2360382.proxy.mov"
         self.assertFalse(mlib._filter_unsupported(mock_filter))
 
         # Test Scaled Proxies are filtered
-        mock_filter.uri = "file:///home/user/Videos/video.mp4.2360382.300x300.scaledproxy.mkv"
+        mock_filter.uri = "file:///home/user/Videos/video.mp4.2360382.300x300.scaledproxy.mov"
         self.assertFalse(mlib._filter_unsupported(mock_filter))
 
     def stop_using_proxies(self, delete_proxies=False):
