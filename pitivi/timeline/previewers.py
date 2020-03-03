@@ -170,9 +170,9 @@ class WaveformPreviewer(PreviewerBin):
 
     def __init__(self):
         PreviewerBin.__init__(self,
-                              "audioconvert ! audioresample ! "
+                              "tee name=at ! queue ! audioconvert ! audioresample ! "
                               "audio/x-raw,channels=1 ! level name=level"
-                              " ! audioconvert ! audioresample")
+                              " ! fakesink at. ! queue")
         self.level = self.internal_bin.get_by_name("level")
         self.debug("Creating waveforms!!")
         self.peaks = None
