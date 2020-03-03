@@ -29,6 +29,8 @@ from gi.repository import GstTranscoder
 
 from pitivi.configure import get_gstpresets_dir
 from pitivi.dialogs.prefs import PreferencesDialog
+from pitivi.utils.misc import ASSET_DURATION_META
+from pitivi.utils.misc import asset_get_duration
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 
@@ -319,7 +321,10 @@ class ProxyManager(GObject.Object, Loggable):
         if cls.is_scaled_proxy(uri):
             return ".".join(uri.split(".")[:-4])
 
-        return ".".join(uri.split(".")[:-3])
+        if cls.is_proxy_asset(uri):
+            return ".".join(uri.split(".")[:-3])
+
+        return uri
 
     def get_proxy_uri(self, asset, scaled=False):
         """Gets the URI of the corresponding proxy file for the specified asset.
@@ -457,15 +462,36 @@ class ProxyManager(GObject.Object, Loggable):
 
             del transcoder
 
-        if asset.get_info().get_duration() != proxy.get_info().get_duration():
-            self.error(
-                "Asset %s (duration=%s) and created proxy %s (duration=%s) do not"
-                " have the same duration this should *never* happen, please file"
-                " a bug with the media files." % (
-                    asset.get_id(), Gst.TIME_ARGS(asset.get_info().get_duration()),
-                    proxy.get_id(), Gst.TIME_ARGS(proxy.get_info().get_duration())
-                )
-            )
+        asset_duration = asset_get_duration(asset)
+        proxy_duration = asset_get_duration(proxy)
+        if asset_duration != proxy_duration:
+            duration = min(asset_duration, proxy_duration)
+
+            self.info("Reseting %s duration from %s to %s as"
+                " new proxy has a different duration",
+                asset.props.id, Gst.TIME_ARGS(asset_duration), Gst.TIME_ARGS(duration))
+            asset.set_uint64(ASSET_DURATION_META, duration)
+            proxy.set_uint64(ASSET_DURATION_META, duration)
+            target_uri = self.get_target_uri(asset)
+
+            for clip in self.app.project_manager.current_project.ges_timeline.iter_clips():
+                if self.get_target_uri(clip.props.uri) == target_uri:
+                    if clip.props.in_point + clip.props.duration > duration:
+                        new_duration = duration - clip.props.in_point
+                        if new_duration > 0:
+                            self.warning("%s reseting duration to %s as"
+                                " new proxy has a shorter duration",
+                                clip, Gst.TIME_ARGS(new_duration))
+                            clip.set_duration(new_duration)
+                        else:
+                            new_inpoint = new_duration - clip.props.in_point
+                            self.error("%s reseting duration to %s"
+                                " and inpoint to %s as the proxy"
+                                " is shorter",
+                                clip, Gst.TIME_ARGS(new_duration), Gst.TIME_ARGS(new_inpoint))
+                            clip.set_inpoint(new_inpoint)
+                            clip.set_duration(duration - new_inpoint)
+                        clip.set_max_duration(duration)
 
         if shadow:
             self.app.project_manager.current_project.finalize_proxy(proxy)
