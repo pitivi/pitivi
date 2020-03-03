@@ -249,7 +249,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             if position > timeline_duration:
                 position = timeline_duration
         human_time = beautify_length(position)
-        cur_frame = int(position / self.ns_per_frame) + 1
+        cur_frame = self.timeline.ges_timeline.get_frame_at(position)
         self.set_tooltip_text(human_time + "\n" + _("Frame #%d") % cur_frame)
 
 # Drawing methods
