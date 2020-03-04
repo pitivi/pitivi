@@ -9,7 +9,6 @@ data/ui/cliptransformation.ui
 data/ui/customwidgets/alpha.ui
 data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui
 data/ui/customwidgets/frei0r-filter-alphaspot.ui
-data/ui/depsmanager.ui
 data/ui/effectslibrary.ui
 data/ui/elementsettingsdialog.ui
 data/ui/filelisterrordialog.ui
