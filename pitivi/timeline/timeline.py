@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
+import math
 import os
 from gettext import gettext as _
 
@@ -861,7 +862,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             if self.got_dragged or self.__past_threshold(event):
                 event_widget = Gtk.get_event_widget(event)
-                x, y = event_widget.translate_coordinates(self.layout.layers_vbox, event.x, event.y)
+                x, y = event_widget.translate_coordinates(self.layout.layers_vbox, math.ceil(event.x), event.y)
                 self.__drag_update(x, y)
                 self.got_dragged = True
         elif self.__moving_layer:
