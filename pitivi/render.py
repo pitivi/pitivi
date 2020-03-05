@@ -637,12 +637,15 @@ class RenderDialog(Loggable):
         return model
 
     def _display_settings(self):
-        """Displays the settings also in the ProjectSettingsDialog."""
+        """Applies the project settings to the UI."""
         # Video settings
         set_combo_value(self.frame_rate_combo, self.project.videorate)
+
         # Audio settings
-        set_combo_value(self.channels_combo, self.project.audiochannels)
-        set_combo_value(self.sample_rate_combo, self.project.audiorate)
+        res = set_combo_value(self.channels_combo, self.project.audiochannels)
+        assert res, self.project.audiochannels
+        res = set_combo_value(self.sample_rate_combo, self.project.audiorate)
+        assert res, self.project.audiorate
 
     def _update_audio_widgets_sensitivity(self):
         active = self.audio_output_checkbutton.get_active()
@@ -663,14 +666,20 @@ class RenderDialog(Loggable):
         self.__update_render_button_sensitivity()
 
     def _display_render_settings(self):
-        """Displays the settings available only in the RenderDialog."""
+        """Applies the project render settings to the UI."""
         # Video settings
         # This will trigger an update of the video resolution label.
         self.scale_spinbutton.set_value(self.project.render_scale)
+
         # Muxer settings
         # This will trigger an update of the codec comboboxes.
-        set_combo_value(self.muxer_combo,
-                        Encoders().factories_by_name.get(self.project.muxer))
+        muxer = Encoders().factories_by_name.get(self.project.muxer)
+        if muxer:
+            if not set_combo_value(self.muxer_combo, muxer):
+                # The project's muxer is not available on this system.
+                # Pick the first one available.
+                first = self.muxer_combo.props.model.get_iter_first()
+                set_combo_value(self.muxer_combo, first)
 
     def _check_filename(self):
         """Displays a warning if the file path already exists."""
@@ -763,8 +772,7 @@ class RenderDialog(Loggable):
             reduced_model.append(value)
         combo.set_model(reduced_model)
 
-        set_combo_value(combo, combo_value)
-        if get_combo_value(combo) != combo_value:
+        if not set_combo_value(combo, combo_value):
             combo.set_active(len(reduced_model) - 1)
             self.warning("%s in %s not supported, setting: %s",
                          combo_value, caps_template, get_combo_value(combo))
@@ -819,25 +827,25 @@ class RenderDialog(Loggable):
     def _update_encoder_combo(self, encoder_combo, preferred_encoder):
         """Selects the specified encoder for the specified encoder combo."""
         if preferred_encoder:
-            # A preference exists, pick it if it can be found in
-            # the current model of the combobox.
             encoder = Encoders().factories_by_name.get(preferred_encoder)
-            set_combo_value(encoder_combo, encoder)
-        if not preferred_encoder or not get_combo_value(encoder_combo):
-            # No preference exists or it is not available,
-            # pick the first encoder from the combobox's model.
-            first = encoder_combo.props.model.get_iter_first()
-            if not first:
-                # Model is empty. Should not happen.
-                self.warning("Model is empty")
+            if set_combo_value(encoder_combo, encoder):
+                # The preference was found in the combo's model
+                # and has been activated.
                 return
-            if not encoder_combo.props.model.iter_has_child(first):
-                # The first item is a supported factory.
-                encoder_combo.set_active_iter(first)
-            else:
-                # The first element is the Unsupported group.
-                second = encoder_combo.props.model.iter_nth_child(first, 0)
-                encoder_combo.set_active_iter(second)
+
+        # Pick the first encoder from the combobox's model.
+        first = encoder_combo.props.model.get_iter_first()
+        if not first:
+            # Model is empty. Should not happen.
+            self.warning("Model is empty")
+            return
+
+        if encoder_combo.props.model.iter_has_child(first):
+            # There are no supported encoders and the first element is
+            # the Unsupported group. Activate its first child.
+            first = encoder_combo.props.model.iter_nth_child(first, 0)
+
+        encoder_combo.set_active_iter(first)
 
     def _element_settings_dialog(self, factory, media_type):
         """Opens a dialog to edit the properties for the specified factory.
