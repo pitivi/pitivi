@@ -8,6 +8,7 @@ variables:
   MANIFEST: build/flatpak/org.pitivi.Pitivi.json
   DBUS_ID: org.pitivi.Pitivi
   XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
+  GST_DEBUG_NO_COLOR: "true"
 
 
 .docker_image_template:
@@ -67,7 +68,7 @@ build:
   script:
     - export BUILDDIR=${HOME}/pitivi
     - export MANIFEST=${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json
-    - export RUN_IN_SANDBOX="flatpak-builder --disable-rofiles-fuse --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --env=GST_DEBUG_COLOR=no --run app ${MANIFEST}"
+    - export RUN_IN_SANDBOX="flatpak-builder --disable-rofiles-fuse --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --env=GST_DEBUG_NO_COLOR=true --run app ${MANIFEST}"
     - export FLATPAK_BUILDER_CACHE="--state-dir=${HOME}/flatpak-cache"
     - export FLATPAK_REPO="${CI_PROJECT_DIR}/flatpak_repo"
 
