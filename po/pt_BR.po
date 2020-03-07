@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-02-23 10:37+0000\n"
-"PO-Revision-Date: 2020-02-28 10:41-0300\n"
+"POT-Creation-Date: 2020-03-06 06:58+0000\n"
+"PO-Revision-Date: 2020-03-07 04:29-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
@@ -41,7 +41,7 @@ msgid "Pitivi/GES video project"
 msgstr "Projeto de vídeo Pitivi/GES"
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:8 data/org.pitivi.Pitivi.desktop.in:4
-#: pitivi/greeterperspective.py:267
+#: pitivi/greeterperspective.py:278
 msgid "Pitivi"
 msgstr "Pitivi"
 
@@ -132,7 +132,7 @@ msgstr "Iniciando auto-alinhamento"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Realizando autoalinhamento</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1167
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1175
 msgid "Estimating..."
 msgstr "Estimando…"
 
@@ -309,22 +309,6 @@ msgstr "alfa mín."
 msgid "max alpha"
 msgstr "alfa máx."
 
-#: data/ui/depsmanager.ui:8
-msgid "Missing Dependencies"
-msgstr "Dependências faltantes"
-
-#: data/ui/depsmanager.ui:36
-msgid "Install"
-msgstr "Instalar"
-
-#: data/ui/depsmanager.ui:68
-msgid ""
-"To enable additional features, please install the following packages and "
-"restart Pitivi:"
-msgstr ""
-"Para habilitar recursos adicionais, por favor instale os seguintes pacotes e "
-"reinicie Pitivi:"
-
 #: data/ui/effectslibrary.ui:14
 msgid "Show video effects"
 msgstr "Mostrar efeitos de vídeo"
@@ -398,7 +382,8 @@ msgstr "Exportar como pacote…"
 #: data/ui/mainmenubutton.ui:85
 msgid "Export the frame at the current playhead position as an image file."
 msgstr ""
-"Exporta o quadro na posição atual do indicador de reprodução como um arquivo de imagem."
+"Exporta o quadro na posição atual do indicador de reprodução como um arquivo "
+"de imagem."
 
 #: data/ui/mainmenubutton.ui:89
 msgid "Export current frame..."
@@ -520,7 +505,7 @@ msgstr "Algumas alterações não terão efeito até que você reinicie o Pitivi
 #: data/ui/projectsettings.ui:61 data/ui/renderingprogress.ui:41
 #: pitivi/editorperspective.py:540 pitivi/editorperspective.py:672
 #: pitivi/editorperspective.py:720 pitivi/editorperspective.py:773
-#: pitivi/greeterperspective.py:236 pitivi/medialibrary.py:859
+#: pitivi/greeterperspective.py:241 pitivi/medialibrary.py:859
 #: pitivi/dialogs/browseprojects.py:38 pitivi/dialogs/missingasset.py:46
 msgid "Cancel"
 msgstr "Cancelar"
@@ -592,7 +577,11 @@ msgstr "Resolução de intermediários dimensionada:"
 msgid "1"
 msgstr "1"
 
-#: data/ui/projectsettings.ui:795
+#: data/ui/projectsettings.ui:777
+msgid "<a href='#'>Proxy Preferences</a>"
+msgstr "<a href='#'>Preferências de proxy</a>"
+
+#: data/ui/projectsettings.ui:811
 msgid "Proxy"
 msgstr "Intermediário"
 
@@ -816,7 +805,6 @@ msgid "Vertical:"
 msgstr "Vertical:"
 
 #: pitivi/action_search_bar.py:46
-#| msgid "Section"
 msgid "Search Action"
 msgstr "Pesquisar ação"
 
@@ -1004,7 +992,7 @@ msgstr "Desfazer"
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/editorperspective.py:319 pitivi/editorperspective.py:532
 #: pitivi/editorperspective.py:673 pitivi/editorperspective.py:721
-#: pitivi/editorperspective.py:774 pitivi/preset.py:114 pitivi/project.py:193
+#: pitivi/editorperspective.py:774 pitivi/preset.py:114 pitivi/project.py:194
 msgid "Save"
 msgstr "Salvar"
 
@@ -1021,7 +1009,6 @@ msgid "Save the current project as"
 msgstr "Salvar o projeto atual como"
 
 #: pitivi/editorperspective.py:388
-#| msgid "Welcome to Pitivi"
 msgid "Quick intros to Pitivi"
 msgstr "Introduções rápidas ao Pitivi"
 
@@ -1030,7 +1017,7 @@ msgstr "Introduções rápidas ao Pitivi"
 msgid "Unable to save project \"%s\""
 msgstr "Não foi possível salvar o projeto “%s”"
 
-#: pitivi/editorperspective.py:534 pitivi/project.py:192
+#: pitivi/editorperspective.py:534 pitivi/project.py:193
 msgid "Save as..."
 msgstr "Salvar como…"
 
@@ -1087,7 +1074,7 @@ msgid "Detect automatically"
 msgstr "Detectar automaticamente"
 
 #: pitivi/editorperspective.py:730 pitivi/editorperspective.py:777
-#: pitivi/project.py:71 pitivi/render.py:436
+#: pitivi/project.py:72 pitivi/render.py:436
 msgid "Untitled"
 msgstr "Sem título"
 
@@ -1144,42 +1131,50 @@ msgstr "Sem categoria"
 msgid "All effects"
 msgstr "Todos os efeitos"
 
-#: pitivi/greeterperspective.py:223 pitivi/preset.py:102
+#: pitivi/greeterperspective.py:228 pitivi/preset.py:102
 msgid "New"
 msgstr "Novo"
 
-#: pitivi/greeterperspective.py:224 pitivi/greeterperspective.py:279
+#: pitivi/greeterperspective.py:229 pitivi/greeterperspective.py:290
 msgid "Create a new project"
 msgstr "Criar um novo projeto"
 
-#: pitivi/greeterperspective.py:227
+#: pitivi/greeterperspective.py:232
 msgid "Open…"
 msgstr "Abrir…"
 
-#: pitivi/greeterperspective.py:228
+#: pitivi/greeterperspective.py:233
 msgid "Open an existing project"
 msgstr "Abre um projeto existente"
 
-#: pitivi/greeterperspective.py:233
+#: pitivi/greeterperspective.py:238
 msgid "Select projects for removal"
 msgstr "Selecionar projetos para remoção"
 
-#: pitivi/greeterperspective.py:261
+#: pitivi/greeterperspective.py:272
 msgid "Click an item to select"
 msgstr "Clique em um item para selecionar"
 
-#: pitivi/greeterperspective.py:265
+#: pitivi/greeterperspective.py:276
 msgid "Select a Project"
 msgstr "Selecionar um projeto"
 
-#: pitivi/greeterperspective.py:286
+#: pitivi/greeterperspective.py:297
 msgid "Open a project"
 msgstr "Abrir um projeto"
 
-#: pitivi/greeterperspective.py:354
+#: pitivi/greeterperspective.py:365
 #, python-format
 msgid "Pitivi %s is available."
 msgstr "Pitivi %s está disponível."
+
+#: pitivi/greeterperspective.py:442
+msgid ""
+"To enable additional features, please install the following packages and "
+"restart Pitivi:"
+msgstr ""
+"Para habilitar recursos adicionais, por favor instale os seguintes pacotes e "
+"reinicie Pitivi:"
 
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/interactiveintro.py:154
@@ -1187,7 +1182,6 @@ msgid "Start Overview"
 msgstr "Iniciar visão geral"
 
 #: pitivi/interactiveintro.py:212
-#| msgid "Welcome to Pitivi"
 msgid "Welcome to Pitivi!"
 msgstr "Bem-vindo ao Pitivi!"
 
@@ -1210,12 +1204,10 @@ msgid "Preview with the play button"
 msgstr "Visualize com o botão de reprodução"
 
 #: pitivi/interactiveintro.py:222
-#| msgid "Export your project as a finished movie"
 msgid "Export your project to share it"
 msgstr "Exporte seu projeto para compartilhá-lo"
 
 #: pitivi/interactiveintro.py:224
-#| msgid "Keyboard shortcuts"
 msgid "See all the keyboard shortcuts"
 msgstr "Veja todos os atalhos de teclado"
 
@@ -1449,11 +1441,11 @@ msgstr "novo-perfil-%d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:176 pitivi/render.py:867
+#: pitivi/project.py:177 pitivi/render.py:875
 msgid "Sorry, something didn’t work right."
 msgstr "Desculpe, algo não funcionou direito."
 
-#: pitivi/project.py:179
+#: pitivi/project.py:180
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1479,11 +1471,11 @@ msgstr ""
 "Antes de fechar Pitivi, você pode salvar as alterações no arquivo de projeto "
 "existente ou como um arquivo de projeto separado."
 
-#: pitivi/project.py:194
+#: pitivi/project.py:195
 msgid "Close Pitivi"
 msgstr "Fechar Pitivi"
 
-#: pitivi/project.py:264
+#: pitivi/project.py:265
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1493,15 +1485,15 @@ msgstr ""
 "projeto não suportado. Se você estava tentando adicionar um arquivo de mídia "
 "ao seu projeto, use o botão “Importar” ao invés disso."
 
-#: pitivi/project.py:286
+#: pitivi/project.py:287
 msgid "Ignore backup"
 msgstr "Ignorar backup"
 
-#: pitivi/project.py:287
+#: pitivi/project.py:288
 msgid "Restore from backup"
 msgstr "Restaurar do backup"
 
-#: pitivi/project.py:303
+#: pitivi/project.py:304
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1514,16 +1506,16 @@ msgstr ""
 "\n"
 "Você gostaria de carregá-la?"
 
-#: pitivi/project.py:376
+#: pitivi/project.py:377
 msgid "You do not have permissions to write to this folder."
 msgstr "Você não possui permissão para escrever nessa pasta."
 
 #. Save the project to a temporary file.
-#: pitivi/project.py:409
+#: pitivi/project.py:410
 msgid "project"
 msgstr "projeto"
 
-#: pitivi/project.py:706
+#: pitivi/project.py:707
 msgid "Pitivi encoding profile"
 msgstr "Perfil de codificação do Pitivi"
 
@@ -1554,11 +1546,11 @@ msgstr "Renderizando no momento"
 msgid "Unsupported"
 msgstr "Sem suporte"
 
-#: pitivi/render.py:691
+#: pitivi/render.py:700
 msgid "A file name is required."
 msgstr "É necessário um nome de arquivo."
 
-#: pitivi/render.py:694
+#: pitivi/render.py:703
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1567,23 +1559,23 @@ msgstr ""
 "Se você não deseja sobrescrevê-lo, selecione um nome de arquivo ou pasta "
 "diferente."
 
-#: pitivi/render.py:698
+#: pitivi/render.py:707
 #, python-format
 msgid "Remove invalid characters from the filename: %s"
 msgstr "Remova caracteres inválidos do nome do arquivo: %s"
 
-#: pitivi/render.py:729
+#: pitivi/render.py:738
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: pitivi/render.py:734
+#: pitivi/render.py:743
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: pitivi/render.py:861
+#: pitivi/render.py:869
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
@@ -1593,11 +1585,11 @@ msgstr ""
 "contrário o x264enc pode não ser capaz de renderizar.</b>\n"
 "\n"
 
-#: pitivi/render.py:869
+#: pitivi/render.py:877
 msgid "An error occurred while trying to render your project."
 msgstr "Ocorreu um erro ao tentar renderizar seu projeto."
 
-#: pitivi/render.py:871
+#: pitivi/render.py:879
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1605,11 +1597,11 @@ msgstr ""
 "Você pode querer verificar o nosso guia de solução de problemas ou enviar um "
 "relatório de erro. O erro GStreamer foi:"
 
-#: pitivi/render.py:1115 pitivi/render.py:1116 pitivi/render.py:1122
+#: pitivi/render.py:1123 pitivi/render.py:1124 pitivi/render.py:1130
 msgid "Render complete"
 msgstr "Renderização completa"
 
-#: pitivi/render.py:1120
+#: pitivi/render.py:1128
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "A renderização de “%s” foi finalizada."
@@ -2358,6 +2350,12 @@ msgid ""
 msgstr ""
 "Não foi possível se sobrepor a {key}, porque comandos de atalhos são somente "
 "leitura."
+
+#~ msgid "Missing Dependencies"
+#~ msgstr "Dependências faltantes"
+
+#~ msgid "Install"
+#~ msgstr "Instalar"
 
 #~ msgid "Clip Effects"
 #~ msgstr "Efeitos de clipe"
