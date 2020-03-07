@@ -1,14 +1,21 @@
 ---
 stages:
   - docker_image
-  - build
+  - test
+  - save_docker_image
   - deploy
 
 variables:
+  CI_NAMESPACE: "$(echo ${CI_PROJECT_NAMESPACE} | tr A-Z a-z)"
   MANIFEST: build/flatpak/org.pitivi.Pitivi.json
   DBUS_ID: org.pitivi.Pitivi
   XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
   GST_DEBUG_NO_COLOR: "true"
+  BLACKLIST: >
+    -b tests.test_effects.EffectsPropertiesManagerTest.test_dependent_properties
+  IMAGE_MASTER: ${CI_REGISTRY}/${CI_NAMESPACE}/${CI_PROJECT_NAME}:master-sdk_3.34
+  IMAGE_MASTER_NEXT: ${IMAGE_MASTER}-tmp
+  IMAGE_1.0: ${CI_REGISTRY}/${CI_NAMESPACE}/${CI_PROJECT_NAME}:1.0-sdk_3.34
 
 
 .docker_image_template:
@@ -21,54 +28,41 @@ variables:
   services:
     - docker:19.03.0-dind
   script:
-    - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}-sdk_3.34"
     - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.34"
-    - export TMPIMAGENAME="tmp-pitivi-${BRANCH}-sdk_3.34"
-    - export BUILDDIR="\${HOME}/pitivi"
+    - export LOCAL_IMAGE="tmp-flatpak-sandbox-image"
     - export CLONE_PITIVI="git clone ${CI_PROJECT_URL}.git --single-branch \${HOME}/pitivi -b ${CI_COMMIT_REF_NAME}"
-    - export BUILD_PITIVI="flatpak-builder --user --disable-rofiles-fuse ${BUILDDIR}/app ${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json --state-dir=\${HOME}/flatpak-cache --ccache"
+    - export BUILD_PITIVI="flatpak-builder --user --disable-rofiles-fuse ${HOME}/pitivi/app ${HOME}/pitivi/build/flatpak/org.pitivi.Pitivi.json --state-dir=\${HOME}/flatpak-cache --ccache"
 
     - env
 
-    - docker run --privileged --name ${TMPIMAGENAME} ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${BUILDDIR}"
-    - docker commit ${TMPIMAGENAME} ${IMAGE}
-    - docker rm ${TMPIMAGENAME}
+    - docker run --privileged --name ${LOCAL_IMAGE} ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${HOME}/pitivi"
+    - docker commit ${LOCAL_IMAGE} ${IMAGE}
+    - docker rm ${LOCAL_IMAGE}
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker push ${IMAGE}
-  only:
-    - triggers
-    - schedules
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" || $CI_PIPELINE_SOURCE == "schedule"'
   retry: 1
 
-pitivi:master:
+docker_image:master:
   stage: docker_image
   extends: .docker_image_template
-  before_script:
-    # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
-    - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
-    - export BRANCH=master
+  variables:
+    IMAGE: ${IMAGE_MASTER_NEXT}
 
-pitivi:1.0:
+docker_image:1.0:
   stage: docker_image
   extends: .docker_image_template
-  before_script:
-    # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
-    - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
-    - export BRANCH=1.0
+  variables:
+    IMAGE: ${IMAGE_1.0}
 
 
-build:
-  stage: build
+.test_template:
   tags:
     - flatpak
-  image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_3.34
-  variables:
-    BLACKLIST: >
-      -b tests.test_effects.EffectsPropertiesManagerTest.test_dependent_properties
   script:
-    - export BUILDDIR=${HOME}/pitivi
-    - export MANIFEST=${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json
-    - export RUN_IN_SANDBOX="flatpak-builder --disable-rofiles-fuse --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --env=GST_DEBUG_NO_COLOR=true --run app ${MANIFEST}"
+    - export MANIFEST=${HOME}/pitivi/build/flatpak/org.pitivi.Pitivi.json
+    - export RUN_IN_SANDBOX="flatpak-builder --disable-rofiles-fuse --filesystem=${HOME}/pitivi --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --env=GST_DEBUG_NO_COLOR=true --run app ${MANIFEST}"
     - export FLATPAK_BUILDER_CACHE="--state-dir=${HOME}/flatpak-cache"
     - export FLATPAK_REPO="${CI_PROJECT_DIR}/flatpak_repo"
 
@@ -76,10 +70,10 @@ build:
 
     # Working around the fact that flatpak-builder *requires* the cache dir
     # to be on the same filesystem as the build dir
-    - mv ${CI_PROJECT_DIR} ${BUILDDIR}
+    - mv ${CI_PROJECT_DIR} ${HOME}/pitivi
     - mkdir -p ${CI_PROJECT_DIR}
 
-    - cd ${BUILDDIR}
+    - cd ${HOME}/pitivi
     - flatpak-builder --user --disable-rofiles-fuse ${FLATPAK_BUILDER_CACHE} --disable-download --ccache --repo=${FLATPAK_REPO} --force-clean app build/flatpak/org.pitivi.Pitivi.json --subject="Rolling update for pitivi master" --body="See ${CI_JOB_URL}"
     - ${RUN_IN_SANDBOX} meson mesonbuild/
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
@@ -101,6 +95,32 @@ build:
     reports:
       junit:
         - ${XUNIT_PATH}
+
+test:with_new_master_image:
+  stage: test
+  image: ${CI_REGISTRY}/${CI_NAMESPACE}/${CI_PROJECT_NAME}:master-sdk_3.34-tmp
+  extends: .test_template
+  needs:
+    - job: docker_image:master
+
+test:
+  stage: test
+  image: ${CI_REGISTRY}/${CI_NAMESPACE}/${CI_PROJECT_NAME}:master-sdk_3.34
+  extends: .test_template
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == "master"
+
+save_docker_image:
+  stage: save_docker_image
+  image: docker:latest
+  script:
+    - docker pull ${IMAGE_MASTER_NEXT}
+    - docker tag ${IMAGE_MASTER_NEXT} ${IMAGE_MASTER}
+    - docker push ${IMAGE_MASTER}
+  needs:
+    - job: test:with_new_master_image
 
 
 deploy:
