@@ -283,7 +283,7 @@ class ProjectManager(GObject.Object, Loggable):
         Args:
             time_diff (int): The difference, in seconds, between file mtimes.
         """
-        dialog = Gtk.MessageDialog(title="", transient_for=None)
+        dialog = Gtk.Dialog(title="", transient_for=self.app.gui)
         ignore_backup_btn = dialog.add_button(_("Ignore backup"),Gtk.ResponseType.REJECT)
         ignore_backup_btn.get_style_context().add_class("destructive-action")
         dialog.add_button(_("Restore from backup"), Gtk.ResponseType.YES)
@@ -292,7 +292,6 @@ class ProjectManager(GObject.Object, Loggable):
         # "pitivi"...
         dialog.set_title("")
         dialog.set_icon_name("pitivi")
-        dialog.set_transient_for(self.app.gui)
         dialog.set_modal(True)
         dialog.set_default_response(Gtk.ResponseType.YES)
         dialog.get_accessible().set_name("restore from backup dialog")
