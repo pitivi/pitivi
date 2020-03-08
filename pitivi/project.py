@@ -37,6 +37,7 @@ from gi.repository import GstVideo
 from gi.repository import Gtk
 
 from pitivi.configure import get_ui_dir
+from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.medialibrary import AssetThumbnail
 from pitivi.preset import AudioPresetManager
 from pitivi.preset import VideoPresetManager
@@ -282,15 +283,11 @@ class ProjectManager(GObject.Object, Loggable):
         Args:
             time_diff (int): The difference, in seconds, between file mtimes.
         """
-        dialog = Gtk.Dialog(title="", transient_for=None)
-        dialog.add_buttons(_("Ignore backup"), Gtk.ResponseType.REJECT,
-                           _("Restore from backup"), Gtk.ResponseType.YES)
-        # Even though we set the title to an empty string when creating dialog,
-        # seems we really have to do it once more so it doesn't show
-        # "pitivi"...
-        dialog.set_title("")
+        dialog = Gtk.Dialog(title="", transient_for=self.app.gui)
+        ignore_backup_btn = dialog.add_button(_("Ignore backup"), Gtk.ResponseType.REJECT)
+        ignore_backup_btn.get_style_context().add_class("destructive-action")
+        dialog.add_button(_("Restore from backup"), Gtk.ResponseType.YES)
         dialog.set_icon_name("pitivi")
-        dialog.set_transient_for(self.app.gui)
         dialog.set_modal(True)
         dialog.set_default_response(Gtk.ResponseType.YES)
         dialog.get_accessible().set_name("restore from backup dialog")
@@ -993,7 +990,6 @@ class Project(Loggable, GES.Project):
         if res:
             self.emit("video-size-changed")
             self._has_default_video_settings = False
-            self.update_restriction_caps()
         return res
 
     def _set_audio_restriction(self, name, value):
@@ -1010,6 +1006,7 @@ class Project(Loggable, GES.Project):
     @videowidth.setter
     def videowidth(self, value):
         if self._set_video_restriction("width", int(value)):
+            self.update_restriction_caps()
             self._emit_change("width")
 
     @property
@@ -1019,6 +1016,7 @@ class Project(Loggable, GES.Project):
     @videoheight.setter
     def videoheight(self, value):
         if self._set_video_restriction("height", int(value)):
+            self.update_restriction_caps()
             self._emit_change("height")
 
     @property
@@ -1028,7 +1026,25 @@ class Project(Loggable, GES.Project):
     @videorate.setter
     def videorate(self, value):
         if self._set_video_restriction("framerate", value):
+            self.update_restriction_caps()
             self._emit_change("videorate")
+
+    def set_video_properties(self, width, height, framerate):
+        """Sets the video properties in one operation.
+
+        This should be called when several properties can be changed at once,
+        to avoid GES repositioning all sources when the video size changes.
+
+        Args:
+            width (int): The new project width.
+            height (int): The new project height.
+            framerate (Gst.Fraction): The new project framerate.
+        """
+        changed = any([self._set_video_restriction("width", width),
+                       self._set_video_restriction("height", height),
+                       self._set_video_restriction("framerate", framerate)])
+        if changed:
+            self.update_restriction_caps()
 
     @property
     def audiochannels(self):
@@ -2067,11 +2083,11 @@ class ProjectSettingsDialog:
         self.widgets_group = RippleUpdateGroup()
         self.widgets_group.add_vertex(self.frame_rate_combo,
                                       signal="changed",
-                                      update_func=self._update_combo_func,
+                                      update_func=self._update_frame_rate_combo_func,
                                       update_func_args=(self.frame_rate_fraction_widget,))
         self.widgets_group.add_vertex(self.frame_rate_fraction_widget,
                                       signal="value-changed",
-                                      update_func=self._update_fraction_func,
+                                      update_func=self._update_frame_rate_fraction_func,
                                       update_func_args=(self.frame_rate_combo,))
         self.widgets_group.add_vertex(self.width_spinbutton, signal="value-changed")
         self.widgets_group.add_vertex(self.height_spinbutton, signal="value-changed")
@@ -2114,15 +2130,13 @@ class ProjectSettingsDialog:
 
         # Bind the widgets in the Video tab to the Video Presets Manager.
         self.bind_spinbutton(self.video_presets, "width", self.width_spinbutton)
-        self.bind_spinbutton(
-            self.video_presets, "height", self.height_spinbutton)
+        self.bind_spinbutton(self.video_presets, "height", self.height_spinbutton)
         self.bind_fraction_widget(
             self.video_presets, "frame-rate", self.frame_rate_fraction_widget)
 
         # Bind the widgets in the Audio tab to the Audio Presets Manager.
         self.bind_combo(self.audio_presets, "channels", self.channels_combo)
-        self.bind_combo(
-            self.audio_presets, "sample-rate", self.sample_rate_combo)
+        self.bind_combo(self.audio_presets, "sample-rate", self.sample_rate_combo)
 
         self.widgets_group.add_edge(
             self.frame_rate_fraction_widget, self.video_preset_menubutton)
@@ -2136,9 +2150,10 @@ class ProjectSettingsDialog:
         mgr.bind_widget(name, widget.set_widget_value, widget.get_widget_value)
 
     def bind_combo(self, mgr, name, widget):
-        mgr.bind_widget(name,
-                        lambda x: set_combo_value(widget, x),
-                        lambda: get_combo_value(widget))
+        def setter(value):
+            res = set_combo_value(widget, value)
+            assert res, value
+        mgr.bind_widget(name, setter, lambda: get_combo_value(widget))
 
     def bind_spinbutton(self, mgr, name, widget):
         mgr.bind_widget(name,
@@ -2151,11 +2166,14 @@ class ProjectSettingsDialog:
     def proxy_res_linked(self):
         return self.proxy_res_linked_check.props.active
 
-    def _update_fraction_func(self, unused, fraction, combo):
-        fraction.set_widget_value(get_combo_value(combo))
+    def _update_frame_rate_fraction_func(self, unused, fraction_widget, combo_widget):
+        """Updates the fraction_widget to match the combo_widget."""
+        fraction_widget.set_widget_value(get_combo_value(combo_widget))
 
-    def _update_combo_func(self, unused, combo, fraction):
-        set_combo_value(combo, fraction.get_widget_value())
+    def _update_frame_rate_combo_func(self, unused, combo_widget, fraction_widget):
+        """Updates the combo_widget to match the fraction_widget."""
+        # This can fail when there is no corresponding value in combo's model.
+        set_combo_value(combo_widget, fraction_widget.get_widget_value())
 
     def __video_preset_loaded_cb(self, unused_mgr):
         self.sar = self.get_sar()
@@ -2188,6 +2206,11 @@ class ProjectSettingsDialog:
         height = int(self.scaled_proxy_height_spin.get_value())
         self.proxy_aspect_ratio = Gst.Fraction(width, height)
 
+    def _proxy_settings_label_cb(self, unused_widget, unused_parm):
+        prefs_dialog = PreferencesDialog(self.app)
+        prefs_dialog.stack.set_visible_child_name("_proxies")
+        prefs_dialog.run()
+
     def update_scaled_proxy_width(self):
         height = int(self.scaled_proxy_height_spin.get_value())
         fraction = height * self.proxy_aspect_ratio
@@ -2211,8 +2234,11 @@ class ProjectSettingsDialog:
             self.video_presets_combo.set_active_id(matching_video_preset)
 
         # Audio
-        set_combo_value(self.channels_combo, self.project.audiochannels)
-        set_combo_value(self.sample_rate_combo, self.project.audiorate)
+        res = set_combo_value(self.channels_combo, self.project.audiochannels)
+        assert res, self.project.audiochannels
+
+        res = set_combo_value(self.sample_rate_combo, self.project.audiorate)
+        assert res, self.project.audiorate
 
         matching_audio_preset = self.audio_presets.matching_preset(self.project)
         if matching_audio_preset:
@@ -2235,9 +2261,10 @@ class ProjectSettingsDialog:
             self.project.author = self.author_entry.get_text()
             self.project.year = str(self.year_spinbutton.get_value_as_int())
 
-            self.project.videowidth = int(self.width_spinbutton.get_value())
-            self.project.videoheight = int(self.height_spinbutton.get_value())
-            self.project.videorate = self.frame_rate_fraction_widget.get_widget_value()
+            self.project.set_video_properties(
+                int(self.width_spinbutton.get_value()),
+                int(self.height_spinbutton.get_value()),
+                self.frame_rate_fraction_widget.get_widget_value())
 
             self.project.audiochannels = get_combo_value(self.channels_combo)
             self.project.audiorate = get_combo_value(self.sample_rate_combo)
