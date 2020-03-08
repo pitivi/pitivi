@@ -721,6 +721,23 @@ def beautify_last_updated_timestamp(last_updated_timestamp):
 
 # -------------------- Gtk widget helpers ----------------------------------- #
 
+class BinWithNaturalWidth(Gtk.Bin):
+    """A bin with a maximum width."""
+
+    def __init__(self, child, width, *args, **kwargs):
+        Gtk.Bin.__init__(self, *args, **kwargs)
+        self.natural_width = width
+        self.add(child)
+
+    def do_get_request_mode(self):
+        return Gtk.SizeRequestMode.HEIGHT_FOR_WIDTH
+
+    def do_get_preferred_width(self):
+        minimum, _ = Gtk.Bin.do_get_preferred_width(self)
+        minimum = min(minimum, self.natural_width)
+        return minimum, self.natural_width
+
+
 def clear_styles(widget):
     """Makes sure the widget has no border, background or other decorations.
 
@@ -754,7 +771,7 @@ def set_combo_value(combo, value):
     if len(found) != 1:
         do_log(INFO, None, "utils",
                "Could not set value %s, possible values: %s",
-               (value, [v[0] for v in combo.props.model]))
+               (value, [v[1] for v in combo.props.model]))
         return False
 
     return True

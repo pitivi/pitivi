@@ -1,18 +1,18 @@
 # Hungarian translation for pitivi.
-# Copyright (C) 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019 Free Software Foundation, Inc.
+# Copyright (C) 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Free Software Foundation, Inc.
 # This file is distributed under the same license as the pitivi package.
 #
 # Attila Hammer <hammera at pickup dot hu>, 2010, 2014.
 # Gabor Kelemen <kelemeng at gnome dot hu>, 2010, 2011, 2012, 2014, 2015, 2016, 2017.
 # Marton Kun-Szabo <kunszabomarton at hotmail dot com>, 2010.
-# Balázs Úr <ur.balazs at fsf dot hu>, 2013, 2014, 2015, 2016, 2018, 2019.
-# Balázs Meskó <mesko.balazs at fsf dot hu>, 2015, 2017, 2018, 2019.
+# Balázs Úr <ur.balazs at fsf dot hu>, 2013, 2014, 2015, 2016, 2018, 2019, 2020.
+# Balázs Meskó <mesko.balazs at fsf dot hu>, 2015, 2017, 2018, 2019, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2019-08-29 09:30+0000\n"
-"PO-Revision-Date: 2019-09-10 07:56+0200\n"
+"POT-Creation-Date: 2020-02-23 10:37+0000\n"
+"PO-Revision-Date: 2020-02-26 07:40+0100\n"
 "Last-Translator: Balázs Úr <ur.balazs at fsf dot hu>\n"
 "Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
 "Language: hu\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 18.12.3\n"
+"X-Generator: Lokalize 19.04.3\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
 msgid "Pitivi video project (legacy)"
@@ -31,7 +31,7 @@ msgid "Pitivi/GES video project"
 msgstr "Pitivi/GES videoprojekt"
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:8 data/org.pitivi.Pitivi.desktop.in:4
-#: pitivi/greeterperspective.py:264
+#: pitivi/greeterperspective.py:267
 msgid "Pitivi"
 msgstr "Pitivi"
 
@@ -121,7 +121,7 @@ msgstr "Automatikus igazítás kezdése"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Automatikus igazítás elvégzése</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1179
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1167
 msgid "Estimating..."
 msgstr "Becslés…"
 
@@ -234,37 +234,37 @@ msgstr "Válasszon egy színt"
 msgid "Blue"
 msgstr "Kék"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:218
-msgid "Split preview"
-msgstr "Osztott előnézet"
-
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:232
-msgid "Source image on left"
-msgstr "Forráskép a bal oldalon"
-
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:253
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:225
 msgid "R"
 msgstr "R"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:266
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:238
 msgid "G"
 msgstr "G"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:279
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:251
 msgid "B"
 msgstr "B"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:448
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:420
 msgid "Shadows"
 msgstr "Árnyékok"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:459
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:431
 msgid "Midtones"
 msgstr "Középtónusok"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:470
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:442
 msgid "Highlights"
 msgstr "Kiemelések"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:481
+msgid "Split preview"
+msgstr "Osztott előnézet"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:494
+msgid "Source image on left"
+msgstr "Forráskép a bal oldalon"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:303
 msgid "Shape:"
@@ -327,7 +327,7 @@ msgid "Clear the current search"
 msgstr "Keresés törlése"
 
 #: data/ui/effectslibrary.ui:85 data/ui/medialibrary.ui:124
-#: pitivi/transitions.py:76
+#: pitivi/transitions.py:74
 msgid "Search..."
 msgstr "Keresés…"
 
@@ -335,7 +335,7 @@ msgstr "Keresés…"
 msgid "Reset all"
 msgstr "Összes alaphelyzetbe"
 
-#: data/ui/elementsettingsdialog.ui:39 data/ui/projectsettings.ui:62
+#: data/ui/elementsettingsdialog.ui:39 data/ui/projectsettings.ui:74
 msgid "OK"
 msgstr "OK"
 
@@ -347,15 +347,15 @@ msgstr "Legutóbbi projektek"
 msgid "Updated"
 msgstr "Frissített"
 
-#: data/ui/greeter.ui:190 pitivi/preset.py:110
+#: data/ui/greeter.ui:190 pitivi/preset.py:108
 msgid "Remove"
 msgstr "Eltávolítás"
 
-#: data/ui/greeter.ui:232
+#: data/ui/greeter.ui:230
 msgid "Welcome to Pitivi"
 msgstr "Üdvözli a Pitivi"
 
-#: data/ui/greeter.ui:246
+#: data/ui/greeter.ui:244
 msgid "Beautiful, powerful and intuitive movie editor"
 msgstr "Szép, hatékony és intuitív videószerkesztő"
 
@@ -363,8 +363,8 @@ msgstr "Szép, hatékony és intuitív videószerkesztő"
 msgid "Save the current project under a new name or a different location"
 msgstr "A jelenlegi projekt mentése új néven vagy egy másik helyre"
 
-#: data/ui/mainmenubutton.ui:25 pitivi/editorperspective.py:703
-#: pitivi/editorperspective.py:757
+#: data/ui/mainmenubutton.ui:25 pitivi/editorperspective.py:717
+#: pitivi/editorperspective.py:771
 msgid "Save As..."
 msgstr "Mentés másként…"
 
@@ -398,13 +398,14 @@ msgstr "Jelenlegi képkocka exportálása…"
 msgid "Edit the project settings"
 msgstr "A projekt beállításainak szerkesztése"
 
-#: data/ui/mainmenubutton.ui:119 data/ui/projectsettings.ui:29
-#: pitivi/medialibrary.py:424
+#: data/ui/mainmenubutton.ui:119 data/ui/projectsettings.ui:41
+#: pitivi/medialibrary.py:160 pitivi/medialibrary.py:518
+#: pitivi/dialogs/prefs.py:339
 msgid "Project Settings"
 msgstr "Projektbeállítások"
 
 #: data/ui/mainmenubutton.ui:148 data/ui/preferences.ui:7
-#: pitivi/mainwindow.py:178
+#: pitivi/mainwindow.py:216
 msgid "Preferences"
 msgstr "Beállítások"
 
@@ -416,11 +417,19 @@ msgstr "Gyorsbillentyűk"
 msgid "User Manual"
 msgstr "Felhasználói kézikönyv"
 
-#: data/ui/mainmenubutton.ui:196
+#: data/ui/mainmenubutton.ui:193
+msgid "Start the intro to Pitivi for new users"
+msgstr "A Pitivi új felhasználóknak szóló bevezetőjének indítása"
+
+#: data/ui/mainmenubutton.ui:197
+msgid "Interactive Intro"
+msgstr "Interaktív bevezető"
+
+#: data/ui/mainmenubutton.ui:213
 msgid "About Pitivi"
 msgstr "A Pitivi névjegye"
 
-#: data/ui/medialibrary.ui:14 pitivi/editorperspective.py:364
+#: data/ui/medialibrary.ui:14 pitivi/editorperspective.py:395
 msgid "Add media files to your project"
 msgstr "Médiafájlok hozzáadása projektjéhez"
 
@@ -489,7 +498,7 @@ msgstr ""
 "Minden beállítás visszaállítása a korábbi (a Beállítások ablak megnyitása "
 "előtti) értékére"
 
-#: data/ui/preferences.ui:61 data/ui/renderingdialog.ui:38
+#: data/ui/preferences.ui:61 data/ui/renderingdialog.ui:41
 #: data/ui/renderingprogress.ui:85
 msgid "Close"
 msgstr "Bezárás"
@@ -498,131 +507,135 @@ msgstr "Bezárás"
 msgid "Some changes will not take effect until you restart Pitivi"
 msgstr "Néhány változtatás nem lép életbe a Pitivi újraindításáig"
 
-#: data/ui/projectsettings.ui:49 data/ui/renderingprogress.ui:41
-#: pitivi/editorperspective.py:505 pitivi/editorperspective.py:658
-#: pitivi/editorperspective.py:706 pitivi/editorperspective.py:759
-#: pitivi/greeterperspective.py:233 pitivi/medialibrary.py:779
-#: pitivi/dialogs/browseprojects.py:41 pitivi/dialogs/missingasset.py:49
+#: data/ui/projectsettings.ui:61 data/ui/renderingprogress.ui:41
+#: pitivi/editorperspective.py:540 pitivi/editorperspective.py:672
+#: pitivi/editorperspective.py:720 pitivi/editorperspective.py:773
+#: pitivi/greeterperspective.py:236 pitivi/medialibrary.py:859
+#: pitivi/dialogs/browseprojects.py:38 pitivi/dialogs/missingasset.py:46
 msgid "Cancel"
 msgstr "Mégse"
 
-#: data/ui/projectsettings.ui:115 data/ui/projectsettings.ui:389
-#: data/ui/renderingdialog.ui:231
+#: data/ui/projectsettings.ui:127 data/ui/projectsettings.ui:401
+#: data/ui/renderingdialog.ui:234
 msgid "Preset:"
 msgstr "Előbeállítás:"
 
-#: data/ui/projectsettings.ui:187
+#: data/ui/projectsettings.ui:199
 msgid "Size:"
 msgstr "Méret:"
 
-#: data/ui/projectsettings.ui:247
+#: data/ui/projectsettings.ui:259 data/ui/projectsettings.ui:742
 msgid "pixels"
 msgstr "képpont"
 
 #. When checked, changing the width or height affects also the other so that the aspect ratio value (width / height) does not change.
-#: data/ui/projectsettings.ui:264
+#: data/ui/projectsettings.ui:276 data/ui/projectsettings.ui:759
 msgid "Constrain proportions"
 msgstr "Arányok korlátozása"
 
-#: data/ui/projectsettings.ui:268
+#: data/ui/projectsettings.ui:280
 msgid "Maintain aspect ratio"
 msgstr "Méretarány megtartása"
 
-#: data/ui/projectsettings.ui:299
-msgid "Frame Rate:"
+#: data/ui/projectsettings.ui:311 data/ui/renderingdialog.ui:451
+msgid "Frame rate:"
 msgstr "Képkockasebesség:"
 
 #. The title of the section with the video settings
-#: data/ui/projectsettings.ui:352 data/ui/renderingdialog.ui:466
-#: pitivi/effects.py:242
+#: data/ui/projectsettings.ui:364 data/ui/renderingdialog.ui:469
+#: pitivi/effects.py:239
 msgid "Video"
 msgstr "Videó"
 
-#: data/ui/projectsettings.ui:455 data/ui/renderingdialog.ui:505
+#: data/ui/projectsettings.ui:467 data/ui/renderingdialog.ui:508
 msgid "Channels:"
 msgstr "Csatornák:"
 
-#: data/ui/projectsettings.ui:489 data/ui/renderingdialog.ui:614
+#: data/ui/projectsettings.ui:501 data/ui/renderingdialog.ui:617
 msgid "Sample rate:"
 msgstr "Mintavételezési gyakoriság:"
 
 #. The title of the section with the audio settings
-#: data/ui/projectsettings.ui:533 data/ui/renderingdialog.ui:632
-#: pitivi/effects.py:242
+#: data/ui/projectsettings.ui:545 data/ui/renderingdialog.ui:635
+#: pitivi/effects.py:239
 msgid "Audio"
 msgstr "Hang"
 
-#: data/ui/projectsettings.ui:578
+#: data/ui/projectsettings.ui:590
 msgid "Author:"
 msgstr "Szerző:"
 
-#: data/ui/projectsettings.ui:590
+#: data/ui/projectsettings.ui:602
 msgid "Year:"
 msgstr "Év:"
 
 #. The title of the section with the name, author, year fields
-#: data/ui/projectsettings.ui:622
+#: data/ui/projectsettings.ui:634
 msgid "Info"
 msgstr "Információk"
 
-#: data/ui/renderingdialog.ui:20 data/ui/renderingdialog.ui:52
-#: pitivi/editorperspective.py:302
+#: data/ui/projectsettings.ui:678
+msgid "Scaled proxies resolution:"
+msgstr "Méretezett segédfájlok felbontása:"
+
+#: data/ui/projectsettings.ui:699 data/ui/projectsettings.ui:727
+msgid "1"
+msgstr "1"
+
+#: data/ui/projectsettings.ui:795
+msgid "Proxy"
+msgstr "Segédfájl"
+
+#: data/ui/renderingdialog.ui:20 data/ui/renderingdialog.ui:55
+#: pitivi/editorperspective.py:325
 msgid "Render"
 msgstr "Renderelés"
 
-#: data/ui/renderingdialog.ui:106
+#: data/ui/renderingdialog.ui:109
 msgid "Folder:"
 msgstr "Mappa:"
 
-#: data/ui/renderingdialog.ui:121
+#: data/ui/renderingdialog.ui:124
 msgid "File name:"
 msgstr "Fájlnév:"
 
-#: data/ui/renderingdialog.ui:148
+#: data/ui/renderingdialog.ui:151
 msgid "Container format:"
 msgstr "Konténerformátum:"
 
-#: data/ui/renderingdialog.ui:181 pitivi/mainwindow.py:160
-msgid "Help"
-msgstr "Súgó"
-
-#: data/ui/renderingdialog.ui:280
+#: data/ui/renderingdialog.ui:283
 msgid "Scale:"
 msgstr "Méretezés:"
 
-#: data/ui/renderingdialog.ui:313
+#: data/ui/renderingdialog.ui:316
 msgid "Scale"
 msgstr "Méretezés"
 
-#: data/ui/renderingdialog.ui:333
+#: data/ui/renderingdialog.ui:336
 msgid "Height"
 msgstr "Magasság"
 
-#: data/ui/renderingdialog.ui:352
+#: data/ui/renderingdialog.ui:355
 msgid "Project Settings..."
 msgstr "Projektbeállítások…"
 
-#: data/ui/renderingdialog.ui:367 data/ui/renderingdialog.ui:537
+#: data/ui/renderingdialog.ui:370 data/ui/renderingdialog.ui:540
 msgid "Advanced..."
 msgstr "Speciális…"
 
-#: data/ui/renderingdialog.ui:406 data/ui/renderingdialog.ui:577
+#: data/ui/renderingdialog.ui:409 data/ui/renderingdialog.ui:580
 msgid "Codec:"
 msgstr "Kodek:"
 
-#: data/ui/renderingdialog.ui:432
+#: data/ui/renderingdialog.ui:435
 msgid "Framerate"
 msgstr "Képkockasebesség"
 
-#: data/ui/renderingdialog.ui:448
-msgid "Frame rate:"
-msgstr "Képkockasebesség:"
-
-#: data/ui/renderingdialog.ui:656
+#: data/ui/renderingdialog.ui:660
 msgid "Automatically render from proxy files"
 msgstr "Automatikus renderelés a segédfájlokból"
 
-#: data/ui/renderingdialog.ui:660
+#: data/ui/renderingdialog.ui:664
 msgid ""
 "Use proxy files if they are available and the source asset media format is "
 "not officially supported.\n"
@@ -630,17 +643,17 @@ msgid ""
 "This option is a good trade-off between quality of the rendered video and "
 "stability."
 msgstr ""
-"A segédfájlok használata, ha elérhetőek, és a forrás médiaformátuma "
+"A segédfájlok használata, ha elérhetők, és a forrás médiaformátuma "
 "hivatalosan nem támogatott.\n"
 "\n"
 "Ez a beállítás egy jó kompromisszum a renderelt videó minősége és a "
 "stabilitás között."
 
-#: data/ui/renderingdialog.ui:675
+#: data/ui/renderingdialog.ui:678
 msgid "Always render from proxy files"
 msgstr "Mindig a segédfájlokból rendereljen"
 
-#: data/ui/renderingdialog.ui:679
+#: data/ui/renderingdialog.ui:682
 msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
@@ -648,11 +661,11 @@ msgstr ""
 "Minden klip renderelése a segédfájlokból. Némi minőségromlás történhet a "
 "renderelési folyamat során."
 
-#: data/ui/renderingdialog.ui:692
+#: data/ui/renderingdialog.ui:694
 msgid "Never render from proxy files"
 msgstr "Soha ne rendereljen segédfájlokból"
 
-#: data/ui/renderingdialog.ui:696
+#: data/ui/renderingdialog.ui:698
 msgid ""
 "Always use source assets for rendering. It is the best choice for the "
 "quality of the rendered video, but you might hit some bugs because of the "
@@ -668,12 +681,12 @@ msgstr ""
 msgid "Rendering"
 msgstr "Renderelés"
 
-#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:742
+#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:736
 msgid "Pause"
 msgstr "Szünet"
 
-#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:734
-#: pitivi/timeline/timeline.py:1722
+#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:728
+#: pitivi/timeline/timeline.py:1777
 msgid "Play"
 msgstr "Lejátszás"
 
@@ -792,46 +805,50 @@ msgstr "Vízszintes:"
 msgid "Vertical:"
 msgstr "Függőleges:"
 
-#: pitivi/application.py:162
+#: pitivi/action_search_bar.py:46
+msgid "Search Action"
+msgstr "Keresési művelet"
+
+#: pitivi/application.py:158
 msgid "General"
 msgstr "Általános"
 
-#: pitivi/application.py:167
+#: pitivi/application.py:165
 msgid "Undo the most recent action"
 msgstr "A legutóbbi művelet visszavonása"
 
-#: pitivi/application.py:173
+#: pitivi/application.py:171
 msgid "Redo the most recent action"
 msgstr "A legutóbbi művelet ismételt végrehajtása"
 
-#: pitivi/application.py:178
+#: pitivi/application.py:176
 msgid "Quit"
 msgstr "Kilépés"
 
-#: pitivi/application.py:185
+#: pitivi/application.py:184
 msgid "Show the Shortcuts Window"
 msgstr "A gyorsbillentyűk ablak megjelenítése"
 
 #. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:109
+#: pitivi/check.py:108
 #, python-format
 msgid "- %s not found on the system"
 msgstr "– %s nem található az Ön rendszerén"
 
 #. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:112
+#: pitivi/check.py:111
 #, python-format
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgstr "– %s %s verzió van telepítve, de a Pitivi legalább %s verziót igényel"
 
 #. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:185
+#: pitivi/check.py:186
 #, python-format
 msgid "- %s GStreamer plug-in not found on the system"
 msgstr "– %s GStreamer bővítmény nem található a rendszeren"
 
 #. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:188
+#: pitivi/check.py:189
 #, python-format
 msgid ""
 "- %s Gstreamer plug-in version %s is installed but Pitivi requires at least "
@@ -840,15 +857,15 @@ msgstr ""
 "– %s GStreamer bővítmény %s verziója van telepítve, de a Pitivi legalább %s "
 "verziót igényel"
 
-#: pitivi/check.py:296
+#: pitivi/check.py:298
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "HIBA – A következő szigorú függőségek nincsenek kielégítve:"
 
-#: pitivi/check.py:305
+#: pitivi/check.py:307
 msgid "Missing soft dependency:"
 msgstr "Hiányzó gyenge függőség:"
 
-#: pitivi/check.py:312
+#: pitivi/check.py:314
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
@@ -856,7 +873,7 @@ msgstr ""
 "HIBA – Nem sikerült a Gst.Fraction létrehozása — ez azt jelenti, hogy a gst-"
 "python nincs megfelelően telepítve."
 
-#: pitivi/check.py:317
+#: pitivi/check.py:319
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -864,36 +881,36 @@ msgstr ""
 "Nem sikerült a hangkimenet nyelő létrehozása. Győződjön meg arról, hogy "
 "rendelkezik-e egy érvényessel (pulsesink, alsasink vagy osssink)."
 
-#: pitivi/check.py:322
+#: pitivi/check.py:324
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
 "Nem sikerült a videokimenet nyelő létrehozása. Győződjön meg arról, hogy "
 "rendelkezik egy elérhető gtksink elemmel."
 
-#: pitivi/check.py:337
+#: pitivi/check.py:339
 #, python-format
 msgid "Could not import '%s'. Make sure you have it available."
 msgstr "A(z) „%s” nem importálható. Győződjön meg róla, hogy elérhető."
 
-#: pitivi/check.py:351
+#: pitivi/check.py:353
 msgid "Could not import 'gi'. Make sure you have pygobject available."
 msgstr ""
 "A „gi” nem importálható. Győződjön meg róla, hogy a pygobject elérhető."
 
-#: pitivi/check.py:442
+#: pitivi/check.py:450
 msgid "enables sound notifications when rendering is complete"
 msgstr "engedélyezi a hangos értesítéseket, amikor a renderelés kész"
 
-#: pitivi/check.py:444
+#: pitivi/check.py:452
 msgid "enables visual notifications when rendering is complete"
 msgstr "engedélyezi a vizuális értesítéseket, amikor a renderelés kész"
 
-#: pitivi/check.py:446
+#: pitivi/check.py:454
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "további multimédiás kodekek a GStreamer Libav programkönyvtárból"
 
-#: pitivi/check.py:448
+#: pitivi/check.py:456
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -901,138 +918,132 @@ msgstr ""
 "engedélyez egy őrt a GStreamer adatcsatornában. Használatával a GStreamerben "
 "bekövetkező hibák felismerhetők és javíthatók"
 
-#: pitivi/clipproperties.py:117
+#: pitivi/clipproperties.py:110
 msgid "Effects"
 msgstr "Effektusok"
 
-#: pitivi/clipproperties.py:132
+#: pitivi/clipproperties.py:125
 msgid "To apply an effect to the clip, drag it from the Effect Library."
 msgstr ""
 "A klipen történő effektus alkalmazásához húzza ki az Effektusgyűjteményből."
 
-#: pitivi/clipproperties.py:150
+#: pitivi/clipproperties.py:143
 msgid "Remove effect"
 msgstr "Effektus eltávolítása"
 
-#: pitivi/clipproperties.py:185
+#: pitivi/clipproperties.py:179
 msgid "Active"
 msgstr "Aktív"
 
-#: pitivi/clipproperties.py:188
+#: pitivi/clipproperties.py:182
 msgid "Type"
 msgstr "Típus"
 
-#: pitivi/clipproperties.py:197
+#: pitivi/clipproperties.py:191
 msgid "Effect name"
 msgstr "Effektus neve"
 
-#: pitivi/clipproperties.py:225
+#: pitivi/clipproperties.py:219
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Az idővonalon válasszon ki egy klipet a hozzá tartozó effektusok "
 "beállításához"
 
-#: pitivi/clipproperties.py:248
-msgid "Clip Effects"
-msgstr "Klip effektusok"
-
-#: pitivi/clipproperties.py:254
-msgid "Remove the selected effect"
-msgstr "A kiválasztott effektus eltávolítása"
-
-#: pitivi/clipproperties.py:573
+#: pitivi/clipproperties.py:564
 msgid "Transformation"
 msgstr "Átalakítás"
 
-#: pitivi/clipproperties.py:683
+#: pitivi/clipproperties.py:659
 msgid "Show keyframes"
 msgstr "Kulcsképkockák megjelenítése"
 
-#: pitivi/clipproperties.py:685
+#: pitivi/clipproperties.py:661
 msgid "Activate keyframes"
 msgstr "Kulcsképkockák aktiválása"
 
-#: pitivi/clipproperties.py:690
+#: pitivi/clipproperties.py:666
 msgid "Hide keyframes"
 msgstr "Kulcsképkockák elrejtése"
 
-#: pitivi/editorperspective.py:173 pitivi/medialibrary.py:576
+#: pitivi/editorperspective.py:200 pitivi/medialibrary.py:658
 msgid "Media Library"
 msgstr "Médiagyűjtemény"
 
-#: pitivi/editorperspective.py:175
+#: pitivi/editorperspective.py:202
 msgid "Effect Library"
 msgstr "Effektusgyűjtemény"
 
-#: pitivi/editorperspective.py:186
+#: pitivi/editorperspective.py:213
 msgid "Clip"
 msgstr "Klip"
 
-#: pitivi/editorperspective.py:188
+#: pitivi/editorperspective.py:215
 msgid "Transition"
 msgstr "Átmenet"
 
-#: pitivi/editorperspective.py:190
+#: pitivi/editorperspective.py:217
 msgid "Title"
 msgstr "Cím"
 
-#: pitivi/editorperspective.py:278
-msgid "Close project"
-msgstr "Projekt bezárása"
-
-#: pitivi/editorperspective.py:286
+#: pitivi/editorperspective.py:308
 msgid "Undo"
 msgstr "Visszavonás"
 
-#: pitivi/editorperspective.py:296 pitivi/editorperspective.py:497
-#: pitivi/editorperspective.py:659 pitivi/editorperspective.py:707
-#: pitivi/editorperspective.py:760 pitivi/preset.py:116 pitivi/project.py:194
+#. pylint: disable=attribute-defined-outside-init
+#: pitivi/editorperspective.py:319 pitivi/editorperspective.py:532
+#: pitivi/editorperspective.py:673 pitivi/editorperspective.py:721
+#: pitivi/editorperspective.py:774 pitivi/preset.py:114 pitivi/project.py:193
 msgid "Save"
 msgstr "Mentés"
 
-#: pitivi/editorperspective.py:304
+#: pitivi/editorperspective.py:327
 msgid "Export your project as a finished movie"
 msgstr "Exportálja projektjét befejezett filmként"
 
-#: pitivi/editorperspective.py:335
+#: pitivi/editorperspective.py:360
 msgid "Save the current project"
 msgstr "Projekt mentése"
 
-#: pitivi/editorperspective.py:342
+#: pitivi/editorperspective.py:368
 msgid "Save the current project as"
 msgstr "A jelenlegi projekt mentése másként"
 
-#: pitivi/editorperspective.py:469
+#: pitivi/editorperspective.py:388
+#| msgid "Welcome to Pitivi"
+msgid "Quick intros to Pitivi"
+msgstr "Gyors bevezetők a Pitivihez"
+
+#: pitivi/editorperspective.py:504
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "Nem menthető a(z) „%s” projekt"
 
-#: pitivi/editorperspective.py:499 pitivi/project.py:193
+#: pitivi/editorperspective.py:534 pitivi/project.py:192
 msgid "Save as..."
 msgstr "Mentés másként…"
 
-#: pitivi/editorperspective.py:502
+#: pitivi/editorperspective.py:537
 msgid "Close without saving"
 msgstr "Bezárás mentés nélkül"
 
-#: pitivi/editorperspective.py:512
+#: pitivi/editorperspective.py:547
 msgid "Save changes to the current project before closing?"
 msgstr "Bezárás előtt menti az aktuális projekt változtatásait?"
 
-#: pitivi/editorperspective.py:521
+#: pitivi/editorperspective.py:556
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr "Ha nem ment, akkor az utolsó %s változtatásai elvesznek."
 
-#: pitivi/editorperspective.py:525
+#: pitivi/editorperspective.py:560
 msgid "If you don't save, your changes will be lost."
 msgstr "Ha nem ment, akkor változtatásai elvesznek."
 
-#: pitivi/editorperspective.py:573
+#: pitivi/editorperspective.py:604
 msgid "Revert to saved project version?"
 msgstr "Visszatérés az elmentett projekt verzióhoz?"
 
-#: pitivi/editorperspective.py:578
+#: pitivi/editorperspective.py:609
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
 "Ez újra fogja tölteni a jelenlegi projektet. Az összes nem mentett változás "
@@ -1041,7 +1052,7 @@ msgstr ""
 #. Signal the project loading failure.
 #. You have to do this *after* successfully creating a blank project,
 #. or the startupwizard will still be connected to that signal too.
-#: pitivi/editorperspective.py:609
+#: pitivi/editorperspective.py:640
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -1052,229 +1063,263 @@ msgstr ""
 "\n"
 "A Pitivi jelenleg nem támogatja a részleges projekteket."
 
-#: pitivi/editorperspective.py:655
+#: pitivi/editorperspective.py:669
 msgid "Export To..."
 msgstr "Exportálás ide…"
 
-#: pitivi/editorperspective.py:672
+#: pitivi/editorperspective.py:686
 msgid "Tar archive"
 msgstr "Tar archívum"
 
-#: pitivi/editorperspective.py:676 pitivi/editorperspective.py:722
+#: pitivi/editorperspective.py:690 pitivi/editorperspective.py:736
 msgid "Detect automatically"
 msgstr "Automatikus detektálás"
 
-#: pitivi/editorperspective.py:716 pitivi/editorperspective.py:763
-#: pitivi/project.py:73 pitivi/render.py:431
+#: pitivi/editorperspective.py:730 pitivi/editorperspective.py:777
+#: pitivi/project.py:71 pitivi/render.py:436
 msgid "Untitled"
 msgstr "Névtelen"
 
-#: pitivi/editorperspective.py:765
+#: pitivi/editorperspective.py:779
 msgid "PNG image"
 msgstr "PNG-kép"
 
-#: pitivi/editorperspective.py:766
+#: pitivi/editorperspective.py:780
 msgid "JPEG image"
 msgstr "JPEG-kép"
 
-#: pitivi/editorperspective.py:807
+#: pitivi/editorperspective.py:821
 msgid "Preview"
 msgstr "Előnézet"
 
-#: pitivi/effects.py:63
+#: pitivi/effects.py:61
 msgid "Colors"
 msgstr "Színek"
 
-#: pitivi/effects.py:80
+#: pitivi/effects.py:78
 msgid "Compositing"
 msgstr "Kompozitálás"
 
-#: pitivi/effects.py:87
+#: pitivi/effects.py:85
 msgid "Noise & blur"
 msgstr "Zaj és elmosás"
 
-#: pitivi/effects.py:93
+#: pitivi/effects.py:91
 msgid "Analysis"
 msgstr "Elemzés"
 
-#: pitivi/effects.py:101
+#: pitivi/effects.py:99
 msgid "Geometry"
 msgstr "Geometria"
 
-#: pitivi/effects.py:112
+#: pitivi/effects.py:110
 msgid "Fancy"
 msgstr "Szép"
 
-#: pitivi/effects.py:124
+#: pitivi/effects.py:122
 msgid "Time"
 msgstr "Idő"
 
-#: pitivi/effects.py:242
+#: pitivi/effects.py:239
 msgid "effect"
 msgstr "effektus"
 
 #. Add Uncategorized only if there are other categories defined.
-#: pitivi/effects.py:336 pitivi/effects.py:357
+#: pitivi/effects.py:333 pitivi/effects.py:354
 msgid "Uncategorized"
 msgstr "Kategorizálatlan"
 
-#: pitivi/effects.py:337 pitivi/effects.py:354
+#: pitivi/effects.py:334 pitivi/effects.py:351
 msgid "All effects"
 msgstr "Minden effektus"
 
-#: pitivi/greeterperspective.py:220 pitivi/preset.py:104
+#: pitivi/greeterperspective.py:223 pitivi/preset.py:102
 msgid "New"
 msgstr "Új"
 
-#: pitivi/greeterperspective.py:221 pitivi/greeterperspective.py:275
+#: pitivi/greeterperspective.py:224 pitivi/greeterperspective.py:279
 msgid "Create a new project"
 msgstr "Új projekt létrehozása"
 
-#: pitivi/greeterperspective.py:224
+#: pitivi/greeterperspective.py:227
 msgid "Open…"
 msgstr "Megnyitás…"
 
-#: pitivi/greeterperspective.py:225
+#: pitivi/greeterperspective.py:228
 msgid "Open an existing project"
 msgstr "Meglévő projekt megnyitása"
 
-#: pitivi/greeterperspective.py:230
+#: pitivi/greeterperspective.py:233
 msgid "Select projects for removal"
 msgstr "Válassza ki az eltávolítandó projekteket"
 
-#: pitivi/greeterperspective.py:258
+#: pitivi/greeterperspective.py:261
 msgid "Click an item to select"
 msgstr "Kattintson a kiválasztandó elemre"
 
-#: pitivi/greeterperspective.py:262
+#: pitivi/greeterperspective.py:265
 msgid "Select a Project"
 msgstr "Válasszon egy projektet"
 
-#: pitivi/greeterperspective.py:281
+#: pitivi/greeterperspective.py:286
 msgid "Open a project"
 msgstr "Projekt megnyitása"
 
-#: pitivi/greeterperspective.py:349
+#: pitivi/greeterperspective.py:354
 #, python-format
 msgid "Pitivi %s is available."
 msgstr "Elérhető a Pitivi %s."
 
-#: pitivi/mainwindow.py:155
+#. pylint: disable=attribute-defined-outside-init
+#: pitivi/interactiveintro.py:154
+msgid "Start Overview"
+msgstr "Áttekintés indítása"
+
+#: pitivi/interactiveintro.py:212
+#| msgid "Welcome to Pitivi"
+msgid "Welcome to Pitivi!"
+msgstr "Üdvözli a Pitivi!"
+
+#: pitivi/interactiveintro.py:214
+msgid "Drag files here to import them"
+msgstr "Húzzon ide fájlokat az importálásukhoz"
+
+#: pitivi/interactiveintro.py:216
+msgid "Drag clips in the timeline to arrange them"
+msgstr "Húzzon klipeket az idővonalra, hogy elrendezze őket"
+
+#: pitivi/interactiveintro.py:218
+msgid "Right-click anywhere to move the playhead"
+msgstr "Kattintson bárhová a jobb gombbal a lejátszófej mozgatásához"
+
+#: pitivi/interactiveintro.py:220
+msgid "Preview with the play button"
+msgstr "Előnézet a lejátszás gombbal"
+
+#: pitivi/interactiveintro.py:222
+#| msgid "Export your project as a finished movie"
+msgid "Export your project to share it"
+msgstr "Exportálja projektjét a megosztásához"
+
+#: pitivi/interactiveintro.py:224
+#| msgid "Keyboard Shortcuts"
+msgid "See all the keyboard shortcuts"
+msgstr "Az összes gyorsbillentyű megtekintése"
+
+#: pitivi/mainwindow.py:74
+msgid "Dark Theme"
+msgstr "Sötét téma"
+
+#: pitivi/mainwindow.py:75
+msgid "Whether or not to use a dark theme."
+msgstr "Az alkalmazás sötét témát használjon-e."
+
+#: pitivi/mainwindow.py:188
 msgid "Project"
 msgstr "Projekt"
 
-#: pitivi/mainwindow.py:166
+#: pitivi/mainwindow.py:195
+msgid "Help"
+msgstr "Súgó"
+
+#: pitivi/mainwindow.py:202
 msgid "About"
 msgstr "Névjegy"
 
-#: pitivi/mainwindow.py:172
+#: pitivi/mainwindow.py:209
 msgid "Show the menu button content"
 msgstr "A menügomb tartalmának megjelenítése"
 
-#: pitivi/mainwindow.py:225
+#: pitivi/mainwindow.py:261
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "Nem tölthető be a(z) „%s” projekt"
 
-#: pitivi/mediafilespreviewer.py:160
+#: pitivi/mediafilespreviewer.py:158
 msgid "Pitivi can not preview this file."
 msgstr "A Pitivi nem képes megjeleníteni ezt a fájlt."
 
-#: pitivi/mediafilespreviewer.py:161
+#: pitivi/mediafilespreviewer.py:159
 msgid "More info"
 msgstr "Több infó"
 
-#: pitivi/mediafilespreviewer.py:271
+#: pitivi/mediafilespreviewer.py:269
 #, python-format
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Felbontás</b>: %d×%d"
 
-#: pitivi/mediafilespreviewer.py:273 pitivi/mediafilespreviewer.py:290
-#: pitivi/utils/ui.py:461
+#: pitivi/mediafilespreviewer.py:271 pitivi/mediafilespreviewer.py:288
+#: pitivi/utils/ui.py:520
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Hossz:</b> %s"
 
-#: pitivi/mediafilespreviewer.py:464 pitivi/medialibrary.py:1132
+#: pitivi/mediafilespreviewer.py:461 pitivi/medialibrary.py:1220
 msgid "Error while analyzing a file"
 msgid_plural "Error while analyzing files"
 msgstr[0] "Hiba a fájl elemzésekor"
 msgstr[1] "Hiba a fájlok elemzésekor"
 
-#: pitivi/medialibrary.py:125
-msgid "Close after importing files"
-msgstr "Bezárás a fájlok importálásának befejeződésekor"
+#: pitivi/medialibrary.py:133
+msgid "Keep dialog open"
+msgstr "A párbeszédablak nyitva tartása"
 
-#: pitivi/medialibrary.py:130
-msgid "Create proxies when the media format is not supported officially"
-msgstr "Segédfájlok létrehozása, ha a médiaformátum hivatalosan nem támogatott"
+#: pitivi/medialibrary.py:135
+msgid "When importing files keep the dialog open"
+msgstr "Fájlok importálásakor nyitva maradjon-e a párbeszédablak"
 
-#: pitivi/medialibrary.py:132
-msgid ""
-"Let Pitivi decide when to create proxy files and when not. The decision will "
-"be made depending on the file format, and how well it is supported. For "
-"example H.264, FLAC files contained in QuickTime will not be proxied, but "
-"AAC, H.264 contained in MPEG-TS will.\n"
-"\n"
-"<i>This is the only option officially supported by the Pitivi developers and "
-"thus is the safest.</i>"
-msgstr ""
-"A Pitivi döntse el, hogy mikor hozzon létre segédfájlokat. A döntés a "
-"fájlformátumon fog múlni, és hogy mennyire támogatott. Például a H.264, "
-"QuickTimeban tárolt FLAC fájlokhoz nem lesznek segédfájlok létrehozva, de az "
-"AAC, MPEG-TS-ben tárolt H.264-hez viszont igen. \n"
-"\n"
-"<i>Ez az egyetlen, a Pitivi fejlesztői által hivatalosan támogatott "
-"beállítás és ezért a legbiztosabb is.</i>"
+#. Translators: Create optimized media for unsupported files.
+#: pitivi/medialibrary.py:141
+msgid "Optimize:"
+msgstr "Optimalizálás:"
 
-#: pitivi/medialibrary.py:142
-msgid "Create proxies for all files"
-msgstr "Segédfájlok létrehozása minden fájlhoz"
+#: pitivi/medialibrary.py:145
+#| msgid "Unsupported"
+msgid "Unsupported assets"
+msgstr "Nem támogatott elemek"
 
-#: pitivi/medialibrary.py:144
-msgid ""
-"Use proxies for every imported file whatever its current media format is."
-msgstr ""
-"Segédfájlok létrehozása minden importált fájlhoz, bármilyen formátumban is "
-"legyen."
+#: pitivi/medialibrary.py:146
+msgid "All"
+msgstr "Összes"
 
-#: pitivi/medialibrary.py:147
-msgid "Do not use proxy files"
-msgstr "Ne használjon segédfájlokat"
+#: pitivi/medialibrary.py:227
+#, python-format
+msgid "Scale assets larger than %s×%s px."
+msgstr "A(z) %s×%s képpontnál nagyobb elemek méretezése."
 
-#: pitivi/medialibrary.py:412 pitivi/medialibrary.py:991
+#: pitivi/medialibrary.py:506 pitivi/medialibrary.py:1079
 msgid "Unknown"
 msgstr "Ismeretlen"
 
-#: pitivi/medialibrary.py:492
+#: pitivi/medialibrary.py:586
 msgid "Icon"
 msgstr "Ikon"
 
-#: pitivi/medialibrary.py:503
+#: pitivi/medialibrary.py:597
 msgid "Information"
 msgstr "Információk"
 
-#: pitivi/medialibrary.py:582
+#: pitivi/medialibrary.py:665
 msgid "Remove the selected assets"
 msgstr "A kiválasztott elemek eltávolítása"
 
-#: pitivi/medialibrary.py:588
+#: pitivi/medialibrary.py:672
 msgid "Insert selected assets at the end of the timeline"
 msgstr "A kijelölt elemek beszúrása az idővonal végére"
 
-#: pitivi/medialibrary.py:776
+#: pitivi/medialibrary.py:856
 msgid "Select One or More Files"
 msgstr "Válasszon ki legalább egy fájlt"
 
-#: pitivi/medialibrary.py:780
+#: pitivi/medialibrary.py:860
 msgid "Add"
 msgstr "Hozzáadás"
 
-#: pitivi/medialibrary.py:795
+#: pitivi/medialibrary.py:875
 msgid "Supported file formats"
 msgstr "Támogatott fájlformátumok"
 
-#: pitivi/medialibrary.py:803 pitivi/dialogs/missingasset.py:120
+#: pitivi/medialibrary.py:887 pitivi/dialogs/missingasset.py:117
 msgid "All files"
 msgstr "Minden fájl"
 
@@ -1284,96 +1329,129 @@ msgstr "Minden fájl"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals)
-#: pitivi/medialibrary.py:897
+#: pitivi/medialibrary.py:986
 #, python-format
 msgid "Transcoding %d asset: %d%% (About %s left)"
 msgid_plural "Transcoding %d assets: %d%% (About %s left)"
 msgstr[0] "%d elem átkódolása: %d%% (Körülbelül ennyi van hátra: %s)"
 msgstr[1] "%d elem átkódolása: %d%% (Körülbelül ennyi van hátra: %s)"
 
-#: pitivi/medialibrary.py:1003
+#: pitivi/medialibrary.py:1091
 msgid "View error"
 msgid_plural "View errors"
 msgstr[0] "Hiba megjelenítése"
 msgstr[1] "Hibák megjelenítése"
 
 #. Translators: {0:d} is just like %d (integer number variable)
-#: pitivi/medialibrary.py:1005
+#: pitivi/medialibrary.py:1093
 #, python-brace-format
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
 msgstr[0] "Hiba történt az importálás közben."
 msgstr[1] "{0:d} hiba történt az importálás közben."
 
-#: pitivi/medialibrary.py:1021
+#: pitivi/medialibrary.py:1109
 #, python-format
 msgid "The project settings have been set to match file '%s'"
 msgstr ""
 "A projektbeállítások módosítva lettek, hogy illeszkedjenek a(z) „%s” fájlhoz"
 
-#: pitivi/medialibrary.py:1135
+#: pitivi/medialibrary.py:1223
 msgid "The following file can not be used with Pitivi."
 msgid_plural "The following files can not be used with Pitivi."
 msgstr[0] "A Pitivi nem tudja használni a következő fájlt."
 msgstr[1] "A Pitivi nem tudja használni a következő fájlokat."
 
-#: pitivi/medialibrary.py:1244
+#: pitivi/medialibrary.py:1349
 msgid "Open containing folder"
 msgstr "Tartalmazó mappa megnyitása"
 
-#: pitivi/medialibrary.py:1262
-msgid "Do not use proxy for selected asset"
-msgid_plural "Do not use proxies for selected assets"
-msgstr[0] "Ne használjon segédfájlt a kijelölt elemhez"
-msgstr[1] "Ne használjon segédfájlokat a kijelölt elemekhez"
+#: pitivi/medialibrary.py:1356
+msgid "Edit"
+msgstr "Szerkesztés"
 
-#: pitivi/medialibrary.py:1273
+#: pitivi/medialibrary.py:1385
+#| msgid "Do not use proxy for selected asset"
+#| msgid_plural "Do not use proxies for selected assets"
+msgid "Do not use Optimised Proxy for selected asset"
+msgid_plural "Do not use Optimised Proxies for selected assets"
+msgstr[0] "Ne használjon optimalizált segédfájlt a kijelölt elemhez"
+msgstr[1] "Ne használjon optimalizált segédfájlokat a kijelölt elemekhez"
+
+#: pitivi/medialibrary.py:1396 pitivi/medialibrary.py:1418
+#: pitivi/medialibrary.py:1440
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
 msgstr[0] "A hozzá tartozó segédfájl törlése"
 msgstr[1] "A hozzá tartozó segédfájlok törlése"
 
-#: pitivi/medialibrary.py:1284
-msgid "Use proxy for selected asset"
-msgid_plural "Use proxies for selected assets"
-msgstr[0] "Segédfájl használata a kiválasztott elemhez"
-msgstr[1] "Segédfájlok használata a kiválasztott elemekhez"
+#: pitivi/medialibrary.py:1407
+#| msgid "Do not use proxy for selected asset"
+#| msgid_plural "Do not use proxies for selected assets"
+msgid "Do not use Proxy for selected asset"
+msgid_plural "Do not use Proxies for selected assets"
+msgstr[0] "Ne használjon segédfájlt a kijelölt elemhez"
+msgstr[1] "Ne használjon segédfájlokat a kijelölt elemekhez"
 
-#: pitivi/pluginmanager.py:52
+#: pitivi/medialibrary.py:1429
+#| msgid "Do not use proxy for selected asset"
+#| msgid_plural "Do not use proxies for selected assets"
+msgid "Do not use Scaled Proxy for selected asset"
+msgid_plural "Do not use Scaled Proxies for selected assets"
+msgstr[0] "Ne használjon méretezett segédfájlt a kijelölt elemhez"
+msgstr[1] "Ne használjon méretezett segédfájlokat a kijelölt elemekhez"
+
+#: pitivi/medialibrary.py:1451
+#| msgid "Use proxy for selected asset"
+#| msgid_plural "Use proxies for selected assets"
+msgid "Use Optimised Proxy for selected asset"
+msgid_plural "Use Optimised Proxies for selected assets"
+msgstr[0] "Optimalizált segédfájl használata a kiválasztott elemhez"
+msgstr[1] "Optimalizált segédfájlok használata a kiválasztott elemekhez"
+
+#: pitivi/medialibrary.py:1461
+#| msgid "Use proxy for selected asset"
+#| msgid_plural "Use proxies for selected assets"
+msgid "Use Scaled Proxy for selected asset"
+msgid_plural "Use Scaled Proxies for selected assets"
+msgstr[0] "Méretezett segédfájl használata a kiválasztott elemhez"
+msgstr[1] "Méretezett segédfájlok használata a kiválasztott elemekhez"
+
+#: pitivi/pluginmanager.py:54
 msgid "User plugins"
 msgstr "Felhasználói bővítmények"
 
-#: pitivi/pluginmanager.py:54
+#: pitivi/pluginmanager.py:56
 msgid "System plugins"
 msgstr "Rendszer bővítmények"
 
-#: pitivi/preset.py:230
+#: pitivi/preset.py:229
 msgid "New preset"
 msgstr "Új előbeállítás"
 
-#: pitivi/preset.py:233
+#: pitivi/preset.py:232
 #, python-format
 msgid "New preset %d"
 msgstr "Új beállítás %d"
 
 #. Translators: This must contain exclusively low case alphanum and '-'
-#: pitivi/preset.py:541
+#: pitivi/preset.py:540
 msgid "new-profile"
 msgstr "uj-profil"
 
 #. Translators: This must contain exclusively low case alphanum and '-'
-#: pitivi/preset.py:545
+#: pitivi/preset.py:544
 #, python-format
 msgid "new-profile-%d"
 msgstr "uj-profil-%d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:177 pitivi/render.py:898
+#: pitivi/project.py:176 pitivi/render.py:867
 msgid "Sorry, something didn’t work right."
 msgstr "Elnézést, valami nem működött rendesen."
 
-#: pitivi/project.py:180
+#: pitivi/project.py:179
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1399,11 +1477,11 @@ msgstr ""
 "Mielőtt bezárja a Pitivi-t, mentheti a jelenlegi projektfájl módosításait, "
 "vagy mentheti más fájlként."
 
-#: pitivi/project.py:195
+#: pitivi/project.py:194
 msgid "Close Pitivi"
 msgstr "Pitivi bezárása"
 
-#: pitivi/project.py:265
+#: pitivi/project.py:264
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1413,15 +1491,15 @@ msgstr ""
 "médiafájlt próbált hozzáadni a projektjéhez, akkor használja inkább az "
 "„Importálás” gombot."
 
-#: pitivi/project.py:287
+#: pitivi/project.py:286
 msgid "Ignore backup"
 msgstr "Biztonsági mentés mellőzése"
 
-#: pitivi/project.py:288
+#: pitivi/project.py:287
 msgid "Restore from backup"
 msgstr "Helyreállítás mentésből"
 
-#: pitivi/project.py:304
+#: pitivi/project.py:303
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1434,16 +1512,16 @@ msgstr ""
 "\n"
 "Szeretné inkább ezt betölteni?"
 
-#: pitivi/project.py:380
+#: pitivi/project.py:376
 msgid "You do not have permissions to write to this folder."
 msgstr "Nincs jogosultsága ebbe a mappába írni."
 
 #. Save the project to a temporary file.
-#: pitivi/project.py:413
+#: pitivi/project.py:409
 msgid "project"
 msgstr "projekt"
 
-#: pitivi/project.py:716
+#: pitivi/project.py:706
 msgid "Pitivi encoding profile"
 msgstr "Pitivi kódolás profil"
 
@@ -1463,22 +1541,22 @@ msgstr "Renderelés — %d%% kész"
 msgid "About %s left"
 msgstr "Körülbelül %s van hátra"
 
-#: pitivi/render.py:394
+#: pitivi/render.py:395
 msgid "Currently rendering"
 msgstr "Jelenleg renderelés alatt"
 
 #. Translators: This item appears in a combobox's popup and
 #. contains as children the unsupported (but still available)
 #. muxers and encoders.
-#: pitivi/render.py:663
+#: pitivi/render.py:632
 msgid "Unsupported"
 msgstr "Nem támogatott"
 
-#: pitivi/render.py:722
+#: pitivi/render.py:691
 msgid "A file name is required."
 msgstr "Fájlnév szükséges."
 
-#: pitivi/render.py:725
+#: pitivi/render.py:694
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1486,23 +1564,23 @@ msgstr ""
 "Ez a fájl már létezik.\n"
 "Ha nem szeretné felülírni, akkor válasszon másik fájlnevet vagy mappát."
 
-#: pitivi/render.py:729
+#: pitivi/render.py:698
 #, python-format
 msgid "Remove invalid characters from the filename: %s"
 msgstr "Érvénytelen karakterek eltávolítása a fájlnévből: %s"
 
-#: pitivi/render.py:760
+#: pitivi/render.py:729
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: pitivi/render.py:765
+#: pitivi/render.py:734
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: pitivi/render.py:892
+#: pitivi/render.py:861
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
@@ -1512,11 +1590,11 @@ msgstr ""
 "esetleg nem fog tudni renderelni.</b>\n"
 "\n"
 
-#: pitivi/render.py:899
+#: pitivi/render.py:869
 msgid "An error occurred while trying to render your project."
 msgstr "Hiba történt a projekt renderelési kísérlete közben."
 
-#: pitivi/render.py:901
+#: pitivi/render.py:871
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1524,20 +1602,20 @@ msgstr ""
 "Nézze meg a hibaelhárítási útmutatónkat, vagy küldjön egy hibajelentést. A "
 "GStreamer hiba a következő volt:"
 
-#: pitivi/render.py:1127 pitivi/render.py:1128 pitivi/render.py:1134
+#: pitivi/render.py:1115 pitivi/render.py:1116 pitivi/render.py:1122
 msgid "Render complete"
 msgstr "Renderelés kész"
 
-#: pitivi/render.py:1132
+#: pitivi/render.py:1120
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "„%s” befejezte a renderelést."
 
-#: pitivi/titleeditor.py:45
+#: pitivi/titleeditor.py:43
 msgid "Title clip duration"
 msgstr "Cím klip hossza"
 
-#: pitivi/titleeditor.py:47
+#: pitivi/titleeditor.py:45
 msgid ""
 "Default clip length (in milliseconds) of titles when inserting on the "
 "timeline."
@@ -1545,47 +1623,47 @@ msgstr ""
 "A cím klipek alapértelmezett hossza ezredmásodpercben az idővonalra való "
 "beszúráskor."
 
-#: pitivi/titleeditor.py:117 pitivi/titleeditor.py:124
+#: pitivi/titleeditor.py:114 pitivi/titleeditor.py:121
 msgid "Absolute"
 msgstr "Abszolút"
 
-#: pitivi/titleeditor.py:118
+#: pitivi/titleeditor.py:115
 msgid "Top"
 msgstr "Fent"
 
-#: pitivi/titleeditor.py:119 pitivi/titleeditor.py:126
+#: pitivi/titleeditor.py:116 pitivi/titleeditor.py:123
 msgid "Center"
 msgstr "Középen"
 
-#: pitivi/titleeditor.py:120
+#: pitivi/titleeditor.py:117
 msgid "Bottom"
 msgstr "Lent"
 
-#: pitivi/titleeditor.py:121
+#: pitivi/titleeditor.py:118
 msgid "Baseline"
 msgstr "Alapvonal"
 
-#: pitivi/titleeditor.py:125
+#: pitivi/titleeditor.py:122
 msgid "Left"
 msgstr "Balra"
 
-#: pitivi/titleeditor.py:127
+#: pitivi/titleeditor.py:124
 msgid "Right"
 msgstr "Jobbra"
 
-#: pitivi/transitions.py:84
+#: pitivi/transitions.py:82
 msgid "Normal"
 msgstr "Normál"
 
-#: pitivi/transitions.py:89
+#: pitivi/transitions.py:87
 msgid "Loop"
 msgstr "Végtelenítés"
 
-#: pitivi/transitions.py:96
+#: pitivi/transitions.py:94
 msgid "Reverse direction"
 msgstr "Fordított irány"
 
-#: pitivi/transitions.py:109
+#: pitivi/transitions.py:107
 msgid ""
 "Create a transition by overlapping two adjacent clips on the same layer. "
 "Click the transition on the timeline to change the transition type."
@@ -1594,47 +1672,47 @@ msgstr ""
 "rétegen. Kattintson az átmenetre az idővonalon az átmenet típusának "
 "megváltoztatásához."
 
-#: pitivi/transitions.py:234
+#: pitivi/transitions.py:232
 msgid "Slow"
 msgstr "Lassú"
 
-#: pitivi/transitions.py:236
+#: pitivi/transitions.py:234
 msgid "Fast"
 msgstr "Gyors"
 
-#: pitivi/transitions.py:238
+#: pitivi/transitions.py:236
 msgid "Epileptic"
 msgstr "Epilepsziás"
 
-#: pitivi/transitions.py:242
+#: pitivi/transitions.py:240
 msgid "Sharp"
 msgstr "Éles"
 
-#: pitivi/transitions.py:244
+#: pitivi/transitions.py:242
 msgid "Smooth"
 msgstr "Sima"
 
-#: pitivi/viewer/viewer.py:76
+#: pitivi/viewer/viewer.py:74
 msgid "Currently playing"
 msgstr "Most játszott"
 
-#: pitivi/viewer/viewer.py:255
+#: pitivi/viewer/viewer.py:250
 msgid "Go to the beginning of the timeline"
 msgstr "Az idővonal elejére"
 
-#: pitivi/viewer/viewer.py:264
+#: pitivi/viewer/viewer.py:259
 msgid "Go back one second"
 msgstr "Egy másodperccel vissza"
 
-#: pitivi/viewer/viewer.py:277
+#: pitivi/viewer/viewer.py:272
 msgid "Go forward one second"
 msgstr "Egy másodperccel előre"
 
-#: pitivi/viewer/viewer.py:286
+#: pitivi/viewer/viewer.py:281
 msgid "Go to the end of the timeline"
 msgstr "Az idővonal végére"
 
-#: pitivi/viewer/viewer.py:293
+#: pitivi/viewer/viewer.py:288
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1642,7 +1720,7 @@ msgstr ""
 "Adjon meg egy időkódot vagy képkocka számot és\n"
 "nyomja meg az „Enter” gombot a pozícióra ugráshoz"
 
-#: pitivi/viewer/viewer.py:304
+#: pitivi/viewer/viewer.py:299
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1650,18 +1728,18 @@ msgstr ""
 "A megjelenítő leválasztva\n"
 "Az újonnan létrehozott ablak bezárásával újra csatolhatja."
 
-#: pitivi/viewer/viewer.py:448 pitivi/viewer/viewer.py:506
+#: pitivi/viewer/viewer.py:440 pitivi/viewer/viewer.py:498
 msgid "Show this window in fullscreen"
 msgstr "Az ablak megjelenítése teljes méretben"
 
-#: pitivi/viewer/viewer.py:503
+#: pitivi/viewer/viewer.py:495
 msgid "Exit fullscreen mode"
 msgstr "Kilépés a teljes képernyős módból"
 
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:415
+#: pitivi/timeline/elements.py:416
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1672,50 +1750,50 @@ msgstr ""
 "Időbélyeg: %s\n"
 "Érték: %s"
 
-#: pitivi/timeline/elements.py:590
+#: pitivi/timeline/elements.py:591
 #, python-format
 msgid "Timestamp: %s"
 msgstr "Időbélyeg: %s"
 
-#: pitivi/timeline/elements.py:1443
+#: pitivi/timeline/elements.py:1460
 msgid "Audio crossfade"
 msgstr "Hangáttűnés"
 
-#: pitivi/timeline/layer.py:176
+#: pitivi/timeline/layer.py:166
 msgid "Move layer to top"
 msgstr "Réteg felülre"
 
-#: pitivi/timeline/layer.py:182
+#: pitivi/timeline/layer.py:172
 msgid "Move layer up"
 msgstr "Réteg fel"
 
-#: pitivi/timeline/layer.py:188
+#: pitivi/timeline/layer.py:178
 msgid "Move layer down"
 msgstr "Réteg le"
 
-#: pitivi/timeline/layer.py:194
+#: pitivi/timeline/layer.py:184
 msgid "Move layer to bottom"
 msgstr "Réteg alulra"
 
-#: pitivi/timeline/layer.py:200
+#: pitivi/timeline/layer.py:190
 msgid "Delete layer"
 msgstr "Réteg törlése"
 
-#: pitivi/timeline/layer.py:292
+#: pitivi/timeline/layer.py:282
 #, python-format
 msgid "Layer %d"
 msgstr "%d. réteg"
 
-#: pitivi/timeline/ruler.py:255
+#: pitivi/timeline/ruler.py:253
 #, python-format
 msgid "Frame #%d"
 msgstr "%d. képkocka"
 
-#: pitivi/timeline/timeline.py:79
+#: pitivi/timeline/timeline.py:80
 msgid "Snap distance"
 msgstr "Illesztési távolság"
 
-#: pitivi/timeline/timeline.py:80
+#: pitivi/timeline/timeline.py:81
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1723,11 +1801,11 @@ msgstr ""
 "Küszöbszint (képpontban), amelynél két klip össze lesz illesztve húzáskor "
 "vagy vágáskor."
 
-#: pitivi/timeline/timeline.py:92
+#: pitivi/timeline/timeline.py:93
 msgid "Image clip duration"
 msgstr "Képbevágás hossza"
 
-#: pitivi/timeline/timeline.py:94
+#: pitivi/timeline/timeline.py:95
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
@@ -1735,161 +1813,146 @@ msgstr ""
 "Képbevágás alapértelmezett hossza ezredmásodpercben az idővonalra való "
 "beszúráskor."
 
-#: pitivi/timeline/timeline.py:105
+#: pitivi/timeline/timeline.py:106
 msgid "Left click also seeks"
 msgstr "A bal kattintás is teker"
 
-#: pitivi/timeline/timeline.py:107
+#: pitivi/timeline/timeline.py:108
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr "A bal kattintás teker is a klip kiválasztása és szerkesztése mellett."
 
-#: pitivi/timeline/timeline.py:330 pitivi/timeline/timeline.py:1674
+#: pitivi/timeline/timeline.py:337 pitivi/timeline/timeline.py:1708
 msgid "Add layer"
 msgstr "Réteg hozzáadása"
 
-#: pitivi/timeline/timeline.py:1631 pitivi/dialogs/prefs.py:61
+#: pitivi/timeline/timeline.py:1651 pitivi/dialogs/prefs.py:60
 msgid "Timeline"
 msgstr "Idővonal"
 
-#: pitivi/timeline/timeline.py:1638
+#: pitivi/timeline/timeline.py:1658
+msgid "Action Search"
+msgstr "Műveletkeresés"
+
+#: pitivi/timeline/timeline.py:1666
 msgid "Delete selected clips"
 msgstr "Kijelölt klipek törlése"
 
-#: pitivi/timeline/timeline.py:1644
+#: pitivi/timeline/timeline.py:1673
 msgid "Delete selected clips and shift following ones"
 msgstr "Kijelölt klipek törlése és a következők eltolása"
 
-#: pitivi/timeline/timeline.py:1650
+#: pitivi/timeline/timeline.py:1680
 msgid "Group selected clips together"
 msgstr "Kijelölt klipek csoportosítása"
 
-#: pitivi/timeline/timeline.py:1656
+#: pitivi/timeline/timeline.py:1687
 msgid "Ungroup selected clips"
 msgstr "Kiválasztott klipek csoportjának felbontása"
 
-#: pitivi/timeline/timeline.py:1662
+#: pitivi/timeline/timeline.py:1694
 msgid "Copy selected clips"
 msgstr "Kiválasztott klipek másolása"
 
-#: pitivi/timeline/timeline.py:1668
+#: pitivi/timeline/timeline.py:1701
 msgid "Paste selected clips"
 msgstr "Kiválasztott klipek beillesztése"
 
-#: pitivi/timeline/timeline.py:1687
+#: pitivi/timeline/timeline.py:1715
+msgid "Seeks to the first clip edge after the playhead."
+msgstr "A lejátszófej utáni első klip széléhez teker."
+
+#: pitivi/timeline/timeline.py:1722
+msgid "Seeks to the first clip edge before the playhead."
+msgstr "A lejátszófej előtti első klip széléhez teker."
+
+#: pitivi/timeline/timeline.py:1735
 msgid "Split the clip at the position"
 msgstr "Klip szétvágása a pozíciónál"
 
-#: pitivi/timeline/timeline.py:1693
+#: pitivi/timeline/timeline.py:1742
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Kulcsképkocka hozzáadása a kiválasztott klip kulcsképkocka görbéjéhez"
 
-#: pitivi/timeline/timeline.py:1698
+#: pitivi/timeline/timeline.py:1747
 msgid "Timeline Navigation"
 msgstr "Navigáció az idővonalon"
 
-#: pitivi/timeline/timeline.py:1705
+#: pitivi/timeline/timeline.py:1755
 msgid "Zoom in"
 msgstr "Nagyítás"
 
-#: pitivi/timeline/timeline.py:1711
+#: pitivi/timeline/timeline.py:1763
 msgid "Zoom out"
 msgstr "Kicsinyítés"
 
-#: pitivi/timeline/timeline.py:1717
+#: pitivi/timeline/timeline.py:1771
 msgid "Adjust zoom to fit the project to the window"
 msgstr "A nagyítási szint igazítása, hogy a projekt kiférjen az ablakba"
 
-#: pitivi/timeline/timeline.py:1728
+#: pitivi/timeline/timeline.py:1784
 msgid "Seek backward one frame"
 msgstr "Egy képkockával vissza"
 
-#: pitivi/timeline/timeline.py:1734
+#: pitivi/timeline/timeline.py:1791
 msgid "Seek forward one frame"
 msgstr "Egy képkockával előre"
 
-#: pitivi/timeline/timeline.py:1741
+#: pitivi/timeline/timeline.py:1799
 msgid "Seek backward one second"
 msgstr "Egy másodperccel vissza"
 
-#: pitivi/timeline/timeline.py:1748
+#: pitivi/timeline/timeline.py:1807
 msgid "Seek forward one second"
 msgstr "Egy másodperccel előre"
 
-#: pitivi/dialogs/about.py:50
+#: pitivi/dialogs/about.py:47
 #, python-format
 msgid "Development version: %s"
 msgstr "Fejlesztői verzió: %s"
 
-#: pitivi/dialogs/about.py:52
+#: pitivi/dialogs/about.py:49
 #, python-format
 msgid "Version %(cur_ver)s — %(new_ver)s is available"
 msgstr "Jelenlegi verzió: %(cur_ver)s — új verzió érhető el: %(new_ver)s"
 
-#: pitivi/dialogs/about.py:56 pitivi/dialogs/about.py:58
+#: pitivi/dialogs/about.py:53 pitivi/dialogs/about.py:55
 #, python-format
 msgid "Version %s"
 msgstr "%s verzió"
 
-#: pitivi/dialogs/about.py:67
+#: pitivi/dialogs/about.py:64
 msgid "Current maintainers:"
 msgstr "Jelenlegi karbantartók:"
 
-#: pitivi/dialogs/about.py:72
+#: pitivi/dialogs/about.py:69
 msgid "Past maintainers:"
 msgstr "Korábbi karbantartók:"
 
-#. Translators: this paragraph is to be translated, the list
-#. of contributors is shown dynamically as a clickable link
-#. below it
-#: pitivi/dialogs/about.py:81
-msgid ""
-"Contributors:\n"
-"A handwritten list here would...\n"
-"• be too long,\n"
-"• be frequently outdated,\n"
-"• not show their relative merit.\n"
-"\n"
-"Out of respect for our contributors, we point you instead to:\n"
-msgstr ""
-"Közreműködők:\n"
-"Egy kézzel írt lista itt...\n"
-"• túl hosszú,\n"
-"• és gyakran elavuló lenne,\n"
-"• nem mutatná az érdemeik közti különbségeket.\n"
-"\n"
-"Közreműködőink iránti tiszteletből inkább ide irányítjuk:\n"
-
-#. Translators: keep the %s at the end of the 1st line
-#: pitivi/dialogs/about.py:88
-#, python-format
-msgid ""
-"The list of contributors on Ohloh %s\n"
-"Or you can run: git shortlog -s -n"
-msgstr ""
-"A közreműködők listája az Ohloh oldalon: %s\n"
-"\n"
-"Vagy futtathatja: git shortlog -s -n"
+#: pitivi/dialogs/about.py:75
+msgid "Contributors:"
+msgstr "Közreműködők:"
 
 #. Translators: See
 #. https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
 #. for details on how this is used.
-#: pitivi/dialogs/about.py:95
+#: pitivi/dialogs/about.py:82
 msgid "translator-credits"
 msgstr ""
 "Hammer Attila <hammera at pickup dot hu>, 2010.\n"
 "Kelemen Gábor <kelemeng at gnome dot hu>, 2010, 2011, 2012.\n"
 "Kun-Szabó Márton <kunszabomarton at hotmail dot com>, 2010.\n"
-"Meskó Balázs <mesko.balazs at fsf dot hu>, 2015, 2017, 2018, 2019."
+"Meskó Balázs <mesko dót balazs at fsf dot hu>, 2015, 2017, 2018, 2019, 2020."
 
-#: pitivi/dialogs/browseprojects.py:37
-msgid "Open File..."
-msgstr "Fájl megnyitása…"
+#: pitivi/dialogs/browseprojects.py:34
+#| msgid "Open a project"
+msgid "Open Project…"
+msgstr "Projekt megnyitása…"
 
-#: pitivi/dialogs/browseprojects.py:42 pitivi/dialogs/missingasset.py:50
+#: pitivi/dialogs/browseprojects.py:39 pitivi/dialogs/missingasset.py:47
 msgid "Open"
 msgstr "Megnyitás"
 
-#: pitivi/dialogs/browseprojects.py:58
+#: pitivi/dialogs/browseprojects.py:55
 msgid "All supported formats"
 msgstr "Minden támogatott formátum"
 
@@ -1901,70 +1964,95 @@ msgstr "Változó"
 msgid "Image:"
 msgstr "Kép:"
 
-#: pitivi/dialogs/filelisterrordialog.py:54
+#: pitivi/dialogs/filelisterrordialog.py:52
 msgid "Unknown reason"
 msgstr "Ismeretlen ok"
 
-#: pitivi/dialogs/filelisterrordialog.py:86
+#: pitivi/dialogs/filelisterrordialog.py:85
 msgid "Problem:"
 msgstr "Probléma:"
 
-#: pitivi/dialogs/filelisterrordialog.py:94
+#: pitivi/dialogs/filelisterrordialog.py:93
 msgid "Extra information:"
 msgstr "További információk:"
 
-#: pitivi/dialogs/missingasset.py:47
+#: pitivi/dialogs/missingasset.py:44
 msgid "Locate missing file..."
 msgstr "Hiányzó fájl megkeresése…"
 
-#: pitivi/dialogs/missingasset.py:61
+#: pitivi/dialogs/missingasset.py:58
 msgid "The following file could not be found:"
 msgstr "A következő fájl nem található:"
 
-#: pitivi/dialogs/missingasset.py:85
+#: pitivi/dialogs/missingasset.py:82
 msgid "Please specify its new location:"
 msgstr "Adja meg az új helyét:"
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI files"
-#: pitivi/dialogs/missingasset.py:116
+#: pitivi/dialogs/missingasset.py:113
 #, python-format
 msgid "%s files"
 msgstr "%s fájlok"
 
-#: pitivi/dialogs/prefs.py:62
+#: pitivi/dialogs/prefs.py:61
 msgid "Plugins"
 msgstr "Bővítmények"
 
-#: pitivi/dialogs/prefs.py:63
+#: pitivi/dialogs/prefs.py:62
 msgid "Shortcuts"
 msgstr "Gyorsbillentyűk"
 
-#: pitivi/dialogs/prefs.py:276 pitivi/utils/widgets.py:981
+#: pitivi/dialogs/prefs.py:63
+msgid "Proxies"
+msgstr "Segédfájlok"
+
+#: pitivi/dialogs/prefs.py:64
+msgid "Other"
+msgstr "Egyéb"
+
+#: pitivi/dialogs/prefs.py:285 pitivi/utils/widgets.py:978
 msgid "Reset to default value"
 msgstr "Visszaállítás alapértelmezett értékre"
 
-#: pitivi/dialogs/prefs.py:387
+#: pitivi/dialogs/prefs.py:331
+msgid ""
+"This resolution will be used as the default target resolution for new "
+"projects and projects missing scaled proxy meta-data."
+msgstr ""
+"Ez a felbontás lesz alapértelmezett célfelbontásként használva az új "
+"projekteknél és azoknál, ahol hiányoznak a méretezett segédfájl metaadatok."
+
+#: pitivi/dialogs/prefs.py:344
+msgid "Initial proxy size for new projects"
+msgstr "Kezdeti segédfájlméret az új projekteknél"
+
+#: pitivi/dialogs/prefs.py:379
+#, python-format
+msgid "Proxy resolution for the current project is %d×%d px"
+msgstr "A jelenlegi projekt segédfájlfelbontása %d×%d képpont"
+
+#: pitivi/dialogs/prefs.py:458
 msgid "Reset the shortcut to the default accelerator"
 msgstr "Minden gyorsbillentyű visszaállítása az alapértelmezett gyorsítóra"
 
-#: pitivi/dialogs/prefs.py:547
+#: pitivi/dialogs/prefs.py:615
 msgid "Set Shortcut"
 msgstr "Gyorsbillentyű beállítása"
 
 #. Setup the widgets used in the dialog.
-#: pitivi/dialogs/prefs.py:562
+#: pitivi/dialogs/prefs.py:630
 msgid "Apply"
 msgstr "Alkalmaz"
 
-#: pitivi/dialogs/prefs.py:565
+#: pitivi/dialogs/prefs.py:633
 msgid "Apply the accelerator to this shortcut."
 msgstr "A gyorsító beállítása ehhez a gyorsbillentyűhöz."
 
-#: pitivi/dialogs/prefs.py:568
+#: pitivi/dialogs/prefs.py:636
 msgid "Replace"
 msgstr "Csere"
 
-#: pitivi/dialogs/prefs.py:571
+#: pitivi/dialogs/prefs.py:639
 msgid ""
 "Remove this accelerator from where it was used previously and set it for "
 "this shortcut."
@@ -1972,14 +2060,14 @@ msgstr ""
 "Törölje ezt a gyorsítót onnan, ahol eddig használatban volt, és állítsa be "
 "ehhez a gyorsbillentyűhöz."
 
-#: pitivi/dialogs/prefs.py:578
+#: pitivi/dialogs/prefs.py:646
 #, python-format
 msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
 msgstr ""
 "Adja meg az új gyorsbillentyűt ehhez: <b>%s</b>, vagy nyomja meg az Esc "
 "gombot a megszakításhoz."
 
-#: pitivi/dialogs/prefs.py:587
+#: pitivi/dialogs/prefs.py:655
 msgid ""
 "The accelerator you are trying to set might interfere with typing. Try using "
 "Control, Shift or Alt with some other key, please."
@@ -1987,7 +2075,7 @@ msgstr ""
 "A gyorsító, amelyet be akar állítani gondot okozhat gépeléskor. Próbálja meg "
 "a Control, Shift vagy Alt billentyűket használni egy másik billentyűvel."
 
-#: pitivi/dialogs/prefs.py:621
+#: pitivi/dialogs/prefs.py:689
 #, python-format
 msgid ""
 "This key combination is already used by <b>%s</b>. Press Replace to use it "
@@ -1996,32 +2084,31 @@ msgstr ""
 "Ez a billentyűkombináció már használatban van ennél: <b>%s</b>. Nyomja meg a "
 "Csere gombot, ha a(z) <b>%s</b> helyett akarja használni."
 
-#: pitivi/dialogs/prefs.py:664
+#: pitivi/dialogs/prefs.py:733
 msgid "No description available."
 msgstr "Nem érhető el leírás."
 
-#: pitivi/dialogs/prefs.py:775
+#: pitivi/dialogs/prefs.py:844
 #, python-brace-format
 msgid "Unable to load the plugin '{module_name}'"
 msgstr "A(z) „{module_name}” bővítmény nem tölthető be"
 
 #. We could use Gtk.ListBox.set_placeholder, but it
 #. appears bad inside the list widget.
-#: pitivi/dialogs/prefs.py:859
-#| msgid "No description available."
+#: pitivi/dialogs/prefs.py:928
 msgid "No plugins available"
 msgstr "Nincsenek elérhető bővítmények"
 
-#: pitivi/dialogs/prefs.py:872
+#: pitivi/dialogs/prefs.py:941
 #, python-brace-format
 msgid ""
 "You can create <a href='{doc_url}'>plugins</a> into your <a "
 "href='{dir_url}'>plugins directory</a>."
 msgstr ""
-"Létrehozhat <a href='{doc_url}'>bővítményeket</a> a <a href='{dir_url}'"
-">bővítmények könyvtárba</a>."
+"Létrehozhat <a href='{doc_url}'>bővítményeket</a> a <a "
+"href='{dir_url}'>bővítmények könyvtárba</a>."
 
-#: pitivi/utils/misc.py:281
+#: pitivi/utils/misc.py:268
 msgid ""
 "Failed to open the user manual. Make sure to have either the `yelp` GNOME  "
 "documentation viewer or a web browser installed"
@@ -2029,7 +2116,7 @@ msgstr ""
 "A felhasználói kézikönyv megnyitása sikertelen. Telepítse a „yelp” "
 "programot, a GNOME dokumentáció megtekintőt, vagy egy webböngészőt"
 
-#: pitivi/utils/misc.py:290
+#: pitivi/utils/misc.py:277
 msgid ""
 "The system's locale that you are using is not UTF-8 capable. Unicode support "
 "is required for Python3 software like Pitivi. Please correct your system "
@@ -2041,147 +2128,155 @@ msgstr ""
 "Javítsa a rendszerbeállításokat, ha a Pitivit hibás területi beállításokkal "
 "használja, furcsa problémákkal fog találkozni."
 
-#: pitivi/utils/misc.py:300
+#: pitivi/utils/misc.py:287
 msgid "Error while decoding a string"
 msgstr "Hiba a karakterlánc dekódolásakor"
 
+#: pitivi/utils/proxy.py:59
+msgid "Max number of parallel transcoding jobs"
+msgstr "Párhuzamos átkódolási feladatok legnagyobb száma"
+
+#: pitivi/utils/proxy.py:70
+msgid "Max CPU usage dedicated to transcoding"
+msgstr "Átkódolásra fenntartott legnagyobb processzorhasználat"
+
 #. Translators: 'fps' is for 'frames per second'
-#: pitivi/utils/ui.py:279
+#: pitivi/utils/ui.py:336
 msgid "{0:s} fps"
 msgstr "{0:s} fps"
 
-#: pitivi/utils/ui.py:299
+#: pitivi/utils/ui.py:356
 #, python-brace-format
 msgid "{0:n} kHz"
 msgstr "{0:n} kHz"
 
-#: pitivi/utils/ui.py:308
+#: pitivi/utils/ui.py:365
 msgid "Mono"
 msgstr "Mono"
 
-#: pitivi/utils/ui.py:309
+#: pitivi/utils/ui.py:366
 msgid "Stereo"
 msgstr "Sztereó"
 
-#: pitivi/utils/ui.py:310
+#: pitivi/utils/ui.py:367
 msgid "6 (5.1)"
 msgstr "6 (5.1)"
 
-#: pitivi/utils/ui.py:311
+#: pitivi/utils/ui.py:368
 msgid "8 (7.1)"
 msgstr "8 (7.1)"
 
-#: pitivi/utils/ui.py:441
+#: pitivi/utils/ui.py:499
 #, python-format
 msgid "<b>Duration:</b> %s"
 msgstr "<b>Hossz:</b> %s"
 
-#: pitivi/utils/ui.py:444
+#: pitivi/utils/ui.py:502
 #, python-format
 msgid "<b>Proxy creation progress:</b> %d%%"
 msgstr "<b>Segédfájl létrehozási folyamat:</b> %d%%"
 
-#: pitivi/utils/ui.py:457
+#: pitivi/utils/ui.py:516
 #, python-format
 msgid "<b>Path</b>: %s"
 msgstr "<b>Útvonal:</b> %s"
 
-#: pitivi/utils/ui.py:466
+#: pitivi/utils/ui.py:526
 #, python-format
 msgid "<b>Size</b>: %s"
 msgstr "<b>Méret:</b> %s"
 
-#: pitivi/utils/ui.py:500
+#: pitivi/utils/ui.py:562
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[0] "<b>Hang:</b> %d csatorna, %d <i>Hz</i> (%d <i>bit</i>)"
 msgstr[1] "<b>Hang:</b> %d csatorna, %d <i>Hz</i> (%d <i>bit</i>)"
 
-#: pitivi/utils/ui.py:512
+#: pitivi/utils/ui.py:574
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
 msgstr "<b>Videó:</b> %d×%d <i>képpont</i>, %s <i>fps</i>"
 
-#: pitivi/utils/ui.py:515
+#: pitivi/utils/ui.py:577
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>Kép:</b> %d×%d <i>képpont</i>"
 
-#: pitivi/utils/ui.py:569 pitivi/utils/ui.py:596 pitivi/utils/ui.py:620
+#: pitivi/utils/ui.py:631 pitivi/utils/ui.py:658 pitivi/utils/ui.py:682
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d óra"
 msgstr[1] "%d óra"
 
-#: pitivi/utils/ui.py:572 pitivi/utils/ui.py:599 pitivi/utils/ui.py:623
+#: pitivi/utils/ui.py:634 pitivi/utils/ui.py:661 pitivi/utils/ui.py:685
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d perc"
 msgstr[1] "%d perc"
 
-#: pitivi/utils/ui.py:575 pitivi/utils/ui.py:602 pitivi/utils/ui.py:626
+#: pitivi/utils/ui.py:637 pitivi/utils/ui.py:664 pitivi/utils/ui.py:688
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d másodperc"
 msgstr[1] "%d másodperc"
 
-#: pitivi/utils/ui.py:594
+#: pitivi/utils/ui.py:656
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d nap"
 msgstr[1] "%d nap"
 
-#: pitivi/utils/ui.py:635
+#: pitivi/utils/ui.py:697
 msgid "Just now"
 msgstr "Épp most"
 
-#: pitivi/utils/ui.py:638
+#: pitivi/utils/ui.py:700
 msgid "An hour ago"
 msgstr "Egy órával ezelőtt"
 
-#: pitivi/utils/ui.py:641
+#: pitivi/utils/ui.py:703
 msgid "Today"
 msgstr "Ma"
 
-#: pitivi/utils/ui.py:644
+#: pitivi/utils/ui.py:706
 msgid "Yesterday"
 msgstr "Tegnap"
 
-#: pitivi/utils/ui.py:653
+#: pitivi/utils/ui.py:715
 msgid "About a year ago"
 msgstr "Körülbelül egy éve"
 
-#: pitivi/utils/ui.py:656
+#: pitivi/utils/ui.py:718
 #, python-format
 msgid "About %d year ago"
 msgid_plural "About %d years ago"
 msgstr[0] "Körülbelül %d éve"
 msgstr[1] "Körülbelül %d éve"
 
-#: pitivi/utils/widgets.py:76
+#: pitivi/utils/widgets.py:74
 msgid "Implement Me"
 msgstr "Valósítson meg"
 
-#: pitivi/utils/widgets.py:808
+#: pitivi/utils/widgets.py:803
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: pitivi/utils/widgets.py:841
+#: pitivi/utils/widgets.py:838
 msgid "No properties."
 msgstr "Nincsenek tulajdonságok."
 
 #. Avoid the ugly selection outline
-#: pitivi/utils/widgets.py:966
+#: pitivi/utils/widgets.py:963
 msgid "Show keyframes for this value"
 msgstr "Az érték kulcsképkockáinak megjelenítése"
 
-#: pitivi/utils/widgets.py:1149
+#: pitivi/utils/widgets.py:1147
 #, python-format
 msgid "Properties for %s"
 msgstr "A(z) %s tulajdonságai"
@@ -2205,46 +2300,46 @@ msgstr "%s megjelenítve"
 msgid "%d nanoseconds displayed, because we can"
 msgstr "%d nanomásodperc megjelenítve, mert képesek vagyunk rá"
 
-#: plugins/console/console.py:125
+#: plugins/console/console.py:123
 msgid "Console"
 msgstr "Konzol"
 
-#: plugins/console/console.py:127
+#: plugins/console/console.py:125
 msgid "Color"
 msgstr "Szín"
 
 #. Translators: The color of the content from stderr.
-#: plugins/console/console.py:132
+#: plugins/console/console.py:130
 msgid "Standard error color"
 msgstr "Szabványos hiba színe"
 
 #. Translators: The color of the content from stdout.
-#: plugins/console/console.py:137
+#: plugins/console/console.py:135
 msgid "Standard output color"
 msgstr "Szabványos kimenet színe"
 
-#: plugins/console/console.py:141
+#: plugins/console/console.py:139
 msgid "Font"
 msgstr "Betűkészlet"
 
-#: plugins/console/console.py:148 plugins/console/console.py:166
+#: plugins/console/console.py:146 plugins/console/console.py:164
 msgid "Developer Console"
 msgstr "Fejlesztői konzol"
 
-#: plugins/console/console.py:190
+#: plugins/console/console.py:188
 msgid "Pitivi Console"
 msgstr "Pitivi konzol"
 
-#: plugins/console/console.py:201
+#: plugins/console/console.py:199
 msgid "You can use the following shortcuts:"
 msgstr "A következő gyorsbillentyűket használhatja:"
 
-#: plugins/console/console.py:206
+#: plugins/console/console.py:204
 #, python-brace-format
 msgid "Type \"{help}(<command>)\" for more information."
 msgstr "További információkért írja be: „{help}(<parancs>)”"
 
-#: plugins/console/utils.py:84
+#: plugins/console/utils.py:81
 #, python-brace-format
 msgid ""
 "Not possible to override {key}, because shortcuts commands are read-only."

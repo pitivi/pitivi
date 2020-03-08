@@ -1,5 +1,5 @@
 # Brazilian Portuguese translation of pitivi.
-# Copyright (C) 2019 The Pitivi's copyright holder
+# Copyright (C) 2020 The Pitivi's copyright holder
 # This file is distributed under the same license as the pitivi package.
 # Raphael Higino <In memoriam>, 2006.
 # Flamarion Jorge <jorge.flamarion@gmail.com>, 2009.
@@ -14,14 +14,14 @@
 # Freire de Almeida <laudivan@riseup.net>, 2016.
 # Enrico Nicoletto <liverig@gmail.com>, 2013, 2014, 2017, 2018.
 # Bruno Lopes da Silva <brunolopesbldsb@gmail.com>, 2018.
-# Rafael Fontenelle <rafaelff@gnome.org>, 2013-2019.
+# Rafael Fontenelle <rafaelff@gnome.org>, 2013-2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2019-10-26 12:00+0000\n"
-"PO-Revision-Date: 2019-11-01 10:40-0300\n"
+"POT-Creation-Date: 2020-03-06 06:58+0000\n"
+"PO-Revision-Date: 2020-03-07 04:29-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
@@ -41,7 +41,7 @@ msgid "Pitivi/GES video project"
 msgstr "Projeto de vídeo Pitivi/GES"
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:8 data/org.pitivi.Pitivi.desktop.in:4
-#: pitivi/greeterperspective.py:269
+#: pitivi/greeterperspective.py:278
 msgid "Pitivi"
 msgstr "Pitivi"
 
@@ -132,7 +132,7 @@ msgstr "Iniciando auto-alinhamento"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Realizando autoalinhamento</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1190
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1175
 msgid "Estimating..."
 msgstr "Estimando…"
 
@@ -245,37 +245,37 @@ msgstr "Selecione uma cor"
 msgid "Blue"
 msgstr "Azul"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:218
-msgid "Split preview"
-msgstr "Visão dividida"
-
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:232
-msgid "Source image on left"
-msgstr "Imagem fonte na esquerda"
-
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:253
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:225
 msgid "R"
 msgstr "R"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:266
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:238
 msgid "G"
 msgstr "G"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:279
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:251
 msgid "B"
 msgstr "B"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:448
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:420
 msgid "Shadows"
 msgstr "Sombras"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:459
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:431
 msgid "Midtones"
 msgstr "Meio-tons"
 
-#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:470
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:442
 msgid "Highlights"
 msgstr "Realces"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:481
+msgid "Split preview"
+msgstr "Visão dividida"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:494
+msgid "Source image on left"
+msgstr "Imagem fonte na esquerda"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:303
 msgid "Shape:"
@@ -309,22 +309,6 @@ msgstr "alfa mín."
 msgid "max alpha"
 msgstr "alfa máx."
 
-#: data/ui/depsmanager.ui:8
-msgid "Missing Dependencies"
-msgstr "Dependências faltantes"
-
-#: data/ui/depsmanager.ui:36
-msgid "Install"
-msgstr "Instalar"
-
-#: data/ui/depsmanager.ui:68
-msgid ""
-"To enable additional features, please install the following packages and "
-"restart Pitivi:"
-msgstr ""
-"Para habilitar recursos adicionais, por favor instale os seguintes pacotes e "
-"reinicie Pitivi:"
-
 #: data/ui/effectslibrary.ui:14
 msgid "Show video effects"
 msgstr "Mostrar efeitos de vídeo"
@@ -338,7 +322,7 @@ msgid "Clear the current search"
 msgstr "Limpar a busca atual"
 
 #: data/ui/effectslibrary.ui:85 data/ui/medialibrary.ui:124
-#: pitivi/transitions.py:76
+#: pitivi/transitions.py:74
 msgid "Search..."
 msgstr "Pesquisar…"
 
@@ -358,7 +342,7 @@ msgstr "Projetos recentes"
 msgid "Updated"
 msgstr "Atualizado"
 
-#: data/ui/greeter.ui:190 pitivi/preset.py:109
+#: data/ui/greeter.ui:190 pitivi/preset.py:108
 msgid "Remove"
 msgstr "Remover"
 
@@ -374,8 +358,8 @@ msgstr "Um editor de vídeo bonito, potente e intuitivo"
 msgid "Save the current project under a new name or a different location"
 msgstr "Salve o projeto atual sob um novo nome ou uma localização diferente"
 
-#: data/ui/mainmenubutton.ui:25 pitivi/editorperspective.py:709
-#: pitivi/editorperspective.py:763
+#: data/ui/mainmenubutton.ui:25 pitivi/editorperspective.py:717
+#: pitivi/editorperspective.py:771
 msgid "Save As..."
 msgstr "Salvar como…"
 
@@ -398,7 +382,8 @@ msgstr "Exportar como pacote…"
 #: data/ui/mainmenubutton.ui:85
 msgid "Export the frame at the current playhead position as an image file."
 msgstr ""
-"Exporta o quadro na posição atual de reprodução como um arquivo de imagem."
+"Exporta o quadro na posição atual do indicador de reprodução como um arquivo "
+"de imagem."
 
 #: data/ui/mainmenubutton.ui:89
 msgid "Export current frame..."
@@ -409,13 +394,13 @@ msgid "Edit the project settings"
 msgstr "Edita as configurações do projeto"
 
 #: data/ui/mainmenubutton.ui:119 data/ui/projectsettings.ui:41
-#: pitivi/medialibrary.py:156 pitivi/medialibrary.py:510
-#: pitivi/dialogs/prefs.py:342
+#: pitivi/medialibrary.py:160 pitivi/medialibrary.py:518
+#: pitivi/dialogs/prefs.py:339
 msgid "Project Settings"
 msgstr "Configurações do projeto"
 
 #: data/ui/mainmenubutton.ui:148 data/ui/preferences.ui:7
-#: pitivi/mainwindow.py:191
+#: pitivi/mainwindow.py:216
 msgid "Preferences"
 msgstr "Preferências"
 
@@ -427,11 +412,19 @@ msgstr "Atalhos de teclado"
 msgid "User Manual"
 msgstr "Manual do usuário"
 
-#: data/ui/mainmenubutton.ui:196
+#: data/ui/mainmenubutton.ui:193
+msgid "Start the intro to Pitivi for new users"
+msgstr "Inicia a introdução ao Pitivi para novos usuários"
+
+#: data/ui/mainmenubutton.ui:197
+msgid "Interactive Intro"
+msgstr "Introdução interativa"
+
+#: data/ui/mainmenubutton.ui:213
 msgid "About Pitivi"
 msgstr "Sobre o Pitivi"
 
-#: data/ui/medialibrary.ui:14 pitivi/editorperspective.py:383
+#: data/ui/medialibrary.ui:14 pitivi/editorperspective.py:395
 msgid "Add media files to your project"
 msgstr "Adiciona arquivos de mídia ao seu projeto"
 
@@ -510,10 +503,10 @@ msgid "Some changes will not take effect until you restart Pitivi"
 msgstr "Algumas alterações não terão efeito até que você reinicie o Pitivi"
 
 #: data/ui/projectsettings.ui:61 data/ui/renderingprogress.ui:41
-#: pitivi/editorperspective.py:528 pitivi/editorperspective.py:664
-#: pitivi/editorperspective.py:712 pitivi/editorperspective.py:765
-#: pitivi/greeterperspective.py:238 pitivi/medialibrary.py:865
-#: pitivi/dialogs/browseprojects.py:40 pitivi/dialogs/missingasset.py:48
+#: pitivi/editorperspective.py:540 pitivi/editorperspective.py:672
+#: pitivi/editorperspective.py:720 pitivi/editorperspective.py:773
+#: pitivi/greeterperspective.py:241 pitivi/medialibrary.py:859
+#: pitivi/dialogs/browseprojects.py:38 pitivi/dialogs/missingasset.py:46
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -545,7 +538,7 @@ msgstr "Taxa de quadros:"
 
 #. The title of the section with the video settings
 #: data/ui/projectsettings.ui:364 data/ui/renderingdialog.ui:469
-#: pitivi/effects.py:241
+#: pitivi/effects.py:239
 msgid "Video"
 msgstr "Vídeo"
 
@@ -559,7 +552,7 @@ msgstr "Taxa da amostra:"
 
 #. The title of the section with the audio settings
 #: data/ui/projectsettings.ui:545 data/ui/renderingdialog.ui:635
-#: pitivi/effects.py:241
+#: pitivi/effects.py:239
 msgid "Audio"
 msgstr "Áudio"
 
@@ -584,12 +577,16 @@ msgstr "Resolução de intermediários dimensionada:"
 msgid "1"
 msgstr "1"
 
-#: data/ui/projectsettings.ui:795
+#: data/ui/projectsettings.ui:777
+msgid "<a href='#'>Proxy Preferences</a>"
+msgstr "<a href='#'>Preferências de proxy</a>"
+
+#: data/ui/projectsettings.ui:811
 msgid "Proxy"
 msgstr "Intermediário"
 
 #: data/ui/renderingdialog.ui:20 data/ui/renderingdialog.ui:55
-#: pitivi/editorperspective.py:321
+#: pitivi/editorperspective.py:325
 msgid "Render"
 msgstr "Renderizar"
 
@@ -683,12 +680,12 @@ msgstr ""
 msgid "Rendering"
 msgstr "Renderizando"
 
-#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:742
+#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:736
 msgid "Pause"
 msgstr "Pausar"
 
-#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:734
-#: pitivi/timeline/timeline.py:1759
+#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:728
+#: pitivi/timeline/timeline.py:1777
 msgid "Play"
 msgstr "Reproduzir"
 
@@ -716,7 +713,7 @@ msgstr "Tamanho estimado do arquivo:"
 
 #: data/ui/timelinetoolbar.ui:15
 msgid "Split clips at playhead position"
-msgstr "Divide clipes na posição indicadora de reprodução"
+msgstr "Divide clipes na posição do indicador de reprodução"
 
 #: data/ui/timelinetoolbar.ui:17
 msgid "Split"
@@ -807,19 +804,23 @@ msgstr "Horizontal:"
 msgid "Vertical:"
 msgstr "Vertical:"
 
-#: pitivi/application.py:161
+#: pitivi/action_search_bar.py:46
+msgid "Search Action"
+msgstr "Pesquisar ação"
+
+#: pitivi/application.py:158
 msgid "General"
 msgstr "Geral"
 
-#: pitivi/application.py:166
+#: pitivi/application.py:165
 msgid "Undo the most recent action"
 msgstr "Desfazer a ação mais recente"
 
-#: pitivi/application.py:172
+#: pitivi/application.py:171
 msgid "Redo the most recent action"
 msgstr "Refazer a ação mais recente"
 
-#: pitivi/application.py:177
+#: pitivi/application.py:176
 msgid "Quit"
 msgstr "Sair"
 
@@ -828,25 +829,25 @@ msgid "Show the Shortcuts Window"
 msgstr "Exibir a janela de atalhos"
 
 #. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:109
+#: pitivi/check.py:108
 #, python-format
 msgid "- %s not found on the system"
 msgstr "- %s não encontrado no sistema"
 
 #. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:112
+#: pitivi/check.py:111
 #, python-format
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgstr "- %s versão %s está instalada, mas Pitivi requer pelo menos %s"
 
 #. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:185
+#: pitivi/check.py:186
 #, python-format
 msgid "- %s GStreamer plug-in not found on the system"
 msgstr "- plug-in de GStreamer %s não encontrado no sistema"
 
 #. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:188
+#: pitivi/check.py:189
 #, python-format
 msgid ""
 "- %s Gstreamer plug-in version %s is installed but Pitivi requires at least "
@@ -855,16 +856,16 @@ msgstr ""
 "- plug-in de GStreamer %s versão %s está instalada, mas Pitivi requer pelo "
 "menos a versão %s"
 
-#: pitivi/check.py:296
+#: pitivi/check.py:298
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "ERRO — As seguintes dependências rígidas não foram correspondidas:"
 
 # Confirmar tradução para soft
-#: pitivi/check.py:305
+#: pitivi/check.py:307
 msgid "Missing soft dependency:"
 msgstr "Dependências leves faltantes:"
 
-#: pitivi/check.py:312
+#: pitivi/check.py:314
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
@@ -872,7 +873,7 @@ msgstr ""
 "ERRO — Não foi possível criar um Gst.Fraction — isso significa que gst-"
 "python não está instalado corretamente."
 
-#: pitivi/check.py:317
+#: pitivi/check.py:319
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -880,38 +881,38 @@ msgstr ""
 "Não foi possível criar um assento de saída de áudio. Certifique-se de que "
 "você tem uma válida (pulsesink, alsasink ou osssink)."
 
-#: pitivi/check.py:322
+#: pitivi/check.py:324
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
 "Não foi possível criar uma assento de saída de áudio. Certifique-se de que "
 "um gtksink está disponível."
 
-#: pitivi/check.py:337
+#: pitivi/check.py:339
 #, python-format
 msgid "Could not import '%s'. Make sure you have it available."
 msgstr ""
 "Não foi possível importar “%s”. Certifique-se de que ele está disponível."
 
-#: pitivi/check.py:351
+#: pitivi/check.py:353
 msgid "Could not import 'gi'. Make sure you have pygobject available."
 msgstr ""
 "Não foi possível importar “gi”. Certifique-se de que pyobject está "
 "disponível."
 
-#: pitivi/check.py:441
+#: pitivi/check.py:450
 msgid "enables sound notifications when rendering is complete"
 msgstr "habilita notificações de som quando a renderização é finalizada"
 
-#: pitivi/check.py:443
+#: pitivi/check.py:452
 msgid "enables visual notifications when rendering is complete"
 msgstr "habilita notificações visuais quando a renderização é finalizada"
 
-#: pitivi/check.py:445
+#: pitivi/check.py:454
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "codecs multimídia adicionais através da biblioteca GStreamer Libav"
 
-#: pitivi/check.py:447
+#: pitivi/check.py:456
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -919,60 +920,52 @@ msgstr ""
 "habilita um watchdog no fluxo do GStreamer. Use para detectar erros "
 "ocorrendo no GStreamer e se recupere deles"
 
-#: pitivi/clipproperties.py:114
+#: pitivi/clipproperties.py:110
 msgid "Effects"
 msgstr "Efeitos"
 
-#: pitivi/clipproperties.py:129
+#: pitivi/clipproperties.py:125
 msgid "To apply an effect to the clip, drag it from the Effect Library."
 msgstr "Para aplicar um efeito ao clipe, arraste-o da biblioteca de efeitos."
 
-#: pitivi/clipproperties.py:147
+#: pitivi/clipproperties.py:143
 msgid "Remove effect"
 msgstr "Remover efeito"
 
-#: pitivi/clipproperties.py:182
+#: pitivi/clipproperties.py:179
 msgid "Active"
 msgstr "Ativo"
 
-#: pitivi/clipproperties.py:185
+#: pitivi/clipproperties.py:182
 msgid "Type"
 msgstr "Tipo"
 
-#: pitivi/clipproperties.py:194
+#: pitivi/clipproperties.py:191
 msgid "Effect name"
 msgstr "Nome do efeito"
 
-#: pitivi/clipproperties.py:222
+#: pitivi/clipproperties.py:219
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Selecione um clipe na linha de tempo para configurar seus efeitos associados"
 
-#: pitivi/clipproperties.py:245
-msgid "Clip Effects"
-msgstr "Efeitos de clipe"
-
-#: pitivi/clipproperties.py:251
-msgid "Remove the selected effect"
-msgstr "Remover o efeito selecionado"
-
-#: pitivi/clipproperties.py:570
+#: pitivi/clipproperties.py:564
 msgid "Transformation"
 msgstr "Transformação"
 
-#: pitivi/clipproperties.py:665
+#: pitivi/clipproperties.py:659
 msgid "Show keyframes"
 msgstr "Mostrar quadros chave"
 
-#: pitivi/clipproperties.py:667
+#: pitivi/clipproperties.py:661
 msgid "Activate keyframes"
 msgstr "Ativar quadros chave"
 
-#: pitivi/clipproperties.py:672
+#: pitivi/clipproperties.py:666
 msgid "Hide keyframes"
 msgstr "Ocultar quadros chave"
 
-#: pitivi/editorperspective.py:200 pitivi/medialibrary.py:662
+#: pitivi/editorperspective.py:200 pitivi/medialibrary.py:658
 msgid "Media Library"
 msgstr "Biblioteca de mídia"
 
@@ -992,59 +985,64 @@ msgstr "Transição"
 msgid "Title"
 msgstr "Título"
 
-#: pitivi/editorperspective.py:305
+#: pitivi/editorperspective.py:308
 msgid "Undo"
 msgstr "Desfazer"
 
-#: pitivi/editorperspective.py:315 pitivi/editorperspective.py:520
-#: pitivi/editorperspective.py:665 pitivi/editorperspective.py:713
-#: pitivi/editorperspective.py:766 pitivi/preset.py:115 pitivi/project.py:194
+#. pylint: disable=attribute-defined-outside-init
+#: pitivi/editorperspective.py:319 pitivi/editorperspective.py:532
+#: pitivi/editorperspective.py:673 pitivi/editorperspective.py:721
+#: pitivi/editorperspective.py:774 pitivi/preset.py:114 pitivi/project.py:194
 msgid "Save"
 msgstr "Salvar"
 
-#: pitivi/editorperspective.py:323
+#: pitivi/editorperspective.py:327
 msgid "Export your project as a finished movie"
 msgstr "Exporta seu projeto como um filme finalizado"
 
-#: pitivi/editorperspective.py:354
+#: pitivi/editorperspective.py:360
 msgid "Save the current project"
 msgstr "Salvar o projeto atual"
 
-#: pitivi/editorperspective.py:361
+#: pitivi/editorperspective.py:368
 msgid "Save the current project as"
 msgstr "Salvar o projeto atual como"
 
-#: pitivi/editorperspective.py:492
+#: pitivi/editorperspective.py:388
+msgid "Quick intros to Pitivi"
+msgstr "Introduções rápidas ao Pitivi"
+
+#: pitivi/editorperspective.py:504
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "Não foi possível salvar o projeto “%s”"
 
-#: pitivi/editorperspective.py:522 pitivi/project.py:193
+#: pitivi/editorperspective.py:534 pitivi/project.py:193
 msgid "Save as..."
 msgstr "Salvar como…"
 
-#: pitivi/editorperspective.py:525
+#: pitivi/editorperspective.py:537
 msgid "Close without saving"
 msgstr "Fechar sem salvar"
 
-#: pitivi/editorperspective.py:535
+#: pitivi/editorperspective.py:547
 msgid "Save changes to the current project before closing?"
 msgstr "Salvar as alterações no projeto atual antes de fechar?"
 
-#: pitivi/editorperspective.py:544
+#: pitivi/editorperspective.py:556
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr "Se você não salvar, alterações dos últimos %s serão perdidas."
 
-#: pitivi/editorperspective.py:548
+#: pitivi/editorperspective.py:560
 msgid "If you don't save, your changes will be lost."
 msgstr "Se você não salvar, suas alterações serão perdidas."
 
-#: pitivi/editorperspective.py:596
+#: pitivi/editorperspective.py:604
 msgid "Revert to saved project version?"
 msgstr "Reverter para versão de projeto salvo?"
 
-#: pitivi/editorperspective.py:601
+#: pitivi/editorperspective.py:609
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
 "Recarrega o projeto atual. Todas as alterações não salvas serão perdidas."
@@ -1052,7 +1050,7 @@ msgstr ""
 #. Signal the project loading failure.
 #. You have to do this *after* successfully creating a blank project,
 #. or the startupwizard will still be connected to that signal too.
-#: pitivi/editorperspective.py:632
+#: pitivi/editorperspective.py:640
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -1063,218 +1061,269 @@ msgstr ""
 "\n"
 "Pitivi não possui suporte a projetos parciais no momento."
 
-#: pitivi/editorperspective.py:661
+#: pitivi/editorperspective.py:669
 msgid "Export To..."
 msgstr "Exportar para…"
 
-#: pitivi/editorperspective.py:678
+#: pitivi/editorperspective.py:686
 msgid "Tar archive"
 msgstr "Arquivo tar"
 
-#: pitivi/editorperspective.py:682 pitivi/editorperspective.py:728
+#: pitivi/editorperspective.py:690 pitivi/editorperspective.py:736
 msgid "Detect automatically"
 msgstr "Detectar automaticamente"
 
-#: pitivi/editorperspective.py:722 pitivi/editorperspective.py:769
-#: pitivi/project.py:73 pitivi/render.py:431
+#: pitivi/editorperspective.py:730 pitivi/editorperspective.py:777
+#: pitivi/project.py:72 pitivi/render.py:436
 msgid "Untitled"
 msgstr "Sem título"
 
-#: pitivi/editorperspective.py:771
+#: pitivi/editorperspective.py:779
 msgid "PNG image"
 msgstr "Imagem PNG"
 
-#: pitivi/editorperspective.py:772
+#: pitivi/editorperspective.py:780
 msgid "JPEG image"
 msgstr "Imagem JPEG"
 
-#: pitivi/editorperspective.py:813
+#: pitivi/editorperspective.py:821
 msgid "Preview"
 msgstr "Visualizar"
 
-#: pitivi/effects.py:63
+#: pitivi/effects.py:61
 msgid "Colors"
 msgstr "Cores"
 
-#: pitivi/effects.py:80
+#: pitivi/effects.py:78
 msgid "Compositing"
 msgstr "Composição"
 
-#: pitivi/effects.py:87
+#: pitivi/effects.py:85
 msgid "Noise & blur"
 msgstr "Ruído & desfocagem"
 
-#: pitivi/effects.py:93
+#: pitivi/effects.py:91
 msgid "Analysis"
 msgstr "Análise"
 
-#: pitivi/effects.py:101
+#: pitivi/effects.py:99
 msgid "Geometry"
 msgstr "Geometria"
 
-#: pitivi/effects.py:112
+#: pitivi/effects.py:110
 msgid "Fancy"
 msgstr "Decoração"
 
-#: pitivi/effects.py:124
+#: pitivi/effects.py:122
 msgid "Time"
 msgstr "Hora"
 
-#: pitivi/effects.py:241
+#: pitivi/effects.py:239
 msgid "effect"
 msgstr "efeito"
 
 #. Add Uncategorized only if there are other categories defined.
-#: pitivi/effects.py:335 pitivi/effects.py:356
+#: pitivi/effects.py:333 pitivi/effects.py:354
 msgid "Uncategorized"
 msgstr "Sem categoria"
 
-#: pitivi/effects.py:336 pitivi/effects.py:353
+#: pitivi/effects.py:334 pitivi/effects.py:351
 msgid "All effects"
 msgstr "Todos os efeitos"
 
-#: pitivi/greeterperspective.py:225 pitivi/preset.py:103
+#: pitivi/greeterperspective.py:228 pitivi/preset.py:102
 msgid "New"
 msgstr "Novo"
 
-#: pitivi/greeterperspective.py:226 pitivi/greeterperspective.py:280
+#: pitivi/greeterperspective.py:229 pitivi/greeterperspective.py:290
 msgid "Create a new project"
 msgstr "Criar um novo projeto"
 
-#: pitivi/greeterperspective.py:229
+#: pitivi/greeterperspective.py:232
 msgid "Open…"
 msgstr "Abrir…"
 
-#: pitivi/greeterperspective.py:230
+#: pitivi/greeterperspective.py:233
 msgid "Open an existing project"
 msgstr "Abre um projeto existente"
 
-#: pitivi/greeterperspective.py:235
+#: pitivi/greeterperspective.py:238
 msgid "Select projects for removal"
 msgstr "Selecionar projetos para remoção"
 
-#: pitivi/greeterperspective.py:263
+#: pitivi/greeterperspective.py:272
 msgid "Click an item to select"
 msgstr "Clique em um item para selecionar"
 
-#: pitivi/greeterperspective.py:267
+#: pitivi/greeterperspective.py:276
 msgid "Select a Project"
 msgstr "Selecionar um projeto"
 
-#: pitivi/greeterperspective.py:286
+#: pitivi/greeterperspective.py:297
 msgid "Open a project"
 msgstr "Abrir um projeto"
 
-#: pitivi/greeterperspective.py:354
+#: pitivi/greeterperspective.py:365
 #, python-format
 msgid "Pitivi %s is available."
 msgstr "Pitivi %s está disponível."
 
-#: pitivi/mainwindow.py:168
+#: pitivi/greeterperspective.py:442
+msgid ""
+"To enable additional features, please install the following packages and "
+"restart Pitivi:"
+msgstr ""
+"Para habilitar recursos adicionais, por favor instale os seguintes pacotes e "
+"reinicie Pitivi:"
+
+#. pylint: disable=attribute-defined-outside-init
+#: pitivi/interactiveintro.py:154
+msgid "Start Overview"
+msgstr "Iniciar visão geral"
+
+#: pitivi/interactiveintro.py:212
+msgid "Welcome to Pitivi!"
+msgstr "Bem-vindo ao Pitivi!"
+
+#: pitivi/interactiveintro.py:214
+msgid "Drag files here to import them"
+msgstr "Arraste arquivos aqui para importá-los"
+
+#: pitivi/interactiveintro.py:216
+msgid "Drag clips in the timeline to arrange them"
+msgstr "Arraste clipes na linha do tempo para organizá-los"
+
+#: pitivi/interactiveintro.py:218
+msgid "Right-click anywhere to move the playhead"
+msgstr ""
+"Clique com botão direito em qualquer lugar para mover o indicador de "
+"reprodução"
+
+#: pitivi/interactiveintro.py:220
+msgid "Preview with the play button"
+msgstr "Visualize com o botão de reprodução"
+
+#: pitivi/interactiveintro.py:222
+msgid "Export your project to share it"
+msgstr "Exporte seu projeto para compartilhá-lo"
+
+#: pitivi/interactiveintro.py:224
+msgid "See all the keyboard shortcuts"
+msgstr "Veja todos os atalhos de teclado"
+
+#: pitivi/mainwindow.py:74
+msgid "Dark Theme"
+msgstr "Tema escuro"
+
+#: pitivi/mainwindow.py:75
+msgid "Whether or not to use a dark theme."
+msgstr "Se deve ou não usar um tema escuro."
+
+#: pitivi/mainwindow.py:188
 msgid "Project"
 msgstr "Projeto"
 
-#: pitivi/mainwindow.py:173
+#: pitivi/mainwindow.py:195
 msgid "Help"
 msgstr "Ajuda"
 
-#: pitivi/mainwindow.py:179
+#: pitivi/mainwindow.py:202
 msgid "About"
 msgstr "Sobre"
 
-#: pitivi/mainwindow.py:185
+#: pitivi/mainwindow.py:209
 msgid "Show the menu button content"
 msgstr "Mostrar o botão do menu de conteúdo"
 
-#: pitivi/mainwindow.py:236
+#: pitivi/mainwindow.py:261
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "Não é possível carregar o projeto “%s”"
 
-#: pitivi/mediafilespreviewer.py:160
+#: pitivi/mediafilespreviewer.py:158
 msgid "Pitivi can not preview this file."
 msgstr "O Pitivi não pode pré-visualizar este arquivo."
 
-#: pitivi/mediafilespreviewer.py:161
+#: pitivi/mediafilespreviewer.py:159
 msgid "More info"
 msgstr "Mais informações"
 
-#: pitivi/mediafilespreviewer.py:271
+#: pitivi/mediafilespreviewer.py:269
 #, python-format
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Resolução</b>: %d×%d"
 
-#: pitivi/mediafilespreviewer.py:273 pitivi/mediafilespreviewer.py:290
-#: pitivi/utils/ui.py:486
+#: pitivi/mediafilespreviewer.py:271 pitivi/mediafilespreviewer.py:288
+#: pitivi/utils/ui.py:520
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Duração</b>: %s"
 
-#: pitivi/mediafilespreviewer.py:463 pitivi/medialibrary.py:1228
+#: pitivi/mediafilespreviewer.py:461 pitivi/medialibrary.py:1220
 msgid "Error while analyzing a file"
 msgid_plural "Error while analyzing files"
 msgstr[0] "Erro ao analisar um arquivo"
 msgstr[1] "Erro ao analisar arquivos"
 
-#: pitivi/medialibrary.py:129
+#: pitivi/medialibrary.py:133
 msgid "Keep dialog open"
 msgstr "Manter diálogo aberto"
 
-#: pitivi/medialibrary.py:131
+#: pitivi/medialibrary.py:135
 msgid "When importing files keep the dialog open"
 msgstr "Ao importar arquivos, manter o diálogo aberto"
 
 #. Translators: Create optimized media for unsupported files.
-#: pitivi/medialibrary.py:137
+#: pitivi/medialibrary.py:141
 msgid "Optimize:"
 msgstr "Otimizar:"
 
-#: pitivi/medialibrary.py:141
+#: pitivi/medialibrary.py:145
 msgid "Unsupported assets"
 msgstr "Ativos sem suporte"
 
-#: pitivi/medialibrary.py:142
+#: pitivi/medialibrary.py:146
 msgid "All"
 msgstr "Todos"
 
-#: pitivi/medialibrary.py:222
+#: pitivi/medialibrary.py:227
 #, python-format
 msgid "Scale assets larger than %s×%s px."
 msgstr "Dimensionar ativos maiores que %s×%s px."
 
-#: pitivi/medialibrary.py:498 pitivi/medialibrary.py:1087
+#: pitivi/medialibrary.py:506 pitivi/medialibrary.py:1079
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: pitivi/medialibrary.py:578
+#: pitivi/medialibrary.py:586
 msgid "Icon"
 msgstr "Ícone"
 
-#: pitivi/medialibrary.py:589
+#: pitivi/medialibrary.py:597
 msgid "Information"
 msgstr "Informações"
 
-#: pitivi/medialibrary.py:668
+#: pitivi/medialibrary.py:665
 msgid "Remove the selected assets"
 msgstr "Remover os recursos selecionados"
 
-#: pitivi/medialibrary.py:674
+#: pitivi/medialibrary.py:672
 msgid "Insert selected assets at the end of the timeline"
 msgstr "Inserir os recursos selecionados no final da linha de tempo"
 
-#: pitivi/medialibrary.py:862
+#: pitivi/medialibrary.py:856
 msgid "Select One or More Files"
 msgstr "Selecione um ou mais arquivos"
 
-#: pitivi/medialibrary.py:866
+#: pitivi/medialibrary.py:860
 msgid "Add"
 msgstr "Adicionar"
 
-#: pitivi/medialibrary.py:881
+#: pitivi/medialibrary.py:875
 msgid "Supported file formats"
 msgstr "Todos os formatos suportados"
 
-#: pitivi/medialibrary.py:894 pitivi/dialogs/missingasset.py:119
+#: pitivi/medialibrary.py:887 pitivi/dialogs/missingasset.py:117
 msgid "All files"
 msgstr "Todos os arquivos"
 
@@ -1284,44 +1333,44 @@ msgstr "Todos os arquivos"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals)
-#: pitivi/medialibrary.py:993
+#: pitivi/medialibrary.py:986
 #, python-format
 msgid "Transcoding %d asset: %d%% (About %s left)"
 msgid_plural "Transcoding %d assets: %d%% (About %s left)"
 msgstr[0] "Transcodificando %d ativo: %d%% (Cerca de %s restantes)"
 msgstr[1] "Transcodificando %d ativos: %d%% (Cerca de %s restantes)"
 
-#: pitivi/medialibrary.py:1099
+#: pitivi/medialibrary.py:1091
 msgid "View error"
 msgid_plural "View errors"
 msgstr[0] "Ver erro"
 msgstr[1] "Ver erros"
 
 #. Translators: {0:d} is just like %d (integer number variable)
-#: pitivi/medialibrary.py:1101
+#: pitivi/medialibrary.py:1093
 #, python-brace-format
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
 msgstr[0] "Um erro ocorreu durante a importação."
 msgstr[1] "{0:d} erros ocorreram durante a importação."
 
-#: pitivi/medialibrary.py:1117
+#: pitivi/medialibrary.py:1109
 #, python-format
 msgid "The project settings have been set to match file '%s'"
 msgstr ""
 "As configurações do projeto foram definidas para corresponder ao arquivo “%s”"
 
-#: pitivi/medialibrary.py:1231
+#: pitivi/medialibrary.py:1223
 msgid "The following file can not be used with Pitivi."
 msgid_plural "The following files can not be used with Pitivi."
 msgstr[0] "O seguinte arquivo não pode ser usado com o Pitivi."
 msgstr[1] "Os seguintes arquivos não podem ser usados com o Pitivi."
 
-#: pitivi/medialibrary.py:1356
+#: pitivi/medialibrary.py:1349
 msgid "Open containing folder"
 msgstr "Abrir pasta contendo"
 
-#: pitivi/medialibrary.py:1363
+#: pitivi/medialibrary.py:1356
 msgid "Edit"
 msgstr "Editar"
 
@@ -1356,17 +1405,17 @@ msgid_plural "Use Optimised Proxies for selected assets"
 msgstr[0] "Usar Intermediário Otimizado para o ativo selecionado"
 msgstr[1] "Usar Intermediários Otimizados para os ativos selecionados"
 
-#: pitivi/medialibrary.py:1460
+#: pitivi/medialibrary.py:1461
 msgid "Use Scaled Proxy for selected asset"
 msgid_plural "Use Scaled Proxies for selected assets"
 msgstr[0] "Usar Intermediário Otimizado para o ativo selecionado"
 msgstr[1] "Usar Intermediários Otimizados para os ativos selecionados"
 
-#: pitivi/pluginmanager.py:55
+#: pitivi/pluginmanager.py:54
 msgid "User plugins"
 msgstr "Plugins do usuário"
 
-#: pitivi/pluginmanager.py:57
+#: pitivi/pluginmanager.py:56
 msgid "System plugins"
 msgstr "Plugins do sistema"
 
@@ -1392,7 +1441,7 @@ msgstr "novo-perfil-%d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:177 pitivi/render.py:898
+#: pitivi/project.py:177 pitivi/render.py:875
 msgid "Sorry, something didn’t work right."
 msgstr "Desculpe, algo não funcionou direito."
 
@@ -1457,16 +1506,16 @@ msgstr ""
 "\n"
 "Você gostaria de carregá-la?"
 
-#: pitivi/project.py:380
+#: pitivi/project.py:377
 msgid "You do not have permissions to write to this folder."
 msgstr "Você não possui permissão para escrever nessa pasta."
 
 #. Save the project to a temporary file.
-#: pitivi/project.py:413
+#: pitivi/project.py:410
 msgid "project"
 msgstr "projeto"
 
-#: pitivi/project.py:719
+#: pitivi/project.py:707
 msgid "Pitivi encoding profile"
 msgstr "Perfil de codificação do Pitivi"
 
@@ -1486,22 +1535,22 @@ msgstr "Renderização — %d%% completa"
 msgid "About %s left"
 msgstr "Cerca de %s restantes"
 
-#: pitivi/render.py:394
+#: pitivi/render.py:395
 msgid "Currently rendering"
 msgstr "Renderizando no momento"
 
 #. Translators: This item appears in a combobox's popup and
 #. contains as children the unsupported (but still available)
 #. muxers and encoders.
-#: pitivi/render.py:663
+#: pitivi/render.py:632
 msgid "Unsupported"
 msgstr "Sem suporte"
 
-#: pitivi/render.py:722
+#: pitivi/render.py:700
 msgid "A file name is required."
 msgstr "É necessário um nome de arquivo."
 
-#: pitivi/render.py:725
+#: pitivi/render.py:703
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1510,23 +1559,23 @@ msgstr ""
 "Se você não deseja sobrescrevê-lo, selecione um nome de arquivo ou pasta "
 "diferente."
 
-#: pitivi/render.py:729
+#: pitivi/render.py:707
 #, python-format
 msgid "Remove invalid characters from the filename: %s"
 msgstr "Remova caracteres inválidos do nome do arquivo: %s"
 
-#: pitivi/render.py:760
+#: pitivi/render.py:738
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: pitivi/render.py:765
+#: pitivi/render.py:743
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: pitivi/render.py:892
+#: pitivi/render.py:869
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
@@ -1536,11 +1585,11 @@ msgstr ""
 "contrário o x264enc pode não ser capaz de renderizar.</b>\n"
 "\n"
 
-#: pitivi/render.py:899
+#: pitivi/render.py:877
 msgid "An error occurred while trying to render your project."
 msgstr "Ocorreu um erro ao tentar renderizar seu projeto."
 
-#: pitivi/render.py:901
+#: pitivi/render.py:879
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1548,20 +1597,20 @@ msgstr ""
 "Você pode querer verificar o nosso guia de solução de problemas ou enviar um "
 "relatório de erro. O erro GStreamer foi:"
 
-#: pitivi/render.py:1138 pitivi/render.py:1139 pitivi/render.py:1145
+#: pitivi/render.py:1123 pitivi/render.py:1124 pitivi/render.py:1130
 msgid "Render complete"
 msgstr "Renderização completa"
 
-#: pitivi/render.py:1143
+#: pitivi/render.py:1128
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "A renderização de “%s” foi finalizada."
 
-#: pitivi/titleeditor.py:45
+#: pitivi/titleeditor.py:43
 msgid "Title clip duration"
 msgstr "Duração do clipe de título"
 
-#: pitivi/titleeditor.py:47
+#: pitivi/titleeditor.py:45
 msgid ""
 "Default clip length (in milliseconds) of titles when inserting on the "
 "timeline."
@@ -1569,47 +1618,47 @@ msgstr ""
 "Comprimento padrão do clipe (em milissegundos) de títulos quando inserida na "
 "linha de tempo."
 
-#: pitivi/titleeditor.py:117 pitivi/titleeditor.py:124
+#: pitivi/titleeditor.py:114 pitivi/titleeditor.py:121
 msgid "Absolute"
 msgstr "Absoluto"
 
-#: pitivi/titleeditor.py:118
+#: pitivi/titleeditor.py:115
 msgid "Top"
 msgstr "Cima"
 
-#: pitivi/titleeditor.py:119 pitivi/titleeditor.py:126
+#: pitivi/titleeditor.py:116 pitivi/titleeditor.py:123
 msgid "Center"
 msgstr "Centro"
 
-#: pitivi/titleeditor.py:120
+#: pitivi/titleeditor.py:117
 msgid "Bottom"
 msgstr "Baixo"
 
-#: pitivi/titleeditor.py:121
+#: pitivi/titleeditor.py:118
 msgid "Baseline"
 msgstr "Linha de base"
 
-#: pitivi/titleeditor.py:125
+#: pitivi/titleeditor.py:122
 msgid "Left"
 msgstr "Esquerda"
 
-#: pitivi/titleeditor.py:127
+#: pitivi/titleeditor.py:124
 msgid "Right"
 msgstr "Direita"
 
-#: pitivi/transitions.py:84
+#: pitivi/transitions.py:82
 msgid "Normal"
 msgstr "Normal"
 
-#: pitivi/transitions.py:89
+#: pitivi/transitions.py:87
 msgid "Loop"
 msgstr "Loop"
 
-#: pitivi/transitions.py:96
+#: pitivi/transitions.py:94
 msgid "Reverse direction"
 msgstr "Reverter direção"
 
-#: pitivi/transitions.py:109
+#: pitivi/transitions.py:107
 msgid ""
 "Create a transition by overlapping two adjacent clips on the same layer. "
 "Click the transition on the timeline to change the transition type."
@@ -1617,47 +1666,47 @@ msgstr ""
 "Crie uma transição sobrepondo dois clipes adjacentes na mesma camada. Clique "
 "na transição na linha de tempo para modificar o tipo de transição."
 
-#: pitivi/transitions.py:234
+#: pitivi/transitions.py:232
 msgid "Slow"
 msgstr "Lenta"
 
-#: pitivi/transitions.py:236
+#: pitivi/transitions.py:234
 msgid "Fast"
 msgstr "Rápida"
 
-#: pitivi/transitions.py:238
+#: pitivi/transitions.py:236
 msgid "Epileptic"
 msgstr "Epilética"
 
-#: pitivi/transitions.py:242
+#: pitivi/transitions.py:240
 msgid "Sharp"
 msgstr "Aguda"
 
-#: pitivi/transitions.py:244
+#: pitivi/transitions.py:242
 msgid "Smooth"
 msgstr "Suave"
 
-#: pitivi/viewer/viewer.py:76
+#: pitivi/viewer/viewer.py:74
 msgid "Currently playing"
 msgstr "Atualmente reproduzindo"
 
-#: pitivi/viewer/viewer.py:255
+#: pitivi/viewer/viewer.py:250
 msgid "Go to the beginning of the timeline"
 msgstr "Ir para o início da linha de tempo"
 
-#: pitivi/viewer/viewer.py:264
+#: pitivi/viewer/viewer.py:259
 msgid "Go back one second"
 msgstr "Voltar um segundo"
 
-#: pitivi/viewer/viewer.py:277
+#: pitivi/viewer/viewer.py:272
 msgid "Go forward one second"
 msgstr "Avançar um segundo"
 
-#: pitivi/viewer/viewer.py:286
+#: pitivi/viewer/viewer.py:281
 msgid "Go to the end of the timeline"
 msgstr "Ir para o fim da linha de tempo"
 
-#: pitivi/viewer/viewer.py:293
+#: pitivi/viewer/viewer.py:288
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1665,7 +1714,7 @@ msgstr ""
 "Digite um número de faixa ou código de tempo\n"
 "e pressione “Enter” para ir àquela posição"
 
-#: pitivi/viewer/viewer.py:304
+#: pitivi/viewer/viewer.py:299
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1673,18 +1722,18 @@ msgstr ""
 "Desanexa o visualizador\n"
 "Você pode reanexá-la fechando a janela recém-criada."
 
-#: pitivi/viewer/viewer.py:448 pitivi/viewer/viewer.py:506
+#: pitivi/viewer/viewer.py:440 pitivi/viewer/viewer.py:498
 msgid "Show this window in fullscreen"
 msgstr "Mostra esta janela em tela cheia"
 
-#: pitivi/viewer/viewer.py:503
+#: pitivi/viewer/viewer.py:495
 msgid "Exit fullscreen mode"
 msgstr "Sair do modo de tela cheia"
 
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:415
+#: pitivi/timeline/elements.py:416
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1695,50 +1744,50 @@ msgstr ""
 "Marca de tempo: %s\n"
 "Valor: %s"
 
-#: pitivi/timeline/elements.py:590
+#: pitivi/timeline/elements.py:591
 #, python-format
 msgid "Timestamp: %s"
 msgstr "Timestamp: %s"
 
-#: pitivi/timeline/elements.py:1449
+#: pitivi/timeline/elements.py:1460
 msgid "Audio crossfade"
 msgstr "Fade cruzado de áudio"
 
-#: pitivi/timeline/layer.py:168
+#: pitivi/timeline/layer.py:166
 msgid "Move layer to top"
 msgstr "Mover camada para o topo"
 
-#: pitivi/timeline/layer.py:174
+#: pitivi/timeline/layer.py:172
 msgid "Move layer up"
 msgstr "Mover camada para cima"
 
-#: pitivi/timeline/layer.py:180
+#: pitivi/timeline/layer.py:178
 msgid "Move layer down"
 msgstr "Mover camada para baixo"
 
-#: pitivi/timeline/layer.py:186
+#: pitivi/timeline/layer.py:184
 msgid "Move layer to bottom"
 msgstr "Mover camada para o fundo"
 
-#: pitivi/timeline/layer.py:192
+#: pitivi/timeline/layer.py:190
 msgid "Delete layer"
 msgstr "Excluir camada"
 
-#: pitivi/timeline/layer.py:284
+#: pitivi/timeline/layer.py:282
 #, python-format
 msgid "Layer %d"
 msgstr "Camada %d"
 
-#: pitivi/timeline/ruler.py:255
+#: pitivi/timeline/ruler.py:253
 #, python-format
 msgid "Frame #%d"
 msgstr "Quadro nº %d"
 
-#: pitivi/timeline/timeline.py:81
+#: pitivi/timeline/timeline.py:80
 msgid "Snap distance"
 msgstr "Distância de encaixe"
 
-#: pitivi/timeline/timeline.py:82
+#: pitivi/timeline/timeline.py:81
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1746,11 +1795,11 @@ msgstr ""
 "Limiar (em pixels) com que dois clipes serão encaixados ao arrastar ou "
 "aparar."
 
-#: pitivi/timeline/timeline.py:94
+#: pitivi/timeline/timeline.py:93
 msgid "Image clip duration"
 msgstr "Duração do clipe de imagem"
 
-#: pitivi/timeline/timeline.py:96
+#: pitivi/timeline/timeline.py:95
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
@@ -1758,128 +1807,132 @@ msgstr ""
 "Comprimento padrão do clipe (em milissegundos) de uma imagem quando inserida "
 "na linha de tempo."
 
-#: pitivi/timeline/timeline.py:107
+#: pitivi/timeline/timeline.py:106
 msgid "Left click also seeks"
 msgstr "Clique com botão esquerdo também busca"
 
-#: pitivi/timeline/timeline.py:109
+#: pitivi/timeline/timeline.py:108
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
 "Se clique com botão esquerdo do mouse também busca, além de selecionar e "
 "editar clipes."
 
-#: pitivi/timeline/timeline.py:332 pitivi/timeline/timeline.py:1699
+#: pitivi/timeline/timeline.py:337 pitivi/timeline/timeline.py:1708
 msgid "Add layer"
 msgstr "Adicionar camada"
 
-#: pitivi/timeline/timeline.py:1656 pitivi/dialogs/prefs.py:61
+#: pitivi/timeline/timeline.py:1651 pitivi/dialogs/prefs.py:60
 msgid "Timeline"
 msgstr "Linha de tempo"
 
-#: pitivi/timeline/timeline.py:1663
+#: pitivi/timeline/timeline.py:1658
+msgid "Action Search"
+msgstr "Pesquisar ação"
+
+#: pitivi/timeline/timeline.py:1666
 msgid "Delete selected clips"
 msgstr "Excluir selecionados"
 
-#: pitivi/timeline/timeline.py:1669
+#: pitivi/timeline/timeline.py:1673
 msgid "Delete selected clips and shift following ones"
 msgstr "Exclui os clipes selecionados e mude os seguintes"
 
-#: pitivi/timeline/timeline.py:1675
+#: pitivi/timeline/timeline.py:1680
 msgid "Group selected clips together"
 msgstr "Agrupar clipes selecionados em conjunto"
 
-#: pitivi/timeline/timeline.py:1681
+#: pitivi/timeline/timeline.py:1687
 msgid "Ungroup selected clips"
 msgstr "Desagrupar clipes selecionados"
 
-#: pitivi/timeline/timeline.py:1687
+#: pitivi/timeline/timeline.py:1694
 msgid "Copy selected clips"
 msgstr "Copiar clipes selecionados"
 
-#: pitivi/timeline/timeline.py:1693
+#: pitivi/timeline/timeline.py:1701
 msgid "Paste selected clips"
 msgstr "Colar clipes selecionados"
 
-#: pitivi/timeline/timeline.py:1705
+#: pitivi/timeline/timeline.py:1715
 msgid "Seeks to the first clip edge after the playhead."
-msgstr "Procura o limite do primeiro clipe após a reprodução."
+msgstr "Procura o limite do primeiro clipe após o indicador de reprodução."
 
-#: pitivi/timeline/timeline.py:1711
+#: pitivi/timeline/timeline.py:1722
 msgid "Seeks to the first clip edge before the playhead."
-msgstr "Procura o limite do primeiro clipe antes da reprodução."
+msgstr "Procura o limite do primeiro clipe antes do indicador de reprodução."
 
-#: pitivi/timeline/timeline.py:1724
+#: pitivi/timeline/timeline.py:1735
 msgid "Split the clip at the position"
 msgstr "Dividir clipes na posição indicada"
 
-#: pitivi/timeline/timeline.py:1730
+#: pitivi/timeline/timeline.py:1742
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr ""
 "Adicionar quadro-chave para a curva de quadro-chave do clipe selecionado"
 
-#: pitivi/timeline/timeline.py:1735
+#: pitivi/timeline/timeline.py:1747
 msgid "Timeline Navigation"
 msgstr "Navegação pela linha do tempo"
 
-#: pitivi/timeline/timeline.py:1742
+#: pitivi/timeline/timeline.py:1755
 msgid "Zoom in"
 msgstr "Ampliar"
 
-#: pitivi/timeline/timeline.py:1748
+#: pitivi/timeline/timeline.py:1763
 msgid "Zoom out"
 msgstr "Reduzir"
 
-#: pitivi/timeline/timeline.py:1754
+#: pitivi/timeline/timeline.py:1771
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Ajustar o zoom para caber o projeto na janela"
 
-#: pitivi/timeline/timeline.py:1765
+#: pitivi/timeline/timeline.py:1784
 msgid "Seek backward one frame"
 msgstr "Buscar para trás um quadro"
 
-#: pitivi/timeline/timeline.py:1771
+#: pitivi/timeline/timeline.py:1791
 msgid "Seek forward one frame"
 msgstr "Buscar para frente um quadro"
 
-#: pitivi/timeline/timeline.py:1778
+#: pitivi/timeline/timeline.py:1799
 msgid "Seek backward one second"
 msgstr "Buscar para trás um segundo"
 
-#: pitivi/timeline/timeline.py:1785
+#: pitivi/timeline/timeline.py:1807
 msgid "Seek forward one second"
 msgstr "Buscar para frente um segundo"
 
-#: pitivi/dialogs/about.py:49
+#: pitivi/dialogs/about.py:47
 #, python-format
 msgid "Development version: %s"
 msgstr "Versão de desenvolvimento: %s"
 
-#: pitivi/dialogs/about.py:51
+#: pitivi/dialogs/about.py:49
 #, python-format
 msgid "Version %(cur_ver)s — %(new_ver)s is available"
 msgstr "Versão %(cur_ver)s — %(new_ver)s está disponível"
 
-#: pitivi/dialogs/about.py:55 pitivi/dialogs/about.py:57
+#: pitivi/dialogs/about.py:53 pitivi/dialogs/about.py:55
 #, python-format
 msgid "Version %s"
 msgstr "Versão %s"
 
-#: pitivi/dialogs/about.py:66
+#: pitivi/dialogs/about.py:64
 msgid "Current maintainers:"
 msgstr "Mantenedores atuais:"
 
-#: pitivi/dialogs/about.py:71
+#: pitivi/dialogs/about.py:69
 msgid "Past maintainers:"
 msgstr "Mantenedores antigos:"
 
-#: pitivi/dialogs/about.py:77
+#: pitivi/dialogs/about.py:75
 msgid "Contributors:"
 msgstr "Contribuidores:"
 
 #. Translators: See
 #. https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
 #. for details on how this is used.
-#: pitivi/dialogs/about.py:84
+#: pitivi/dialogs/about.py:82
 msgid "translator-credits"
 msgstr ""
 "Raphael Higino <In memoriam>, 2006.\n"
@@ -1894,16 +1947,15 @@ msgstr ""
 "Enrico Nicoletto <liverig@gmail.com>, 2013-2014, 2017-2018.\n"
 "Rafael Fontenelle <rafaelff@gnome.org>, 2016-2019."
 
-#: pitivi/dialogs/browseprojects.py:36
-#| msgid "Open a project"
+#: pitivi/dialogs/browseprojects.py:34
 msgid "Open Project…"
 msgstr "Abrir projeto…"
 
-#: pitivi/dialogs/browseprojects.py:41 pitivi/dialogs/missingasset.py:49
+#: pitivi/dialogs/browseprojects.py:39 pitivi/dialogs/missingasset.py:47
 msgid "Open"
 msgstr "Abrir"
 
-#: pitivi/dialogs/browseprojects.py:57
+#: pitivi/dialogs/browseprojects.py:55
 msgid "All supported formats"
 msgstr "Todos os formatos suportados"
 
@@ -1915,53 +1967,57 @@ msgstr "Variável"
 msgid "Image:"
 msgstr "Imagem:"
 
-#: pitivi/dialogs/filelisterrordialog.py:54
+#: pitivi/dialogs/filelisterrordialog.py:52
 msgid "Unknown reason"
 msgstr "Razão desconhecida"
 
-#: pitivi/dialogs/filelisterrordialog.py:86
+#: pitivi/dialogs/filelisterrordialog.py:85
 msgid "Problem:"
 msgstr "Problema:"
 
-#: pitivi/dialogs/filelisterrordialog.py:94
+#: pitivi/dialogs/filelisterrordialog.py:93
 msgid "Extra information:"
 msgstr "Informações extras:"
 
-#: pitivi/dialogs/missingasset.py:46
+#: pitivi/dialogs/missingasset.py:44
 msgid "Locate missing file..."
 msgstr "Localizar o arquivo que falta…"
 
-#: pitivi/dialogs/missingasset.py:60
+#: pitivi/dialogs/missingasset.py:58
 msgid "The following file could not be found:"
 msgstr "O seguinte arquivo não pode ser localizado:"
 
-#: pitivi/dialogs/missingasset.py:84
+#: pitivi/dialogs/missingasset.py:82
 msgid "Please specify its new location:"
 msgstr "Por favor, especifique seu novo local:"
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI files"
-#: pitivi/dialogs/missingasset.py:115
+#: pitivi/dialogs/missingasset.py:113
 #, python-format
 msgid "%s files"
 msgstr "Arquivos %s"
 
-#: pitivi/dialogs/prefs.py:62
+#: pitivi/dialogs/prefs.py:61
 msgid "Plugins"
 msgstr "Plugins"
 
-#: pitivi/dialogs/prefs.py:63
+#: pitivi/dialogs/prefs.py:62
 msgid "Shortcuts"
 msgstr "Atalhos"
 
-#: pitivi/dialogs/prefs.py:64
+#: pitivi/dialogs/prefs.py:63
 msgid "Proxies"
 msgstr "Intermediários"
 
-#: pitivi/dialogs/prefs.py:288 pitivi/utils/widgets.py:984
+#: pitivi/dialogs/prefs.py:64
+msgid "Other"
+msgstr "Outro"
+
+#: pitivi/dialogs/prefs.py:285 pitivi/utils/widgets.py:978
 msgid "Reset to default value"
 msgstr "Restaurar o valor padrão"
 
-#: pitivi/dialogs/prefs.py:334
+#: pitivi/dialogs/prefs.py:331
 msgid ""
 "This resolution will be used as the default target resolution for new "
 "projects and projects missing scaled proxy meta-data."
@@ -1969,37 +2025,37 @@ msgstr ""
 "Esta resolução será usada como a resolução alvo padrão para novos projetos e "
 "projetos que carecem de metadados de intermediário dimensionado."
 
-#: pitivi/dialogs/prefs.py:347
+#: pitivi/dialogs/prefs.py:344
 msgid "Initial proxy size for new projects"
 msgstr "Tamanho de intermediário inicial para novos projetos"
 
-#: pitivi/dialogs/prefs.py:382
+#: pitivi/dialogs/prefs.py:379
 #, python-format
 msgid "Proxy resolution for the current project is %d×%d px"
 msgstr "Resolução intermediário para o projeto atual é %d×%d px"
 
-#: pitivi/dialogs/prefs.py:461
+#: pitivi/dialogs/prefs.py:458
 msgid "Reset the shortcut to the default accelerator"
 msgstr "Restaura o atalho de teclado para o acelerador padrão"
 
-#: pitivi/dialogs/prefs.py:614
+#: pitivi/dialogs/prefs.py:615
 msgid "Set Shortcut"
 msgstr "Definir atalho de teclado"
 
 #. Setup the widgets used in the dialog.
-#: pitivi/dialogs/prefs.py:629
+#: pitivi/dialogs/prefs.py:630
 msgid "Apply"
 msgstr "Aplicar"
 
-#: pitivi/dialogs/prefs.py:632
+#: pitivi/dialogs/prefs.py:633
 msgid "Apply the accelerator to this shortcut."
 msgstr "Aplica o acelerador para esse atalho de teclado."
 
-#: pitivi/dialogs/prefs.py:635
+#: pitivi/dialogs/prefs.py:636
 msgid "Replace"
 msgstr "Substituir"
 
-#: pitivi/dialogs/prefs.py:638
+#: pitivi/dialogs/prefs.py:639
 msgid ""
 "Remove this accelerator from where it was used previously and set it for "
 "this shortcut."
@@ -2007,14 +2063,14 @@ msgstr ""
 "Remove esses acelerador de onde ele era usado previamente e define-o para "
 "esse atalho."
 
-#: pitivi/dialogs/prefs.py:645
+#: pitivi/dialogs/prefs.py:646
 #, python-format
 msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
 msgstr ""
 "Digite um novo atalho de teclado para <b>%s</b> ou pressione Esc para "
 "cancelar."
 
-#: pitivi/dialogs/prefs.py:654
+#: pitivi/dialogs/prefs.py:655
 msgid ""
 "The accelerator you are trying to set might interfere with typing. Try using "
 "Control, Shift or Alt with some other key, please."
@@ -2022,7 +2078,7 @@ msgstr ""
 "O acelerador que você está tentando definir pode interferir com a digitação. "
 "Por favor, tente usar Control, Shift ou Alt com algumas outras teclas."
 
-#: pitivi/dialogs/prefs.py:688
+#: pitivi/dialogs/prefs.py:689
 #, python-format
 msgid ""
 "This key combination is already used by <b>%s</b>. Press Replace to use it "
@@ -2031,22 +2087,22 @@ msgstr ""
 "Essa combinação de teclas já está sendo usada por <b>%s</b>. Pressione "
 "Substituir para usá-la para <b>%s</b>."
 
-#: pitivi/dialogs/prefs.py:731
+#: pitivi/dialogs/prefs.py:733
 msgid "No description available."
 msgstr "Nenhuma descrição disponível."
 
-#: pitivi/dialogs/prefs.py:842
+#: pitivi/dialogs/prefs.py:844
 #, python-brace-format
 msgid "Unable to load the plugin '{module_name}'"
 msgstr "Não foi possível carregar o plugin “{module_name}”"
 
 #. We could use Gtk.ListBox.set_placeholder, but it
 #. appears bad inside the list widget.
-#: pitivi/dialogs/prefs.py:926
+#: pitivi/dialogs/prefs.py:928
 msgid "No plugins available"
 msgstr "Nenhum plugin disponível"
 
-#: pitivi/dialogs/prefs.py:939
+#: pitivi/dialogs/prefs.py:941
 #, python-brace-format
 msgid ""
 "You can create <a href='{doc_url}'>plugins</a> into your <a "
@@ -2055,7 +2111,7 @@ msgstr ""
 "Você pode criar <a href='{doc_url}'>plugins</a> em seu <a "
 "href='{dir_url}'>diretório de plugins</a>."
 
-#: pitivi/utils/misc.py:286
+#: pitivi/utils/misc.py:268
 msgid ""
 "Failed to open the user manual. Make sure to have either the `yelp` GNOME  "
 "documentation viewer or a web browser installed"
@@ -2063,7 +2119,7 @@ msgstr ""
 "Falha ao abrir o manual do usuário. Certifique-se de ter o `yelp` — o "
 "visualizador de documentação do GNOME — ou um navegador web instalado"
 
-#: pitivi/utils/misc.py:295
+#: pitivi/utils/misc.py:277
 msgid ""
 "The system's locale that you are using is not UTF-8 capable. Unicode support "
 "is required for Python3 software like Pitivi. Please correct your system "
@@ -2075,225 +2131,237 @@ msgstr ""
 "Pitivi. Por favor, corrija as suas configurações de sistema; se você tentar "
 "usar Pitivi com uma localização quebrada, erros estranhos vão acontecer."
 
-#: pitivi/utils/misc.py:305
+#: pitivi/utils/misc.py:287
 msgid "Error while decoding a string"
 msgstr "Erro ao decodificar uma mensagem"
 
-#: pitivi/utils/proxy.py:61
+#: pitivi/utils/proxy.py:59
 msgid "Max number of parallel transcoding jobs"
 msgstr "Número máximo de tarefas de transcodificação paralela"
 
-#: pitivi/utils/proxy.py:72
+#: pitivi/utils/proxy.py:70
 msgid "Max CPU usage dedicated to transcoding"
 msgstr "Uso máximo de CPU dedicada a transcodificação"
 
 #. Translators: 'fps' is for 'frames per second'
-#: pitivi/utils/ui.py:303
+#: pitivi/utils/ui.py:336
 msgid "{0:s} fps"
 msgstr "{0:s} fps"
 
-#: pitivi/utils/ui.py:323
+#: pitivi/utils/ui.py:356
 #, python-brace-format
 msgid "{0:n} kHz"
 msgstr "{0:n} kHz"
 
-#: pitivi/utils/ui.py:332
+#: pitivi/utils/ui.py:365
 msgid "Mono"
 msgstr "Mono"
 
-#: pitivi/utils/ui.py:333
+#: pitivi/utils/ui.py:366
 msgid "Stereo"
 msgstr "Estéreo"
 
-#: pitivi/utils/ui.py:334
+#: pitivi/utils/ui.py:367
 msgid "6 (5.1)"
 msgstr "6 (5.1)"
 
-#: pitivi/utils/ui.py:335
+#: pitivi/utils/ui.py:368
 msgid "8 (7.1)"
 msgstr "8 (7.1)"
 
-#: pitivi/utils/ui.py:466
+#: pitivi/utils/ui.py:499
 #, python-format
 msgid "<b>Duration:</b> %s"
 msgstr "<b>Duração:</b> %s"
 
-#: pitivi/utils/ui.py:469
+#: pitivi/utils/ui.py:502
 #, python-format
 msgid "<b>Proxy creation progress:</b> %d%%"
 msgstr "<b>Progresso de criação de intermediários:</b> %d%%"
 
-#: pitivi/utils/ui.py:482
+#: pitivi/utils/ui.py:516
 #, python-format
 msgid "<b>Path</b>: %s"
 msgstr "<b>Caminho</b>: %s"
 
-#: pitivi/utils/ui.py:491
+#: pitivi/utils/ui.py:526
 #, python-format
 msgid "<b>Size</b>: %s"
 msgstr "<b>Tamanho</b>: %s"
 
-#: pitivi/utils/ui.py:526
+#: pitivi/utils/ui.py:562
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[0] "<b>Áudio:</b> %d canal a %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[1] "<b>Áudio:</b> %d canais a %d <i>Hz</i> (%d <i>bits</i>)"
 
-#: pitivi/utils/ui.py:538
+#: pitivi/utils/ui.py:574
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
 msgstr "<b>Vídeo:</b> %d×%d <i>pixels</i> a %s <i>quadros/seg</i>"
 
-#: pitivi/utils/ui.py:541
+#: pitivi/utils/ui.py:577
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>Imagem:</b> %d×%d <i>pixels</i>"
 
-#: pitivi/utils/ui.py:595 pitivi/utils/ui.py:622 pitivi/utils/ui.py:646
+#: pitivi/utils/ui.py:631 pitivi/utils/ui.py:658 pitivi/utils/ui.py:682
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d hora"
 msgstr[1] "%d horas"
 
-#: pitivi/utils/ui.py:598 pitivi/utils/ui.py:625 pitivi/utils/ui.py:649
+#: pitivi/utils/ui.py:634 pitivi/utils/ui.py:661 pitivi/utils/ui.py:685
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minuto"
 msgstr[1] "%d minutos"
 
-#: pitivi/utils/ui.py:601 pitivi/utils/ui.py:628 pitivi/utils/ui.py:652
+#: pitivi/utils/ui.py:637 pitivi/utils/ui.py:664 pitivi/utils/ui.py:688
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d segundo"
 msgstr[1] "%d segundos"
 
-#: pitivi/utils/ui.py:620
+#: pitivi/utils/ui.py:656
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d dia"
 msgstr[1] "%d dias"
 
-#: pitivi/utils/ui.py:661
+#: pitivi/utils/ui.py:697
 msgid "Just now"
 msgstr "Agora"
 
-#: pitivi/utils/ui.py:664
+#: pitivi/utils/ui.py:700
 msgid "An hour ago"
 msgstr "Uma hora atrás"
 
-#: pitivi/utils/ui.py:667
+#: pitivi/utils/ui.py:703
 msgid "Today"
 msgstr "Hoje"
 
-#: pitivi/utils/ui.py:670
+#: pitivi/utils/ui.py:706
 msgid "Yesterday"
 msgstr "Ontem"
 
-#: pitivi/utils/ui.py:679
+#: pitivi/utils/ui.py:715
 msgid "About a year ago"
 msgstr "Cerca de um ano atrás"
 
-#: pitivi/utils/ui.py:682
+#: pitivi/utils/ui.py:718
 #, python-format
 msgid "About %d year ago"
 msgid_plural "About %d years ago"
 msgstr[0] "Cerca de %d ano atrás"
 msgstr[1] "Cerca de %d anos atrás"
 
-#: pitivi/utils/widgets.py:76
+#: pitivi/utils/widgets.py:74
 msgid "Implement Me"
 msgstr "Implemente-me"
 
-#: pitivi/utils/widgets.py:811
+#: pitivi/utils/widgets.py:803
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: pitivi/utils/widgets.py:844
+#: pitivi/utils/widgets.py:838
 msgid "No properties."
 msgstr "Nenhuma propriedade."
 
 #. Avoid the ugly selection outline
-#: pitivi/utils/widgets.py:969
+#: pitivi/utils/widgets.py:963
 msgid "Show keyframes for this value"
 msgstr "Mostrar quadros chave para este valor"
 
-#: pitivi/utils/widgets.py:1152
+#: pitivi/utils/widgets.py:1147
 #, python-format
 msgid "Properties for %s"
 msgstr "Propriedades de %s"
 
-#: pitivi/utils/widgets.py:1233
+#: pitivi/utils/widgets.py:1229
 msgid "Zoom Fit"
 msgstr "Ajuste de zoom"
 
-#: pitivi/utils/widgets.py:1238
+#: pitivi/utils/widgets.py:1234
 msgid "Zoom"
 msgstr "Ampliação"
 
 # Analisar se seria caso de se utilizar formas de plural aqui. Caso sim, relatar no BGO.
 #. Translators: %s represents a duration, for example "10 minutes"
-#: pitivi/utils/widgets.py:1314
+#: pitivi/utils/widgets.py:1310
 #, python-format
 msgid "%s displayed"
 msgstr "%s exibidos"
 
-#: pitivi/utils/widgets.py:1318
+#: pitivi/utils/widgets.py:1314
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "%d nanossegundos exibidos porque nós podemos"
 
-#: plugins/console/console.py:125
+#: plugins/console/console.py:123
 msgid "Console"
 msgstr "Console"
 
-#: plugins/console/console.py:127
+#: plugins/console/console.py:125
 msgid "Color"
 msgstr "Cor"
 
 #. Translators: The color of the content from stderr.
-#: plugins/console/console.py:132
+#: plugins/console/console.py:130
 msgid "Standard error color"
 msgstr "Cor de erro padrão"
 
 #. Translators: The color of the content from stdout.
-#: plugins/console/console.py:137
+#: plugins/console/console.py:135
 msgid "Standard output color"
 msgstr "Cor de saída padrão"
 
-#: plugins/console/console.py:141
+#: plugins/console/console.py:139
 msgid "Font"
 msgstr "Fonte"
 
-#: plugins/console/console.py:148 plugins/console/console.py:166
+#: plugins/console/console.py:146 plugins/console/console.py:164
 msgid "Developer Console"
 msgstr "Console de desenvolvimento"
 
-#: plugins/console/console.py:190
+#: plugins/console/console.py:188
 msgid "Pitivi Console"
 msgstr "Console do Pitivi"
 
-#: plugins/console/console.py:201
+#: plugins/console/console.py:199
 msgid "You can use the following shortcuts:"
 msgstr "Você pode usar os seguintes atalhos:"
 
-#: plugins/console/console.py:206
+#: plugins/console/console.py:204
 #, python-brace-format
 msgid "Type \"{help}(<command>)\" for more information."
 msgstr "Digite \"{help}(<comando>)\" para mais informações."
 
-#: plugins/console/utils.py:84
+#: plugins/console/utils.py:81
 #, python-brace-format
 msgid ""
 "Not possible to override {key}, because shortcuts commands are read-only."
 msgstr ""
 "Não foi possível se sobrepor a {key}, porque comandos de atalhos são somente "
 "leitura."
+
+#~ msgid "Missing Dependencies"
+#~ msgstr "Dependências faltantes"
+
+#~ msgid "Install"
+#~ msgstr "Instalar"
+
+#~ msgid "Clip Effects"
+#~ msgstr "Efeitos de clipe"
+
+#~ msgid "Remove the selected effect"
+#~ msgstr "Remover o efeito selecionado"
 
 #~ msgid "Open File..."
 #~ msgstr "Abrir arquivo…"
@@ -2409,9 +2477,6 @@ msgstr ""
 
 #~ msgid "Browse projects..."
 #~ msgstr "Procurar projetos…"
-
-#~ msgid "Keyboard shortcuts"
-#~ msgstr "Atalhos de teclado"
 
 #~ msgid "Missing dependencies..."
 #~ msgstr "Dependências faltantes…"
@@ -2565,9 +2630,6 @@ msgstr ""
 
 #~ msgid "timeline"
 #~ msgstr "linha de tempo"
-
-#~ msgid "Section"
-#~ msgstr "Seção"
 
 #~ msgid "Behavior"
 #~ msgstr "Comportamento"
