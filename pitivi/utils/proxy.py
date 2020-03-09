@@ -723,18 +723,20 @@ class ProxyManager(GObject.Object, Loggable):
                 self.emit("proxy-ready", asset, None)
                 return
 
-        proxy_uri = self.get_proxy_uri(asset, scaled)
-        if streams and Gio.File.new_for_uri(proxy_uri).query_exists(None):
-            self.debug("Using proxy already generated: %s", proxy_uri)
-            GES.Asset.request_async(GES.UriClip,
-                                    proxy_uri, None,
-                                    self.__asset_loaded_cb, asset,
-                                    None)
-            return
+        if streams:
+            proxy_uri = self.get_proxy_uri(asset, scaled)
+            if Gio.File.new_for_uri(proxy_uri).query_exists(None):
+                self.debug("Using proxy already generated: %s", proxy_uri)
+                GES.Asset.request_async(GES.UriClip,
+                                        proxy_uri, None,
+                                        self.__asset_loaded_cb, asset,
+                                        None)
+                return
 
-        self.debug("Creating a proxy for %s (strategy: %s, force: %s, scaled: %s)",
-                   asset.get_id(), self.app.settings.proxying_strategy,
-                   force_proxying, scaled)
+            self.debug("Creating a proxy for %s (strategy: %s, force: %s, scaled: %s)",
+                       asset.get_id(), self.app.settings.proxying_strategy,
+                       force_proxying, scaled)
+
         if scaled and streams:
             project = self.app.project_manager.current_project
             w = project.scaled_proxy_width

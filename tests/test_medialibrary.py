@@ -160,11 +160,11 @@ class BaseTestMediaLibrary(common.TestCase):
                 medialibrary.AssetThumbnail.PROXIED)
 
         proxy = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+        self.assertEqual(proxy.props.proxy_target.props.id, asset.props.id)
         # Check if the asset is video or not
         if w:
             stream = proxy.get_info().get_video_streams()[0]
             resolution = [stream.get_width(), stream.get_height()]
-            self.assertEqual(proxy.props.proxy_target.props.id, asset.props.id)
             if scaled:
                 self.assertEqual(resolution, [w, h])
 
@@ -453,7 +453,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self._custom_set_up(project_uri=uri)
         self.assertTrue(self.medialibrary._import_warning_infobar.props.visible)
 
-    def test_import_scaled_audio(self):
+    def test_scaling_audio_while_importing(self):
         sample = "mp3_sample.mp3"
         with common.cloned_sample(sample):
             self.check_import([sample], auto_scaling_enabled=True)
