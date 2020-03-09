@@ -189,6 +189,12 @@ class LayerControls(Gtk.EventBox, Loggable):
         action_group.add_action(action)
         menu_model.append(_("Delete layer"), "layer.%s" % action.get_name())
 
+        self.mute_layer_action = Gio.SimpleAction.new("mute-layer", None)
+        action = self.delete_layer_action
+        action.connect("activate", self.__delete_layer_cb)
+        action_group.add_action(action)
+        menu_model.append(_("Mute layer"), "layer.%s" % action.get_name())
+
         return menu_model, action_group
 
     def __delete_layer_cb(self, unused_action, unused_parameter):
