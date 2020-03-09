@@ -190,8 +190,8 @@ class LayerControls(Gtk.EventBox, Loggable):
         menu_model.append(_("Delete layer"), "layer.%s" % action.get_name())
 
         self.mute_layer_action = Gio.SimpleAction.new("mute-layer", None)
-        action = self.delete_layer_action
-        action.connect("activate", self.__delete_layer_cb)
+        action = self.mute_layer_action
+        action.connect("activate", self.__mute_layer_cb)
         action_group.add_action(action)
         menu_model.append(_("Mute layer"), "layer.%s" % action.get_name())
 
@@ -218,6 +218,9 @@ class LayerControls(Gtk.EventBox, Loggable):
             index = len(self.ges_timeline.get_layers()) - 1
         self.ges_timeline.ui.move_layer(self.ges_layer, index)
         self.app.project_manager.current_project.pipeline.commit_timeline()
+
+    def __mute_layer_cb(self, unused_action, unused_parameter):
+        print('mute')
 
     def update(self, media_types):
         self.props.height_request = self.ges_layer.ui.props.height_request
