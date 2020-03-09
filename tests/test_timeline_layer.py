@@ -46,6 +46,25 @@ class TestLayerControl(common.TestCase):
         layer.set_name("Layer 0x")
         self.assertEqual(layer.get_name(), "Layer 0x")
 
+    def test_mute_layer(self):
+        ges_layer = GES.Layer()
+        layer_muted = ges_layer.get_mute()
+        self.assertEqual(layer_muted, False)
+        ges_layer.set_mute(True)
+        layer_muted = ges_layer.get_mute()
+        self.assertEqual(layer_muted, True)
+
+    def test_mute_clip_in_layer(self):
+        ges_layer = GES.Layer()
+        ges_clip = GES.Clip()
+        ges_layer.add_clip(ges_clip)
+        layer_muted = ges_layer.get_mute()
+        ges_layer.set_mute(True)
+        layer_muted = ges_layer.get_mute()
+        self.assertEqual(layer_muted, True)
+        clip_muted = ges_clip.get_mute()
+        self.assertEqual(clip_muted, True)
+
 
 class TestLayer(common.TestCase):
 

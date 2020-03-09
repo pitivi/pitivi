@@ -151,6 +151,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__move_layer_down_action.props.enabled = not last
         self.__move_layer_bottom_action.props.enabled = not last
         self.delete_layer_action.props.enabled = layers_count > 1
+        self.mute_layer_action.props.enabled = True
 
     def __update_name(self):
         self.name_entry.set_text(self.ges_layer.ui.get_name())
@@ -220,6 +221,13 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
     def __mute_layer_cb(self, unused_action, unused_parameter):
+        self.__mute_layer(self.ges_layer)
+
+    def __mute_layer(self, ges_layer):
+        # self.ges_layer.set_mute(True) # Planned Implementation
+        clips = ges_layer.get_clips()
+        for clip in clips:
+            clip.set_mute(True)
         print('mute')
 
     def update(self, media_types):
