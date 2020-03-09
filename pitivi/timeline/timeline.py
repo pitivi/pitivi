@@ -1345,9 +1345,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.editing_context.set_mode(mode)
 
         if self.editing_context.edge is GES.Edge.EDGE_END:
-            position = self.pixel_to_ns(x)
+            position = self.pixel_to_ns(x - int(self.__drag_start_x) + self.__clicked_handle.get_allocated_width())
         else:
-            position = self.pixel_to_ns(x - self.__drag_start_x)
+            position = self.pixel_to_ns(x - int(self.__drag_start_x))
 
         self._set_separators_prelight(False)
         res = self.get_layer_at(y, prefer_ges_layer=self._on_layer)
