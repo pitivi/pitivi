@@ -376,13 +376,6 @@ def initialize_modules():
 
     require_version("GstPbutils", GST_API_VERSION)
     from gi.repository import GstPbutils
-    from pitivi.utils.misc import video_info_get_natural_height, video_info_get_natural_width, video_info_get_rotation
-
-    # Monkey patch a helper method for retrieving the size of a video
-    # when using square pixels.
-    GstPbutils.DiscovererVideoInfo.get_natural_width = video_info_get_natural_width
-    GstPbutils.DiscovererVideoInfo.get_natural_height = video_info_get_natural_height
-    GstPbutils.DiscovererVideoInfo.get_rotation = video_info_get_rotation
 
     if not os.environ.get("GES_DISCOVERY_TIMEOUT"):
         os.environ["GES_DISCOVERY_TIMEOUT"] = "5"
@@ -393,6 +386,14 @@ def initialize_modules():
     assert res
     # Monkey patch deprecated methods to use the new variant by default
     GES.TrackElement.list_children_properties = GES.TimelineElement.list_children_properties
+
+    from pitivi.utils.misc import video_info_get_natural_height, video_info_get_natural_width, video_info_get_rotation
+
+    # Monkey patch a helper method for retrieving the size of a video
+    # when using square pixels.
+    GstPbutils.DiscovererVideoInfo.get_natural_width = video_info_get_natural_width
+    GstPbutils.DiscovererVideoInfo.get_natural_height = video_info_get_natural_height
+    GstPbutils.DiscovererVideoInfo.get_rotation = video_info_get_rotation
 
     from pitivi.utils import validate
     if validate.init() and "--inspect-action-type" in sys.argv:
