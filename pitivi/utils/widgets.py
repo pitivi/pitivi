@@ -449,6 +449,7 @@ class ToggleWidget(Gtk.Box, DynamicWidget):
     def __init__(self, default=None, switch_button=None):
         Gtk.Box.__init__(self)
         DynamicWidget.__init__(self, default)
+        self.props.valign = Gtk.Align.CENTER
         if switch_button is None:
             self.switch_button = Gtk.Switch()
             self.pack_start(self.switch_button, expand=False, fill=False, padding=0)
