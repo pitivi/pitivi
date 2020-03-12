@@ -33,6 +33,7 @@ from pitivi.undo.timeline import ClipAdded
 from pitivi.undo.timeline import ClipRemoved
 from pitivi.undo.timeline import TrackElementAdded
 from pitivi.undo.undo import PropertyChangedAction
+from pitivi.utils.timeline import Selected
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import URI_TARGET_ENTRY
 from tests import common
@@ -98,6 +99,68 @@ class BaseTestUndoTimeline(common.TestCase):
         # run twice.
         from tests.test_timeline_timeline import TestLayers
         TestLayers.check_priorities_and_positions(self, self.timeline.ui, layers, list(range(len(layers))))
+
+
+class TestSelectionResetWhenRemovingClip(BaseTestUndoTimeline):
+
+    def setUp(self):
+        super().setUp()
+        super(TestSelectionResetWhenRemovingClip, self).setUp()
+        self.setup_timeline_container()
+        # Add two clips in the same layer
+        self.clip1 = GES.TitleClip()
+        self.clip1.set_start(0 * Gst.SECOND)
+        self.clip1.set_duration(1 * Gst.SECOND)
+
+        self.clip2 = GES.TitleClip()
+        self.clip2.set_start(1 * Gst.SECOND)
+        self.clip2.set_duration(1 * Gst.SECOND)
+
+        with self.action_log.started("add clip1"):
+            self.layer.add_clip(self.clip1)
+
+        with self.action_log.started("add clip2"):
+            self.layer.add_clip(self.clip2)
+
+    def test_redo(self):
+        self.timeline_container.timeline.selection.select([self.clip1])
+        self.timeline_container.delete_action.activate(None)
+        # Check clip panel is deselected
+        self.assertSetEqual(self.timeline_container.timeline.selection.get_selected_track_elements(), set())
+        # Undo clip1 deletion
+        self.action_log.undo()
+        self.assertListEqual(list(self.get_timeline_clips()), [self.clip1, self.clip2])
+        self.timeline_container.timeline.selection.select([self.clip1, self.clip2])
+        # Redo clip1 deletion
+        self.action_log.redo()
+        self.assertSetEqual(self.timeline_container.timeline.selection.get_selected_track_elements(), set())
+
+        self.action_log.undo()
+
+        self.assertListEqual(list(self.get_timeline_clips()), [self.clip1, self.clip2])
+        with self.action_log.started("remove clip2"):
+            self.layer.remove_clip(self.clip2)
+        self.action_log.undo()
+        self.assertListEqual(list(self.get_timeline_clips()), [self.clip1, self.clip2])
+        self.timeline_container.timeline.selection.select([self.clip1])
+        # Redo clip2 deletion
+        self.action_log.redo()
+        self.assertEqual(len(self.layer.get_clips()), 1)
+        self.assertEqual(self.timeline_container.timeline.selection.get_single_clip(), self.clip1)
+
+    def test_undo(self):
+        self.timeline_container.timeline.selection.select([self.clip1, self.clip2])
+        # Undo clip2 creation
+        self.action_log.undo()
+        self.assertSetEqual(self.timeline_container.timeline.selection.get_selected_track_elements(), set())
+
+        self.action_log.redo()
+
+        self.assertListEqual(list(self.get_timeline_clips()), [self.clip1, self.clip2])
+        self.timeline_container.timeline.selection.select([self.clip1])
+        # Undo clip2 creation
+        self.action_log.undo()
+        self.assertEqual(self.timeline_container.timeline.selection.get_single_clip(), self.clip1)
 
 
 class TestTimelineObserver(BaseTestUndoTimeline):
@@ -188,6 +251,7 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip = asset.extract()
+        clip.selected = Selected()
         self.layer.add_clip(clip)
         clips = list(self.get_timeline_clips())
         self.assertEqual(len(clips), 1, clips)
@@ -325,12 +389,14 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertEqual(layer._name_if_set(), "Beautiful name")
 
     def test_add_clip(self):
+        self.setup_timeline_container()
         clip1 = GES.TitleClip()
+        clip1.selected = Selected()
         with self.action_log.started("add clip"):
             self.layer.add_clip(clip1)
 
         stack = self.action_log.undo_stacks[0]
-        self.assertEqual(len(stack.done_actions), 2, stack.done_actions)
+        self.assertEqual(len(stack.done_actions), 7, stack.done_actions)
         self.assertTrue(isinstance(stack.done_actions[0], ClipAdded))
         self.assertTrue(clip1 in self.get_timeline_clips())
 
@@ -341,10 +407,12 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertTrue(clip1 in self.get_timeline_clips())
 
     def test_remove_clip(self):
+        self.setup_timeline_container()
         stacks = []
         self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
 
         clip1 = GES.TitleClip()
+        clip1.selected = Selected()
         self.layer.add_clip(clip1)
         with self.action_log.started("remove clip"):
             self.layer.remove_clip(clip1)
@@ -397,6 +465,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
     def test_ungroup_group_clip(self):
         # This test is in TestLayerObserver because the relevant operations
         # recorded are clip-added and clip-removed.
+        self.setup_timeline_container()
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip1 = asset.extract()
@@ -413,6 +482,8 @@ class TestLayerObserver(BaseTestUndoTimeline):
             ungrouped = GES.Container.ungroup(clip1, False)
             self.assertEqual(2, len(ungrouped), ungrouped)
         timeline_clips = list(self.get_timeline_clips())
+        for clip in timeline_clips:
+            clip.selected = Selected()
         self.assertEqual(2, len(timeline_clips), timeline_clips)
         self.assertEqual(5 * Gst.SECOND, timeline_clips[0].get_start())
         self.assertEqual(0.5 * Gst.SECOND, timeline_clips[0].get_duration())
@@ -434,18 +505,22 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertEqual(0.5 * Gst.SECOND, timeline_clips[1].get_duration())
 
     def test_split_clip(self):
+        self.setup_timeline_container()
         clip = GES.TitleClip()
         clip.set_start(0 * Gst.SECOND)
         clip.set_duration(20 * Gst.SECOND)
+        clip.selected = Selected()
 
         self.layer.add_clip(clip)
 
         with self.action_log.started("split clip"):
             clip1 = clip.split(10 * Gst.SECOND)
+            clip1.selected = Selected()
             self.assertEqual(2, len(self.layer.get_clips()))
 
         with self.action_log.started("split clip"):
             _clip2 = clip1.split(15 * Gst.SECOND)
+            _clip2.selected = Selected()
             self.assertEqual(3, len(self.layer.get_clips()))
 
         self.action_log.undo()
@@ -550,17 +625,20 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
     def test_transition_type(self):
         """Checks the transitions keep their type."""
+        self.setup_timeline_container()
         self._wait_until_project_loaded()
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
 
         clip1 = asset.extract()
         clip1.set_start(0 * Gst.SECOND)
+        clip1.selected = Selected()
         self.layer.add_clip(clip1)
 
         clip2 = asset.extract()
         clip2.set_start(clip1.props.duration / 2)
         clip2.set_duration(clip2.props.max_duration)
+        clip2.selected = Selected()
         with self.action_log.started("add second clip"):
             self.layer.add_clip(clip2)
 
