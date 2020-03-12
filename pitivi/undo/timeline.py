@@ -300,6 +300,8 @@ class ClipAction(UndoableAction):
 
     def remove(self):
         self.layer.remove_clip(self.clip)
+        if (self.clip == self.layer.timeline.ui.selection.get_single_clip()) or (self.clip.selected.selected):
+            self.layer.timeline.ui.selection.select([])
 
 
 class ClipAdded(ClipAction):

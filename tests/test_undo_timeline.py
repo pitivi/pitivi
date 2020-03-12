@@ -33,6 +33,7 @@ from pitivi.undo.timeline import ClipAdded
 from pitivi.undo.timeline import ClipRemoved
 from pitivi.undo.timeline import TrackElementAdded
 from pitivi.undo.undo import PropertyChangedAction
+from pitivi.utils.timeline import Selected
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import URI_TARGET_ENTRY
 from tests import common
@@ -46,6 +47,7 @@ class BaseTestUndoTimeline(common.TestCase):
         self.project = self.app.project_manager.new_blank_project()
         self.timeline = self.project.ges_timeline
         self.layer = self.timeline.append_layer()
+        self.layer.timeline.ui = Timeline(app=self.app, size_group=mock.Mock())
         self.action_log = self.app.action_log
         self.timeline_container = None
 
@@ -98,6 +100,75 @@ class BaseTestUndoTimeline(common.TestCase):
         # run twice.
         from tests.test_timeline_timeline import TestLayers
         TestLayers.check_priorities_and_positions(self, self.timeline.ui, layers, list(range(len(layers))))
+
+
+class TestClipAction(BaseTestUndoTimeline):
+
+    def test_redo(self):
+        self.setup_timeline_container()
+
+        clip1 = GES.TitleClip()
+        clip1.set_start(0 * Gst.SECOND)
+        clip1.set_duration(1 * Gst.SECOND)
+
+        clip2 = GES.TitleClip()
+        clip2.set_start(1 * Gst.SECOND)
+        clip2.set_duration(1 * Gst.SECOND)
+
+        with self.action_log.started("add clip"):
+            self.layer.add_clip(clip1)
+
+        with self.action_log.started("add clip"):
+            self.layer.add_clip(clip2)
+
+        self.timeline_container.timeline.selection.select([clip1])
+        with self.action_log.started("remove clip"):
+            self.layer.remove_clip(clip1)
+        self.action_log.undo()
+        self.assertEqual(len(self.layer.get_clips()), 2)
+        self.timeline_container.timeline.selection.select([clip1, clip2])
+        self.action_log.redo()
+        self.assertFalse(clip1.selected.selected)
+
+        self.action_log.undo()
+
+        self.assertEqual(len(self.layer.get_clips()), 2)
+        with self.action_log.started("remove clip"):
+            self.layer.remove_clip(clip2)
+        self.action_log.undo()
+        self.assertEqual(len(self.layer.get_clips()), 2)
+        self.timeline_container.timeline.selection.select([clip1])
+        self.action_log.redo()
+        self.assertEqual(len(self.layer.get_clips()), 1)
+        self.assertEqual(self.timeline_container.timeline.selection.get_single_clip(), clip1)
+
+    def test_undo(self):
+        self.setup_timeline_container()
+
+        clip1 = GES.TitleClip()
+        clip1.set_start(0 * Gst.SECOND)
+        clip1.set_duration(1 * Gst.SECOND)
+
+        clip2 = GES.TitleClip()
+        clip2.set_start(1 * Gst.SECOND)
+        clip2.set_duration(1 * Gst.SECOND)
+
+        with self.action_log.started("add clip"):
+            self.layer.add_clip(clip1)
+
+        with self.action_log.started("add clip"):
+            self.layer.add_clip(clip2)
+
+        self.timeline_container.timeline.selection.select([clip1, clip2])
+        self.action_log.undo()
+        self.assertIsNone(self.timeline_container.timeline.selection.get_single_clip())
+
+        self.action_log.redo()
+
+        self.assertEqual(len(self.layer.get_clips()), 2)
+        self.timeline_container.timeline.selection.select([clip1])
+        self.action_log.undo()
+        self.assertEqual(self.timeline_container.timeline.selection.get_single_clip(), clip1)
 
 
 class TestTimelineObserver(BaseTestUndoTimeline):
@@ -188,6 +259,7 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip = asset.extract()
+        clip.selected = Selected()
         self.layer.add_clip(clip)
         clips = list(self.get_timeline_clips())
         self.assertEqual(len(clips), 1, clips)
@@ -326,6 +398,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
     def test_add_clip(self):
         clip1 = GES.TitleClip()
+        clip1.selected = Selected()
         with self.action_log.started("add clip"):
             self.layer.add_clip(clip1)
 
@@ -345,6 +418,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
 
         clip1 = GES.TitleClip()
+        clip1.selected = Selected()
         self.layer.add_clip(clip1)
         with self.action_log.started("remove clip"):
             self.layer.remove_clip(clip1)
@@ -413,6 +487,8 @@ class TestLayerObserver(BaseTestUndoTimeline):
             ungrouped = GES.Container.ungroup(clip1, False)
             self.assertEqual(2, len(ungrouped), ungrouped)
         timeline_clips = list(self.get_timeline_clips())
+        for clip in timeline_clips:
+            clip.selected = Selected()
         self.assertEqual(2, len(timeline_clips), timeline_clips)
         self.assertEqual(5 * Gst.SECOND, timeline_clips[0].get_start())
         self.assertEqual(0.5 * Gst.SECOND, timeline_clips[0].get_duration())
@@ -437,15 +513,18 @@ class TestLayerObserver(BaseTestUndoTimeline):
         clip = GES.TitleClip()
         clip.set_start(0 * Gst.SECOND)
         clip.set_duration(20 * Gst.SECOND)
+        clip.selected = Selected()
 
         self.layer.add_clip(clip)
 
         with self.action_log.started("split clip"):
             clip1 = clip.split(10 * Gst.SECOND)
+            clip1.selected = Selected()
             self.assertEqual(2, len(self.layer.get_clips()))
 
         with self.action_log.started("split clip"):
             _clip2 = clip1.split(15 * Gst.SECOND)
+            _clip2.selected = Selected()
             self.assertEqual(3, len(self.layer.get_clips()))
 
         self.action_log.undo()
@@ -556,11 +635,13 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
         clip1 = asset.extract()
         clip1.set_start(0 * Gst.SECOND)
+        clip1.selected = Selected()
         self.layer.add_clip(clip1)
 
         clip2 = asset.extract()
         clip2.set_start(clip1.props.duration / 2)
         clip2.set_duration(clip2.props.max_duration)
+        clip2.selected = Selected()
         with self.action_log.started("add second clip"):
             self.layer.add_clip(clip2)
 
