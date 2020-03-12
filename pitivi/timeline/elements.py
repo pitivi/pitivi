@@ -986,7 +986,7 @@ class VideoUriSource(VideoSource):
         self.get_style_context().add_class("VideoUriSource")
 
     def _get_previewer(self):
-        if isinstance(self._ges_elem, GES.ImageSource):
+        if self._ges_elem.get_asset().is_image():
             previewer = ImagePreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
         else:
             previewer = VideoPreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
