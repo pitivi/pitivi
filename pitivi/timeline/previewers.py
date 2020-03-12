@@ -1393,7 +1393,7 @@ class TitlePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         layout.set_ellipsize(Pango.EllipsizeMode.END)
 
         # Draw text
-        layout.set_text(text, -1)
+        layout.set_markup(text, -1)
         context.move_to(x_pos, (rect.height / 2) - 11)
         PangoCairo.show_layout(context, layout)
 
