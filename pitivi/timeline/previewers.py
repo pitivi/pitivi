@@ -1355,14 +1355,14 @@ class TitlePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         context.set_source_rgb(1, 1, 1)
 
         # Get text
-        res, text = self.ges_elem.get_child_property("text")
+        res, escaped_text = self.ges_elem.get_child_property("text")
         if res:
-            text = text.strip().split("\n", 1)[0]
-        if not res or not text:
-            text = _("Title Clip")
+            escaped_text = escaped_text.strip().split("\n", 1)[0]
+        if not res or not escaped_text:
+            escaped_text = _("Title Clip")
 
         # Adapt to RTL/LTR direction
-        direction = Pango.unichar_direction(text[0])
+        direction = Pango.unichar_direction(escaped_text[0])
         if direction in (Pango.Direction.LTR, Pango.Direction.NEUTRAL):
             stops = (0, 1)
             x_pos = 10
@@ -1393,7 +1393,7 @@ class TitlePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         layout.set_ellipsize(Pango.EllipsizeMode.END)
 
         # Draw text
-        layout.set_text(text, -1)
+        layout.set_markup(escaped_text, -1)
         context.move_to(x_pos, (rect.height / 2) - 11)
         PangoCairo.show_layout(context, layout)
 
