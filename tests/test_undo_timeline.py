@@ -46,6 +46,7 @@ class BaseTestUndoTimeline(common.TestCase):
         self.project = self.app.project_manager.new_blank_project()
         self.timeline = self.project.ges_timeline
         self.layer = self.timeline.append_layer()
+        self.layer.timeline.ui = Timeline(app=self.app, size_group=mock.Mock())
         self.action_log = self.app.action_log
         self.timeline_container = None
 
@@ -98,6 +99,101 @@ class BaseTestUndoTimeline(common.TestCase):
         # run twice.
         from tests.test_timeline_timeline import TestLayers
         TestLayers.check_priorities_and_positions(self, self.timeline.ui, layers, list(range(len(layers))))
+
+
+class TestClipAction(BaseTestUndoTimeline):
+
+    def test_redo(self):
+        self.setup_timeline_container()
+
+        # Creating two clips
+        clip1 = GES.TitleClip()
+        clip1.set_start(0 * Gst.SECOND)
+        clip1.set_duration(1 * Gst.SECOND)
+
+        clip2 = GES.TitleClip()
+        clip2.set_start(1 * Gst.SECOND)
+        clip2.set_duration(1 * Gst.SECOND)
+
+        with self.action_log.started("add clip"):
+            self.layer.add_clip(clip1)
+            self.assertEqual(len(self.layer.get_clips()), 1)
+
+        with self.action_log.started("add clip"):
+            self.layer.add_clip(clip2)
+            self.assertEqual(len(self.layer.get_clips()), 2)
+
+        # Select clip1
+        self.timeline_container.timeline.selection.select([clip1])
+        # Remove clip1
+        with self.action_log.started("remove clip"):
+            self.layer.remove_clip(clip1)
+            self.assertEqual(len(self.layer.get_clips()), 1)
+        # Undo deletion
+        self.action_log.undo()
+        self.assertEqual(len(self.layer.get_clips()), 2)
+        # Select the two clips
+        self.timeline_container.timeline.selection.select([clip1, clip2])
+        # Redo deletion
+        self.action_log.redo()
+        # Check if nothing is selected
+        self.assertIsNone(self.timeline_container.timeline.selection.get_single_clip())
+
+        self.action_log.undo()
+
+        self.assertEqual(len(self.layer.get_clips()), 2)
+        # Delete clip2
+        with self.action_log.started("remove clip"):
+            self.layer.remove_clip(clip2)
+            self.assertEqual(len(self.layer.get_clips()), 1)
+        # Undo deletion
+        self.action_log.undo()
+        self.assertEqual(len(self.layer.get_clips()), 2)
+        # Select clip1
+        self.timeline_container.timeline.selection.select([clip1])
+        # Redo deletion
+        self.action_log.redo()
+        self.assertEqual(len(self.layer.get_clips()), 1)
+        # Check if clip1 is still selected
+        self.assertEqual(self.timeline_container.timeline.selection.get_single_clip(), clip1)
+
+    def test_undo(self):
+        self.setup_timeline_container()
+
+        # Creating two clips
+        clip1 = GES.TitleClip()
+        clip1.set_start(0 * Gst.SECOND)
+        clip1.set_duration(1 * Gst.SECOND)
+
+        clip2 = GES.TitleClip()
+        clip2.set_start(1 * Gst.SECOND)
+        clip2.set_duration(1 * Gst.SECOND)
+
+        with self.action_log.started("add clip"):
+            self.layer.add_clip(clip1)
+            self.assertEqual(len(self.layer.get_clips()), 1)
+
+        with self.action_log.started("add clip"):
+            self.layer.add_clip(clip2)
+            self.assertEqual(len(self.layer.get_clips()), 2)
+
+        # Selecting the two clips
+        self.timeline_container.timeline.selection.select([clip1, clip2])
+        # Undo creation of clip2
+        self.action_log.undo()
+        # Checking if the selection is none
+        self.assertIsNone(self.timeline_container.timeline.selection.get_single_clip())
+
+        self.action_log.redo()
+
+        # Checking we have two clips
+        self.assertEqual(len(self.layer.get_clips()), 2)
+        # Selecting clip1
+        self.timeline_container.timeline.selection.select([clip1])
+        # Undo creation of clip2
+        self.action_log.undo()
+        # Check if clip1 is still selected
+        self.assertEqual(self.timeline_container.timeline.selection.get_single_clip(), clip1)
 
 
 class TestTimelineObserver(BaseTestUndoTimeline):
