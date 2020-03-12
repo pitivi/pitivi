@@ -15,9 +15,11 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 import os
+import html
 from gettext import gettext as _
 
 from gi.repository import GES
+from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import Pango
@@ -163,7 +165,7 @@ class TitleEditor(Loggable):
         self._set_child_property("font-desc", font_desc)
 
     def _update_from_source(self, source):
-        self.textbuffer.set_text(source.get_child_property("text")[1] or "")
+        self.textbuffer.props.text = html.unescape(source.get_child_property("text")[1] or "")
         self.settings['x-absolute'].set_value(source.get_child_property("x-absolute")[1])
         self.settings['y-absolute'].set_value(source.get_child_property("y-absolute")[1])
         self.settings['valignment'].set_active_id(
@@ -187,7 +189,7 @@ class TitleEditor(Loggable):
             # Nothing to update.
             return
 
-        text = self.textbuffer.props.text
+        text = html.escape(self.textbuffer.props.text)
         self.log("Source text updated to %s", text)
         self._set_child_property("text", text)
 
@@ -274,9 +276,9 @@ class TitleEditor(Loggable):
         if pspec.name == "text":
             res, value = self.source.get_child_property(pspec.name)
             assert res, pspec.name
-            if self.textbuffer.props.text == value or "":
+            if self.textbuffer.props.text == html.unescape(value) or "":
                 return
-            self.textbuffer.props.text = value
+            self.textbuffer.props.text = html.unescape(value)
         elif pspec.name in ["x-absolute", "y-absolute"]:
             res, value = self.source.get_child_property(pspec.name)
             assert res, pspec.name
