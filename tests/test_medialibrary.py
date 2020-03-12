@@ -22,16 +22,15 @@ from unittest import mock
 
 from gi.repository import Gdk
 from gi.repository import GES
-from gi.repository import GObject
 from gi.repository import Gst
 
 from pitivi import medialibrary
 from pitivi.project import ProjectManager
+from pitivi.utils.misc import ASSET_DURATION_META
+from pitivi.utils.misc import asset_get_duration
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.validate import create_event
 from tests import common
-from pitivi.utils.misc import asset_get_duration
-from pitivi.utils.misc import ASSET_DURATION_META
 
 
 class BaseTestMediaLibrary(common.TestCase):
@@ -475,6 +474,11 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.check_import([sample], check_no_transcoding=True,
                               proxying_strategy=ProxyingStrategy.AUTOMATIC)
 
+    def test_import_supported_forced_scaled_audio(self):
+        sample = "mp3_sample.mp3"
+        with common.cloned_sample(sample):
+            self.check_import([sample], auto_scaling_enabled=True)
+
     def test_missing_uri_displayed(self):
         asset_uri = common.get_sample_uri("image-which-does-not-exist.png")
         with common.created_project_file(asset_uri) as uri:
@@ -488,8 +492,3 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         # Release click
         event = create_event(Gdk.EventType.BUTTON_RELEASE, button=3)
         mlib._iconview_button_release_event_cb(mlib.iconview, event)
-
-    def test_scaling_audio_while_importing(self):
-        sample = "mp3_sample.mp3"
-        with common.cloned_sample(sample):
-            self.check_import([sample], auto_scaling_enabled=True)
