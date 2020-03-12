@@ -18,6 +18,7 @@ import os
 from gettext import gettext as _
 
 from gi.repository import GES
+from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import Pango
@@ -187,7 +188,7 @@ class TitleEditor(Loggable):
             # Nothing to update.
             return
 
-        text = self.textbuffer.props.text
+        text = GLib.markup_escape_text(self.textbuffer.props.text)
         self.log("Source text updated to %s", text)
         self._set_child_property("text", text)
 
