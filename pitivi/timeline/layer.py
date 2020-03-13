@@ -225,6 +225,8 @@ class LayerControls(Gtk.EventBox, Loggable):
 
     def __mute_layer(self, ges_layer):
         # self.ges_layer.set_mute(True) # Planned Implementation
+        print(ges_layer.get_timeline().get_tracks())
+
         clips = ges_layer.get_clips()
         for clip in clips:
             clip.set_mute(True)
