@@ -718,75 +718,61 @@ class ProxyManager(GObject.Object, Loggable):
         """
         force_proxying = asset.force_proxying
         video_streams = asset.get_info().get_video_streams()
-        if video_streams:
-            # Handle Automatic scaling
-            if self.app.settings.auto_scaling_enabled and not force_proxying \
-                    and not shadow and not self.asset_matches_target_res(asset):
-                scaled = True
+        # Handle Automatic scaling
+        if video_streams and self.app.settings.auto_scaling_enabled and not force_proxying \
+                and not shadow and not self.asset_matches_target_res(asset):
+            scaled = True
 
-            proxy_uri = self.get_proxy_uri(asset, scaled)
-            if Gio.File.new_for_uri(proxy_uri).query_exists(None):
-                self.debug("Using proxy already generated: %s", proxy_uri)
-                GES.Asset.request_async(GES.UriClip,
-                                        proxy_uri, None,
-                                        self.__asset_loaded_cb, asset,
-                                        None)
+        # Create shadow proxies for unsupported assets
+        if not self.is_asset_format_well_supported(asset) and not \
+                self.app.settings.proxying_strategy == ProxyingStrategy.NOTHING \
+                and not shadow and scaled:
+            hq_uri = self.app.proxy_manager.get_proxy_uri(asset)
+            if not Gio.File.new_for_uri(hq_uri).query_exists(None):
+                self.add_job(asset, shadow=True)
+
+        if scaled:
+            if self.is_asset_queued(asset, optimisation=False):
+                self.log("Asset already queued for scaling: %s", asset)
                 return
 
-            self.debug("Creating a proxy for %s (strategy: %s, force: %s, scaled: %s)",
-                       asset.get_id(), self.app.settings.proxying_strategy,
-                       force_proxying, scaled)
-
-            if not force_proxying:
-                if not self.__asset_needs_transcoding(asset, scaled):
-                    self.debug("Not proxying asset (proxying disabled: %s)",
-                               self.proxying_unsupported)
-                    # Make sure to notify we do not need a proxy for that asset.
-                    self.emit("proxy-ready", asset, None)
-                    return
-
-            if scaled:
-                project = self.app.project_manager.current_project
-                w = project.scaled_proxy_width
-                h = project.scaled_proxy_height
-
-                # Create shadow proxies for unsupported assets
-                if not self.is_asset_format_well_supported(asset) and not \
-                        self.app.settings.proxying_strategy == ProxyingStrategy.NOTHING \
-                        and not shadow:
-                    hq_uri = self.app.proxy_manager.get_proxy_uri(asset)
-                    if not Gio.File.new_for_uri(hq_uri).query_exists(None):
-                        self.add_job(asset, shadow=True)
-
-                if self.is_asset_queued(asset, optimisation=False):
-                    self.log("Asset already queued for scaling: %s", asset)
-                    return
-
-                if not project.has_scaled_proxy_size():
-                    project.scaled_proxy_width = w
-                    project.scaled_proxy_height = h
-                t_width, t_height = self._scale_asset_resolution(asset, w, h)
-                self.__create_transcoder(asset, width=t_width, height=t_height, shadow=shadow)
-            else:
-                self.__create_transcoder(asset, shadow=shadow)
-
-                if self.is_asset_queued(asset, scaling=False):
-                    self.log("Asset already queued for optimization: %s", asset)
-                    return
         else:
-            if not force_proxying:
-                if not self.__asset_needs_transcoding(asset, scaled):
-                    self.debug("Not proxying asset (proxying not disabled: %s)",
-                               self.proxying_unsupported)
-                    # Make sure to notify we do not need a proxy for that asset.
-                    self.emit("proxy-ready", asset, None)
-                    return
-
-            self.__create_transcoder(asset)
-
             if self.is_asset_queued(asset, scaling=False):
                 self.log("Asset already queued for optimization: %s", asset)
                 return
+
+        if not force_proxying:
+            if not self.__asset_needs_transcoding(asset, scaled):
+                self.debug("Not proxying asset (proxying not disabled: %s)",
+                           self.proxying_unsupported)
+                # Make sure to notify we do not need a proxy for that asset.
+                self.emit("proxy-ready", asset, None)
+                return
+
+        proxy_uri = self.get_proxy_uri(asset, scaled)
+        if video_streams and Gio.File.new_for_uri(proxy_uri).query_exists(None):
+            self.debug("Using proxy already generated: %s", proxy_uri)
+            GES.Asset.request_async(GES.UriClip,
+                                    proxy_uri, None,
+                                    self.__asset_loaded_cb, asset,
+                                    None)
+            return
+
+        self.debug("Creating a proxy for %s (strategy: %s, force: %s, scaled: %s)",
+                   asset.get_id(), self.app.settings.proxying_strategy,
+                   force_proxying, scaled)
+
+        if video_streams and scaled:
+            project = self.app.project_manager.current_project
+            w = project.scaled_proxy_width
+            h = project.scaled_proxy_height
+            if not project.has_scaled_proxy_size():
+                project.scaled_proxy_width = w
+                project.scaled_proxy_height = h
+            t_width, t_height = self._scale_asset_resolution(asset, w, h)
+            self.__create_transcoder(asset, width=t_width, height=t_height, shadow=shadow)
+        else:
+            self.__create_transcoder(asset, shadow=shadow)
 
 
 def get_proxy_target(obj):
