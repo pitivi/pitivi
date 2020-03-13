@@ -774,20 +774,19 @@ class ProxyManager(GObject.Object, Loggable):
                     self.log("Asset already queued for optimization: %s", asset)
                     return
         else:
-            if not scaled:
-                self.__create_transcoder(asset, shadow=shadow)
-
-                if self.is_asset_queued(asset, scaling=False):
-                    self.log("Asset already queued for optimization: %s", asset)
-                    return
-
             if not force_proxying:
                 if not self.__asset_needs_transcoding(asset, scaled):
-                    self.debug("Not proxying asset (proxying disabled: %s)",
+                    self.debug("Not proxying asset (proxying not disabled: %s)",
                                self.proxying_unsupported)
                     # Make sure to notify we do not need a proxy for that asset.
                     self.emit("proxy-ready", asset, None)
                     return
+
+            self.__create_transcoder(asset)
+
+            if self.is_asset_queued(asset, scaling=False):
+                self.log("Asset already queued for optimization: %s", asset)
+                return
 
 
 def get_proxy_target(obj):
