@@ -113,7 +113,7 @@ class BaseTestMediaLibrary(common.TestCase):
                         check_progress=True):
         self.assertFalse(self.app.proxy_manager.is_proxy_asset(asset))
 
-        # Check the inital state of the asset, nothing should be going on.
+        # Check the initial state of the asset, nothing should be going on.
         self.assertNotIn("Proxy creation progress:",
                          self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
         self.assertIn(
@@ -149,7 +149,7 @@ class BaseTestMediaLibrary(common.TestCase):
         if check_progress:
             self.assertTrue(was_in_progress)
 
-        # Finally, check the final staus of the asset after proxying.
+        # Finally, check the final status of the asset after proxying.
         self.assertNotIn("Proxy creation progress:",
                          self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
         if scaled:

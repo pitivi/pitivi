@@ -467,7 +467,7 @@ class ProxyManager(GObject.Object, Loggable):
         if asset_duration != proxy_duration:
             duration = min(asset_duration, proxy_duration)
 
-            self.info("Reseting %s duration from %s to %s as"
+            self.info("Resetting %s duration from %s to %s as"
                 " new proxy has a different duration",
                 asset.props.id, Gst.TIME_ARGS(asset_duration), Gst.TIME_ARGS(duration))
             asset.set_uint64(ASSET_DURATION_META, duration)
@@ -479,13 +479,13 @@ class ProxyManager(GObject.Object, Loggable):
                     if clip.props.in_point + clip.props.duration > duration:
                         new_duration = duration - clip.props.in_point
                         if new_duration > 0:
-                            self.warning("%s reseting duration to %s as"
+                            self.warning("%s resetting duration to %s as"
                                 " new proxy has a shorter duration",
                                 clip, Gst.TIME_ARGS(new_duration))
                             clip.set_duration(new_duration)
                         else:
                             new_inpoint = new_duration - clip.props.in_point
-                            self.error("%s reseting duration to %s"
+                            self.error("%s resetting duration to %s"
                                 " and inpoint to %s as the proxy"
                                 " is shorter",
                                 clip, Gst.TIME_ARGS(new_duration), Gst.TIME_ARGS(new_inpoint))
