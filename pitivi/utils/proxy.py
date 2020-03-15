@@ -775,7 +775,7 @@ class ProxyManager(GObject.Object, Loggable):
         else:
             if not force_proxying:
                 if not self.__asset_needs_transcoding(asset, scaled):
-                    self.debug("Not proxying asset (proxying not disabled: %s)",
+                    self.debug("Not proxying asset (proxying disabled: %s)",
                                self.proxying_unsupported)
                     # Make sure to notify we do not need a proxy for that asset.
                     self.emit("proxy-ready", asset, None)
