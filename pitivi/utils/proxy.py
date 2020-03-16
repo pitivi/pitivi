@@ -732,6 +732,15 @@ class ProxyManager(GObject.Object, Loggable):
                 if not Gio.File.new_for_uri(hq_uri).query_exists(None):
                     self.add_job(asset, shadow=True)
 
+            if scaled:
+                if self.is_asset_queued(asset, optimisation=False):
+                    self.log("Asset already queued for scaling: %s", asset)
+                    return
+            else:
+                if self.is_asset_queued(asset, scaling=False):
+                    self.log("Asset already queued for optimization: %s", asset)
+                    return
+
             if not force_proxying:
                 if not self.__asset_needs_transcoding(asset, scaled):
                     self.debug("Not proxying asset (proxying disabled: %s)",
@@ -754,10 +763,6 @@ class ProxyManager(GObject.Object, Loggable):
                        force_proxying, scaled)
 
             if scaled:
-                if self.is_asset_queued(asset, optimisation=False):
-                    self.log("Asset already queued for scaling: %s", asset)
-                    return
-
                 project = self.app.project_manager.current_project
                 w = project.scaled_proxy_width
                 h = project.scaled_proxy_height
@@ -768,10 +773,6 @@ class ProxyManager(GObject.Object, Loggable):
                 self.__create_transcoder(asset, width=t_width, height=t_height, shadow=shadow)
             else:
                 self.__create_transcoder(asset, shadow=shadow)
-
-                if self.is_asset_queued(asset, scaling=False):
-                    self.log("Asset already queued for optimization: %s", asset)
-                    return
         else:
             if not force_proxying:
                 if not self.__asset_needs_transcoding(asset, scaled):
@@ -781,11 +782,11 @@ class ProxyManager(GObject.Object, Loggable):
                     self.emit("proxy-ready", asset, None)
                     return
 
-            self.__create_transcoder(asset)
-
             if self.is_asset_queued(asset, scaling=False):
                 self.log("Asset already queued for optimization: %s", asset)
                 return
+
+            self.__create_transcoder(asset)
 
 
 def get_proxy_target(obj):
