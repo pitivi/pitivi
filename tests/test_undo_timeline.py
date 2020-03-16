@@ -114,13 +114,21 @@ class TestSelectionResetWhenRemovingClip(BaseTestUndoTimeline):
             with self.action_log.started("add clip {}".format(i)):
                 self.layer.add_clip(clip)
 
+    def check_selection(self, expected_selected_clips):
+        self.assertSetEqual(set(self.timeline_container.timeline.selection), expected_selected_clips)
+        for clip in self.get_timeline_clips():
+            if clip in expected_selected_clips:
+                self.assertTrue(clip.selected.selected)
+            else:
+                self.assertFalse(clip.selected.selected)
+
     def test_redo_delete_when_selected(self):
         clip1, clip2, clip3 = self.get_timeline_clips()
 
         # Delete clip1.
         self.timeline_container.timeline.selection.select([clip1])
         self.timeline_container.delete_action.activate(None)
-        self.assertSetEqual(set(self.timeline_container.timeline.selection), set())
+        self.check_selection(set())
 
         # Undo clip1 deletion.
         self.action_log.undo()
@@ -128,7 +136,7 @@ class TestSelectionResetWhenRemovingClip(BaseTestUndoTimeline):
         # Redo clip1 deletion when selected.
         self.timeline_container.timeline.selection.select([clip1, clip2, clip3])
         self.action_log.redo()
-        self.assertSetEqual(set(self.timeline_container.timeline.selection), set())
+        self.check_selection(set())
 
     def test_redo_delete_when_unselected(self):
         clip1, clip2, clip3 = self.get_timeline_clips()
@@ -136,7 +144,7 @@ class TestSelectionResetWhenRemovingClip(BaseTestUndoTimeline):
         # Delete clip1.
         self.timeline_container.timeline.selection.select([clip1])
         self.timeline_container.delete_action.activate(None)
-        self.assertSetEqual(set(self.timeline_container.timeline.selection), set())
+        self.check_selection(set())
 
         # Undo clip1 deletion.
         self.action_log.undo()
@@ -144,7 +152,7 @@ class TestSelectionResetWhenRemovingClip(BaseTestUndoTimeline):
         # Redo clip1 deletion when unselected.
         self.timeline_container.timeline.selection.select([clip2, clip3])
         self.action_log.redo()
-        self.assertEqual(set(self.timeline_container.timeline.selection), {clip2, clip3})
+        self.check_selection({clip2, clip3})
 
     def test_undo_add_when_selected(self):
         clip1, clip2, clip3 = self.get_timeline_clips()
@@ -152,7 +160,7 @@ class TestSelectionResetWhenRemovingClip(BaseTestUndoTimeline):
         # Undo clip3 creation when selected.
         self.timeline_container.timeline.selection.select([clip1, clip2, clip3])
         self.action_log.undo()
-        self.assertSetEqual(set(self.timeline_container.timeline.selection), set())
+        self.check_selection(set())
 
     def test_undo_add_when_unselected(self):
         clip1, clip2, _ = self.get_timeline_clips()
@@ -160,7 +168,7 @@ class TestSelectionResetWhenRemovingClip(BaseTestUndoTimeline):
         # Undo clip3 creation when unselected.
         self.timeline_container.timeline.selection.select([clip1, clip2])
         self.action_log.undo()
-        self.assertSetEqual(set(self.timeline_container.timeline.selection), {clip1, clip2})
+        self.check_selection({clip1, clip2})
 
 
 class TestTimelineObserver(BaseTestUndoTimeline):
