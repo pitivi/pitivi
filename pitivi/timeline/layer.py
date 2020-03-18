@@ -93,6 +93,11 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.menubutton.set_popover(popover)
         name_row.pack_start(self.menubutton, False, False, 0)
 
+        self.togglebutton = Gtk.ToggleButton.new()
+        self.togglebutton.props.valign = Gtk.Align.CENTER
+        self.togglebutton.props.relief = Gtk.ReliefStyle.NONE
+        name_row.pack_start(self.togglebutton, False, False, 0)
+
         space = Gtk.Label()
         space.props.vexpand = True
         vbox.pack_start(space, False, False, 0)
