@@ -96,6 +96,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.togglebutton = Gtk.ToggleButton.new()
         self.togglebutton.props.valign = Gtk.Align.CENTER
         self.togglebutton.props.relief = Gtk.ReliefStyle.NONE
+        self.togglebutton.connect("toggled", self.__mute_layer_cb)
         name_row.pack_start(self.togglebutton, False, False, 0)
 
         space = Gtk.Label()
@@ -225,7 +226,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.ges_timeline.ui.move_layer(self.ges_layer, index)
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
-    def __mute_layer_cb(self, unused_action, unused_parameter):
+    def __mute_layer_cb(self, unused_action):
         self.__mute_layer(self.ges_layer)
 
     def __mute_layer(self, ges_layer):
