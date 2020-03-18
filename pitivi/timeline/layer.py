@@ -97,6 +97,9 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.togglebutton.props.valign = Gtk.Align.CENTER
         self.togglebutton.props.relief = Gtk.ReliefStyle.NONE
         self.togglebutton.connect("toggled", self.__mute_layer_cb)
+        unmute_image = Gtk.Image.new_from_icon_name(
+            "audio-volume-high", Gtk.IconSize.BUTTON)
+        self.togglebutton.set_image(unmute_image)
         name_row.pack_start(self.togglebutton, False, False, 0)
 
         space = Gtk.Label()
@@ -227,6 +230,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
     def __mute_layer_cb(self, unused_action):
+
         self.__mute_layer(self.ges_layer)
 
     def __mute_layer(self, ges_layer):
@@ -236,6 +240,15 @@ class LayerControls(Gtk.EventBox, Loggable):
         clips = ges_layer.get_clips()
         for clip in clips:
             clip.set_mute(True)
+
+        if self.togglebutton.get_active():
+            mute_image = Gtk.Image.new_from_icon_name(
+                "audio-volume-muted", Gtk.IconSize.BUTTON)
+            self.togglebutton.set_image(mute_image)
+        else:
+            unmute_image = Gtk.Image.new_from_icon_name(
+                "audio-volume-high", Gtk.IconSize.BUTTON)
+            self.togglebutton.set_image(unmute_image)
         print('mute')
 
     def update(self, media_types):
