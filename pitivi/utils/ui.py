@@ -58,6 +58,8 @@ LAYER_HEIGHT = 130
 # The space between two layers.
 SEPARATOR_HEIGHT = 1
 
+CLIP_BORDER_WIDTH = 1
+
 SMALL_THUMB_WIDTH = 64
 # 128 is the normal size for thumbnails, but for *icons* it looks insane.
 LARGE_THUMB_WIDTH = 96
@@ -169,18 +171,44 @@ EDITOR_PERSPECTIVE_CSS = """
         background: transparent;
     }
 
+
     .AudioBackground,
     .VideoBackground {
-        transition: background-color 200ms ease-out;
+        transition: background-color 200ms ease-out, border-color 200ms ease-out;
     }
 
-    .AudioBackground {
+    .UriClip .AudioBackground {
         background-color: rgb(60, 97, 43);
+        border: %(clip_border_width)spx solid shade(rgb(60, 97, 43), 1.2);
     }
 
-    .VideoBackground {
+    .UriClip .VideoBackground {
         background-color: rgb(25, 25, 25);
+        border: %(clip_border_width)spx solid shade(rgb(25, 25, 25), 2.5);
     }
+
+    .TitleClip .VideoBackground {
+        background-color: rgb(94, 78, 102);
+        border: %(clip_border_width)spx solid shade(rgb(25, 25, 25), 2.5);
+    }
+
+    .AudioBackground:selected,
+    .VideoBackground:selected {
+        border-color: rgb(132, 131, 79)
+    }
+
+    .UriClip .AudioBackground:selected {
+        background-color: shade(rgb(60, 97, 43), 0.4);
+    }
+
+    .UriClip .VideoBackground:selected {
+        background-color: shade(rgb(25, 25, 25), 0.4);
+    }
+
+    .TitleClip .VideoBackground:selected  {
+        background-color: shade(rgb(94, 78, 102), 0.4);
+    }
+
 
     .VideoUriSource image {
         transition: opacity 200ms linear;
@@ -188,24 +216,8 @@ EDITOR_PERSPECTIVE_CSS = """
      }
 
     .VideoUriSource:selected image,
-    .AudioUriSource:selected .AudioUriSource {
+    .AudioUriSource:selected .AudioPreviewer {
         opacity: 0.15;
-    }
-
-    .AudioBackground:selected {
-        background-color: shade(rgb(60, 97, 43), 0.4);
-    }
-
-    .VideoBackground:selected {
-        background-color: shade(rgb(25, 25, 25), 0.4);
-    }
-
-    .TitleClip .VideoBackground {
-        background-color: rgb(94, 78, 102);
-    }
-
-    .TitleClip .VideoBackground:selected  {
-        background-color: shade(rgb(94, 78, 102), 0.4);
     }
 
     .KeyframeCurve {
@@ -214,7 +226,7 @@ EDITOR_PERSPECTIVE_CSS = """
 
     .Trimbar {
         background-image: url('%(trimbar_normal)s');
-        opacity:0.5;
+        opacity: 0.5;
     }
 
     .Trimbar.left {
@@ -279,10 +291,12 @@ EDITOR_PERSPECTIVE_CSS = """
         background-image: url('%(marker_hovered)s');
     }
 
-""" % ({'trimbar_normal': os.path.join(get_pixmap_dir(), "trimbar-normal.png"),
-        'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png"),
-        'marker_unselected': os.path.join(get_pixmap_dir(), "marker-unselect.png"),
-        'marker_hovered': os.path.join(get_pixmap_dir(), "marker-hover.png")})
+""" % ({
+    'clip_border_width': CLIP_BORDER_WIDTH,
+    'marker_hovered': os.path.join(get_pixmap_dir(), "marker-hover.png"),
+    'marker_unselected': os.path.join(get_pixmap_dir(), "marker-unselect.png"),
+    'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png"),
+    'trimbar_normal': os.path.join(get_pixmap_dir(), "trimbar-normal.png")})
 
 
 PREFERENCES_CSS = """
@@ -310,7 +324,6 @@ PREFERENCES_CSS = """
     .prefs_list .last {
         border-bottom: 1px solid rgb(32, 32, 32);
     }
-
 """
 
 

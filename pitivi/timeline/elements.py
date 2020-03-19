@@ -1012,7 +1012,7 @@ class AudioUriSource(TimelineElement):
 
     def _get_previewer(self):
         previewer = AudioPreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
-        previewer.get_style_context().add_class("AudioUriSource")
+        previewer.get_style_context().add_class("AudioPreviewer")
 
         return previewer
 
@@ -1386,6 +1386,7 @@ class UriClip(SourceClip):
 
     def __init__(self, layer, ges_clip):
         SourceClip.__init__(self, layer, ges_clip)
+        self.get_style_context().add_class("UriClip")
         self.props.has_tooltip = True
 
     def do_query_tooltip(self, x, y, keyboard_mode, tooltip):
