@@ -83,6 +83,15 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__update_name()
         name_row.pack_start(self.name_entry, True, True, 0)
 
+        self.togglebutton = Gtk.ToggleButton.new()
+        self.togglebutton.props.valign = Gtk.Align.CENTER
+        self.togglebutton.props.relief = Gtk.ReliefStyle.NONE
+        self.togglebutton.connect("toggled", self.__mute_layer_cb)
+        unmute_image = Gtk.Image.new_from_icon_name(
+            "audio-volume-high", Gtk.IconSize.BUTTON)
+        self.togglebutton.set_image(unmute_image)
+        name_row.pack_start(self.togglebutton, False, False, 0)
+
         self.menubutton = Gtk.MenuButton.new()
         self.menubutton.props.valign = Gtk.Align.CENTER
         self.menubutton.props.relief = Gtk.ReliefStyle.NONE
@@ -92,15 +101,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         popover.props.position = Gtk.PositionType.LEFT
         self.menubutton.set_popover(popover)
         name_row.pack_start(self.menubutton, False, False, 0)
-
-        self.togglebutton = Gtk.ToggleButton.new()
-        self.togglebutton.props.valign = Gtk.Align.CENTER
-        self.togglebutton.props.relief = Gtk.ReliefStyle.NONE
-        self.togglebutton.connect("toggled", self.__mute_layer_cb)
-        unmute_image = Gtk.Image.new_from_icon_name(
-            "audio-volume-high", Gtk.IconSize.BUTTON)
-        self.togglebutton.set_image(unmute_image)
-        name_row.pack_start(self.togglebutton, False, False, 0)
 
         space = Gtk.Label()
         space.props.vexpand = True
