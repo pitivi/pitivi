@@ -223,10 +223,15 @@ class LayersLayout(Gtk.Layout, Zoomable, Loggable):
         self.layers_vbox.get_style_context().add_class("LayersBox")
         self.put(self.layers_vbox, 0, 0)
 
+        # self.mute_button = Gtk.ToggleButton(Gtk.Orientation.HORIZONTAL)
+        # self.mute_button.get_style_context().add_class("MuteButton")
+        # self.put(self.mute_button, 0, 0)
+
         self.marquee = Marquee(timeline)
         self.put(self.marquee, 0, 0)
 
         self.layers_vbox.connect("size-allocate", self.__size_allocate_cb)
+        # self.mute_button.connect("size-allocate", self.__size_allocate_cb)
 
     def zoom_changed(self):
         # The width of the area/workspace changes when the zoom level changes.
@@ -1102,14 +1107,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             # Make sure the first layer has separators above it.
             self.__add_separators()
 
-        mute_button = Gtk.ToggleButton()
-        unmute_image = Gtk.Image.new_from_icon_name(
-            "audio-volume-high", Gtk.IconSize.BUTTON)
-        mute_button.set_image(unmute_image)
-        mute_button.connect("toggled", self._mute_button_cb)
-        self._layers_controls_vbox.pack_start(mute_button, False, False, 0)
-        mute_button.show()
-
         control = LayerControls(ges_layer, self.app)
         control.show_all()
         self._layers_controls_vbox.pack_start(control, False, False, 0)
@@ -1123,16 +1120,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__add_separators()
 
         ges_layer.connect("notify::priority", self.__layer_priority_changed_cb)
-
-    def _mute_button_cb(self, button):
-        if button.get_active():
-            mute_image = Gtk.Image.new_from_icon_name(
-                "audio-volume-muted", Gtk.IconSize.BUTTON)
-            button.set_image(mute_image)
-        else:
-            unmute_image = Gtk.Image.new_from_icon_name(
-                "audio-volume-high", Gtk.IconSize.BUTTON)
-            button.set_image(unmute_image)
 
     def __add_separators(self):
         """Adds separators to separate layers."""

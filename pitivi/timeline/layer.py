@@ -238,18 +238,21 @@ class LayerControls(Gtk.EventBox, Loggable):
         print(ges_layer.get_timeline().get_tracks())
 
         clips = ges_layer.get_clips()
-        for clip in clips:
-            clip.set_mute(True)
 
         if self.togglebutton.get_active():
             mute_image = Gtk.Image.new_from_icon_name(
                 "audio-volume-muted", Gtk.IconSize.BUTTON)
             self.togglebutton.set_image(mute_image)
+            for clip in clips:
+                clip.set_mute(True)
+            print('mute')
         else:
             unmute_image = Gtk.Image.new_from_icon_name(
                 "audio-volume-high", Gtk.IconSize.BUTTON)
             self.togglebutton.set_image(unmute_image)
-        print('mute')
+            for clip in clips:
+                clip.set_mute(False)
+            print('unmute')
 
     def update(self, media_types):
         self.props.height_request = self.ges_layer.ui.props.height_request
