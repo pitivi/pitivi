@@ -1102,14 +1102,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             # Make sure the first layer has separators above it.
             self.__add_separators()
 
-        mute_button = Gtk.ToggleButton()
-        unmute_image = Gtk.Image.new_from_icon_name(
-            "audio-volume-high", Gtk.IconSize.BUTTON)
-        mute_button.set_image(unmute_image)
-        mute_button.connect("toggled", self._mute_button_cb)
-        self._layers_controls_vbox.pack_start(mute_button, False, False, 0)
-        mute_button.show()
-
         control = LayerControls(ges_layer, self.app)
         control.show_all()
         self._layers_controls_vbox.pack_start(control, False, False, 0)
@@ -1123,16 +1115,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__add_separators()
 
         ges_layer.connect("notify::priority", self.__layer_priority_changed_cb)
-
-    def _mute_button_cb(self, button):
-        if button.get_active():
-            mute_image = Gtk.Image.new_from_icon_name(
-                "audio-volume-muted", Gtk.IconSize.BUTTON)
-            button.set_image(mute_image)
-        else:
-            unmute_image = Gtk.Image.new_from_icon_name(
-                "audio-volume-high", Gtk.IconSize.BUTTON)
-            button.set_image(unmute_image)
 
     def __add_separators(self):
         """Adds separators to separate layers."""
