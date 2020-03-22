@@ -926,7 +926,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             max_duration = clip_duration
 
         ges_clip = ges_layer.add_asset(asset, start, 0, clip_duration,
-                                        asset.get_supported_formats())
+                                       asset.get_supported_formats())
         if not ges_clip:
             return ges_clip
 
@@ -935,7 +935,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if max_duration and ges_clip.props.max_duration > max_duration:
             ges_clip.props.max_duration = max_duration
         return ges_clip
-
 
     def __create_clips(self, x, y):
         """Creates the clips for an asset drag operation.
@@ -1460,6 +1459,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             if get_proxy_target(clip) == original_asset:
                 clip.set_asset(replacement_asset)
         self._project.pipeline.commit_timeline()
+
+    def insert_asset(self, asset, position, layer):
+        """Adds asset at 'position' of specified layer."""
+        self._insert_clips_and_assets([asset], position, layer)
 
     def insert_assets(self, assets, position=None):
         """Creates clips out of the specified assets on the longest layer."""
