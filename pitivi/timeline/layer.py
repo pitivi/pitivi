@@ -14,17 +14,23 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
+import os
 import re
+import sys
 from gettext import gettext as _
 
 from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gio
+from gi.repository import GLib
+from gi.repository import Gst
+from gi.repository import GstPbutils
 from gi.repository import Gtk
 
 from pitivi.timeline import elements
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import path_from_uri
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import PADDING
@@ -189,6 +195,12 @@ class LayerControls(Gtk.EventBox, Loggable):
         action_group.add_action(action)
         menu_model.append(_("Delete layer"), "layer.%s" % action.get_name())
 
+        self.record_audio_action = Gio.SimpleAction.new("record-audio", None)
+        action = self.record_audio_action
+        action.connect("activate", self.__record_audio_cb)
+        action_group.add_action(action)
+        menu_model.append(_("Record Audio"), "layer.%s" % action.get_name())
+
         return menu_model, action_group
 
     def __delete_layer_cb(self, unused_action, unused_parameter):
@@ -227,6 +239,119 @@ class LayerControls(Gtk.EventBox, Loggable):
             image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
             self.menubutton.props.image = image
             self.__icon = icon
+
+    def __record_audio_cb(self, *_):
+        """Records audio and adds it to a new layer."""
+
+        def record(duration, filename):
+            def bus_call(_, message, loop):
+                msg_type = message.type
+                Gst.debug_bin_to_dot_file_with_ts(
+                    pipeline, Gst.DebugGraphDetails.ALL, "test")
+                if msg_type == Gst.MessageType.EOS:
+                    sys.stdout.write("End-of-stream\n")
+                    loop.quit()
+                elif msg_type == Gst.MessageType.ERROR:
+                    err, debug = message.parse_error()
+                    sys.stderr.write("Error: %s: %s\n" % (err, debug))
+                    loop.quit()
+                return True
+
+            def stop(loop, pipeline):
+                _, position = pipeline.query_position(Gst.Format.TIME)
+
+                if position > duration * Gst.SECOND:
+                    loop.quit()
+                    return False
+
+                return True
+
+            if self.app.project_manager.current_project.uri is not None:
+                file_path = os.path.dirname(path_from_uri(
+                    self.app.project_manager.current_project.uri))
+            else:
+                file_path = os.getenv("HOME")
+            file_path = file_path + "/" + filename
+
+            Gst.init(None)
+
+            monitor = Gst.DeviceMonitor.new()
+            monitor.add_filter("Audio/Source", Gst.Caps("audio/x-raw"))
+            # This is happening synchonously, use the GstBus based API and
+            # monitor.start() to avoid blocking the main thread.
+            devices = monitor.get_devices()
+            # Using the first microphone.
+            device = devices[0]
+
+            pipeline = Gst.ElementFactory.make("pipeline", None)
+            source = device.create_element()
+            transcodebin = Gst.ElementFactory.make("transcodebin", None)
+            target = GstPbutils.EncodingTarget.load("oga", None)
+            transcodebin.props.profile = target.get_profile("default")
+            filesink = Gst.ElementFactory.make("filesink", None)
+            filesink.props.location = file_path
+
+            pipeline.add(source, transcodebin, filesink)
+            source.link(transcodebin)
+            transcodebin.link(filesink)
+
+            pipeline.set_state(Gst.State.PLAYING)
+
+            bus = pipeline.get_bus()
+            bus.add_signal_watch()
+
+            loop = GLib.MainLoop()
+            GLib.timeout_add_seconds(1, stop, loop, pipeline)
+            bus.connect("message", bus_call, loop)
+            loop.run()
+
+            pipeline.set_state(Gst.State.NULL)
+            pipeline.get_state(Gst.CLOCK_TIME_NONE)
+
+            return file_path
+
+        def on_button_clicked(_):
+            duration = spinbutton.get_value_as_int()
+            filename = entry.get_text()
+            path = record(duration, filename)
+            uri = Gst.filename_to_uri(path)
+            self.app.project_manager.current_project.create_asset(
+                uri, GES.UriClip)
+            self.ges_timeline.append_layer()
+            layers = self.ges_timeline.get_layers()
+
+            def asset_added_cb(project, asset):
+                self.app.gui.editor.timeline_ui.insert_asset(
+                    asset, layers[-1])
+
+            self.app.project_manager.current_project.connect(
+                "asset-added", asset_added_cb)
+            win.destroy()
+
+        win = Gtk.Window(title="Audio Recording")
+        grid = Gtk.Grid()
+        win.add(grid)
+
+        label = Gtk.Label()
+        label.set_label("   Enter duration and filename   ")
+        grid.attach(label, 0, 0, 2, 1)
+
+        adjustment = Gtk.Adjustment(
+            value=0, lower=0, upper=1000, step_increment=1, page_increment=10, page_size=0)
+        spinbutton = Gtk.SpinButton()
+        spinbutton.set_adjustment(adjustment)
+        grid.attach_next_to(spinbutton, label, Gtk.PositionType.BOTTOM, 2, 1)
+
+        entry = Gtk.Entry()
+        grid.attach_next_to(entry, spinbutton, Gtk.PositionType.BOTTOM, 2, 1)
+
+        button = Gtk.Button(label="Ok")
+        button.connect("clicked", on_button_clicked)
+        grid.attach_next_to(button, entry, Gtk.PositionType.BOTTOM, 2, 1)
+
+        win.show_all()
+        win.connect("destroy", Gtk.main_quit)
+        Gtk.main()
 
 
 class Layer(Gtk.Layout, Zoomable, Loggable):
