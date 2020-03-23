@@ -264,6 +264,30 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
 
+    def test_action_stack_in_nested_rollback(self):
+        # begin parent operation
+        self.log.begin("parent")
+        self.assertTrue(self.log.is_in_transaction())
+
+        # push one parent action
+        action1 = mock.Mock(spec=UndoableAction)
+        action1.expand.return_value = False
+        self.log.push(action1)
+        initial_parent_stack = self.log._get_last_stack()
+
+        # begin nested operation
+        self.log.begin("nested")
+        self.assertTrue(self.log.is_in_transaction())
+
+        # push one nested action
+        action2 = mock.Mock(spec=UndoableAction)
+        action2.expand.return_value = False
+        self.log.push(action2)
+
+        # rollback nested operation and check log
+        self.log.rollback()
+        self.assertEqual(initial_parent_stack.done_actions[::], self.log._get_last_stack().done_actions[::])
+
     def test_undo_redo(self):
         """Tries an undo() redo() sequence."""
         # begin
