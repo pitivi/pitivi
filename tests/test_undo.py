@@ -19,6 +19,7 @@
 from unittest import mock
 
 from gi.repository import GES
+from gi.repository import Gst
 
 from pitivi.undo.undo import GObjectObserver
 from pitivi.undo.undo import PropertyChangedAction
@@ -28,6 +29,7 @@ from pitivi.undo.undo import UndoableActionStack
 from pitivi.undo.undo import UndoError
 from pitivi.undo.undo import UndoWrongStateError
 from tests import common
+from tests.test_undo_timeline import BaseTestUndoTimeline
 
 
 class TestUndoableActionStack(common.TestCase):
@@ -392,6 +394,40 @@ class TestUndoableActionLog(common.TestCase):
         # Check the undo and redo stacks are empty
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
+
+
+class TestUndoableActionLogWithRealActions(BaseTestUndoTimeline):
+
+    def setUp(self):
+        super().setUp()
+        self.setup_timeline_container()
+
+    def test_action_stack_of_parent_operation_on_nested_operation_rollback(self):
+        clip1 = GES.TitleClip()
+        clip1.set_duration(1 * Gst.SECOND)
+        clip1.set_duration(1 * Gst.SECOND)
+
+        clip2 = GES.TitleClip()
+        clip2.set_start(1 * Gst.SECOND)
+        clip2.set_duration(1 * Gst.SECOND)
+
+        # begin parent operation
+        self.action_log.begin("parent")
+        self.assertTrue(self.action_log.is_in_transaction())
+
+        # push one parent action
+        self.layer.add_clip(clip1)
+        parent_stack = len(self.action_log._get_last_stack().done_actions)
+
+        # begin nested operation
+        self.action_log.begin("nested")
+        self.assertTrue(self.action_log.is_in_transaction())
+
+        # push one nested action
+        self.layer.add_clip(clip2)
+
+        self.action_log.rollback()
+        self.assertEqual(len(self.action_log._get_last_stack().done_actions), parent_stack, self.action_log._get_last_stack().done_actions)
 
 
 class TestGObjectObserver(common.TestCase):

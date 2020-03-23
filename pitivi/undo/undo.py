@@ -256,11 +256,12 @@ class UndoableActionLog(GObject.Object, Loggable):
             return
 
         self.debug("Rolling back")
-        stack = self._get_last_stack(pop=True)
+        stack = self._get_last_stack()
         self.debug("rollback action group %s, nested %s",
                    stack.action_group_name, len(self.stacks))
         self.emit("rollback", stack)
         stack.undo()
+        self._get_last_stack(pop=True)
 
     def try_rollback(self, action_group_name):
         """Do rollback if the last started operation is @action_group_name."""
