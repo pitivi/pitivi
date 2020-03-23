@@ -183,6 +183,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.redo_stacks = []
         self.stacks = []
         self.running = False
+        self.rolling_back = False
         self._checkpoint = self._take_snapshot()
 
     @contextlib.contextmanager
@@ -239,6 +240,10 @@ class UndoableActionLog(GObject.Object, Loggable):
             self.debug("Ignore push because running: %s", action)
             return
 
+        if self.rolling_back:
+            self.debug("Ignore push because rolling back: %s", action)
+            return
+
         try:
             stack = self._get_last_stack()
         except UndoWrongStateError as e:
@@ -255,12 +260,16 @@ class UndoableActionLog(GObject.Object, Loggable):
             self.debug("Ignore rollback because running")
             return
 
-        self.debug("Rolling back")
-        stack = self._get_last_stack(pop=True)
-        self.debug("rollback action group %s, nested %s",
-                   stack.action_group_name, len(self.stacks))
-        self.emit("rollback", stack)
-        stack.undo()
+        self.rolling_back = True
+        try:
+            self.debug("Rolling back")
+            stack = self._get_last_stack(pop=True)
+            self.debug("rollback action group %s, nested %s",
+                       stack.action_group_name, len(self.stacks))
+            self.emit("rollback", stack)
+            stack.undo()
+        finally:
+            self.rolling_back = False
 
     def try_rollback(self, action_group_name):
         """Do rollback if the last started operation is @action_group_name."""
