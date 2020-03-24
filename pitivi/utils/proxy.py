@@ -631,11 +631,11 @@ class ProxyManager(GObject.Object, Loggable):
 
         return is_queued
 
-    def __create_transcoder(self, asset, width=None, height=None, shadow=False):
+    def __create_transcoder(self, asset, scaled=False, shadow=False):
+        width = None
+        height = None
         self._total_time_to_transcode += asset.get_duration() / Gst.SECOND
         asset_uri = asset.get_id()
-
-        scaled = width or height
         proxy_uri = self.get_proxy_uri(asset, scaled=scaled)
 
         if Gio.File.new_for_uri(proxy_uri).query_exists(None):
@@ -649,6 +649,15 @@ class ProxyManager(GObject.Object, Loggable):
         self.debug("Creating a proxy for %s (strategy: %s, force: %s, scaled: %s)",
                    asset.get_id(), self.app.settings.proxying_strategy,
                    asset.force_proxying, scaled)
+
+        if scaled:
+            project = self.app.project_manager.current_project
+            w = project.scaled_proxy_width
+            h = project.scaled_proxy_height
+            if not project.has_scaled_proxy_size():
+                project.scaled_proxy_width = w
+                project.scaled_proxy_height = h
+            width, height = self._scale_asset_resolution(asset, w, h)
 
         dispatcher = GstTranscoder.TranscoderGMainContextSignalDispatcher.new()
 
@@ -758,17 +767,7 @@ class ProxyManager(GObject.Object, Loggable):
                     self.emit("proxy-ready", asset, None)
                     return
 
-            if scaled:
-                project = self.app.project_manager.current_project
-                w = project.scaled_proxy_width
-                h = project.scaled_proxy_height
-                if not project.has_scaled_proxy_size():
-                    project.scaled_proxy_width = w
-                    project.scaled_proxy_height = h
-                t_width, t_height = self._scale_asset_resolution(asset, w, h)
-                self.__create_transcoder(asset, width=t_width, height=t_height, shadow=shadow)
-            else:
-                self.__create_transcoder(asset, shadow=shadow)
+            self.__create_transcoder(asset, scaled=scaled, shadow=shadow)
         else:
             if self.is_asset_queued(asset, scaling=False):
                 self.log("Asset already queued for optimization: %s", asset)
