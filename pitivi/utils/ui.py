@@ -210,13 +210,14 @@ EDITOR_PERSPECTIVE_CSS = """
     }
 
 
-    .VideoUriSource image {
+    .Thumbnail {
         transition: opacity 200ms linear;
         opacity: 1;
      }
 
-    .VideoUriSource:selected image,
-    .AudioUriSource:selected .AudioPreviewer {
+    .VideoPreviewer:selected,
+    .AudioPreviewer:selected,
+    .TitlePreviewer:selected {
         opacity: 0.15;
     }
 
