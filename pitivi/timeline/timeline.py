@@ -771,7 +771,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                     self.__next_seek_position = None
                 else:
                     event_widget = Gtk.get_event_widget(event)
-                    if self._get_parent_of_type(event_widget, LayerControls) is None:
+                    if event_widget and self._get_parent_of_type(event_widget, LayerControls) is None:
                         self._seek(event)
 
             # Allowing group clips selection by shift+clicking anywhere on the timeline.
@@ -926,7 +926,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             max_duration = clip_duration
 
         ges_clip = ges_layer.add_asset(asset, start, 0, clip_duration,
-                                        asset.get_supported_formats())
+                                       asset.get_supported_formats())
         if not ges_clip:
             return ges_clip
 
@@ -935,7 +935,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if max_duration and ges_clip.props.max_duration > max_duration:
             ges_clip.props.max_duration = max_duration
         return ges_clip
-
 
     def __create_clips(self, x, y):
         """Creates the clips for an asset drag operation.
