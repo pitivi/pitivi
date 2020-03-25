@@ -368,7 +368,12 @@ class KeyframeCurve(FigureCanvas, Loggable):
         x, unused_y = event_widget.translate_coordinates(self._timeline.layout.layers_vbox,
                                                          event.x, event.y)
         ges_clip = self._timeline.selection.get_single_clip(GES.Clip)
-        event.xdata = Zoomable.pixel_to_ns(x) - ges_clip.props.start + ges_clip.props.in_point
+
+        if ges_clip:
+            event.xdata = Zoomable.pixel_to_ns(x) - ges_clip.props.start + ges_clip.props.in_point
+        else:
+            for clip in self._timeline.selection.get_selected_track_elements():
+                event.xdata += Zoomable.pixel_to_ns(x) - clip.props.start + clip.props.in_point
 
         if self._offset is not None:
             # If dragging a keyframe, make sure the keyframe ends up exactly
