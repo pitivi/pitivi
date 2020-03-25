@@ -1280,7 +1280,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             self.app.gui.editor.switch_context_tab(self.ges_clip)
 
         parent = self.ges_clip.get_toplevel_parent()
-        if parent is self.ges_clip:
+        if self.ges_clip:
             selection = [self.ges_clip]
         else:
             selection = [elem for elem in parent.get_children(True)

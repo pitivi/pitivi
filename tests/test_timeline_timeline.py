@@ -371,10 +371,12 @@ class TestGrouping(BaseTestTimeline):
         # Deselect one grouped clip clips
         self.toggle_clip_selection(clips[0], expect_selected=False)
 
-        # Make sure all the clips have been deselected
-        for clip in clips:
-            self.assertFalse(bool(clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED))
-            self.assertFalse(clip.selected.selected)
+        # Check if only one clip was deselected
+        self.assertFalse(bool(clips[0].ui.get_state_flags() & Gtk.StateFlags.SELECTED))
+        self.assertFalse(clips[0].selected.selected)
+
+        self.assertTrue(bool(clips[1].ui.get_state_flags() & Gtk.StateFlags.SELECTED))
+        self.assertTrue(clips[1].selected.selected)
 
     def test_group_ungroup(self):
         num_clips = 2
