@@ -776,7 +776,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                     self.__next_seek_position = None
                 else:
                     event_widget = Gtk.get_event_widget(event)
-                    if self._get_parent_of_type(event_widget, LayerControls) is None:
+                    if event_widget and self._get_parent_of_type(event_widget, LayerControls) is None:
                         self._seek(event)
 
             # Allowing group clips selection by shift+clicking anywhere on the timeline.
