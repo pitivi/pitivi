@@ -90,11 +90,12 @@ class KeyframeCurve(FigureCanvas, Loggable):
         "leave": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
-    def __init__(self, timeline, binding):
+    def __init__(self, timeline, binding, ges_elem):
         figure = Figure()
         FigureCanvas.__init__(self, figure)
         Loggable.__init__(self)
 
+        self._ges_elem = ges_elem
         self._timeline = timeline
         self.__source = binding.props.control_source
         self._connect_sources()
@@ -368,8 +369,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         event_widget = Gtk.get_event_widget(event.guiEvent)
         x, unused_y = event_widget.translate_coordinates(self._timeline.layout.layers_vbox,
                                                          event.x, event.y)
-        ges_clip = self._timeline.selection.get_single_clip(GES.Clip)
-        event.xdata = Zoomable.pixel_to_ns(x) - ges_clip.props.start + ges_clip.props.in_point
+        event.xdata = Zoomable.pixel_to_ns(x) - self._ges_elem.props.start + self._ges_elem.props.in_point
 
         if self._offset is not None:
             # If dragging a keyframe, make sure the keyframe ends up exactly
@@ -447,9 +447,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
 class MultipleKeyframeCurve(KeyframeCurve):
     """Keyframe curve which controls multiple properties at once."""
 
-    def __init__(self, timeline, bindings):
+    def __init__(self, timeline, bindings, ges_elem):
         self.__bindings = bindings
-        super().__init__(timeline, bindings[0])
+        super().__init__(timeline, bindings[0], ges_elem)
 
         self._timeline = timeline
         self._project = timeline.app.project_manager.current_project
@@ -726,9 +726,9 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             bindings = [self._ges_elem.get_control_binding(self.__controlled_property.name)]
 
         if len(bindings) == 1:
-            self.keyframe_curve = KeyframeCurve(self.timeline, bindings[0])
+            self.keyframe_curve = KeyframeCurve(self.timeline, bindings[0], self._ges_elem)
         else:
-            self.keyframe_curve = MultipleKeyframeCurve(self.timeline, bindings)
+            self.keyframe_curve = MultipleKeyframeCurve(self.timeline, bindings, self._ges_elem)
 
         self.keyframe_curve.connect("enter", self.__curve_enter_cb)
         self.keyframe_curve.connect("leave", self.__curve_leave_cb)
