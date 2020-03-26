@@ -635,10 +635,6 @@ class ProxyManager(GObject.Object, Loggable):
         width = None
         height = None
 
-        self._total_time_to_transcode += asset.get_duration() / Gst.SECOND
-        asset_uri = asset.get_id()
-        proxy_uri = self.get_proxy_uri(asset, scaled=scaled)
-
         if scaled:
             project = self.app.project_manager.current_project
             w = project.scaled_proxy_width
@@ -647,6 +643,10 @@ class ProxyManager(GObject.Object, Loggable):
                 project.scaled_proxy_width = w
                 project.scaled_proxy_height = h
             width, height = self._scale_asset_resolution(asset, w, h)
+
+        self._total_time_to_transcode += asset.get_duration() / Gst.SECOND
+        asset_uri = asset.get_id()
+        proxy_uri = self.get_proxy_uri(asset, scaled=scaled)
 
         if Gio.File.new_for_uri(proxy_uri).query_exists(None):
             self.debug("Using proxy already generated: %s", proxy_uri)
@@ -768,10 +768,7 @@ class ProxyManager(GObject.Object, Loggable):
                     self.emit("proxy-ready", asset, None)
                     return
 
-            if scaled:
-                self.__create_transcoder(asset, scaled=True, shadow=shadow)
-            else:
-                self.__create_transcoder(asset, shadow=shadow)
+            self.__create_transcoder(asset, scaled=scaled, shadow=shadow)
         else:
             if self.is_asset_queued(asset, scaling=False):
                 self.log("Asset already queued for optimization: %s", asset)
