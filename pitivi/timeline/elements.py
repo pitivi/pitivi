@@ -451,9 +451,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
 class MultipleKeyframeCurve(KeyframeCurve):
     """Keyframe curve which controls multiple properties at once."""
 
-    def __init__(self, timeline, bindings):
+    def __init__(self, timeline, bindings, ges_elem):
         self.__bindings = bindings
-        super().__init__(timeline, bindings[0])
+        super().__init__(timeline, bindings[0], ges_elem)
 
         self._timeline = timeline
         self._project = timeline.app.project_manager.current_project
@@ -732,7 +732,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         if len(bindings) == 1:
             self.keyframe_curve = KeyframeCurve(self.timeline, bindings[0], self._ges_elem)
         else:
-            self.keyframe_curve = MultipleKeyframeCurve(self.timeline, bindings)
+            self.keyframe_curve = MultipleKeyframeCurve(self.timeline, bindings, self._ges_elem)
 
         self.keyframe_curve.connect("enter", self.__curve_enter_cb)
         self.keyframe_curve.connect("leave", self.__curve_leave_cb)
