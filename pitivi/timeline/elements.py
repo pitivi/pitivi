@@ -369,11 +369,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         event_widget = Gtk.get_event_widget(event.guiEvent)
         x, unused_y = event_widget.translate_coordinates(self._timeline.layout.layers_vbox,
                                                          event.x, event.y)
-        event.xdata = (
-            Zoomable.pixel_to_ns(x) -
-            self._ges_elem.props.start +
-            self._ges_elem.props.in_point
-        )
+        event.xdata = Zoomable.pixel_to_ns(x) - self._ges_elem.props.start + self._ges_elem.props.in_point
 
         if self._offset is not None:
             # If dragging a keyframe, make sure the keyframe ends up exactly
