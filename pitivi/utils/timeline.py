@@ -342,7 +342,7 @@ class EditingContext(GObject.Object, Loggable):
                               edge=self.edge.value_nick,
                               new_layer_priority=int(priority))
 
-        if res and self.mode == GES.EditMode.EDIT_TRIM and self.with_video:
+        if res and self.with_video:
             if self.edge == GES.Edge.EDGE_START:
                 self.timeline.ui.app.gui.editor.viewer.clip_trim_preview(
                     self.focus, self.focus.props.in_point)
