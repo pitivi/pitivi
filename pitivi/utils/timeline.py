@@ -226,7 +226,7 @@ class Selection(GObject.Object, Loggable):
             toplevel = obj.get_toplevel_parent()
             toplevels.add(toplevel)
 
-        group = GES.Group()
+        group = GES.Group.new()
         group.props.serialize = False
         for toplevel in toplevels:
             group.add(toplevel)
