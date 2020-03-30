@@ -475,6 +475,8 @@ class ProxyManager(GObject.Object, Loggable):
             target_uri = self.get_target_uri(asset)
 
             for clip in self.app.project_manager.current_project.ges_timeline.iter_clips():
+                if isinstance (clip, GES.UriClip):
+                    continue
                 if self.get_target_uri(clip.props.uri) == target_uri:
                     if clip.props.in_point + clip.props.duration > duration:
                         new_duration = duration - clip.props.in_point
