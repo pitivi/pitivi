@@ -320,21 +320,33 @@ class EditingContext(GObject.Object, Loggable):
         self.new_position = position
         self.new_priority = priority
 
-        res = self.focus.edit([], priority, self.mode, self.edge, int(position))
-        self.app.write_action("edit-container",
-                              container_name=self.focus.get_name(),
-                              position=float(position / Gst.SECOND),
-                              edit_mode=self.mode.value_nick,
-                              edge=self.edge.value_nick,
-                              new_layer_priority=int(priority))
+        if self.with_video:
+            frame = self.timeline.get_frame_at(position)
+            time = self.timeline.get_frame_time(frame)
+            if position != time:
+                frame_dur = self.timeline.get_frame_time(1)
+                next_time = self.timeline.get_frame_time(frame + 1)
+                if abs(position - next_time) < frame_dur / 2:
+                    position = next_time
+                else:
+                    position = time
 
-        if res and self.mode == GES.EditMode.EDIT_TRIM and self.with_video:
-            if self.edge == GES.Edge.EDGE_START:
-                self.timeline.ui.app.gui.editor.viewer.clip_trim_preview(
-                    self.focus, self.focus.props.in_point)
-            elif self.edge == GES.Edge.EDGE_END:
-                self.timeline.ui.app.gui.editor.viewer.clip_trim_preview(
-                    self.focus, self.focus.props.duration + self.focus.props.in_point)
+        res = self.focus.edit([], priority, self.mode, self.edge, int(position))
+        if res:
+            self.app.write_action("edit-container",
+                                container_name=self.focus.get_name(),
+                                position=float(position / Gst.SECOND),
+                                edit_mode=self.mode.value_nick,
+                                edge=self.edge.value_nick,
+                                new_layer_priority=int(priority))
+
+            if self.with_video:
+                if self.edge == GES.Edge.EDGE_START:
+                    self.timeline.ui.app.gui.editor.viewer.clip_trim_preview(
+                        self.focus, self.focus.props.in_point)
+                elif self.edge == GES.Edge.EDGE_END:
+                    self.timeline.ui.app.gui.editor.viewer.clip_trim_preview(
+                        self.focus, self.focus.props.duration + self.focus.props.in_point)
 
 
 # -------------------------- Interfaces ----------------------------------------#
