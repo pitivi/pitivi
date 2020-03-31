@@ -332,20 +332,21 @@ class EditingContext(GObject.Object, Loggable):
                     position = time
 
         res = self.focus.edit([], priority, self.mode, self.edge, int(position))
-        self.app.write_action("edit-container",
-                              container_name=self.focus.get_name(),
-                              position=float(position / Gst.SECOND),
-                              edit_mode=self.mode.value_nick,
-                              edge=self.edge.value_nick,
-                              new_layer_priority=int(priority))
+        if res:
+            self.app.write_action("edit-container",
+                                container_name=self.focus.get_name(),
+                                position=float(position / Gst.SECOND),
+                                edit_mode=self.mode.value_nick,
+                                edge=self.edge.value_nick,
+                                new_layer_priority=int(priority))
 
-        if res and self.with_video:
-            if self.edge == GES.Edge.EDGE_START:
-                self.timeline.ui.app.gui.editor.viewer.clip_trim_preview(
-                    self.focus, self.focus.props.in_point)
-            elif self.edge == GES.Edge.EDGE_END:
-                self.timeline.ui.app.gui.editor.viewer.clip_trim_preview(
-                    self.focus, self.focus.props.duration + self.focus.props.in_point)
+            if self.with_video:
+                if self.edge == GES.Edge.EDGE_START:
+                    self.timeline.ui.app.gui.editor.viewer.clip_trim_preview(
+                        self.focus, self.focus.props.in_point)
+                elif self.edge == GES.Edge.EDGE_END:
+                    self.timeline.ui.app.gui.editor.viewer.clip_trim_preview(
+                        self.focus, self.focus.props.duration + self.focus.props.in_point)
 
 
 # -------------------------- Interfaces ----------------------------------------#
