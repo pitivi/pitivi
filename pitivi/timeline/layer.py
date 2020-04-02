@@ -160,7 +160,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__move_layer_down_action.props.enabled = not last
         self.__move_layer_bottom_action.props.enabled = not last
         self.delete_layer_action.props.enabled = layers_count > 1
-        self.mute_layer_action.props.enabled = True
 
     def __update_name(self):
         self.name_entry.set_text(self.ges_layer.ui.get_name())
@@ -199,12 +198,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         action_group.add_action(action)
         menu_model.append(_("Delete layer"), "layer.%s" % action.get_name())
 
-        self.mute_layer_action = Gio.SimpleAction.new("mute-layer", None)
-        action = self.mute_layer_action
-        action.connect("activate", self.__mute_layer_cb)
-        action_group.add_action(action)
-        menu_model.append(_("Mute layer"), "layer.%s" % action.get_name())
-
         return menu_model, action_group
 
     def __delete_layer_cb(self, unused_action, unused_parameter):
@@ -234,22 +227,27 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__mute_layer(self.ges_layer)
 
     def __mute_layer(self, ges_layer):
-        # self.ges_layer.set_mute(True) # Planned Implementation
-        print(ges_layer.get_timeline().get_tracks())
-
-        clips = ges_layer.get_clips()
-        for clip in clips:
-            clip.set_mute(True)
+        tracks = ges_layer.get_timeline().get_tracks()
+        audio_track = None
+        for track in tracks:
+            if track.props.track_type == GES.TrackType.VIDEO:
+                audio_track = track
+                break
 
         if self.togglebutton.get_active():
             mute_image = Gtk.Image.new_from_icon_name(
                 "audio-volume-muted", Gtk.IconSize.BUTTON)
             self.togglebutton.set_image(mute_image)
+            ges_layer.set_active_for_tracks(False, [audio_track])
+            print('mute')
         else:
             unmute_image = Gtk.Image.new_from_icon_name(
                 "audio-volume-high", Gtk.IconSize.BUTTON)
             self.togglebutton.set_image(unmute_image)
-        print('mute')
+            ges_layer.set_active_for_tracks(True, [audio_track])
+            print('unmute')
+
+        print(ges_layer.get_active_for_track(audio_track))
 
     def update(self, media_types):
         self.props.height_request = self.ges_layer.ui.props.height_request
