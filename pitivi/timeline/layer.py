@@ -86,7 +86,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.togglebutton = Gtk.ToggleButton.new()
         self.togglebutton.props.valign = Gtk.Align.CENTER
         self.togglebutton.props.relief = Gtk.ReliefStyle.NONE
-        self.togglebutton.connect("toggled", self.__mute_layer_cb)
+        self.togglebutton.connect("toggled", self.__toggle_mute_layer_cb)
         unmute_image = Gtk.Image.new_from_icon_name(
             "audio-volume-high", Gtk.IconSize.BUTTON)
         self.togglebutton.set_image(unmute_image)
@@ -222,32 +222,23 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.ges_timeline.ui.move_layer(self.ges_layer, index)
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
-    def __mute_layer_cb(self, unused_action):
-
-        self.__mute_layer(self.ges_layer)
-
-    def __mute_layer(self, ges_layer):
-        tracks = ges_layer.get_timeline().get_tracks()
+    def __toggle_mute_layer_cb(self, unused_action):
+        tracks = self.ges_layer.get_timeline().get_tracks()
         audio_track = None
         for track in tracks:
             if track.props.track_type == GES.TrackType.AUDIO:
                 audio_track = track
                 break
-
         if self.togglebutton.get_active():
             mute_image = Gtk.Image.new_from_icon_name(
                 "audio-volume-muted", Gtk.IconSize.BUTTON)
             self.togglebutton.set_image(mute_image)
-            ges_layer.set_active_for_tracks(False, [audio_track])
-            print('mute')
+            self.ges_layer.set_active_for_tracks(False, [audio_track])
         else:
             unmute_image = Gtk.Image.new_from_icon_name(
                 "audio-volume-high", Gtk.IconSize.BUTTON)
             self.togglebutton.set_image(unmute_image)
-            ges_layer.set_active_for_tracks(True, [audio_track])
-            print('unmute')
-
-        print(ges_layer.get_active_for_track(audio_track))
+            self.ges_layer.set_active_for_tracks(True, [audio_track])
 
     def update(self, media_types):
         self.props.height_request = self.ges_layer.ui.props.height_request
