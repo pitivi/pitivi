@@ -230,7 +230,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         tracks = ges_layer.get_timeline().get_tracks()
         audio_track = None
         for track in tracks:
-            if track.props.track_type == GES.TrackType.VIDEO:
+            if track.props.track_type == GES.TrackType.AUDIO:
                 audio_track = track
                 break
 
