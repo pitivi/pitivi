@@ -17,6 +17,7 @@
 import collections
 from gettext import gettext as _
 
+import cairo
 from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import GLib
@@ -27,6 +28,7 @@ from gi.repository import Gtk
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.pipeline import AssetPipeline
+from pitivi.utils.ui import gtk_style_context_get_color
 from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import TimeWidget
 from pitivi.viewer.overlay_stack import OverlayStack
@@ -59,7 +61,7 @@ GlobalSettings.add_config_option("pointColor", section="viewer",
 
 
 class ViewerContainer(Gtk.Box, Loggable):
-    """Wiget holding a viewer and the controls.
+    """Wiget holding a viewer, the controls, and a peak meter.
 
     Attributes:
         pipeline (SimplePipeline): The displayed pipeline.
@@ -151,14 +153,15 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.overlay_stack = OverlayStack(self.app, sink_widget)
         self.target = ViewerWidget(self.overlay_stack)
         self._reset_viewer_aspect_ratio(self.project)
+        self.viewer_subcontainer.pack_start(self.target, expand=True, fill=True, padding=0)
 
         if self.docked:
-            self.pack_start(self.target, expand=True, fill=True, padding=0)
+            self.pack_start(self.viewer_subcontainer, expand=True, fill=True, padding=0)
         else:
-            self.external_vbox.pack_start(self.target, expand=True, fill=False, padding=0)
-            self.external_vbox.child_set(self.target, fill=True)
+            self.external_vbox.pack_start(self.viewer_subcontainer, expand=True, fill=False, padding=0)
+            self.external_vbox.child_set(self.viewer_subcontainer, fill=True)
 
-        self.target.show_all()
+        self.viewer_subcontainer.show_all()
 
         # Wait for 1s to make sure that the viewer has completely realized
         # and then we can mark the resize status as showable.
@@ -208,6 +211,10 @@ class ViewerContainer(Gtk.Box, Loggable):
             "configure-event", self._external_window_configure_cb)
         self.external_vbox = vbox
 
+        # This holds the peak meter and the viewer.
+        self.viewer_subcontainer = Gtk.Box()
+        self.viewer_subcontainer.set_orientation(Gtk.Orientation.HORIZONTAL)
+
         # Corner marker.
         corner = Gtk.DrawingArea()
         # Number of lines to draw in the corner marker.
@@ -231,6 +238,16 @@ class ViewerContainer(Gtk.Box, Loggable):
         corner.connect("button-release-event", self.__corner_button_release_cb)
         corner.connect("motion-notify-event", self.__corner_motion_notify_cb, hpane, vpane)
         self.pack_end(corner, False, False, 0)
+
+        # Peak Meter
+        self.peakmeter = PeakMeterWidget()
+        self.peakmeter.set_property("valign", Gtk.Align.CENTER)
+        self.peakmeter.set_property("halign", Gtk.Align.CENTER)
+        self.peakmeter.set_margin_left(SPACING)
+        self.peakmeter.set_margin_right(SPACING)
+        self.peakmeter.set_tooltip_text(
+            _('I\'m a peak meter! (I think)'))
+        self.viewer_subcontainer.pack_end(self.peakmeter, False, False, 0)
 
         # Buttons/Controls
         bbox = Gtk.Box()
@@ -316,6 +333,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.end_button.get_accessible().set_name("end_button")
         self.timecode_entry.get_accessible().set_name("timecode_entry")
         self.undock_button.get_accessible().set_name("undock_button")
+        self.peakmeter.get_accessible().set_name("peakmeter")
 
         self.buttons_container = bbox
         self.external_vbox.show_all()
@@ -426,7 +444,8 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.overlay_stack.enable_resize_status(False)
             position = self.project.pipeline.get_position()
             self.project.pipeline.set_simple_state(Gst.State.NULL)
-            self.remove(self.target)
+            self.remove(self.viewer_subcontainer)
+            self.viewer_subcontainer.remove(self.target)
             self.__create_new_viewer()
         self.buttons_container.set_margin_bottom(SPACING)
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
@@ -470,7 +489,8 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.overlay_stack.enable_resize_status(False)
             position = self.project.pipeline.get_position()
             self.project.pipeline.set_simple_state(Gst.State.NULL)
-            self.external_vbox.remove(self.target)
+            self.external_vbox.remove(self.viewer_subcontainer)
+            self.viewer_subcontainer.remove(self.target)
             self.__create_new_viewer()
 
         self.undock_button.show()
@@ -735,3 +755,90 @@ class PlayPauseButton(Gtk.Button, Loggable):
             "media-playback-pause-symbolic", Gtk.IconSize.BUTTON))
         self.set_tooltip_text(_("Pause"))
         self.playing = True
+
+
+class PeakMeterWidget(Gtk.DrawingArea, Loggable):
+    """Widget for a peak meter.
+
+    Args:
+        TO DO
+    """
+
+    # def __init__(self, upper=None, lower=None, default=None, adjustment=None, width_chars=None):
+    def __init__(self):
+        Gtk.DrawingArea.__init__(self)
+        Loggable.__init__(self)
+        self._type = None
+        self.handler_id = None
+        self.pixbuf = None
+        self.width = 30
+        self.height = 150
+        self.set_size_request(self.width, self.height)
+
+        self.show()
+
+    def do_configure_event(self, unused_event):
+        width = self.get_allocated_width()
+        height = self.get_allocated_height()
+        self.debug("Configuring, height %d, width %d", width, height)
+
+        # Destroy previous buffer
+        if self.pixbuf is not None:
+            self.pixbuf.finish()
+            self.pixbuf = None
+
+        # Create a new buffer
+        self.pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+
+        # pylint: disable=attribute-defined-outside-init
+        context = self.get_style_context()
+        color_normal = gtk_style_context_get_color(context, Gtk.StateFlags.NORMAL)
+        color_insensitive = gtk_style_context_get_color(context, Gtk.StateFlags.BACKDROP)
+        self._color_normal = color_normal
+        self._color_dimmed = Gdk.RGBA(
+            *[(x * 3 + y * 2) / 5
+              for x, y in ((color_normal.red, color_insensitive.red),
+                           (color_normal.green, color_insensitive.green),
+                           (color_normal.blue, color_insensitive.blue))])
+
+        self._color_subtle = Gdk.RGBA(
+            *[(x * 3 + y * 2) / 10
+              for x, y in ((color_normal.red, color_insensitive.red),
+                           (color_normal.green, color_insensitive.green),
+                           (color_normal.blue, color_insensitive.blue))])
+
+        # Two colors with high contrast.
+        self._color_frame = gtk_style_context_get_color(context, Gtk.StateFlags.LINK)
+
+    def do_draw(self, context):
+        if self.pixbuf is None:
+            self.info('No buffer to paint')
+            return False
+
+        pixbuf = self.pixbuf
+
+        # Draw on a temporary context and then copy everything.
+        drawing_context = cairo.Context(pixbuf)
+        self.draw_bar(drawing_context)
+        self.draw_background(drawing_context)
+        pixbuf.flush()
+
+        context.set_source_surface(self.pixbuf, 0.0, 0.0)
+        context.paint()
+
+        return False
+
+    def draw_bar(self, context):
+        y = context.get_target().get_height()
+        context.set_source_rgb(0.1, 0.1, 0.1)
+        context.rectangle(0, y - self.height, self.width, self.height)
+        context.fill()
+        context.set_source_rgb(0, 1, 0)
+        context.rectangle(0, y - self.height + 50, self.width, self.height - 50)
+        context.fill()
+
+    def draw_background(self, context):
+        width = context.get_target().get_width()
+        height = context.get_target().get_height()
+        style_context = self.get_style_context()
+        Gtk.render_background(style_context, context, 0, 0, width, height)
