@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="trimming">
+  <info>
+    <link type="guide" xref="index#timeline"/>
+    <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
+    <credit type="author">
+      <name>Aaron Byington</name>
+      <email>aabyington4@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Matt Lowe</name>
+      <email>mattlowe13@huskers.unl.edu</email>
+    </credit>
+    <credit type="contributor">
+      <name>Michael Westberg</name>
+      <email>michael.westberg@huskers.unl.edu</email>
+    </credit>
+    <desc>
+      Creating a new title clip for a project.
+    </desc>
+  </info>
+  <title>Title Clips</title>
+  <p><em>Title Clips</em> are clips within a Pitivi project that allow the creator to add a simple clip containing text.</p>
+  <p>To create a new title clip, first open Pitivi and find the tab near the top labeled "Title".</p>
+  <p>You can then click the "Create" button within this tab to create a new title clip.</p>
+  <p>Once the "Create" button has been clicked, you should see a number of title clip properties that can be changed:
+    <p>A text box at the top to type in the title clip's text.</p>
+    <p>A button below the text box to edit the text's font style and size.</p>
+    <p>Two buttons to the right to select the clip's text color from a pre-existing color palette or using an eye-dropper tool.</p>
+    <p>Two buttons to the right to select the clip's background color from a pre-existing color palette or using an eye-dropper tool.</p>
+    <p>Alignment settings at the bottom to make the text either horizontal or vertical and to change its orientation within the clip.</p>
+  </p>
+  <p>Changes can be viewed in real time in Pitivi's viewer to the right of the "Title" tab.</p>
+  <p>The newly created title clip should appear in the top layer of the pitivi project, and can then be moved between layers as needed. Its duration and start time can also be altered like any other clip.</p>
+</page>
