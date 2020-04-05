@@ -60,6 +60,7 @@ class LayerControls(Gtk.EventBox, Loggable):
 
         tracks = self.ges_timeline.get_tracks()
         self.timeline_audio_tracks = [track for track in tracks if track.props.track_type == GES.TrackType.AUDIO]
+        self.timeline_video_tracks = [track for track in tracks if track.props.track_type == GES.TrackType.VIDEO]
 
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(hbox)
@@ -92,6 +93,13 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.mute_toggle_button.connect("toggled", self.__mute_button_toggled_cb)
         self.__update_mute_button()
         name_row.pack_start(self.mute_toggle_button, False, False, 0)
+
+        self.video_toggle_button = Gtk.ToggleButton.new()
+        self.video_toggle_button.props.valign = Gtk.Align.CENTER
+        self.video_toggle_button.props.relief = Gtk.ReliefStyle.NONE
+        self.video_toggle_button.connect("toggled", self.__video_button_toggled_cb)
+        self.__update_video_button()
+        name_row.pack_start(self.video_toggle_button, False, False, 0)
 
         self.menubutton = Gtk.MenuButton.new()
         self.menubutton.props.valign = Gtk.Align.CENTER
@@ -236,12 +244,26 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.mute_toggle_button.set_image(image)
 
     def __layer_active_changed_cb(self, ges_layer, active, tracks):
+        self.__update_video_button()
         self.__update_mute_button()
+
+    def __video_button_toggled_cb(self, button):
+        self.ges_layer.set_active_for_tracks(not button.get_active(), self.timeline_video_tracks)
+        self.app.project_manager.current_project.pipeline.commit_timeline()
+
+    def __update_video_button(self):
+        muted = all([not self.ges_layer.get_active_for_track(t) for t in self.timeline_video_tracks])
+        self.video_toggle_button.set_active(muted)
+        icon_name = "eye-not-looking-symbolic" if muted else "eye-open-negative-filled-symbolic"
+        image = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
+        self.video_toggle_button.set_image(image)
 
     def update(self, media_types):
         self.props.height_request = self.ges_layer.ui.props.height_request
+        has_video = media_types & GES.TrackType.VIDEO
+        self.video_toggle_button.set_sensitive(has_video)
 
-        if media_types & GES.TrackType.VIDEO or not media_types:
+        if has_video or not media_types:
             # The layer has video or is empty.
             icon = "video-x-generic-symbolic"
         else:

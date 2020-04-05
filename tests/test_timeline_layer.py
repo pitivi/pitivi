@@ -91,6 +91,51 @@ class TestLayerControl(common.TestCase):
         common.create_main_loop().run(until_empty=True)
         self.assertFalse(mute_toggle_button.get_active())
 
+    def test_layer_hide_video(self):
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+        layer_controls = ges_layer.control_ui
+        video_toggle_button = layer_controls.video_toggle_button
+
+        for video_track in layer_controls.timeline_video_tracks:
+            self.assertTrue(ges_layer.get_active_for_track(video_track))
+            self.assertFalse(video_toggle_button.get_active())
+
+            ges_layer.set_active_for_tracks(False, [video_track])
+            common.create_main_loop().run(until_empty=True)
+            self.assertFalse(ges_layer.get_active_for_track(video_track))
+            self.assertTrue(video_toggle_button.get_active())
+
+            ges_layer.set_active_for_tracks(True, [video_track])
+            common.create_main_loop().run(until_empty=True)
+            self.assertTrue(ges_layer.get_active_for_track(video_track))
+            self.assertFalse(video_toggle_button.get_active())
+
+    def test_layer_hide_video_button(self):
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+        layer_controls = ges_layer.control_ui
+        video_toggle_button = layer_controls.video_toggle_button
+
+        for video_track in layer_controls.timeline_video_tracks:
+            self.assertTrue(ges_layer.get_active_for_track(video_track))
+        common.create_main_loop().run(until_empty=True)
+        self.assertFalse(video_toggle_button.get_active())
+
+        video_toggle_button.clicked()
+        for video_track in layer_controls.timeline_video_tracks:
+            self.assertFalse(ges_layer.get_active_for_track(video_track))
+        common.create_main_loop().run(until_empty=True)
+        self.assertTrue(video_toggle_button.get_active())
+
+        video_toggle_button.clicked()
+        for video_track in layer_controls.timeline_video_tracks:
+            self.assertTrue(ges_layer.get_active_for_track(video_track))
+        common.create_main_loop().run(until_empty=True)
+        self.assertFalse(video_toggle_button.get_active())
+
 
 class TestLayer(common.TestCase):
 
