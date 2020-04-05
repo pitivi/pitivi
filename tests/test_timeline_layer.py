@@ -46,6 +46,38 @@ class TestLayerControl(common.TestCase):
         layer.set_name("Layer 0x")
         self.assertEqual(layer.get_name(), "Layer 0x")
 
+    def test_layer_hide_video(self):
+        # Initialize timeline and layer
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+
+        # Add video clip to layer
+        video_uri = common.get_sample_uri("tears_of_steel.webm")
+        video_clip = GES.UriClipAsset.request_sync(video_uri).extract()
+        self.assertTrue(ges_layer.add_clip(video_clip))
+        self.assertEqual(len(ges_layer.get_clips()), 1)
+
+        track = None
+        for child in video_clip.get_children(False):
+            clip_track = child.get_track()
+            if clip_track.props.track_type == GES.TrackType.VIDEO:
+                track = clip_track
+                break
+
+        # Check if initialized correctly
+        self.assertTrue(ges_layer.get_active_for_track(track))
+
+        # Hide layer video
+        ges_layer.control_ui.video_track_toggle_button.clicked()
+
+        self.assertFalse(ges_layer.get_active_for_track(track))
+
+        # Show layer video
+        ges_layer.control_ui.video_track_toggle_button.clicked()
+
+        self.assertTrue(ges_layer.get_active_for_track(track))
+
 
 class TestLayer(common.TestCase):
 
