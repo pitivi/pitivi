@@ -30,12 +30,12 @@ variables:
   script:
     - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.34"
     - export LOCAL_IMAGE="tmp-flatpak-sandbox-image"
-    - export CLONE_PITIVI="git clone ${CI_PROJECT_URL}.git --single-branch \${HOME}/pitivi -b ${CI_COMMIT_REF_NAME}"
-    - export BUILD_PITIVI="flatpak-builder --user --disable-rofiles-fuse \${HOME}/pitivi/app \${HOME}/pitivi/build/flatpak/org.pitivi.Pitivi.json --state-dir=\${HOME}/flatpak-cache --ccache"
+    - export CLONE_PITIVI="git clone ${CI_PROJECT_URL}.git --single-branch ${HOME}/pitivi -b ${CI_COMMIT_REF_NAME}"
+    - export BUILD_PITIVI="flatpak-builder --user --disable-rofiles-fuse ${HOME}/pitivi/app ${HOME}/pitivi/build/flatpak/org.pitivi.Pitivi.json --state-dir=\${HOME}/flatpak-cache --ccache"
 
     - env
 
-    - docker run --privileged --name ${LOCAL_IMAGE} ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf \${HOME}/pitivi"
+    - docker run --privileged --name ${LOCAL_IMAGE} ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${HOME}/pitivi"
     - docker commit ${LOCAL_IMAGE} ${IMAGE}
     - docker rm ${LOCAL_IMAGE}
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
@@ -44,6 +44,7 @@ variables:
     - if: '$CI_PIPELINE_SOURCE == "trigger" || $CI_PIPELINE_SOURCE == "schedule"'
   retry: 1
 
+# Builds a docker image to be used as
 image:master:
   stage: docker_image
   extends: .docker_image_template
