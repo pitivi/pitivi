@@ -91,6 +91,56 @@ class TestLayerControl(common.TestCase):
         common.create_main_loop().run(until_empty=True)
         self.assertFalse(mute_toggle_button.get_active())
 
+    def test_layer_hide_video(self):
+        # Initialize timeline and layer
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+
+        # Add video clip to layer
+        video_uri = common.get_sample_uri("tears_of_steel.webm")
+        video_clip = GES.UriClipAsset.request_sync(video_uri).extract()
+        self.assertTrue(ges_layer.add_clip(video_clip))
+        self.assertEqual(len(ges_layer.get_clips()), 1)
+
+        # Get video track
+        track = ges_layer.control_ui.timeline_video_tracks[0]
+
+        # Check if initialized correctly
+        self.assertTrue(ges_layer.get_active_for_track(track))
+
+        # Hide layer video
+        ges_layer.control_ui.video_button.clicked()
+
+        self.assertFalse(ges_layer.get_active_for_track(track))
+
+        # Show layer video
+        ges_layer.control_ui.video_button.clicked()
+
+        self.assertTrue(ges_layer.get_active_for_track(track))
+
+    def test_layer_hide_video_button(self):
+        # Initialize timeline and layer
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+
+        # Add video clip to layer
+        video_uri = common.get_sample_uri("tears_of_steel.webm")
+        video_clip = GES.UriClipAsset.request_sync(video_uri).extract()
+        self.assertTrue(ges_layer.add_clip(video_clip))
+        self.assertEqual(len(ges_layer.get_clips()), 1)
+
+        track = ges_layer.control_ui.timeline_video_tracks
+
+        ges_layer.set_active_for_tracks(False, track)
+
+        self.assertFalse(ges_layer.control_ui.video_button.get_active())
+
+        ges_layer.set_active_for_tracks(True, track)
+
+        self.assertTrue(ges_layer.control_ui.video_button.get_active())
+
 
 class TestLayer(common.TestCase):
 
