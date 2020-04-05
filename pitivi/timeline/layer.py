@@ -83,6 +83,11 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__update_name()
         name_row.pack_start(self.name_entry, True, True, 0)
 
+        self.layer_hide_button = Gtk.Switch()
+        self.layer_hide_button.set_active(True)
+        self.layer_hide_button.connect("notify::active", self._hide_layer_cb)
+        name_row.pack_start(self.layer_hide_button, False, False, 0)
+
         self.menubutton = Gtk.MenuButton.new()
         self.menubutton.props.valign = Gtk.Align.CENTER
         self.menubutton.props.relief = Gtk.ReliefStyle.NONE
@@ -227,6 +232,14 @@ class LayerControls(Gtk.EventBox, Loggable):
             image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
             self.menubutton.props.image = image
             self.__icon = icon
+
+    def _hide_layer_cb(self, switch, _):
+        if not switch.get_active():
+            # Hide layer
+            self.ges_layer.set_active_for_tracks(active=False, tracks=None)
+        else:
+            # Show layer
+            self.ges_layer.set_active_for_tracks(active=True, tracks=None)
 
 
 class Layer(Gtk.Layout, Zoomable, Loggable):
