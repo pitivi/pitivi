@@ -58,6 +58,9 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.app = app
         self.__icon = None
 
+        tracks = self.ges_timeline.get_tracks()
+        self.timeline_video_tracks = [track for track in tracks if track.props.track_type == GES.TrackType.VIDEO]
+
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(hbox)
 
@@ -82,6 +85,14 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.ges_layer.connect("notify-meta", self.__layer_rename_cb)
         self.__update_name()
         name_row.pack_start(self.name_entry, True, True, 0)
+
+        self.video_button = Gtk.ToggleButton.new()
+        self.video_button.props.image = Gtk.Image.new_from_icon_name(
+            "video-display-symbolic", Gtk.IconSize.BUTTON)
+        self.video_button.set_active(self.ges_layer.get_active_for_track(
+            self.timeline_video_tracks[0]))
+        self.video_button.connect("toggled", self._video_button_toggled_cb)
+        name_row.pack_start(self.video_button, False, False, 0)
 
         self.menubutton = Gtk.MenuButton.new()
         self.menubutton.props.valign = Gtk.Align.CENTER
@@ -215,8 +226,10 @@ class LayerControls(Gtk.EventBox, Loggable):
 
     def update(self, media_types):
         self.props.height_request = self.ges_layer.ui.props.height_request
+        has_video = media_types & GES.TrackType.VIDEO
+        self.video_button.set_sensitive(has_video)
 
-        if media_types & GES.TrackType.VIDEO or not media_types:
+        if has_video or not media_types:
             # The layer has video or is empty.
             icon = "video-x-generic-symbolic"
         else:
@@ -227,6 +240,12 @@ class LayerControls(Gtk.EventBox, Loggable):
             image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
             self.menubutton.props.image = image
             self.__icon = icon
+
+    def _video_button_toggled_cb(self, button):
+        """Hide/show only video track(s)."""
+        self.ges_layer.set_active_for_tracks(
+            active=button.get_active(), tracks=self.timeline_video_tracks)
+        self.app.project_manager.current_project.pipeline.commit_timeline()
 
 
 class Layer(Gtk.Layout, Zoomable, Loggable):
