@@ -37,9 +37,11 @@ from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import AUDIO_CHANNELS
 from pitivi.utils.ui import AUDIO_RATES
 from pitivi.utils.ui import beautify_eta
+from pitivi.utils.ui import create_frame_rates_model
 from pitivi.utils.ui import FRAME_RATES
 from pitivi.utils.ui import get_combo_value
 from pitivi.utils.ui import set_combo_value
+from pitivi.utils.ui import standard_frames_list
 from pitivi.utils.widgets import GstElementSettingsDialog
 from pitivi.utils.widgets import TextWidget
 
@@ -451,7 +453,6 @@ class RenderDialog(Loggable):
         self.preferred_aencoder = self.project.aencoder
         self.__replaced_assets = {}
 
-        self.frame_rate_combo.set_model(FRAME_RATES)
         self.channels_combo.set_model(AUDIO_CHANNELS)
         self.sample_rate_combo.set_model(AUDIO_RATES)
         self.__initialize_muxers_model()
@@ -639,6 +640,12 @@ class RenderDialog(Loggable):
     def _display_settings(self):
         """Applies the project settings to the UI."""
         # Video settings
+        fr_datum = (int(self.project.videorate.num), int(self.project.videorate.denom))
+        if fr_datum not in standard_frames_list:
+            new_fr_model = create_frame_rates_model([self.project.videorate])
+            self.frame_rate_combo.set_model(new_fr_model)
+        else:
+            self.frame_rate_combo.set_model(FRAME_RATES)
         set_combo_value(self.frame_rate_combo, self.project.videorate)
 
         # Audio settings
@@ -1212,6 +1219,7 @@ class RenderDialog(Loggable):
         from pitivi.project import ProjectSettingsDialog
         dialog = ProjectSettingsDialog(self.window, self.project, self.app)
         dialog.window.run()
+        self._display_settings()
 
     def _audio_output_checkbutton_toggled_cb(self, unused_audio):
         self._update_audio_widgets_sensitivity()
