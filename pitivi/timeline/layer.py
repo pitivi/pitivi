@@ -31,6 +31,17 @@ from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SEPARATOR_HEIGHT
 
 
+AUDIO_ICONS = {
+    True: "audio-volume-high-symbolic",
+    False: "audio-volume-muted-symbolic",
+}
+
+VIDEO_ICONS = {
+    True: "eye-open-negative-filled-symbolic",
+    False: "eye-not-looking-symbolic",
+}
+
+
 class SpacedSeparator(Gtk.EventBox):
     """A Separator with vertical spacing.
 
@@ -60,6 +71,7 @@ class LayerControls(Gtk.EventBox, Loggable):
 
         tracks = self.ges_timeline.get_tracks()
         self.timeline_audio_tracks = [track for track in tracks if track.props.track_type == GES.TrackType.AUDIO]
+        self.timeline_video_tracks = [track for track in tracks if track.props.track_type == GES.TrackType.VIDEO]
 
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(hbox)
@@ -86,12 +98,19 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__update_name()
         name_row.pack_start(self.name_entry, True, True, 0)
 
-        self.mute_toggle_button = Gtk.ToggleButton.new()
-        self.mute_toggle_button.props.valign = Gtk.Align.CENTER
-        self.mute_toggle_button.props.relief = Gtk.ReliefStyle.NONE
-        self.mute_toggle_button.connect("toggled", self.__mute_button_toggled_cb)
-        self.__update_mute_button()
-        name_row.pack_start(self.mute_toggle_button, False, False, 0)
+        self.audio_button = Gtk.Button.new()
+        self.audio_button.connect("clicked", self.__audio_button_clicked_cb)
+        self.__update_audio_button()
+
+        self.video_button = Gtk.Button.new()
+        self.video_button.connect("clicked", self.__video_button_clicked_cb)
+        self.__update_video_button()
+
+        control_box = Gtk.ButtonBox()
+        control_box.set_layout(Gtk.ButtonBoxStyle.EXPAND)
+        control_box.add(self.video_button)
+        control_box.add(self.audio_button)
+        name_row.pack_start(control_box, False, False, 0)
 
         self.menubutton = Gtk.MenuButton.new()
         self.menubutton.props.valign = Gtk.Align.CENTER
@@ -224,24 +243,43 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.ges_timeline.ui.move_layer(self.ges_layer, index)
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
-    def __mute_button_toggled_cb(self, button):
-        self.ges_layer.set_active_for_tracks(not button.get_active(), self.timeline_audio_tracks)
+    def __audio_button_clicked_cb(self, button):
+        self.ges_layer.set_active_for_tracks(not self.__check_tracks_active(
+            self.timeline_audio_tracks), self.timeline_audio_tracks)
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
-    def __update_mute_button(self):
-        muted = all([not self.ges_layer.get_active_for_track(t) for t in self.timeline_audio_tracks])
-        self.mute_toggle_button.set_active(muted)
-        icon_name = "audio-volume-muted-symbolic" if muted else "audio-volume-high-symbolic"
-        image = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
-        self.mute_toggle_button.set_image(image)
+    def __update_audio_button(self):
+        active = self.__check_tracks_active(self.timeline_audio_tracks)
+        icon = AUDIO_ICONS[active]
+        self.audio_button.set_image(Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON))
+
+    def __video_button_clicked_cb(self, button):
+        self.ges_layer.set_active_for_tracks(not self.__check_tracks_active(
+            self.timeline_video_tracks), self.timeline_video_tracks)
+        self.app.project_manager.current_project.pipeline.commit_timeline()
+
+    def __update_video_button(self):
+        active = self.__check_tracks_active(self.timeline_video_tracks)
+        icon = VIDEO_ICONS[active]
+        self.video_button.set_image(Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON))
 
     def __layer_active_changed_cb(self, ges_layer, active, tracks):
-        self.__update_mute_button()
+        self.__update_video_button()
+        self.__update_audio_button()
+
+    def __check_tracks_active(self, tracks):
+        return all([self.ges_layer.get_active_for_track(t) for t in tracks])
 
     def update(self, media_types):
         self.props.height_request = self.ges_layer.ui.props.height_request
 
-        if media_types & GES.TrackType.VIDEO or not media_types:
+        has_audio = media_types & GES.TrackType.AUDIO
+        self.audio_button.set_sensitive(has_audio)
+
+        has_video = media_types & GES.TrackType.VIDEO
+        self.video_button.set_sensitive(has_video)
+
+        if has_video or not media_types:
             # The layer has video or is empty.
             icon = "video-x-generic-symbolic"
         else:

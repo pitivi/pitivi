@@ -18,7 +18,9 @@ from unittest import mock
 
 from gi.repository import GES
 
+from pitivi.timeline.layer import AUDIO_ICONS
 from pitivi.timeline.layer import Layer
+from pitivi.timeline.layer import VIDEO_ICONS
 from tests import common
 
 
@@ -46,50 +48,99 @@ class TestLayerControl(common.TestCase):
         layer.set_name("Layer 0x")
         self.assertEqual(layer.get_name(), "Layer 0x")
 
-    def test_mute_and_unmute_layer(self):
+    def test_audio_toggle(self):
+        """Checks that audio toggling is reflected in the UI."""
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         ges_layer = timeline.ges_timeline.append_layer()
         layer_controls = ges_layer.control_ui
-        mute_toggle_button = layer_controls.mute_toggle_button
+        audio_button = layer_controls.audio_button
 
         for audio_track in layer_controls.timeline_audio_tracks:
             self.assertTrue(ges_layer.get_active_for_track(audio_track))
-            self.assertFalse(mute_toggle_button.get_active())
+            self.assertEqual(audio_button.get_image().props.icon_name, AUDIO_ICONS[True])
 
             ges_layer.set_active_for_tracks(False, [audio_track])
             common.create_main_loop().run(until_empty=True)
             self.assertFalse(ges_layer.get_active_for_track(audio_track))
-            self.assertTrue(mute_toggle_button.get_active())
+            self.assertEqual(audio_button.get_image().props.icon_name, AUDIO_ICONS[False])
 
             ges_layer.set_active_for_tracks(True, [audio_track])
             common.create_main_loop().run(until_empty=True)
             self.assertTrue(ges_layer.get_active_for_track(audio_track))
-            self.assertFalse(mute_toggle_button.get_active())
+            self.assertEqual(audio_button.get_image().props.icon_name, AUDIO_ICONS[True])
 
-    def test_mute_and_unmute_layer_button(self):
+    def test_audio_button(self):
+        """Checks that the audio button toggles the audio track."""
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         ges_layer = timeline.ges_timeline.append_layer()
         layer_controls = ges_layer.control_ui
-        mute_toggle_button = layer_controls.mute_toggle_button
+        audio_button = layer_controls.audio_button
 
         for audio_track in layer_controls.timeline_audio_tracks:
             self.assertTrue(ges_layer.get_active_for_track(audio_track))
         common.create_main_loop().run(until_empty=True)
-        self.assertFalse(mute_toggle_button.get_active())
+        self.assertEqual(audio_button.get_image().props.icon_name, AUDIO_ICONS[True])
 
-        mute_toggle_button.clicked()
+        audio_button.clicked()
         for audio_track in layer_controls.timeline_audio_tracks:
             self.assertFalse(ges_layer.get_active_for_track(audio_track))
         common.create_main_loop().run(until_empty=True)
-        self.assertTrue(mute_toggle_button.get_active())
+        self.assertEqual(audio_button.get_image().props.icon_name, AUDIO_ICONS[False])
 
-        mute_toggle_button.clicked()
+        audio_button.clicked()
         for audio_track in layer_controls.timeline_audio_tracks:
             self.assertTrue(ges_layer.get_active_for_track(audio_track))
         common.create_main_loop().run(until_empty=True)
-        self.assertFalse(mute_toggle_button.get_active())
+        self.assertEqual(audio_button.get_image().props.icon_name, AUDIO_ICONS[True])
+
+    def test_video_toggle(self):
+        """Checks that video toggling is reflected in the UI."""
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+        layer_controls = ges_layer.control_ui
+        video_button = layer_controls.video_button
+
+        for video_track in layer_controls.timeline_video_tracks:
+            self.assertTrue(ges_layer.get_active_for_track(video_track))
+            self.assertEqual(video_button.get_image().props.icon_name, VIDEO_ICONS[True])
+
+            ges_layer.set_active_for_tracks(False, [video_track])
+            common.create_main_loop().run(until_empty=True)
+            self.assertFalse(ges_layer.get_active_for_track(video_track))
+            self.assertEqual(video_button.get_image().props.icon_name, VIDEO_ICONS[False])
+
+            ges_layer.set_active_for_tracks(True, [video_track])
+            common.create_main_loop().run(until_empty=True)
+            self.assertTrue(ges_layer.get_active_for_track(video_track))
+            self.assertEqual(video_button.get_image().props.icon_name, VIDEO_ICONS[True])
+
+    def test_video_button(self):
+        """Checks that the video button toggles the video track."""
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+        layer_controls = ges_layer.control_ui
+        video_button = layer_controls.video_button
+
+        for video_track in layer_controls.timeline_video_tracks:
+            self.assertTrue(ges_layer.get_active_for_track(video_track))
+        common.create_main_loop().run(until_empty=True)
+        self.assertEqual(video_button.get_image().props.icon_name, VIDEO_ICONS[True])
+
+        video_button.clicked()
+        for video_track in layer_controls.timeline_video_tracks:
+            self.assertFalse(ges_layer.get_active_for_track(video_track))
+        common.create_main_loop().run(until_empty=True)
+        self.assertEqual(video_button.get_image().props.icon_name, VIDEO_ICONS[False])
+
+        video_button.clicked()
+        for video_track in layer_controls.timeline_video_tracks:
+            self.assertTrue(ges_layer.get_active_for_track(video_track))
+        common.create_main_loop().run(until_empty=True)
+        self.assertEqual(video_button.get_image().props.icon_name, VIDEO_ICONS[True])
 
 
 class TestLayer(common.TestCase):
