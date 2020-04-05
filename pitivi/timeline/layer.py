@@ -83,6 +83,12 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__update_name()
         name_row.pack_start(self.name_entry, True, True, 0)
 
+        self.video_track_toggle_button = Gtk.ToggleButton(
+            None, image=Gtk.Image.new_from_icon_name("video-x-generic", Gtk.IconSize.BUTTON))
+        self.video_track_toggle_button.set_active(True)
+        self.video_track_toggle_button.connect("toggled", self._hide_video_cb)
+        name_row.pack_start(self.video_track_toggle_button, False, False, 0)
+
         self.menubutton = Gtk.MenuButton.new()
         self.menubutton.props.valign = Gtk.Align.CENTER
         self.menubutton.props.relief = Gtk.ReliefStyle.NONE
@@ -219,14 +225,25 @@ class LayerControls(Gtk.EventBox, Loggable):
         if media_types & GES.TrackType.VIDEO or not media_types:
             # The layer has video or is empty.
             icon = "video-x-generic-symbolic"
+            self.video_track_toggle_button.set_sensitive(True)
         else:
             # The layer has audio and nothing else.
             icon = "audio-x-generic-symbolic"
+            # Disable video track toggle button.
+            self.video_track_toggle_button.set_sensitive(False)
 
         if icon != self.__icon:
             image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
             self.menubutton.props.image = image
             self.__icon = icon
+
+    def _hide_video_cb(self, button):
+        """Hide only video track(s)."""
+        video_track = [track for track in self.app.gui.editor.timeline_ui.ges_timeline.get_tracks() if track.type == GES.TrackType.VIDEO]
+
+        # Hide/Show video track(s)
+        self.ges_layer.set_active_for_tracks(active=button.get_active(), tracks=video_track)
+        self.app.project_manager.current_project.pipeline.commit_timeline()
 
 
 class Layer(Gtk.Layout, Zoomable, Loggable):
