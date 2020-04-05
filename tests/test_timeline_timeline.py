@@ -826,17 +826,8 @@ class TestClipsEdges(BaseTestTimeline):
 
 class TestDragFromOutside(BaseTestTimeline):
 
-    def test_adding_overlap_clip(self):
-        """Checks asset drag&drop on top of an existing clip."""
-        timeline_container = common.create_timeline_container()
-        timeline_ui = timeline_container.timeline
-
-        asset = GES.UriClipAsset.request_sync(
-            common.get_sample_uri("tears_of_steel.webm"))
-        layer, = timeline_ui.ges_timeline.get_layers()
-        layer.add_asset(asset, 0, 0, 10, GES.TrackType.UNKNOWN)
-
-        # Events emitted while dragging an asset over a clip in the timeline:
+    def drag_assets_from_outside_to_timeline(self, timeline_ui, assets_props_id):
+        # Events emitted while dragging assets over a clip in the timeline:
         # motion, receive, motion.
         with mock.patch.object(Gdk, "drag_status") as _drag_status_mock:
             with mock.patch.object(Gtk, "drag_finish") as _drag_finish_mock:
@@ -850,11 +841,11 @@ class TestDragFromOutside(BaseTestTimeline):
                 self.assertFalse(timeline_ui.drop_data_ready)
                 selection_data = mock.Mock()
                 selection_data.get_data_type = mock.Mock(return_value=target)
-                selection_data.get_uris.return_value = [asset.props.id]
+                selection_data.get_uris.return_value = assets_props_id
                 self.assertIsNone(timeline_ui.drop_data)
                 self.assertFalse(timeline_ui.drop_data_ready)
                 timeline_ui._drag_data_received_cb(None, None, 0, 0, selection_data, None, 0)
-                self.assertEqual(timeline_ui.drop_data, [asset.props.id])
+                self.assertEqual(timeline_ui.drop_data, assets_props_id)
                 self.assertTrue(timeline_ui.drop_data_ready)
 
                 timeline_ui.drag_get_data.reset_mock()
@@ -869,3 +860,37 @@ class TestDragFromOutside(BaseTestTimeline):
                 self.assertFalse(timeline_ui.drag_get_data.called)
                 self.assertIsNone(timeline_ui.dragging_element)
                 self.assertFalse(timeline_ui.dropping_clips)
+
+    def test_adding_overlap_clip(self):
+        """Checks asset drag&drop on top of an existing clip."""
+        timeline_container = common.create_timeline_container()
+        timeline_ui = timeline_container.timeline
+
+        asset = GES.UriClipAsset.request_sync(
+            common.get_sample_uri("tears_of_steel.webm"))
+
+        layer, = timeline_ui.ges_timeline.get_layers()
+        layer.add_asset(asset, 0, 0, 10, GES.TrackType.UNKNOWN)
+
+        self.drag_assets_from_outside_to_timeline(timeline_ui, [asset.props.id])
+        clips = layer.get_clips()
+        self.assertEqual(len(clips), 1)
+
+    def test_dragging_multiple_clips_over_timeline(self):
+        """Checks drag&drop in case not all assets can be placed due to occupied timeline."""
+        timeline_container = common.create_timeline_container()
+        timeline_ui = timeline_container.timeline
+
+        asset1 = GES.UriClipAsset.request_sync(
+            common.get_sample_uri("flat_colour4_1600x1200.jpg"))
+        asset2 = GES.UriClipAsset.request_sync(
+            common.get_sample_uri("flat_colour5_1600x1200.jpg"))
+
+        layer, = timeline_ui.ges_timeline.get_layers()
+        layer.add_asset(asset1, 1 * Gst.SECOND, 0, 30 * Gst.SECOND, GES.TrackType.UNKNOWN)
+        layer.add_asset(asset2, 35 * Gst.SECOND, 0, 1 * Gst.SECOND, GES.TrackType.UNKNOWN)
+
+        self.drag_assets_from_outside_to_timeline(timeline_ui, [asset1.props.id, asset2.props.id])
+        clips = layer.get_clips()
+        self.assertEqual(clips, [])
+        self.assertEqual(len(clips), 2)
