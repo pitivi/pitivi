@@ -29,6 +29,7 @@ from pitivi.check import GtkDependency
 from pitivi.utils.misc import fixate_caps_with_default_values
 from pitivi.utils.ui import beautify_last_updated_timestamp
 from pitivi.utils.ui import beautify_length
+from pitivi.utils.ui import create_frame_rates_model
 from pitivi.utils.ui import format_audiochannels
 from pitivi.utils.ui import format_audiorate
 from pitivi.utils.ui import format_framerate_value
@@ -271,3 +272,25 @@ class TestColors(common.TestCase):
         self.assertEqual(
             (0x01FF, 0x02FF, 0x04FF, 0x08FF),
             unpack_color_64(0x01FF02FF04FF08FF))
+
+
+class TestCreateFramerateModel(common.TestCase):
+
+    def test_create_framerate_model(self):
+        model = create_frame_rates_model((25, 2), (130, 1))
+        sorted_frameslist = [(12, 1),
+                             (25, 2),
+                             (15, 1),
+                             (20, 1),
+                             (24000, 1001),
+                             (24, 1),
+                             (25, 1),
+                             (30000, 1001),
+                             (30, 1),
+                             (50, 1),
+                             (60000, 1001),
+                             (60, 1),
+                             (120, 1),
+                             (130, 1)
+                             ]
+        self.assertListEqual([(row[1].num, row[1].denom) for row in model], sorted_frameslist)

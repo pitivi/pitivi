@@ -37,6 +37,7 @@ from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import AUDIO_CHANNELS
 from pitivi.utils.ui import AUDIO_RATES
 from pitivi.utils.ui import beautify_eta
+from pitivi.utils.ui import create_frame_rates_model
 from pitivi.utils.ui import FRAME_RATES
 from pitivi.utils.ui import get_combo_value
 from pitivi.utils.ui import set_combo_value
@@ -451,7 +452,6 @@ class RenderDialog(Loggable):
         self.preferred_aencoder = self.project.aencoder
         self.__replaced_assets = {}
 
-        self.frame_rate_combo.set_model(FRAME_RATES)
         self.channels_combo.set_model(AUDIO_CHANNELS)
         self.sample_rate_combo.set_model(AUDIO_RATES)
         self.__initialize_muxers_model()
@@ -639,6 +639,9 @@ class RenderDialog(Loggable):
     def _display_settings(self):
         """Applies the project settings to the UI."""
         # Video settings
+        fr_datum = (self.project.videorate.num, self.project.videorate.denom)
+        model = create_frame_rates_model(fr_datum)
+        self.frame_rate_combo.set_model(model)
         set_combo_value(self.frame_rate_combo, self.project.videorate)
 
         # Audio settings
@@ -799,10 +802,13 @@ class RenderDialog(Loggable):
         template = [t for t in factory.get_static_pad_templates()
                     if t.direction == Gst.PadDirection.SINK][0]
 
+        fr_datum = (self.project.videorate.num, self.project.videorate.denom)
+        model = create_frame_rates_model(fr_datum)
+
         caps = template.static_caps.get()
         self._update_valid_restriction_values(
             caps, self.frame_rate_combo,
-            "video/x-raw,framerate=(GstFraction)%d/%d", FRAME_RATES,
+            "video/x-raw,framerate=(GstFraction)%d/%d", model,
             self.project.videorate,
             caps_template_expander=fraction_expander_func)
 
@@ -1212,6 +1218,7 @@ class RenderDialog(Loggable):
         from pitivi.project import ProjectSettingsDialog
         dialog = ProjectSettingsDialog(self.window, self.project, self.app)
         dialog.window.run()
+        self._display_settings()
 
     def _audio_output_checkbutton_toggled_cb(self, unused_audio):
         self._update_audio_widgets_sensitivity()
