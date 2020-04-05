@@ -40,13 +40,17 @@
       <p>Clips located on a layer above will block the clips below from view, unless they have an opacity value lower than 100% (as shown with the two topmost layers in the previous illustration).</p>
     </note>
   </section>
+  <section id="renaming">
+    <title>Renaming a layer</title>
+    <p>To rename a layer, click the layer's name, which is an editable text field.</p>
+  </section>
   <section id="adding">
     <title>Adding and removing layers</title>
     <p>To create a layer, drag a clip to the middle space between two existing layers or just above the top layer or just below the bottom layer. Once the thin space between the layers is highlighted, release the clip.</p>
     <p>To remove a layer, click <guiseq><gui>Layer icon</gui><gui>Delete layer</gui></guiseq>. The <gui>Layer icon</gui> can be found at the right of the layer name field.</p>
   </section>
   <section id ="muting">
-    <title>Muting a Layer</title>
+    <title>Muting a layer</title>
     <p>To mute a layer, click <gui>Mute icon</gui>. The icon will be toggled to show the layer has been muted. To unmute a layer, click the <gui>Mute icon</gui> again.The <gui>Mute icon</gui> can be found at the right of the layer name field.</p>
   </section>
   <section id="audio">
