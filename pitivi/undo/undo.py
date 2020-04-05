@@ -254,20 +254,26 @@ class UndoableActionLog(GObject.Object, Loggable):
                    action, stack.action_group_name)
         self.emit("push", stack, action)
 
-    def rollback(self):
-        """Forgets about the last started operation."""
+    def rollback(self, undo=True):
+        """Forgets about the last started operation.
+
+        Args:
+            undo (bool): Whether to undo the last started operation.
+                If False, it's disregarded without any action.
+        """
         if self.running:
             self.debug("Ignore rollback because running")
             return
 
+        self.debug("Rolling back, undo=%s", undo)
         self.rolling_back = True
         try:
-            self.debug("Rolling back")
             stack = self._get_last_stack(pop=True)
             self.debug("rollback action group %s, nested %s",
                        stack.action_group_name, len(self.stacks))
             self.emit("rollback", stack)
-            stack.undo()
+            if undo:
+                stack.undo()
         finally:
             self.rolling_back = False
 
