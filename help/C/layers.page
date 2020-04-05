@@ -45,6 +45,10 @@
     <p>To create a layer, drag a clip to the middle space between two existing layers or just above the top layer or just below the bottom layer. Once the thin space between the layers is highlighted, release the clip.</p>
     <p>To remove a layer, click <guiseq><gui>Layer icon</gui><gui>Delete layer</gui></guiseq>. The <gui>Layer icon</gui> can be found at the right of the layer name field.</p>
   </section>
+  <section id ="muting">
+    <title>Muting a Layer</title>
+    <p>To mute a layer, click <gui>Mute icon</gui>. The icon will be toggled to show the layer has been muted. To unmute a layer, click the <gui>Mute icon</gui> again.The <gui>Mute icon</gui> can be found at the right of the layer name field.</p>
+  </section>
   <section id="audio">
     <title>What about audio layers?</title>
     <p>Unlike in vision, multiple sounds do not “block” each other. If you have multiple audio clips on separate layers, their sound will be mixed together. Controlling the volume of those audio clips simply changes their relative loudness.</p>
