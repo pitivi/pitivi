@@ -763,11 +763,23 @@ def clear_styles(widget):
         style.remove_class(css_class)
 
 
-def create_model(columns, data):
-    ret = Gtk.ListStore(*columns)
+def create_model(columns, data, curr_ret=None):
+    if curr_ret is None:
+        ret = Gtk.ListStore(*columns)
+    else:
+        ret = curr_ret
     for datum in data:
         ret.append(datum)
     return ret
+
+
+def create_fr_model(framerates, current_fr=None):
+    frames_list = []
+    for fps in framerates:
+        processed_fps = (format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps))
+        frames_list.append(processed_fps)
+    new_fr = create_model((str, object), frames_list, current_fr)
+    return new_fr, frames_list
 
 
 def set_combo_value(combo, value):
@@ -845,21 +857,19 @@ AUDIO_CHANNELS = create_model((str, int),
                               [(format_audiochannels(ch), ch)
                                for ch in (8, 6, 4, 2, 1)])
 
-FRAME_RATES = create_model((str, object),
-                           [(format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps)) for fps in (
-                               (12, 1),
-                               (15, 1),
-                               (20, 1),
-                               (24000, 1001),
-                               (24, 1),
-                               (25, 1),
-                               (30000, 1001),
-                               (30, 1),
-                               (50, 1),
-                               (60000, 1001),
-                               (60, 1),
-                               (120, 1)
-                           )])
+FRAME_RATES, fr_list = create_fr_model(((12, 1),
+                                        (15, 1),
+                                        (20, 1),
+                                        (24000, 1001),
+                                        (24, 1),
+                                        (25, 1),
+                                        (30000, 1001),
+                                        (30, 1),
+                                        (50, 1),
+                                        (60000, 1001),
+                                        (60, 1),
+                                        (120, 1)
+                                        ))
 
 AUDIO_RATES = create_model((str, int),
                            [(format_audiorate(rate), rate) for rate in (
