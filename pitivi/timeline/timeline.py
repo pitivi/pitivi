@@ -949,9 +949,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         assets = self._project.assets_for_uris(self.drop_data)
         if not assets:
             self._project.add_uris(self.drop_data)
-            return False
+            return
 
         ges_clips = []
+        self.app.action_log.begin("Add assets")
         for asset in assets:
 
             ges_layer, unused_on_sep = self.get_layer_at(y)
@@ -963,7 +964,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             ges_clip = self.add_clip_to_layer(ges_layer, asset, placement)
             if not ges_clip:
-                return False
+                self.app.action_log.rollback()
+                return
 
             placement += ges_clip.props.duration
             ges_clip.first_placement = True
@@ -971,6 +973,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             ges_clips.append(ges_clip)
 
+        self.app.action_log.commit("Add assets")
         if ges_clips:
             ges_clip = ges_clips[0]
             self.dragging_element = ges_clip.ui
@@ -981,7 +984,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             self.dragging_group = self.selection.group()
 
-        return True
+        return
 
     def _drag_motion_cb(self, widget, context, x, y, timestamp):
         target = self.drag_dest_find_target(context, None)
