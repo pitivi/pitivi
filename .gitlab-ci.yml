@@ -35,7 +35,7 @@ variables:
 
     - env
 
-    - docker run --privileged --name ${LOCAL_IMAGE} ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${HOME}/pitivi"
+    - docker run --privileged --name ${LOCAL_IMAGE} ${BASE_IMAGE} bash -c "echo XXX && env && echo YYY && ${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${HOME}/pitivi"
     - docker commit ${LOCAL_IMAGE} ${IMAGE}
     - docker rm ${LOCAL_IMAGE}
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
