@@ -223,15 +223,10 @@ class LayersLayout(Gtk.Layout, Zoomable, Loggable):
         self.layers_vbox.get_style_context().add_class("LayersBox")
         self.put(self.layers_vbox, 0, 0)
 
-        # self.mute_button = Gtk.ToggleButton(Gtk.Orientation.HORIZONTAL)
-        # self.mute_button.get_style_context().add_class("MuteButton")
-        # self.put(self.mute_button, 0, 0)
-
         self.marquee = Marquee(timeline)
         self.put(self.marquee, 0, 0)
 
         self.layers_vbox.connect("size-allocate", self.__size_allocate_cb)
-        # self.mute_button.connect("size-allocate", self.__size_allocate_cb)
 
     def zoom_changed(self):
         # The width of the area/workspace changes when the zoom level changes.

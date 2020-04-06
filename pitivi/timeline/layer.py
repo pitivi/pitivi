@@ -223,7 +223,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
     def __toggle_mute_layer_cb(self, unused_action):
-        tracks = self.ges_layer.get_timeline().get_tracks()
+        tracks = self.ges_timeline.get_tracks()
         audio_track = None
         for track in tracks:
             if track.props.track_type == GES.TrackType.AUDIO:
@@ -239,6 +239,8 @@ class LayerControls(Gtk.EventBox, Loggable):
                 "audio-volume-high", Gtk.IconSize.BUTTON)
             self.togglebutton.set_image(unmute_image)
             self.ges_layer.set_active_for_tracks(True, [audio_track])
+
+        self.app.project_manager.current_project.pipeline.commit_timeline()
 
     def update(self, media_types):
         self.props.height_request = self.ges_layer.ui.props.height_request
