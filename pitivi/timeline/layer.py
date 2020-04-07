@@ -87,9 +87,17 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.togglebutton.props.valign = Gtk.Align.CENTER
         self.togglebutton.props.relief = Gtk.ReliefStyle.NONE
         self.togglebutton.connect("toggled", self.__toggle_mute_layer_cb)
-        unmute_image = Gtk.Image.new_from_icon_name(
-            "audio-volume-high", Gtk.IconSize.BUTTON)
-        self.togglebutton.set_image(unmute_image)
+        audio_track = self.get_audio_track()
+        if self.ges_layer.get_active_for_track(audio_track):
+            self.togglebutton.set_active(False)
+            unmute_image = Gtk.Image.new_from_icon_name(
+                "audio-volume-high", Gtk.IconSize.BUTTON)
+            self.togglebutton.set_image(unmute_image)
+        else:
+            mute_image = Gtk.Image.new_from_icon_name(
+                "audio-volume-muted", Gtk.IconSize.BUTTON)
+            self.togglebutton.set_image(mute_image)
+            self.togglebutton.set_active(True)
         name_row.pack_start(self.togglebutton, False, False, 0)
 
         self.menubutton = Gtk.MenuButton.new()
@@ -223,12 +231,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
     def __toggle_mute_layer_cb(self, unused_action):
-        tracks = self.ges_timeline.get_tracks()
-        audio_track = None
-        for track in tracks:
-            if track.props.track_type == GES.TrackType.AUDIO:
-                audio_track = track
-                break
+        audio_track = self.get_audio_track()
         if self.togglebutton.get_active():
             mute_image = Gtk.Image.new_from_icon_name(
                 "audio-volume-muted", Gtk.IconSize.BUTTON)
@@ -256,6 +259,13 @@ class LayerControls(Gtk.EventBox, Loggable):
             image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
             self.menubutton.props.image = image
             self.__icon = icon
+
+    def get_audio_track(self):
+        tracks = self.ges_timeline.get_tracks()
+        for track in tracks:
+            if track.props.track_type == GES.TrackType.AUDIO:
+                audio_track = track
+        return audio_track
 
 
 class Layer(Gtk.Layout, Zoomable, Loggable):
