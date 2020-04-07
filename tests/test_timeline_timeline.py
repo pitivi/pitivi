@@ -185,6 +185,23 @@ class TestLayers(BaseTestTimeline):
         ges_layer_2.remove_clip(ges_clip_video)
         self.assertEqual(timeline.media_types, GES.TrackType(0))
 
+    def test_mute_and_unmute_layer(self):
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+        audio_track = ges_layer.get_timeline().get_tracks()[1]
+        layer_active = ges_layer.get_active_for_track(audio_track)
+
+        self.assertEqual(layer_active, True)
+
+        ges_layer.set_active_for_tracks(False, [audio_track])
+        layer_active = ges_layer.get_active_for_track(audio_track)
+        self.assertEqual(layer_active, False)
+
+        ges_layer.set_active_for_tracks(True, [audio_track])
+        layer_active = ges_layer.get_active_for_track(audio_track)
+        self.assertEqual(layer_active, True)
+
     def test_create_layer(self):
         self.check_create_layer([0, 0, 0, 0], [3, 2, 1, 0])
         self.check_create_layer([0, 1, 1, 1], [0, 3, 2, 1])
