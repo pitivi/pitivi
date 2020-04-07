@@ -51,7 +51,7 @@
   </section>
   <section id ="muting">
     <title>Muting a layer</title>
-    <p>To mute a layer, click <gui>Mute icon</gui>. The icon will be toggled to show the layer has been muted. To unmute a layer, click the <gui>Mute icon</gui> again.The <gui>Mute icon</gui> can be found at the right of the layer name field.</p>
+    <p>To mute a layer, click <gui>Volume icon</gui>. The icon will be toggled to show the layer has been muted. To unmute a layer, click <gui>Volume icon</gui> again.The <gui>Volume icon</gui> can be found at the right of the layer name field.</p>
   </section>
   <section id="audio">
     <title>What about audio layers?</title>
