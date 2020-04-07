@@ -329,6 +329,13 @@ on GitLab, indicating:
 -   test keyboard shortcuts
     -   try to locate a specific frame using only the keyboard
 
+## Test Peak Meter
+
+1. Start with a clip that contains audio in the project and timeline
+2. Position the seeker at the beginning of the clip
+3. Press the 'Play/Pause' button on the viewer
+    -   The height of the peak meter should start changing during playback of the clip
+
 ## Test Preferences
 
 # User provided Scenarios
