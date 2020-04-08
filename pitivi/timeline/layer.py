@@ -83,22 +83,12 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__update_name()
         name_row.pack_start(self.name_entry, True, True, 0)
 
-        self.togglebutton = Gtk.ToggleButton.new()
-        self.togglebutton.props.valign = Gtk.Align.CENTER
-        self.togglebutton.props.relief = Gtk.ReliefStyle.NONE
-        self.togglebutton.connect("toggled", self.__toggle_mute_layer_cb)
-        audio_track = self.get_audio_track()
-        if self.ges_layer.get_active_for_track(audio_track):
-            self.togglebutton.set_active(False)
-            unmute_image = Gtk.Image.new_from_icon_name(
-                "audio-volume-high", Gtk.IconSize.BUTTON)
-            self.togglebutton.set_image(unmute_image)
-        else:
-            mute_image = Gtk.Image.new_from_icon_name(
-                "audio-volume-muted", Gtk.IconSize.BUTTON)
-            self.togglebutton.set_image(mute_image)
-            self.togglebutton.set_active(True)
-        name_row.pack_start(self.togglebutton, False, False, 0)
+        self.mute_toggle_button = Gtk.ToggleButton.new()
+        self.mute_toggle_button.props.valign = Gtk.Align.CENTER
+        self.mute_toggle_button.props.relief = Gtk.ReliefStyle.NONE
+        self.mute_toggle_button.connect("toggled", self.__toggle_mute_layer_cb)
+        self.update_mute_button_status()
+        name_row.pack_start(self.mute_toggle_button, False, False, 0)
 
         self.menubutton = Gtk.MenuButton.new()
         self.menubutton.props.valign = Gtk.Align.CENTER
@@ -232,15 +222,15 @@ class LayerControls(Gtk.EventBox, Loggable):
 
     def __toggle_mute_layer_cb(self, unused_action):
         audio_track = self.get_audio_track()
-        if self.togglebutton.get_active():
+        if self.mute_toggle_button.get_active():
             mute_image = Gtk.Image.new_from_icon_name(
                 "audio-volume-muted", Gtk.IconSize.BUTTON)
-            self.togglebutton.set_image(mute_image)
+            self.mute_toggle_button.set_image(mute_image)
             self.ges_layer.set_active_for_tracks(False, [audio_track])
         else:
             unmute_image = Gtk.Image.new_from_icon_name(
                 "audio-volume-high", Gtk.IconSize.BUTTON)
-            self.togglebutton.set_image(unmute_image)
+            self.mute_toggle_button.set_image(unmute_image)
             self.ges_layer.set_active_for_tracks(True, [audio_track])
 
         self.app.project_manager.current_project.pipeline.commit_timeline()
@@ -266,6 +256,19 @@ class LayerControls(Gtk.EventBox, Loggable):
             if track.props.track_type == GES.TrackType.AUDIO:
                 audio_track = track
         return audio_track
+
+    def update_mute_button_status(self):
+        audio_track = self.get_audio_track()
+        if self.ges_layer.get_active_for_track(audio_track):
+            self.mute_toggle_button.set_active(False)
+            unmute_image = Gtk.Image.new_from_icon_name(
+                "audio-volume-high", Gtk.IconSize.BUTTON)
+            self.mute_toggle_button.set_image(unmute_image)
+        else:
+            mute_image = Gtk.Image.new_from_icon_name(
+                "audio-volume-muted", Gtk.IconSize.BUTTON)
+            self.mute_toggle_button.set_image(mute_image)
+            self.mute_toggle_button.set_active(True)
 
 
 class Layer(Gtk.Layout, Zoomable, Loggable):

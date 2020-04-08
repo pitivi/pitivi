@@ -46,18 +46,6 @@ class TestLayerControl(common.TestCase):
         layer.set_name("Layer 0x")
         self.assertEqual(layer.get_name(), "Layer 0x")
 
-    def test_get_active_for_tracks(self):
-        timeline = GES.Timeline()
-        ges_layer = GES.Layer()
-        ges_layer.set_timeline(timeline)
-        audio_track = ges_layer.get_timeline().get_tracks()[1]
-        layer_active = ges_layer.get_active_for_track(audio_track)
-        self.assertEqual(layer_active, True)
-
-        video_track = ges_layer.get_timeline().get_tracks()[0]
-        layer_active = ges_layer.get_active_for_track(video_track)
-        self.assertEqual(layer_active, True)
-
 
 class TestLayer(common.TestCase):
 

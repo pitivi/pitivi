@@ -23,6 +23,7 @@ from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk
 
+from pitivi.timeline.layer import LayerControls
 from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import SEPARATOR_HEIGHT
@@ -199,6 +200,26 @@ class TestLayers(BaseTestTimeline):
         self.assertEqual(layer_active, False)
 
         ges_layer.set_active_for_tracks(True, [audio_track])
+        layer_active = ges_layer.get_active_for_track(audio_track)
+        self.assertEqual(layer_active, True)
+
+    def test_mute_and_unmute_layer_button(self):
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        app = timeline_container.app
+        ges_layer = timeline.ges_timeline.append_layer()
+        audio_track = ges_layer.get_timeline().get_tracks()[1]
+        layer_controls = LayerControls(ges_layer, app)
+        mute_toggle_button = layer_controls.mute_toggle_button
+
+        layer_active = ges_layer.get_active_for_track(audio_track)
+        self.assertEqual(layer_active, True)
+
+        mute_toggle_button.clicked()
+        layer_active = ges_layer.get_active_for_track(audio_track)
+        self.assertEqual(layer_active, False)
+
+        mute_toggle_button.clicked()
         layer_active = ges_layer.get_active_for_track(audio_track)
         self.assertEqual(layer_active, True)
 
