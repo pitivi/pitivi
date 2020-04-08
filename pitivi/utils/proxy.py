@@ -29,10 +29,10 @@ from gi.repository import GstTranscoder
 
 from pitivi.configure import get_gstpresets_dir
 from pitivi.dialogs.prefs import PreferencesDialog
-from pitivi.utils.misc import ASSET_DURATION_META
-from pitivi.utils.misc import asset_get_duration
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import ASSET_DURATION_META
+from pitivi.utils.misc import asset_get_duration
 
 # Make sure gst knowns about our own GstPresets
 Gst.preset_set_app_dir(get_gstpresets_dir())
@@ -58,7 +58,8 @@ GlobalSettings.add_config_option('num_transcoding_jobs',
 PreferencesDialog.add_numeric_preference('num_transcoding_jobs',
                                          description="",
                                          section="_proxies",
-                                         label=_("Max number of parallel transcoding jobs"),
+                                         label=_(
+                                             "Max number of parallel transcoding jobs"),
                                          lower=1)
 
 GlobalSettings.add_config_option("max_cpu_usage",
@@ -69,7 +70,8 @@ GlobalSettings.add_config_option("max_cpu_usage",
 PreferencesDialog.add_numeric_preference('max_cpu_usage',
                                          description="",
                                          section="_proxies",
-                                         label=_("Max CPU usage dedicated to transcoding"),
+                                         label=_(
+                                             "Max CPU usage dedicated to transcoding"),
                                          lower=1,
                                          upper=100)
 
@@ -96,7 +98,8 @@ ENCODING_FORMAT_JPEG = "jpeg-raw-in-qt.gep"
 
 def create_encoding_profile_simple(container_caps, audio_caps, video_caps):
     container_profile = GstPbutils.EncodingContainerProfile.new(None, None,
-                                                                Gst.Caps(container_caps),
+                                                                Gst.Caps(
+                                                                    container_caps),
                                                                 None)
     audio_profile = GstPbutils.EncodingAudioProfile.new(Gst.Caps(audio_caps),
                                                         None, None, 0)
@@ -163,7 +166,8 @@ class ProxyManager(GObject.Object, Loggable):
         self.__encoding_target_file = None
         self.proxying_unsupported = False
         for encoding_format in [ENCODING_FORMAT_JPEG, ENCODING_FORMAT_PRORES]:
-            self.__encoding_profile = self.__get_encoding_profile(encoding_format)
+            self.__encoding_profile = self.get_encoding_profile(
+                encoding_format)
             if self.__encoding_profile:
                 self.__encoding_target_file = encoding_format
                 self.info("Using %s as proxying format", encoding_format)
@@ -231,8 +235,8 @@ class ProxyManager(GObject.Object, Loggable):
                         return False
         return True
 
-    def __get_encoding_profile(self, encoding_target_file, asset=None, width=None,
-                               height=None):
+    def get_encoding_profile(self, encoding_target_file, asset=None, width=None,
+                             height=None):
         encoding_target = GstPbutils.EncodingTarget.load_from_file(
             os.path.join(get_gstpresets_dir(), encoding_target_file))
         encoding_profile = encoding_target.get_profile("default")
@@ -352,7 +356,8 @@ class ProxyManager(GObject.Object, Loggable):
 
             max_w = self.app.project_manager.current_project.scaled_proxy_width
             max_h = self.app.project_manager.current_project.scaled_proxy_height
-            t_width, t_height = self._scale_asset_resolution(asset, max_w, max_h)
+            t_width, t_height = self._scale_asset_resolution(
+                asset, max_w, max_h)
             proxy_res = "%sx%s" % (t_width, t_height)
             return "%s.%s.%s.%s" % (asset.get_id(), file_size, proxy_res,
                                     self.scaled_proxy_extension)
@@ -468,8 +473,8 @@ class ProxyManager(GObject.Object, Loggable):
             duration = min(asset_duration, proxy_duration)
 
             self.info("Resetting %s duration from %s to %s as"
-                " new proxy has a different duration",
-                asset.props.id, Gst.TIME_ARGS(asset_duration), Gst.TIME_ARGS(duration))
+                      " new proxy has a different duration",
+                      asset.props.id, Gst.TIME_ARGS(asset_duration), Gst.TIME_ARGS(duration))
             asset.set_uint64(ASSET_DURATION_META, duration)
             proxy.set_uint64(ASSET_DURATION_META, duration)
             target_uri = self.get_target_uri(asset)
@@ -482,15 +487,15 @@ class ProxyManager(GObject.Object, Loggable):
                         new_duration = duration - clip.props.in_point
                         if new_duration > 0:
                             self.warning("%s resetting duration to %s as"
-                                " new proxy has a shorter duration",
-                                clip, Gst.TIME_ARGS(new_duration))
+                                         " new proxy has a shorter duration",
+                                         clip, Gst.TIME_ARGS(new_duration))
                             clip.set_duration(new_duration)
                         else:
                             new_inpoint = new_duration - clip.props.in_point
                             self.error("%s resetting duration to %s"
-                                " and inpoint to %s as the proxy"
-                                " is shorter",
-                                clip, Gst.TIME_ARGS(new_duration), Gst.TIME_ARGS(new_inpoint))
+                                       " and inpoint to %s as the proxy"
+                                       " is shorter",
+                                       clip, Gst.TIME_ARGS(new_duration), Gst.TIME_ARGS(new_inpoint))
                             clip.set_inpoint(new_inpoint)
                             clip.set_duration(duration - new_inpoint)
                         clip.set_max_duration(duration)
@@ -535,7 +540,8 @@ class ProxyManager(GObject.Object, Loggable):
             for pair in self.__waiting_transcoders:
                 waiting_transcoder, waiting_asset = pair
                 if waiting_transcoder.props.src_uri == transcoder.props.src_uri:
-                    proxy_uri = waiting_transcoder.props.dest_uri.rstrip(ProxyManager.part_suffix)
+                    proxy_uri = waiting_transcoder.props.dest_uri.rstrip(
+                        ProxyManager.part_suffix)
                     GES.Asset.needs_reload(GES.UriClip, proxy_uri)
                     GES.Asset.request_async(GES.UriClip, proxy_uri, None,
                                             self.__asset_loaded_cb, waiting_asset, waiting_transcoder)
@@ -556,7 +562,8 @@ class ProxyManager(GObject.Object, Loggable):
         if self._transcoded_durations:
             time_spent = time.time() - self._start_proxying_time
             transcoded_seconds = sum(self._transcoded_durations.values())
-            remaining_seconds = max(0, self._total_time_to_transcode - transcoded_seconds)
+            remaining_seconds = max(
+                0, self._total_time_to_transcode - transcoded_seconds)
             estimated_time = remaining_seconds * time_spent / transcoded_seconds
         else:
             estimated_time = 0
@@ -645,8 +652,8 @@ class ProxyManager(GObject.Object, Loggable):
 
         dispatcher = GstTranscoder.TranscoderGMainContextSignalDispatcher.new()
 
-        enc_profile = self.__get_encoding_profile(self.__encoding_target_file,
-                                                  asset, width, height)
+        enc_profile = self.get_encoding_profile(self.__encoding_target_file,
+                                                asset, width, height)
 
         transcoder = GstTranscoder.Transcoder.new_full(
             asset_uri, proxy_uri + ProxyManager.part_suffix, enc_profile,
@@ -770,7 +777,8 @@ class ProxyManager(GObject.Object, Loggable):
                 project.scaled_proxy_width = w
                 project.scaled_proxy_height = h
             t_width, t_height = self._scale_asset_resolution(asset, w, h)
-            self.__create_transcoder(asset, width=t_width, height=t_height, shadow=shadow)
+            self.__create_transcoder(
+                asset, width=t_width, height=t_height, shadow=shadow)
         else:
             self.__create_transcoder(asset, shadow=shadow)
 
