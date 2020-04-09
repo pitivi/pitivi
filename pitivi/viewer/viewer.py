@@ -28,6 +28,7 @@ from gi.repository import Gtk
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.pipeline import AssetPipeline
+from pitivi.utils.ui import gtk_style_context_get_color
 from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import TimeWidget
 from pitivi.viewer.overlay_stack import OverlayStack
@@ -57,13 +58,6 @@ GlobalSettings.add_config_option("clickedPointColor", section="viewer",
 GlobalSettings.add_config_option("pointColor", section="viewer",
                                  key="point-color",
                                  default='49a0e0')
-GlobalSettings.add_config_section("peakMeter")
-GlobalSettings.add_config_option("peakMeterWidth", section="peakMeter",
-                                 key="width",
-                                 default=30)
-GlobalSettings.add_config_option("peakMeterHeight", section="peakMeter",
-                                 key="height",
-                                 default=140)
 
 
 class ViewerContainer(Gtk.Box, Loggable):
@@ -246,7 +240,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pack_end(corner, False, False, 0)
 
         # Peak Meter
-        self.peakmeter = PeakMeterWidget(self.app)
+        self.peakmeter = PeakMeterWidget()
         self.peakmeter.set_property("valign", Gtk.Align.CENTER)
         self.peakmeter.set_property("halign", Gtk.Align.CENTER)
         self.peakmeter.set_margin_left(SPACING)
@@ -764,26 +758,69 @@ class PlayPauseButton(Gtk.Button, Loggable):
 
 
 class PeakMeterWidget(Gtk.DrawingArea, Loggable):
-    """A widget that displays a peak meter."""
+    """Widget for a peak meter.
 
-    def __init__(self, app):
+    Args:
+        TO DO
+    """
+
+    # def __init__(self, upper=None, lower=None, default=None, adjustment=None, width_chars=None):
+    def __init__(self):
         Gtk.DrawingArea.__init__(self)
         Loggable.__init__(self)
-        self.app = app
-        self.settings = app.settings
-        self.width = self.settings.peakMeterWidth
-        self.height = self.settings.peakMeterHeight
-        self.peak = 0
-        self.pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.width, self.height)
+        self._type = None
+        self.handler_id = None
+        self.pixbuf = None
+        self.width = 30
+        self.height = 150
         self.set_size_request(self.width, self.height)
 
         self.show()
 
+    def do_configure_event(self, unused_event):
+        width = self.get_allocated_width()
+        height = self.get_allocated_height()
+        self.debug("Configuring, height %d, width %d", width, height)
+
+        # Destroy previous buffer
+        if self.pixbuf is not None:
+            self.pixbuf.finish()
+            self.pixbuf = None
+
+        # Create a new buffer
+        self.pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+
+        # pylint: disable=attribute-defined-outside-init
+        context = self.get_style_context()
+        color_normal = gtk_style_context_get_color(context, Gtk.StateFlags.NORMAL)
+        color_insensitive = gtk_style_context_get_color(context, Gtk.StateFlags.BACKDROP)
+        self._color_normal = color_normal
+        self._color_dimmed = Gdk.RGBA(
+            *[(x * 3 + y * 2) / 5
+              for x, y in ((color_normal.red, color_insensitive.red),
+                           (color_normal.green, color_insensitive.green),
+                           (color_normal.blue, color_insensitive.blue))])
+
+        self._color_subtle = Gdk.RGBA(
+            *[(x * 3 + y * 2) / 10
+              for x, y in ((color_normal.red, color_insensitive.red),
+                           (color_normal.green, color_insensitive.green),
+                           (color_normal.blue, color_insensitive.blue))])
+
+        # Two colors with high contrast.
+        self._color_frame = gtk_style_context_get_color(context, Gtk.StateFlags.LINK)
+
     def do_draw(self, context):
+        if self.pixbuf is None:
+            self.info('No buffer to paint')
+            return False
+
         pixbuf = self.pixbuf
 
+        # Draw on a temporary context and then copy everything.
         drawing_context = cairo.Context(pixbuf)
         self.draw_bar(drawing_context)
+        self.draw_background(drawing_context)
         pixbuf.flush()
 
         context.set_source_surface(self.pixbuf, 0.0, 0.0)
@@ -798,7 +835,18 @@ class PeakMeterWidget(Gtk.DrawingArea, Loggable):
         context.rectangle(0, y - self.height, self.width, self.height)
         context.fill()
 
-        context.set_source_rgb(0, 1, 0)
-        peak = min(self.peak, self.height)
-        context.rectangle(0, y - peak, self.width, peak)
+        percent_filled = self.peak / self.height
+        if percent_filled >= .75:
+            context.set_source_rgb(1, 0, 0)
+        elif percent_filled >= .5:
+            context.set_source_rgb(1, 1, 0)
+        else:
+            context.set_source_rgb(0, 1, 0)
+        context.rectangle(0, y - self.height + 50, self.width, self.height - 50)
         context.fill()
+
+    def draw_background(self, context):
+        width = context.get_target().get_width()
+        height = context.get_target().get_height()
+        style_context = self.get_style_context()
+        Gtk.render_background(style_context, context, 0, 0, width, height)
