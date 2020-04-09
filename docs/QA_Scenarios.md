@@ -329,16 +329,6 @@ on GitLab, indicating:
 -   test keyboard shortcuts
     -   try to locate a specific frame using only the keyboard
 
-## Test Peak Meter Color
-
-1. Start with a clip that contains audio in the project and timeline
-2. Position the seeker at the beginning of the clip
-3. Press the 'Play/Pause' button on the viewer
-    -   The color of the peak meter should change with the rise and fall of the meter
-    -   A low level (<50%) should result in a green meter
-    -   A medium level (>50% but <75%>) should result in a yellow meter
-    -   A high level (>75%) should result in a red meter
-
 ## Test Peak Meter Level
 
 1. Start with a clip that contains audio in the project and timeline
