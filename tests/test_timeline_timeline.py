@@ -216,14 +216,17 @@ class TestLayers(BaseTestTimeline):
 
         layer_active = ges_layer.get_active_for_track(audio_track)
         self.assertEqual(layer_active, True)
+        self.assertEqual(mute_toggle_button.get_active(), False)
 
         mute_toggle_button.clicked()
         layer_active = ges_layer.get_active_for_track(audio_track)
         self.assertEqual(layer_active, False)
+        self.assertEqual(mute_toggle_button.get_active(), True)
 
         mute_toggle_button.clicked()
         layer_active = ges_layer.get_active_for_track(audio_track)
         self.assertEqual(layer_active, True)
+        self.assertEqual(mute_toggle_button.get_active(), False)
 
     def test_create_layer(self):
         self.check_create_layer([0, 0, 0, 0], [3, 2, 1, 0])
