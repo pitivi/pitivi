@@ -189,8 +189,10 @@ class TestLayers(BaseTestTimeline):
     def test_mute_and_unmute_layer(self):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
+        app = timeline_container.app
         ges_layer = timeline.ges_timeline.append_layer()
-        audio_track = ges_layer.get_timeline().get_tracks()[1]
+        layer_controls = LayerControls(ges_layer, app)
+        audio_track = layer_controls.get_audio_track()
         layer_active = ges_layer.get_active_for_track(audio_track)
 
         self.assertEqual(layer_active, True)
@@ -208,8 +210,8 @@ class TestLayers(BaseTestTimeline):
         timeline = timeline_container.timeline
         app = timeline_container.app
         ges_layer = timeline.ges_timeline.append_layer()
-        audio_track = ges_layer.get_timeline().get_tracks()[1]
         layer_controls = LayerControls(ges_layer, app)
+        audio_track = layer_controls.get_audio_track()
         mute_toggle_button = layer_controls.mute_toggle_button
 
         layer_active = ges_layer.get_active_for_track(audio_track)
