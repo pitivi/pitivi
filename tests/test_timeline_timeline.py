@@ -23,7 +23,6 @@ from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.timeline.layer import LayerControls
 from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import SEPARATOR_HEIGHT
@@ -185,48 +184,6 @@ class TestLayers(BaseTestTimeline):
         ges_layer_1.remove_clip(ges_clip_audio)
         ges_layer_2.remove_clip(ges_clip_video)
         self.assertEqual(timeline.media_types, GES.TrackType(0))
-
-    def test_mute_and_unmute_layer(self):
-        timeline_container = common.create_timeline_container()
-        timeline = timeline_container.timeline
-        app = timeline_container.app
-        ges_layer = timeline.ges_timeline.append_layer()
-        layer_controls = LayerControls(ges_layer, app)
-        audio_track = layer_controls.get_audio_track()
-        layer_active = ges_layer.get_active_for_track(audio_track)
-
-        self.assertEqual(layer_active, True)
-
-        ges_layer.set_active_for_tracks(False, [audio_track])
-        layer_active = ges_layer.get_active_for_track(audio_track)
-        self.assertEqual(layer_active, False)
-
-        ges_layer.set_active_for_tracks(True, [audio_track])
-        layer_active = ges_layer.get_active_for_track(audio_track)
-        self.assertEqual(layer_active, True)
-
-    def test_mute_and_unmute_layer_button(self):
-        timeline_container = common.create_timeline_container()
-        timeline = timeline_container.timeline
-        app = timeline_container.app
-        ges_layer = timeline.ges_timeline.append_layer()
-        layer_controls = LayerControls(ges_layer, app)
-        audio_track = layer_controls.get_audio_track()
-        mute_toggle_button = layer_controls.mute_toggle_button
-
-        layer_active = ges_layer.get_active_for_track(audio_track)
-        self.assertEqual(layer_active, True)
-        self.assertEqual(mute_toggle_button.get_active(), False)
-
-        mute_toggle_button.clicked()
-        layer_active = ges_layer.get_active_for_track(audio_track)
-        self.assertEqual(layer_active, False)
-        self.assertEqual(mute_toggle_button.get_active(), True)
-
-        mute_toggle_button.clicked()
-        layer_active = ges_layer.get_active_for_track(audio_track)
-        self.assertEqual(layer_active, True)
-        self.assertEqual(mute_toggle_button.get_active(), False)
 
     def test_create_layer(self):
         self.check_create_layer([0, 0, 0, 0], [3, 2, 1, 0])
