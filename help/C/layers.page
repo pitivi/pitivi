@@ -44,6 +44,11 @@
     <title>Renaming a layer</title>
     <p>To rename a layer, click the layer's name, which is an editable text field.</p>
   </section>
+  <section id="adjusting">
+    <title>Adjusting layer positioning</title>
+    <p>To move a layer to the top of the layer order, click <guiseq><gui>Layer icon</gui><gui>Move layer to top</gui></guiseq>. To move a layer to the one position higher in the layer order, click <guiseq><gui>Layer icon</gui><gui>Move layer up</gui></guiseq>.</p>
+    <p>To move a layer to the one position lower in the layer order, click <guiseq><gui>Layer icon</gui><gui>Move layer down</gui></guiseq>. To move a layer to the bottom of the layer order, click <guiseq><gui>Layer icon</gui><gui>Move layer to bottom</gui></guiseq>.</p>
+  </section>
   <section id="adding">
     <title>Adding and removing layers</title>
     <p>To create a layer, drag a clip to the middle space between two existing layers or just above the top layer or just below the bottom layer. Once the thin space between the layers is highlighted, release the clip.</p>
