@@ -61,7 +61,7 @@ GlobalSettings.add_config_option("pointColor", section="viewer",
 
 
 class ViewerContainer(Gtk.Box, Loggable):
-    """Wiget holding a viewer, the controls, and a peak meter.
+    """Widget holding a viewer, the controls, and a peak meter.
 
     Attributes:
         pipeline (SimplePipeline): The displayed pipeline.
@@ -138,6 +138,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         project.pipeline.connect("state-change", self._pipeline_state_changed_cb)
         project.pipeline.connect("position", self._position_cb)
         project.pipeline.connect("duration-changed", self._duration_changed_cb)
+        project.pipeline.get_bus().connect("message::element", self.peakmeter.update_peakmeter)
         self.project = project
 
         self.__create_new_viewer()
@@ -835,7 +836,8 @@ class PeakMeterWidget(Gtk.DrawingArea, Loggable):
         context.rectangle(0, y - self.height, self.width, self.height)
         context.fill()
 
-        percent_filled = self.peak / self.height
+        # percent_filled = self.peak / self.height
+        percent_filled = .5
         if percent_filled >= .75:
             context.set_source_rgb(1, 0, 0)
         elif percent_filled >= .5:
@@ -850,3 +852,9 @@ class PeakMeterWidget(Gtk.DrawingArea, Loggable):
         height = context.get_target().get_height()
         style_context = self.get_style_context()
         Gtk.render_background(style_context, context, 0, 0, width, height)
+
+    def update_peakmeter(self, unused_bus, message):
+        peak = message.get_structure().get_value("peak")
+        if peak is not None:
+            print(peak)
+            # TODO
