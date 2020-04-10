@@ -32,4 +32,8 @@
   </p>
   <p>Changes can be viewed in real time in Pitivi's viewer to the right of the "Title" tab.</p>
   <p>The newly created title clip should appear in the top layer of the pitivi project, and can then be moved between layers as needed. Its duration and start time can also be altered like any other clip.</p>
+  <section id="editing">
+    <title>Editing Title Clips</title>
+    <p>To edit the title clip, go to <guiseq><gui>middle pane</gui><gui>Clip</gui><gui>Title</gui></guiseq>. Within this dropdown are various properties that you can edit to adjust the title clip.</p>
+  </section>
 </page>
