@@ -751,39 +751,28 @@ class ProxyManager(GObject.Object, Loggable):
                 hq_uri = self.app.proxy_manager.get_proxy_uri(asset)
                 if not Gio.File.new_for_uri(hq_uri).query_exists(None):
                     self.add_job(asset, shadow=True)
+        else:
+            # Scaled proxy is not for audio assets
+            scaled = False
 
-            if scaled:
-                if self.is_asset_queued(asset, optimisation=False):
-                    self.log("Asset already queued for scaling: %s", asset)
-                    return
-            else:
-                if self.is_asset_queued(asset, scaling=False):
-                    self.log("Asset already queued for optimization: %s", asset)
-                    return
-
-            if not force_proxying:
-                if not self.__asset_needs_transcoding(asset, scaled):
-                    self.debug("Not proxying asset (proxying disabled: %s)",
-                               self.proxying_unsupported)
-                    # Make sure to notify we do not need a proxy for that asset.
-                    self.emit("proxy-ready", asset, None)
-                    return
-
-            self.__create_transcoder(asset, scaled=scaled, shadow=shadow)
+        if scaled:
+            if self.is_asset_queued(asset, optimisation=False):
+                self.log("Asset already queued for scaling: %s", asset)
+                return
         else:
             if self.is_asset_queued(asset, scaling=False):
                 self.log("Asset already queued for optimization: %s", asset)
                 return
 
-            if not force_proxying:
-                if not self.__asset_needs_transcoding(asset, scaled):
-                    self.debug("Not proxying asset (proxying disabled: %s)",
-                               self.proxying_unsupported)
-                    # Make sure to notify we do not need a proxy for that asset.
-                    self.emit("proxy-ready", asset, None)
-                    return
+        if not force_proxying:
+            if not self.__asset_needs_transcoding(asset, scaled):
+                self.debug("Not proxying asset (proxying disabled: %s)",
+                           self.proxying_unsupported)
+                # Make sure to notify we do not need a proxy for that asset.
+                self.emit("proxy-ready", asset, None)
+                return
 
-            self.__create_transcoder(asset)
+        self.__create_transcoder(asset, scaled=scaled, shadow=shadow)
 
 
 def get_proxy_target(obj):
