@@ -760,30 +760,23 @@ class ProxyManager(GObject.Object, Loggable):
                 if self.is_asset_queued(asset, scaling=False):
                     self.log("Asset already queued for optimization: %s", asset)
                     return
-
-            if not force_proxying:
-                if not self.__asset_needs_transcoding(asset, scaled):
-                    self.debug("Not proxying asset (proxying disabled: %s)",
-                               self.proxying_unsupported)
-                    # Make sure to notify we do not need a proxy for that asset.
-                    self.emit("proxy-ready", asset, None)
-                    return
-
-            self.__create_transcoder(asset, scaled=scaled, shadow=shadow)
         else:
+            # Scaled proxy is not for audio assets
+            scaled = False
+
             if self.is_asset_queued(asset, scaling=False):
                 self.log("Asset already queued for optimization: %s", asset)
                 return
 
-            if not force_proxying:
-                if not self.__asset_needs_transcoding(asset, scaled):
-                    self.debug("Not proxying asset (proxying disabled: %s)",
-                               self.proxying_unsupported)
-                    # Make sure to notify we do not need a proxy for that asset.
-                    self.emit("proxy-ready", asset, None)
-                    return
+        if not force_proxying:
+            if not self.__asset_needs_transcoding(asset, scaled):
+                self.debug("Not proxying asset (proxying disabled: %s)",
+                           self.proxying_unsupported)
+                # Make sure to notify we do not need a proxy for that asset.
+                self.emit("proxy-ready", asset, None)
+                return
 
-            self.__create_transcoder(asset)
+        self.__create_transcoder(asset, scaled=scaled, shadow=shadow)
 
 
 def get_proxy_target(obj):
