@@ -16,29 +16,36 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Widgets to control clips properties."""
 import bisect
+import html
 import os
 from gettext import gettext as _
 
 from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gio
+from gi.repository import Gst
 from gi.repository import GstController
 from gi.repository import Gtk
 from gi.repository import Pango
 
 from pitivi.configure import get_ui_dir
+from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
+from pitivi.settings import GlobalSettings
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.custom_effect_widgets import setup_custom_effect_widgets
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.pipeline import PipelineError
+from pitivi.utils.ui import argb_to_gdk_rgba
 from pitivi.utils.ui import disable_scroll
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.ui import fix_infobar
+from pitivi.utils.ui import gdk_rgba_to_argb
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
+from pitivi.utils.widgets import ColorPickerButton
 
 (COL_ACTIVATED,
  COL_TYPE,
@@ -46,6 +53,29 @@ from pitivi.utils.ui import SPACING
  COL_NAME_TEXT,
  COL_DESC_TEXT,
  COL_TRACK_EFFECT) = list(range(6))
+
+DEFAULT_SOLID_COLOR = GES.VideoTestPattern.GAMUT  # Default Solid Color
+DEFAULT_FREQUENCY = 440.0
+DEFAULT_VOLUME = 1.0
+DEFAULT_MUTE = False
+GlobalSettings.add_config_option('titleClipLength',
+                                 section="user-interface",
+                                 key="title-clip-length",
+                                 default=5000,
+                                 notify=True)
+
+PreferencesDialog.add_numeric_preference('titleClipLength',
+                                         section="timeline",
+                                         label=_("Title clip duration"),
+                                         description=_(
+                                             "Default clip length (in milliseconds) of titles when inserting on the timeline."),
+                                         lower=1)
+
+FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White
+BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
+DEFAULT_FONT_DESCRIPTION = "Sans 36"
+DEFAULT_VALIGNMENT = "absolute"
+DEFAULT_HALIGNMENT = "absolute"
 
 
 class ClipProperties(Gtk.ScrolledWindow, Loggable):
@@ -66,6 +96,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         viewport.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         viewport.show()
         self.add(viewport)
+        self._selection = None
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         vbox.show()
@@ -80,18 +111,37 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         transformation_expander.set_vexpand(False)
         vbox.pack_start(transformation_expander, False, False, 0)
 
+        self.title_expander = TitleProperties(app)
+        self.title_expander.set_vexpand(False)
+        vbox.pack_start(self.title_expander, False, False, 0)
+
         self.effect_expander = EffectProperties(app, self)
         self.effect_expander.set_vexpand(False)
         vbox.pack_start(self.effect_expander, False, False, 0)
 
     def create_info_bar(self, text):
         """Creates an infobar to be displayed at the top."""
+        box = Gtk.Grid()
+        box.insert_row(0)
+        box.insert_row(1)
+        box.insert_column(0)
+        box.insert_column(1)
         label = Gtk.Label(label=text)
         label.set_line_wrap(True)
+        label.set_xalign(0)
+        box.attach(label, 0, 0, 2, 1)
+        title_label = Gtk.Label(label="Create a title clip:")
+        title_label.set_line_wrap(True)
+        title_label.set_xalign(0)
+        box.attach(title_label, 0, 1, 1, 1)
         infobar = Gtk.InfoBar()
         fix_infobar(infobar)
         infobar.props.message_type = Gtk.MessageType.OTHER
-        infobar.get_content_area().add(label)
+        title_clip_button = Gtk.Button()
+        title_clip_button.set_label("Title")
+        title_clip_button.connect("clicked", self.title_expander.create_title_cb)
+        box.attach(title_clip_button, 2, 1, 1, 1)
+        infobar.get_content_area().add(box)
         self.infobar_box.pack_start(infobar, False, False, 0)
         return infobar
 
@@ -216,13 +266,14 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview_selection.set_mode(Gtk.SelectionMode.SINGLE)
 
         self._infobar = clip_properties.create_info_bar(
-            _("Select a clip on the timeline to configure its associated effects"))
+            _("Select a clip on the timeline to configure its associated effects or create a new clip:"))
         self._infobar.show_all()
 
         # Prepare the main container widgets and lay out everything
         self._expander_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self._vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self._vbox.pack_start(self.treeview, expand=False, fill=False, padding=0)
+        self._vbox.pack_start(self.treeview, expand=False,
+                              fill=False, padding=0)
         self._vbox.pack_start(buttons_box, expand=False, fill=False, padding=0)
         separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
         separator.set_margin_top(SPACING)
@@ -230,32 +281,41 @@ class EffectProperties(Gtk.Expander, Loggable):
         separator.set_margin_right(SPACING)
         self._vbox.pack_start(separator, expand=False, fill=False, padding=0)
         self._vbox.show_all()
-        self._expander_box.pack_start(self.no_effect_infobar, expand=False, fill=False, padding=0)
-        self._expander_box.pack_start(self._vbox, expand=False, fill=False, padding=0)
+        self._expander_box.pack_start(
+            self.no_effect_infobar, expand=False, fill=False, padding=0)
+        self._expander_box.pack_start(
+            self._vbox, expand=False, fill=False, padding=0)
         self._expander_box.show_all()
         self.add(self._expander_box)
         self.hide()
 
         effects_actions_group = Gio.SimpleActionGroup()
-        self.treeview.insert_action_group("clipproperties-effects", effects_actions_group)
-        buttons_box.insert_action_group("clipproperties-effects", effects_actions_group)
+        self.treeview.insert_action_group(
+            "clipproperties-effects", effects_actions_group)
+        buttons_box.insert_action_group(
+            "clipproperties-effects", effects_actions_group)
 
         self.remove_effect_action = Gio.SimpleAction.new("remove-effect", None)
         self.remove_effect_action.connect("activate", self._remove_effect_cb)
         effects_actions_group.add_action(self.remove_effect_action)
-        self.app.set_accels_for_action("clipproperties-effects.remove-effect", ["Delete"])
+        self.app.set_accels_for_action(
+            "clipproperties-effects.remove-effect", ["Delete"])
         self.remove_effect_action.set_enabled(False)
-        remove_effect_button.set_action_name("clipproperties-effects.remove-effect")
+        remove_effect_button.set_action_name(
+            "clipproperties-effects.remove-effect")
 
         # Connect all the widget signals
-        self.treeview_selection.connect("changed", self._treeview_selection_changed_cb)
+        self.treeview_selection.connect(
+            "changed", self._treeview_selection_changed_cb)
         self.connect("drag-motion", self._drag_motion_cb)
         self.connect("drag-leave", self._drag_leave_cb)
         self.connect("drag-data-received", self._drag_data_received_cb)
         self.treeview.connect("drag-motion", self._drag_motion_cb)
         self.treeview.connect("drag-leave", self._drag_leave_cb)
-        self.treeview.connect("drag-data-received", self._drag_data_received_cb)
-        self.treeview.connect("query-tooltip", self._tree_view_query_tooltip_cb)
+        self.treeview.connect("drag-data-received",
+                              self._drag_data_received_cb)
+        self.treeview.connect(
+            "query-tooltip", self._tree_view_query_tooltip_cb)
         self.app.project_manager.connect_after(
             "new-project-loaded", self._new_project_loaded_cb)
         self.connect('notify::expanded', self._expanded_cb)
@@ -267,7 +327,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._project = project
         if project:
             self._selection = project.ges_timeline.ui.selection
-            self._selection.connect('selection-changed', self._selection_changed_cb)
+            self._selection.connect(
+                'selection-changed', self._selection_changed_cb)
         self.__update_all()
 
     def _selection_changed_cb(self, selection):
@@ -335,7 +396,8 @@ class EffectProperties(Gtk.Expander, Loggable):
     def _remove_effect(self, effect):
         pipeline = self._project.pipeline
         with self.app.action_log.started("remove effect",
-                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         finalizing_action=CommitTimelineFinalizingAction(
+                                             pipeline),
                                          toplevel=True):
             self.__remove_configuration_widget()
             self.effects_properties_manager.clean_cache(effect)
@@ -375,7 +437,8 @@ class EffectProperties(Gtk.Expander, Loggable):
             effect_info = self.app.effects.get_info(factory_name)
             pipeline = self._project.pipeline
             with self.app.action_log.started("add effect",
-                                             finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                             finalizing_action=CommitTimelineFinalizingAction(
+                                                 pipeline),
                                              toplevel=True):
                 effect = self.clip.ui.add_effect(effect_info)
                 if effect:
@@ -428,7 +491,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         effect = effects[source_index]
         pipeline = self._project.ges_timeline.get_parent()
         with self.app.action_log.started("move effect",
-                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         finalizing_action=CommitTimelineFinalizingAction(
+                                             pipeline),
                                          toplevel=True):
             clip.set_top_effect_index(effect, drop_index)
 
@@ -454,7 +518,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         effect = self.storemodel.get_value(_iter, COL_TRACK_EFFECT)
         pipeline = self._project.ges_timeline.get_parent()
         with self.app.action_log.started("change active state",
-                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         finalizing_action=CommitTimelineFinalizingAction(
+                                             pipeline),
                                          toplevel=True):
             effect.props.active = not effect.props.active
         # This is not strictly necessary, but makes sure
@@ -495,7 +560,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         for effect in self.clip.get_top_effects():
             if effect.props.bin_description in HIDDEN_EFFECTS:
                 continue
-            effect_info = self.app.effects.get_info(effect.props.bin_description)
+            effect_info = self.app.effects.get_info(
+                effect.props.bin_description)
             to_append = [effect.props.active]
             track_type = effect.get_track_type()
             if track_type == GES.TrackType.AUDIO:
@@ -590,7 +656,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self._project = project
         if project:
             self._selection = project.ges_timeline.ui.selection
-            self._selection.connect('selection-changed', self._selection_changed_cb)
+            self._selection.connect(
+                'selection-changed', self._selection_changed_cb)
             self._project.pipeline.connect("position", self._position_cb)
 
     def __project_closed_cb(self, unused_project_manager, unused_project):
@@ -600,15 +667,21 @@ class TransformationProperties(Gtk.Expander, Loggable):
         clear_button = self.builder.get_object("clear_button")
         clear_button.connect("clicked", self._default_values_cb)
 
-        self._activate_keyframes_btn = self.builder.get_object("activate_keyframes_button")
-        self._activate_keyframes_btn.connect("toggled", self.__show_keyframes_toggled_cb)
+        self._activate_keyframes_btn = self.builder.get_object(
+            "activate_keyframes_button")
+        self._activate_keyframes_btn.connect(
+            "toggled", self.__show_keyframes_toggled_cb)
 
-        self._next_keyframe_btn = self.builder.get_object("next_keyframe_button")
-        self._next_keyframe_btn.connect("clicked", self.__go_to_keyframe_cb, True)
+        self._next_keyframe_btn = self.builder.get_object(
+            "next_keyframe_button")
+        self._next_keyframe_btn.connect(
+            "clicked", self.__go_to_keyframe_cb, True)
         self._next_keyframe_btn.set_sensitive(False)
 
-        self._prev_keyframe_btn = self.builder.get_object("prev_keyframe_button")
-        self._prev_keyframe_btn.connect("clicked", self.__go_to_keyframe_cb, False)
+        self._prev_keyframe_btn = self.builder.get_object(
+            "prev_keyframe_button")
+        self._prev_keyframe_btn.connect(
+            "clicked", self.__go_to_keyframe_cb, False)
         self._prev_keyframe_btn.set_sensitive(False)
 
         self.__setup_spin_button("xpos_spinbtn", "posx")
@@ -620,8 +693,10 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def __get_keyframes_timestamps(self):
         keyframes_ts = []
         for prop in ["posx", "posy", "width", "height"]:
-            prop_keyframes = self.__control_bindings[prop].props.control_source.get_all()
-            keyframes_ts.extend([keyframe.timestamp for keyframe in prop_keyframes])
+            prop_keyframes = self.__control_bindings[prop].props.control_source.get_all(
+            )
+            keyframes_ts.extend(
+                [keyframe.timestamp for keyframe in prop_keyframes])
 
         return sorted(set(keyframes_ts))
 
@@ -656,9 +731,11 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self._prev_keyframe_btn.set_sensitive(False)
             self._next_keyframe_btn.set_sensitive(False)
             if self.__source_uses_keyframes():
-                self._activate_keyframes_btn.set_tooltip_text(_("Show keyframes"))
+                self._activate_keyframes_btn.set_tooltip_text(
+                    _("Show keyframes"))
             else:
-                self._activate_keyframes_btn.set_tooltip_text(_("Activate keyframes"))
+                self._activate_keyframes_btn.set_tooltip_text(
+                    _("Activate keyframes"))
             self.source.ui_element.show_default_keyframes()
         else:
             self._prev_keyframe_btn.set_sensitive(True)
@@ -689,7 +766,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
             # control_source.unset_all() can't be used here as it doesn't emit
             # the 'value-removed' signal, so the undo system wouldn't notice
             # the removed keyframes
-            keyframes_ts = [keyframe.timestamp for keyframe in control_source.get_all()]
+            keyframes_ts = [
+                keyframe.timestamp for keyframe in control_source.get_all()]
             for ts in keyframes_ts:
                 control_source.unset(ts)
             self.__own_bindings_change = True
@@ -711,7 +789,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 control_source = GstController.InterpolationControlSource()
                 control_source.props.mode = GstController.InterpolationMode.LINEAR
                 self.__own_bindings_change = True
-                self.source.set_control_source(control_source, prop, "direct-absolute")
+                self.source.set_control_source(
+                    control_source, prop, "direct-absolute")
                 self.__own_bindings_change = False
                 self.__set_default_keyframes_values(control_source, prop)
 
@@ -719,23 +798,27 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self.__control_bindings[prop] = binding
 
         if adding_kfs:
-            self.app.action_log.commit("Transformation properties keyframes activate")
+            self.app.action_log.commit(
+                "Transformation properties keyframes activate")
 
     def __set_default_keyframes_values(self, control_source, prop):
         res, val = self.source.get_child_property(prop)
         assert res
         control_source.set(self.source.props.in_point, val)
-        control_source.set(self.source.props.in_point + self.source.props.duration, val)
+        control_source.set(self.source.props.in_point +
+                           self.source.props.duration, val)
 
     def _default_values_cb(self, unused_widget):
         with self.app.action_log.started("Transformation properties reset default",
-                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                         finalizing_action=CommitTimelineFinalizingAction(
+                                             self._project.pipeline),
                                          toplevel=True):
             if self.__source_uses_keyframes():
                 self.__remove_control_bindings()
 
             for prop in ["posx", "posy", "width", "height"]:
-                self.source.set_child_property(prop, self.source.ui.default_position[prop])
+                self.source.set_child_property(
+                    prop, self.source.ui.default_position[prop])
 
         self.__update_keyframes_ui()
 
@@ -749,8 +832,10 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
                 # If the position is outside of the clip, take the property
                 # value at the start/end (whichever is closer) of the clip.
-                source_position = max(0, min(position - start, duration - 1)) + in_point
-                value = self.__control_bindings[prop].get_value(source_position)
+                source_position = max(
+                    0, min(position - start, duration - 1)) + in_point
+                value = self.__control_bindings[prop].get_value(
+                    source_position)
                 res = value is not None
                 return res, value
             except PipelineError:
@@ -809,22 +894,26 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
                 with self.app.action_log.started(
                         "Transformation property change",
-                        finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                        finalizing_action=CommitTimelineFinalizingAction(
+                            self._project.pipeline),
                         toplevel=True):
-                    self.__control_bindings[prop].props.control_source.set(source_position, value)
+                    self.__control_bindings[prop].props.control_source.set(
+                        source_position, value)
             except PipelineError:
                 self.warning("Could not get pipeline position")
                 return
         else:
             with self.app.action_log.started("Transformation property change",
-                                             finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                             finalizing_action=CommitTimelineFinalizingAction(
+                                                 self._project.pipeline),
                                              toplevel=True):
                 self.source.set_child_property(prop, value)
 
     def __setup_spin_button(self, widget_name, property_name):
         """Creates a SpinButton for editing a property value."""
         spinbtn = self.builder.get_object(widget_name)
-        handler_id = spinbtn.connect("value-changed", self._on_value_changed_cb, property_name)
+        handler_id = spinbtn.connect(
+            "value-changed", self._on_value_changed_cb, property_name)
         disable_scroll(spinbtn)
         self.spin_buttons[property_name] = spinbtn
         self.spin_buttons_handler_ids[property_name] = handler_id
@@ -846,8 +935,10 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def __set_source(self, source):
         if self.source:
             try:
-                self.source.disconnect_by_func(self.__source_property_changed_cb)
-                disconnect_all_by_func(self.source, self._control_bindings_changed)
+                self.source.disconnect_by_func(
+                    self.__source_property_changed_cb)
+                disconnect_all_by_func(
+                    self.source, self._control_bindings_changed)
             except TypeError:
                 pass
         self.source = source
@@ -856,9 +947,12 @@ class TransformationProperties(Gtk.Expander, Loggable):
             for prop in self.spin_buttons:
                 self.__update_spin_btn(prop)
             self.__update_keyframes_ui()
-            self.source.connect("deep-notify", self.__source_property_changed_cb)
-            self.source.connect("control-binding-added", self._control_bindings_changed)
-            self.source.connect("control-binding-removed", self._control_bindings_changed)
+            self.source.connect(
+                "deep-notify", self.__source_property_changed_cb)
+            self.source.connect("control-binding-added",
+                                self._control_bindings_changed)
+            self.source.connect("control-binding-removed",
+                                self._control_bindings_changed)
 
     def _selection_changed_cb(self, unused_timeline):
         if len(self._selection) == 1:
@@ -877,3 +971,300 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self._project.pipeline.commit_timeline()
         self.__set_source(None)
         self.hide()
+
+
+class TitleProperties(Gtk.Expander, Loggable):
+    """Widget for configuring the placement and size of the clip."""
+
+    __signals__ = {
+        'selection-changed': []}
+
+    def __init__(self, app):
+        Gtk.Expander.__init__(self)
+        Loggable.__init__(self)
+        self.set_expanded(True)
+        self.app = app
+        self._project = None
+        self._selection = None
+        self.source = None
+        self._children_props_handler = None
+        self._selected_clip = None
+        self.spin_buttons = {}
+        self.spin_buttons_handler_ids = {}
+        self.set_label(_("Title"))
+        self.settings = {}
+        self._setting_props = False
+        self._create_ui()
+        self.app.project_manager.connect_after(
+            "new-project-loaded", self._new_project_loaded_cb)
+        self.app.project_manager.connect_after(
+            "project-closed", self.__project_closed_cb)
+
+    def _create_ui(self):
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(os.path.join(get_ui_dir(),
+                                                "titleeditor.ui"))
+        self.builder.connect_signals(self)
+
+        self.__control_bindings = {}
+        # Used to make sure self.__control_bindings_changed doesn't get called
+        # when bindings are changed from this class
+        self.__own_bindings_change = False
+        # Create UI
+        self.add(self.builder.get_object("box1"))
+        self.editing_box = self.builder.get_object("base_table")
+
+        self.textarea = self.builder.get_object("textview")
+
+        self.textbuffer = self.textarea.props.buffer
+        self.textbuffer.connect("changed", self._text_changed_cb)
+
+        self.font_button = self.builder.get_object("fontbutton1")
+        self.foreground_color_button = self.builder.get_object(
+            "fore_text_color")
+        self.background_color_button = self.builder.get_object("back_color")
+
+        self.color_picker_foreground_widget = ColorPickerButton()
+        self.color_picker_foreground_widget.show()
+        self.color_picker_foreground = self.builder.get_object(
+            "color_picker_foreground")
+        self.color_picker_foreground.add(self.color_picker_foreground_widget)
+        self.color_picker_foreground_widget.connect(
+            "value-changed", self._color_picker_value_changed_cb, self.foreground_color_button, "color")
+
+        self.color_picker_background_widget = ColorPickerButton()
+        self.color_picker_background_widget.show()
+        self.background_color_picker = self.builder.get_object(
+            "color_picker_background")
+        self.background_color_picker.add(self.color_picker_background_widget)
+        self.color_picker_background_widget.connect(
+            "value-changed", self._color_picker_value_changed_cb, self.background_color_button, "foreground-color")
+
+        for widget_id in ("valignment", "halignment", "x-absolute", "y-absolute"):
+            self.settings[widget_id] = self.builder.get_object(widget_id)
+
+        for value_id, text in (("absolute", _("Absolute")),
+                               ("top", _("Top")),
+                               ("center", _("Center")),
+                               ("bottom", _("Bottom")),
+                               ("baseline", _("Baseline"))):
+            self.settings["valignment"].append(value_id, text)
+
+        for value_id, text in (("absolute", _("Absolute")),
+                               ("left", _("Left")),
+                               ("center", _("Center")),
+                               ("right", _("Right"))):
+            self.settings["halignment"].append(value_id, text)
+        # Show UI
+        self.show_all()
+        self.hide()
+
+    def _text_changed_cb(self, unused_updated_obj):
+        if not self.source:
+            # Nothing to update.
+            return
+
+        text = self.textbuffer.props.text
+        self.log("Source text updated to %s", text)
+        self._set_child_property("text", text)
+
+    def _background_color_button_cb(self, widget):
+        color = gdk_rgba_to_argb(widget.get_rgba())
+        self.debug("Setting title background color to %x", color)
+        self._set_child_property("foreground-color", color)
+
+    def _front_text_color_button_cb(self, widget):
+        color = gdk_rgba_to_argb(widget.get_rgba())
+        self.debug("Setting title foreground color to %x", color)
+        # TODO: Use set_text_color when we work with TitleSources instead of
+        # TitleClips
+        self._set_child_property("color", color)
+
+    def _font_button_cb(self, widget):
+        font_desc = widget.get_font_desc().to_string()
+        self.debug("Setting font desc to %s", font_desc)
+        self._set_child_property("font-desc", font_desc)
+
+    def _set_child_property(self, name, value):
+        with self.app.action_log.started("Title change property",
+                                         toplevel=True):
+            self._setting_props = True
+            try:
+                res = self.source.set_child_property(name, value)
+                assert res
+            finally:
+                self._setting_props = False
+
+    def _color_picker_value_changed_cb(self, widget, color_button, color_layer):
+        argb = 0
+        argb += (1 * 255) * 256 ** 3
+        argb += float(widget.color_r) * 256 ** 2
+        argb += float(widget.color_g) * 256 ** 1
+        argb += float(widget.color_b) * 256 ** 0
+        self.debug("Setting text %s to %x", color_layer, argb)
+        self._set_child_property(color_layer, argb)
+        rgba = argb_to_gdk_rgba(argb)
+        color_button.set_rgba(rgba)
+
+    def _source_deep_notify_cb(self, source, unused_gstelement, pspec):
+        """Handles updates in the TitleSource backing the current TitleClip."""
+        if self._setting_props:
+            self._project.pipeline.commit_timeline()
+            return
+
+        control_binding = self.source.get_control_binding(pspec.name)
+        if control_binding:
+            self.debug("Not handling %s as it is being interpolated",
+                       pspec.name)
+            return
+
+        if pspec.name == "text":
+            res, value = self.source.get_child_property(pspec.name)
+            assert res, pspec.name
+            if self.textbuffer.props.text == value or "":
+                return
+            self.textbuffer.props.text = value
+        elif pspec.name in ["x-absolute", "y-absolute"]:
+            res, value = self.source.get_child_property(pspec.name)
+            assert res, pspec.name
+            if self.settings[pspec.name].get_value() == value:
+                return
+            self.settings[pspec.name].set_value(value)
+        elif pspec.name in ["valignment", "halignment"]:
+            res, value = self.source.get_child_property(pspec.name)
+            assert res, pspec.name
+            value = value.value_name
+            if self.settings[pspec.name].get_active_id() == value:
+                return
+            self.settings[pspec.name].set_active_id(value)
+        elif pspec.name == "font-desc":
+            res, value = self.source.get_child_property(pspec.name)
+            assert res, pspec.name
+            if self.font_button.get_font_desc() == value:
+                return
+            font_desc = Pango.FontDescription.from_string(value)
+            self.font_button.set_font_desc(font_desc)
+        elif pspec.name == "color":
+            res, value = self.source.get_child_property(pspec.name)
+            assert res, pspec.name
+            color = argb_to_gdk_rgba(value)
+            if color == self.foreground_color_button.get_rgba():
+                return
+            self.foreground_color_button.set_rgba(color)
+        elif pspec.name == "foreground-color":
+            res, value = self.source.get_child_property(pspec.name)
+            assert res, pspec.name
+            color = argb_to_gdk_rgba(value)
+            if color == self.background_color_button.get_rgba():
+                return
+            self.background_color_button.set_rgba(color)
+
+        self._project.pipeline.commit_timeline()
+
+    def _new_project_loaded_cb(self, unused_project_manager, project):
+        if self._selection is not None:
+            self._selection.disconnect_by_func(self._selection_changed_cb)
+            self._selection = None
+        if project:
+            self._selection = project.ges_timeline.ui.selection
+            self._selection.connect('selection-changed', self._selection_changed_cb)
+        self._project = project
+
+    def _update_from_source(self, source):
+        self.textbuffer.props.text = html.unescape(source.get_child_property("text")[1] or "")
+        self.settings['x-absolute'].set_value(source.get_child_property("x-absolute")[1])
+        self.settings['y-absolute'].set_value(source.get_child_property("y-absolute")[1])
+        self.settings['valignment'].set_active_id(
+            source.get_child_property("valignment")[1].value_name)
+        self.settings['halignment'].set_active_id(
+            source.get_child_property("halignment")[1].value_name)
+        self._update_widgets_visibility()
+
+        font_desc = Pango.FontDescription.from_string(
+            source.get_child_property("font-desc")[1])
+        self.font_button.set_font_desc(font_desc)
+
+        color = argb_to_gdk_rgba(source.get_child_property("color")[1])
+        self.foreground_color_button.set_rgba(color)
+
+        color = argb_to_gdk_rgba(source.get_child_property("foreground-color")[1])
+        self.background_color_button.set_rgba(color)
+
+    def _update_source_cb(self, updated_obj):
+        """Handles changes in the advanced property widgets at the bottom."""
+        if not self.source:
+            # Nothing to update.
+            return
+
+        for name, obj in list(self.settings.items()):
+            if obj == updated_obj:
+                if name == "valignment":
+                    value = obj.get_active_id()
+                    self._update_widgets_visibility()
+                elif name == "halignment":
+                    value = obj.get_active_id()
+                    self._update_widgets_visibility()
+                else:
+                    value = obj.get_value()
+                self._set_child_property(name, value)
+                return
+
+    def _update_widgets_visibility(self):
+        visible = self.settings["valignment"].get_active_id() == "absolute"
+        self.settings["y-absolute"].set_visible(visible)
+        visible = self.settings["halignment"].get_active_id() == "absolute"
+        self.settings["x-absolute"].set_visible(visible)
+
+    def __project_closed_cb(self, unused_project_manager, unused_project):
+        self._project = None
+
+    def __set_source(self, source):
+        """Sets the clip to be edited with this editor.
+
+        Args:
+            source (GES.TitleSource): The source of the clip.
+        """
+        self.debug("Source set to %s", source)
+        if self._children_props_handler is not None:
+            self.source.disconnect(self._children_props_handler)
+            self._children_props_handler = None
+        self.source = None
+        if source:
+            assert isinstance(source, (GES.TextOverlay, GES.TitleSource))
+            self._update_from_source(source)
+            self.source = source
+            self._children_props_handler = self.source.connect('deep-notify',
+                                                               self._source_deep_notify_cb)
+
+    def _selection_changed_cb(self, selection):
+        selected_clip = selection.get_single_clip(GES.TitleClip)
+        source = None
+        if selected_clip:
+            for child in selected_clip.get_children(False):
+                if isinstance(child, GES.TitleSource):
+                    source = child
+                    self.show()
+                    self.__set_source(source)
+                    return
+        self.__set_source(source)
+        self.hide()
+
+    def create_title_cb(self, unused_button):
+        title_clip = GES.TitleClip()
+        duration = self.app.settings.titleClipLength * Gst.MSECOND
+        title_clip.set_duration(duration)
+        with self.app.action_log.started("add title clip", toplevel=True):
+            self.app.gui.editor.timeline_ui.insert_clips_on_first_layer([
+                title_clip])
+            # Now that the clip is inserted in the timeline, it has a source which
+            # can be used to set its properties.
+            source = title_clip.get_children(False)[0]
+            properties = {"text": "",
+                          "foreground-color": BACKGROUND_DEFAULT_COLOR,
+                          "color": FOREGROUND_DEFAULT_COLOR,
+                          "font-desc": DEFAULT_FONT_DESCRIPTION,
+                          "valignment": DEFAULT_VALIGNMENT,
+                          "halignment": DEFAULT_HALIGNMENT}
+            for prop, value in properties.items():
+                res = source.set_child_property(prop, value)
+                assert res, prop
