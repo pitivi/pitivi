@@ -17,7 +17,6 @@
 import collections
 from gettext import gettext as _
 
-import cairo
 from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import GLib
@@ -31,6 +30,7 @@ from pitivi.utils.pipeline import AssetPipeline
 from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import TimeWidget
 from pitivi.viewer.overlay_stack import OverlayStack
+from pitivi.viewer.peak_meter import PeakMeter
 
 GlobalSettings.add_config_section("viewer")
 GlobalSettings.add_config_option("viewerDocked", section="viewer",
@@ -240,7 +240,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pack_end(corner, False, False, 0)
 
         # Peak Meter
-        self.peakmeter = PeakMeterWidget()
+        self.peakmeter = PeakMeter()
         self.peakmeter.set_property("valign", Gtk.Align.CENTER)
         self.peakmeter.set_property("halign", Gtk.Align.CENTER)
         self.peakmeter.set_margin_left(SPACING)
@@ -753,57 +753,3 @@ class PlayPauseButton(Gtk.Button, Loggable):
             "media-playback-pause-symbolic", Gtk.IconSize.BUTTON))
         self.set_tooltip_text(_("Pause"))
         self.playing = True
-
-
-class PeakMeterWidget(Gtk.DrawingArea, Loggable):
-    """Widget for a peak meter."""
-
-    def __init__(self):
-        Gtk.DrawingArea.__init__(self)
-        Loggable.__init__(self)
-        self.width = 30
-        self.height = 150
-        self.peak_left = 0
-        self.peak_right = 0
-        self.set_size_request(self.width, self.height)
-        self.pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.width, self.height)
-
-        self.show()
-
-    def do_draw(self, context):
-        pixbuf = self.pixbuf
-
-        drawing_context = cairo.Context(pixbuf)
-        self.draw_bar(drawing_context)
-        pixbuf.flush()
-
-        context.set_source_surface(self.pixbuf, 0.0, 0.0)
-        context.paint()
-
-        return False
-
-    def draw_bar(self, context):
-        context.set_source_rgb(0.1, 0.1, 0.1)
-        context.rectangle(0, 0, self.width, self.height)
-        context.fill()
-
-        percent_filled = self.peak_left / self.height
-        if percent_filled >= .75:
-            context.set_source_rgb(1, 0, 0)
-        elif percent_filled >= .5:
-            context.set_source_rgb(1, 1, 0)
-        else:
-            context.set_source_rgb(0, 1, 0)
-        context.rectangle(0, self.height - self.peak_left, self.width, self.peak_left)
-        context.fill()
-
-    def normalize_peak(self, peak):
-        min_peak = -60
-        return (self.height) / (-min_peak) * (max(peak, min_peak) - min_peak)
-
-    def update_peakmeter(self, unused_bus, message):
-        peak = message.get_structure().get_value("peak")
-        if peak is not None:
-            self.peak_left = self.normalize_peak(peak[0])
-            self.peak_right = self.normalize_peak(peak[1])
-            self.queue_draw()
