@@ -30,6 +30,7 @@ from pitivi.utils.pipeline import AssetPipeline
 from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import TimeWidget
 from pitivi.viewer.overlay_stack import OverlayStack
+from pitivi.viewer.peak_meter import Channel
 from pitivi.viewer.peak_meter import PeakMeter
 
 GlobalSettings.add_config_section("viewer")
@@ -137,8 +138,8 @@ class ViewerContainer(Gtk.Box, Loggable):
         project.pipeline.connect("state-change", self._pipeline_state_changed_cb)
         project.pipeline.connect("position", self._position_cb)
         project.pipeline.connect("duration-changed", self._duration_changed_cb)
-        project.pipeline.get_bus().connect("message::element", self.right_peakmeter.update_peakmeter)
-        project.pipeline.get_bus().connect("message::element", self.left_peakmeter.update_peakmeter)
+        project.pipeline.get_bus().connect("message::element", self.right_peakmeter.update_peakmeter, Channel)
+        project.pipeline.get_bus().connect("message::element", self.left_peakmeter.update_peakmeter, Channel)
         self.project = project
 
         self.__create_new_viewer()

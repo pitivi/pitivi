@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import enum
+
 import cairo
 from gi.repository import Gtk
 
@@ -9,13 +11,17 @@ CELL_COUNT = 20
 MIN_PEAK = -60
 
 
+class Channel(enum.Enum):
+    LEFT_PEAK = 0
+    RIGHT_PEAK = 1
+
+
 class PeakMeter(Gtk.DrawingArea):
     """A meter that shows peak values."""
 
     def __init__(self):
         Gtk.DrawingArea.__init__(self)
-        self.peak_left = 0
-        self.peak_right = 0
+        self.peak = 0
         self.full_height = HEIGHT + PADDING * 2
         self.full_width = WIDTH + PADDING * 2
         self.set_size_request(self.full_width, self.full_height)
@@ -58,7 +64,7 @@ class PeakMeter(Gtk.DrawingArea):
         context.fill()
 
         context.set_source(self.peak_gradient)
-        context.rectangle(PADDING, HEIGHT - self.peak_left + PADDING, WIDTH, self.peak_left)
+        context.rectangle(PADDING, HEIGHT - self.peak + PADDING, WIDTH, self.peak)
         context.fill()
 
     def draw_cells(self, context):
@@ -80,9 +86,8 @@ class PeakMeter(Gtk.DrawingArea):
     def normalize_peak(self, peak):
         return HEIGHT / (-MIN_PEAK) * (max(peak, MIN_PEAK) - MIN_PEAK)
 
-    def update_peakmeter(self, unused_bus, message):
+    def update_peakmeter(self, unused_bus, message, channel):
         peak = message.get_structure().get_value("peak")
         if peak is not None:
-            self.peak_left = self.normalize_peak(peak[0])
-            self.peak_right = self.normalize_peak(peak[1])
+            self.peak = self.normalize_peak(peak[channel])
             self.queue_draw()
