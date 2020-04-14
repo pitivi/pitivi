@@ -551,7 +551,9 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         level = Gst.ElementFactory.make("level", None)
         audio_bin = Gst.ElementFactory.make("bin", None)
         audio_bin.add(level)
-        self.props.audio_filter = level
+
+        pad = Gst.GhostPad("sink", level.get_static_pad("sink"))
+        audio_bin.add_pad(pad)
 
         if "watchdog" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ''):
             watchdog = Gst.ElementFactory.make("watchdog", None)
@@ -560,7 +562,15 @@ class Pipeline(GES.Pipeline, SimplePipeline):
                 self.props.video_filter = watchdog
                 watchdog = Gst.ElementFactory.make("watchdog", None)
                 watchdog.props.timeout = WATCHDOG_TIMEOUT * 1000
-                # audio_bin.add(watchdog)
+                audio_bin.add(watchdog)
+                level.link(watchdog)
+                pad = Gst.GhostPad("src", watchdog.get_static_pad("src"))
+                audio_bin.add_pad(pad)
+        else:
+            pad = Gst.GhostPad("src", level.get_static_pad("src"))
+            audio_bin.add_pad(pad)
+
+        self.props.audio_filter = audio_bin
 
     def create_sink(self):
         video_sink, sink_widget = SimplePipeline.create_sink(self)
