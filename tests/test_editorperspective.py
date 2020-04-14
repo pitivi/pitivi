@@ -18,12 +18,12 @@
 from unittest import mock
 
 from gi.repository import GES
+from tests import common
 
 from pitivi.dialogs.missingasset import MissingAssetDialog
 from pitivi.editorperspective import EditorPerspective
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import disconnect_all_by_func
-from tests import common
 
 
 class TestEditorPerspective(common.TestCase):
@@ -36,7 +36,6 @@ class TestEditorPerspective(common.TestCase):
         editorperspective = EditorPerspective(app)
         editorperspective.setup_ui()
         for expected_tab, b_element in [
-                (2, GES.TitleClip()),
                 (0, GES.SourceClip()),
                 (1, GES.TransitionClip())]:
             editorperspective.switch_context_tab(b_element)
