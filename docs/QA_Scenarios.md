@@ -342,7 +342,7 @@ on GitLab, indicating:
 3. Press the 'Play/Pause' button on the viewer
     -   The color of the peak meter should change with the rise and fall of the meter
     -   A low level (<50%) should result in a green meter
-    -   A medium level (>50% but <75%>) should result in a yellow meter
+    -   A medium level (>50% but <75%) should result in a yellow meter
     -   A high level (>75%) should result in a red meter
 
 ## Test Preferences

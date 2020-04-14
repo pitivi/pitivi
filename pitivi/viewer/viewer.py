@@ -137,7 +137,8 @@ class ViewerContainer(Gtk.Box, Loggable):
         project.pipeline.connect("state-change", self._pipeline_state_changed_cb)
         project.pipeline.connect("position", self._position_cb)
         project.pipeline.connect("duration-changed", self._duration_changed_cb)
-        project.pipeline.get_bus().connect("message::element", self.peakmeter.update_peakmeter)
+        project.pipeline.get_bus().connect("message::element", self.right_peakmeter.update_peakmeter)
+        project.pipeline.get_bus().connect("message::element", self.left_peakmeter.update_peakmeter)
         self.project = project
 
         self.__create_new_viewer()
@@ -239,13 +240,21 @@ class ViewerContainer(Gtk.Box, Loggable):
         corner.connect("motion-notify-event", self.__corner_motion_notify_cb, hpane, vpane)
         self.pack_end(corner, False, False, 0)
 
-        # Peak Meter
-        self.peakmeter = PeakMeter()
-        self.peakmeter.set_property("valign", Gtk.Align.CENTER)
-        self.peakmeter.set_property("halign", Gtk.Align.CENTER)
-        self.peakmeter.set_margin_left(SPACING)
-        self.peakmeter.set_margin_right(SPACING)
-        self.viewer_subcontainer.pack_end(self.peakmeter, False, False, 0)
+        # Right Peak Meter
+        self.right_peakmeter = PeakMeter()
+        self.right_peakmeter.set_property("valign", Gtk.Align.CENTER)
+        self.right_peakmeter.set_property("halign", Gtk.Align.CENTER)
+        self.right_peakmeter.set_margin_left(SPACING)
+        self.right_peakmeter.set_margin_right(SPACING)
+        self.viewer_subcontainer.pack_end(self.right_peakmeter, False, False, 0)
+
+        # Left Peak Meter
+        self.left_peakmeter = PeakMeter()
+        self.left_peakmeter.set_property("valign", Gtk.Align.CENTER)
+        self.left_peakmeter.set_property("halign", Gtk.Align.CENTER)
+        self.left_peakmeter.set_margin_left(SPACING)
+        self.left_peakmeter.set_margin_right(SPACING)
+        self.viewer_subcontainer.pack_end(self.left_peakmeter, False, False, 0)
 
         # Buttons/Controls
         bbox = Gtk.Box()
@@ -331,7 +340,8 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.end_button.get_accessible().set_name("end_button")
         self.timecode_entry.get_accessible().set_name("timecode_entry")
         self.undock_button.get_accessible().set_name("undock_button")
-        self.peakmeter.get_accessible().set_name("peakmeter")
+        self.right_peakmeter.get_accessible().set_name("right_peakmeter")
+        self.left_peakmeter.get_accessible().set_name("left_peakmeter")
 
         self.buttons_container = bbox
         self.external_vbox.show_all()
