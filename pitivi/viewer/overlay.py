@@ -58,6 +58,8 @@ class Overlay(Gtk.DrawingArea, Loggable):
             page = 2
         elif isinstance(self._source, GES.VideoUriSource):
             page = 0
+        elif isinstance(self._source, GES.VideoTestSource):
+            page = 3
         else:
             self.warning("Unknown clip type: %s", self._source)
             return
