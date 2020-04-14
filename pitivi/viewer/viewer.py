@@ -138,8 +138,8 @@ class ViewerContainer(Gtk.Box, Loggable):
         project.pipeline.connect("state-change", self._pipeline_state_changed_cb)
         project.pipeline.connect("position", self._position_cb)
         project.pipeline.connect("duration-changed", self._duration_changed_cb)
-        project.pipeline.get_bus().connect("message::element", self.right_peakmeter.update_peakmeter, Channel)
-        project.pipeline.get_bus().connect("message::element", self.left_peakmeter.update_peakmeter, Channel)
+        project.pipeline.get_bus().connect("message::element", self.right_peakmeter.update_peakmeter, Channel.RIGHT_PEAK)
+        project.pipeline.get_bus().connect("message::element", self.left_peakmeter.update_peakmeter, Channel.LEFT_PEAK)
         self.project = project
 
         self.__create_new_viewer()

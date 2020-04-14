@@ -89,5 +89,5 @@ class PeakMeter(Gtk.DrawingArea):
     def update_peakmeter(self, unused_bus, message, channel):
         peak = message.get_structure().get_value("peak")
         if peak is not None:
-            self.peak = self.normalize_peak(peak[channel])
+            self.peak = self.normalize_peak(peak[channel.value])
             self.queue_draw()
