@@ -244,7 +244,6 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.right_peakmeter = PeakMeter()
         self.right_peakmeter.set_property("valign", Gtk.Align.CENTER)
         self.right_peakmeter.set_property("halign", Gtk.Align.CENTER)
-        self.right_peakmeter.set_margin_left(SPACING)
         self.right_peakmeter.set_margin_right(SPACING)
         self.viewer_subcontainer.pack_end(self.right_peakmeter, False, False, 0)
 
@@ -253,7 +252,6 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.left_peakmeter.set_property("valign", Gtk.Align.CENTER)
         self.left_peakmeter.set_property("halign", Gtk.Align.CENTER)
         self.left_peakmeter.set_margin_left(SPACING)
-        self.left_peakmeter.set_margin_right(SPACING)
         self.viewer_subcontainer.pack_end(self.left_peakmeter, False, False, 0)
 
         # Buttons/Controls
