@@ -228,6 +228,13 @@ class LayerControls(Gtk.EventBox, Loggable):
             self.menubutton.props.image = image
             self.__icon = icon
 
+    def get_video_track(self):
+        video_track = None
+        for track in self.ges_timeline.get_tracks():
+            if track.type == GES.TrackType.VIDEO:
+                video_track = track
+        return video_track
+
 
 class Layer(Gtk.Layout, Zoomable, Loggable):
     """Container for the clips widgets of a layer."""
