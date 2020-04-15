@@ -100,6 +100,77 @@ class BaseTestUndoTimeline(common.TestCase):
         TestLayers.check_priorities_and_positions(self, self.timeline.ui, layers, list(range(len(layers))))
 
 
+class TestSelectionResetWhenRemovingClip(BaseTestUndoTimeline):
+
+    def setUp(self):
+        super().setUp()
+        self.setup_timeline_container()
+
+        for i in range(3):
+            clip = GES.TitleClip()
+            clip.set_start(i * Gst.SECOND)
+            clip.set_duration(1 * Gst.SECOND)
+
+            with self.action_log.started("add clip {}".format(i)):
+                self.layer.add_clip(clip)
+
+    def check_selection(self, *expected_selected_clips):
+        self.assertSetEqual(set(self.timeline_container.timeline.selection), set(expected_selected_clips))
+        for clip in self.get_timeline_clips():
+            if clip in expected_selected_clips:
+                self.assertTrue(clip.selected.selected)
+            else:
+                self.assertFalse(clip.selected.selected)
+
+    def test_redo_delete_when_selected(self):
+        clip1, clip2, clip3 = self.get_timeline_clips()
+
+        # Delete clip1.
+        self.timeline_container.timeline.selection.select([clip1])
+        self.timeline_container.delete_action.activate(None)
+        self.check_selection()
+
+        # Undo clip1 deletion.
+        self.action_log.undo()
+
+        # Redo clip1 deletion when selected.
+        self.timeline_container.timeline.selection.select([clip1, clip2, clip3])
+        self.action_log.redo()
+        self.check_selection()
+
+    def test_redo_delete_when_unselected(self):
+        clip1, clip2, clip3 = self.get_timeline_clips()
+
+        # Delete clip1.
+        self.timeline_container.timeline.selection.select([clip1])
+        self.timeline_container.delete_action.activate(None)
+        self.check_selection()
+
+        # Undo clip1 deletion.
+        self.action_log.undo()
+
+        # Redo clip1 deletion when unselected.
+        self.timeline_container.timeline.selection.select([clip2, clip3])
+        self.action_log.redo()
+        self.check_selection(clip2, clip3)
+
+    def test_undo_add_when_selected(self):
+        clip1, clip2, clip3 = self.get_timeline_clips()
+
+        # Undo clip3 creation when selected.
+        self.timeline_container.timeline.selection.select([clip1, clip2, clip3])
+        self.action_log.undo()
+        self.check_selection()
+
+    def test_undo_add_when_unselected(self):
+        clip1, clip2, _ = self.get_timeline_clips()
+
+        # Undo clip3 creation when unselected.
+        self.timeline_container.timeline.selection.select([clip1, clip2])
+        self.action_log.undo()
+        self.check_selection(clip1, clip2)
+
+
 class TestTimelineObserver(BaseTestUndoTimeline):
 
     def test_layer_removed(self):
@@ -325,12 +396,13 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertEqual(layer._name_if_set(), "Beautiful name")
 
     def test_add_clip(self):
+        self.setup_timeline_container()
         clip1 = GES.TitleClip()
         with self.action_log.started("add clip"):
             self.layer.add_clip(clip1)
 
         stack = self.action_log.undo_stacks[0]
-        self.assertEqual(len(stack.done_actions), 2, stack.done_actions)
+        self.assertEqual(len(stack.done_actions), 7, stack.done_actions)
         self.assertTrue(isinstance(stack.done_actions[0], ClipAdded))
         self.assertTrue(clip1 in self.get_timeline_clips())
 
@@ -341,6 +413,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertTrue(clip1 in self.get_timeline_clips())
 
     def test_remove_clip(self):
+        self.setup_timeline_container()
         stacks = []
         self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
 
@@ -397,6 +470,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
     def test_ungroup_group_clip(self):
         # This test is in TestLayerObserver because the relevant operations
         # recorded are clip-added and clip-removed.
+        self.setup_timeline_container()
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip1 = asset.extract()
@@ -434,6 +508,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertEqual(0.5 * Gst.SECOND, timeline_clips[1].get_duration())
 
     def test_split_clip(self):
+        self.setup_timeline_container()
         clip = GES.TitleClip()
         clip.set_start(0 * Gst.SECOND)
         clip.set_duration(20 * Gst.SECOND)
@@ -550,6 +625,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
     def test_transition_type(self):
         """Checks the transitions keep their type."""
+        self.setup_timeline_container()
         self._wait_until_project_loaded()
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)

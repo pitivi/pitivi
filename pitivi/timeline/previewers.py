@@ -20,6 +20,7 @@ import hashlib
 import os
 import random
 import sqlite3
+from gettext import gettext as _
 
 import cairo
 import numpy
@@ -30,6 +31,8 @@ from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
+from gi.repository import Pango
+from gi.repository import PangoCairo
 
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
@@ -42,6 +45,7 @@ from pitivi.utils.proxy import get_proxy_target
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.system import CPUUsageTracker
 from pitivi.utils.timeline import Zoomable
+from pitivi.utils.ui import CLIP_BORDER_WIDTH
 from pitivi.utils.ui import EXPANDED_SIZE
 
 # Our C module optimizing waveforms rendering
@@ -54,8 +58,9 @@ except ImportError:
 
 SAMPLE_DURATION = Gst.SECOND / 100
 
+# Horizontal space between thumbs.
 THUMB_MARGIN_PX = 3
-THUMB_HEIGHT = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
+THUMB_HEIGHT = EXPANDED_SIZE - 2 * CLIP_BORDER_WIDTH
 THUMB_PERIOD = int(Gst.SECOND / 2)
 assert Gst.SECOND % THUMB_PERIOD == 0
 # For the waveforms, ensures we always have a little extra surface when
@@ -366,11 +371,9 @@ class Previewer(GObject.Object):
 
     def start_generation(self):
         """Starts preview generation."""
-        raise NotImplementedError
 
     def stop_generation(self):
         """Stops preview generation."""
-        raise NotImplementedError
 
     def become_controlled(self):
         """Lets the PreviewGeneratorManager control our execution."""
@@ -411,6 +414,8 @@ class ImagePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         Previewer.__init__(self, GES.TrackType.VIDEO, max_cpu_usage)
         Zoomable.__init__(self)
         Loggable.__init__(self)
+
+        self.get_style_context().add_class("VideoPreviewer")
 
         self.ges_elem = ges_elem
 
@@ -808,6 +813,8 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
         Zoomable.__init__(self)
         AssetPreviewer.__init__(self, get_proxy_target(ges_elem), max_cpu_usage)
 
+        self.get_style_context().add_class("VideoPreviewer")
+
         self.ges_elem = ges_elem
         self.thumbs = {}
 
@@ -903,6 +910,9 @@ class Thumbnail(Gtk.Image):
 
     def __init__(self, width, height):
         Gtk.Image.__init__(self)
+
+        self.get_style_context().add_class("Thumbnail")
+
         self.props.width_request = width
         self.props.height_request = height
 
@@ -1115,6 +1125,8 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
+        self.get_style_context().add_class("AudioPreviewer")
+
         self.pipeline = None
         self._wavebin = None
 
@@ -1246,7 +1258,8 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         end_ns = min(max(0, self.pixel_to_ns(rect.x + rect.width) + inpoint), max_duration)
 
         zoom = self.get_current_zoom_level()
-        height = self.get_allocation().height
+        height = self.get_allocation().height - 2 * CLIP_BORDER_WIDTH
+
         if not self.surface or \
                 height != self.surface.get_height() or \
                 zoom != self._surface_zoom_level or \
@@ -1275,7 +1288,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         # 2. - inpoint, because we're drawing a clip, not the entire asset.
         context.set_operator(cairo.OPERATOR_OVER)
         offset = self.ns_to_pixel(self._surface_start_ns - inpoint)
-        context.set_source_surface(self.surface, offset, 0)
+        context.set_source_surface(self.surface, offset, CLIP_BORDER_WIDTH)
         context.paint()
 
     def _emit_done_on_idle(self):
@@ -1310,3 +1323,88 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         """Stops preview generation and cleans the object."""
         self.stop_generation()
         Zoomable.__del__(self)
+
+
+class TitlePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
+    """Title Clip previewer using Pango to draw text on the clip."""
+
+    __gsignals__ = PREVIEW_GENERATOR_SIGNALS
+
+    def __init__(self, ges_elem):
+        Gtk.Layout.__init__(self)
+        Previewer.__init__(self, GES.TrackType.VIDEO, None)
+        Zoomable.__init__(self)
+        Loggable.__init__(self)
+
+        self.get_style_context().add_class("TitlePreviewer")
+
+        self.ges_elem = ges_elem
+        font = Gtk.Settings.get_default().get_property("gtk-font-name")
+        self._font_desc = Pango.font_description_from_string(font)
+        self._selected = False
+
+        self.ges_elem.connect("deep-notify", self._ges_elem_deep_notify_cb)
+
+    def _ges_elem_deep_notify_cb(self, ges_element, gst_element, pspec):
+        """Forces a redraw when the clip's text is changed."""
+        if pspec.name == "text":
+            self.queue_draw()
+
+    def do_draw(self, context):
+        rect = Gdk.cairo_get_clip_rectangle(context)[1]
+        context.set_source_rgb(1, 1, 1)
+
+        # Get text
+        res, escaped_text = self.ges_elem.get_child_property("text")
+        if res:
+            escaped_text = escaped_text.strip().split("\n", 1)[0]
+        if not res or not escaped_text:
+            escaped_text = _("Title Clip")
+
+        # Adapt to RTL/LTR direction
+        direction = Pango.unichar_direction(escaped_text[0])
+        if direction in (Pango.Direction.LTR, Pango.Direction.NEUTRAL):
+            stops = (0, 1)
+            x_pos = 10
+            grad = cairo.LinearGradient(rect.width * 0.66, 0,
+                                        rect.width * 0.91, 0)
+        else:
+            stops = (1, 0)
+            x_pos = -10
+            grad = cairo.LinearGradient(rect.width * 0.09, 0,
+                                        rect.width * 0.34, 0)
+
+        # Gradient to make text "fade out"
+        if self._selected:
+            color = (0.14, 0.133, 0.15)
+        else:
+            color = (0.368, 0.305, 0.4)
+
+        grad.add_color_stop_rgba(stops[0], color[0], color[1], color[2], 0)
+        grad.add_color_stop_rgba(stops[1], color[0], color[1], color[2], 1)
+
+        # Setup Pango layout
+        layout = PangoCairo.create_layout(context)
+        layout.set_auto_dir(True)
+        layout.set_font_description(self._font_desc)
+        layout.set_width(rect.width * Pango.SCALE)
+
+        # Prevent lines from being wrapped
+        layout.set_ellipsize(Pango.EllipsizeMode.END)
+
+        # Draw text
+        layout.set_markup(escaped_text, -1)
+        context.move_to(x_pos, (rect.height / 2) - 11)
+        PangoCairo.show_layout(context, layout)
+
+        # Draw gradient
+        context.rectangle(0, 0, rect.width, rect.height)
+        context.set_source(grad)
+        context.fill()
+
+    def set_selected(self, select):
+        self._selected = select
+
+    def release(self):
+        # Nothing to release
+        pass
