@@ -185,6 +185,51 @@ class TestLayers(BaseTestTimeline):
         ges_layer_2.remove_clip(ges_clip_video)
         self.assertEqual(timeline.media_types, GES.TrackType(0))
 
+    def test_mute_and_unmute_layer(self):
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+        layer_controls = ges_layer.control_ui
+        mute_toggle_button = layer_controls.mute_toggle_button
+
+        for audio_track in layer_controls.timeline_audio_tracks:
+            self.assertTrue(ges_layer.get_active_for_track(audio_track))
+            self.assertFalse(mute_toggle_button.get_active())
+
+            ges_layer.set_active_for_tracks(False, [audio_track])
+            common.create_main_loop().run(until_empty=True)
+            self.assertFalse(ges_layer.get_active_for_track(audio_track))
+            self.assertTrue(mute_toggle_button.get_active())
+
+            ges_layer.set_active_for_tracks(True, [audio_track])
+            common.create_main_loop().run(until_empty=True)
+            self.assertTrue(ges_layer.get_active_for_track(audio_track))
+            self.assertFalse(mute_toggle_button.get_active())
+
+    def test_mute_and_unmute_layer_button(self):
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+        layer_controls = ges_layer.control_ui
+        mute_toggle_button = layer_controls.mute_toggle_button
+
+        for audio_track in layer_controls.timeline_audio_tracks:
+            self.assertTrue(ges_layer.get_active_for_track(audio_track))
+        common.create_main_loop().run(until_empty=True)
+        self.assertFalse(mute_toggle_button.get_active())
+
+        mute_toggle_button.clicked()
+        for audio_track in layer_controls.timeline_audio_tracks:
+            self.assertFalse(ges_layer.get_active_for_track(audio_track))
+        common.create_main_loop().run(until_empty=True)
+        self.assertTrue(mute_toggle_button.get_active())
+
+        mute_toggle_button.clicked()
+        for audio_track in layer_controls.timeline_audio_tracks:
+            self.assertTrue(ges_layer.get_active_for_track(audio_track))
+        common.create_main_loop().run(until_empty=True)
+        self.assertFalse(mute_toggle_button.get_active())
+
     def test_create_layer(self):
         self.check_create_layer([0, 0, 0, 0], [3, 2, 1, 0])
         self.check_create_layer([0, 1, 1, 1], [0, 3, 2, 1])
