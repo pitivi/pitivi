@@ -86,8 +86,6 @@ class PeakMeter(Gtk.DrawingArea):
     def normalize_peak(self, peak):
         return HEIGHT / (-MIN_PEAK) * (max(peak, MIN_PEAK) - MIN_PEAK)
 
-    def update_peakmeter(self, unused_bus, message, channel):
-        peak = message.get_structure().get_value("peak")
-        if peak is not None:
-            self.peak = self.normalize_peak(peak[channel.value])
-            self.queue_draw()
+    def update_peakmeter(self, peak):
+        self.peak = self.normalize_peak(peak)
+        self.queue_draw()

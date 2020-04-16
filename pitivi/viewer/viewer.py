@@ -138,8 +138,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         project.pipeline.connect("state-change", self._pipeline_state_changed_cb)
         project.pipeline.connect("position", self._position_cb)
         project.pipeline.connect("duration-changed", self._duration_changed_cb)
-        project.pipeline.get_bus().connect("message::element", self.right_peakmeter.update_peakmeter, Channel.RIGHT_PEAK)
-        project.pipeline.get_bus().connect("message::element", self.left_peakmeter.update_peakmeter, Channel.LEFT_PEAK)
+        project.pipeline.get_bus().connect("message::element", self._bus_level_message_cb)
         self.project = project
 
         self.__create_new_viewer()
@@ -344,6 +343,12 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.buttons_container = bbox
         self.external_vbox.show_all()
+
+    def _bus_level_message_cb(self, unused_bus, message):
+        peak = message.get_structure().get_value("peak")
+        if peak is not None:
+            self.left_peakmeter.update_peakmeter(peak[Channel.LEFT_PEAK.value])
+            self.right_peakmeter.update_peakmeter(peak[Channel.RIGHT_PEAK.value])
 
     def __corner_draw_cb(self, unused_widget, cr, lines, space, margin):
         cr.set_line_width(1)
