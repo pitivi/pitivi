@@ -26,6 +26,7 @@ from gi.repository import GstController
 from gi.repository import Gtk
 from gi.repository import Pango
 
+from pitivi.clip_properties.title import TitleProperties
 from pitivi.configure import get_ui_dir
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
@@ -66,34 +67,50 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         viewport.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         viewport.show()
         self.add(viewport)
+        self._selection = None
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         vbox.show()
         viewport.add(vbox)
 
-        self.infobar_box = Gtk.Box()
-        self.infobar_box.set_orientation(Gtk.Orientation.VERTICAL)
-        self.infobar_box.show()
-        vbox.pack_start(self.infobar_box, False, False, 0)
+        self.clips_box = Gtk.Box()
+        self.clips_box.set_orientation(Gtk.Orientation.VERTICAL)
+        self.clips_box.show()
+        vbox.pack_start(self.clips_box, False, False, 0)
 
         transformation_expander = TransformationProperties(app)
         transformation_expander.set_vexpand(False)
         vbox.pack_start(transformation_expander, False, False, 0)
 
+        self.title_expander = TitleProperties(app)
+        self.title_expander.set_vexpand(False)
+        vbox.pack_start(self.title_expander, False, False, 0)
+
         self.effect_expander = EffectProperties(app, self)
         self.effect_expander.set_vexpand(False)
         vbox.pack_start(self.effect_expander, False, False, 0)
 
-    def create_info_bar(self, text):
-        """Creates an infobar to be displayed at the top."""
-        label = Gtk.Label(label=text)
+    def create_clips_box(self):
+        """Creates a menu to be displayed at the top."""
+        box = Gtk.Grid()
+        box.insert_row(0)
+        box.insert_row(1)
+        box.insert_column(0)
+        box.insert_column(1)
+        label = Gtk.Label(label=_("Select a clip on the timeline to configure its associated effects or create a new clip:"))
         label.set_line_wrap(True)
-        infobar = Gtk.InfoBar()
-        fix_infobar(infobar)
-        infobar.props.message_type = Gtk.MessageType.OTHER
-        infobar.get_content_area().add(label)
-        self.infobar_box.pack_start(infobar, False, False, 0)
-        return infobar
+        label.set_xalign(0)
+        box.attach(label, 0, 0, 2, 1)
+        title_label = Gtk.Label(label=_("Create a title clip:"))
+        title_label.set_line_wrap(True)
+        title_label.set_xalign(0)
+        box.attach(title_label, 0, 1, 1, 1)
+        title_clip_button = Gtk.Button()
+        title_clip_button.set_label(_("Title"))
+        title_clip_button.connect("clicked", self.title_expander.create_title_cb)
+        box.attach(title_clip_button, 2, 1, 1, 1)
+        self.clips_box.pack_start(box, False, False, 0)
+        return box
 
 
 class EffectProperties(Gtk.Expander, Loggable):
@@ -215,8 +232,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview_selection = self.treeview.get_selection()
         self.treeview_selection.set_mode(Gtk.SelectionMode.SINGLE)
 
-        self._infobar = clip_properties.create_info_bar(
-            _("Select a clip on the timeline to configure its associated effects"))
+        self._infobar = clip_properties.create_clips_box()
         self._infobar.show_all()
 
         # Prepare the main container widgets and lay out everything
@@ -230,32 +246,41 @@ class EffectProperties(Gtk.Expander, Loggable):
         separator.set_margin_right(SPACING)
         self._vbox.pack_start(separator, expand=False, fill=False, padding=0)
         self._vbox.show_all()
-        self._expander_box.pack_start(self.no_effect_infobar, expand=False, fill=False, padding=0)
-        self._expander_box.pack_start(self._vbox, expand=False, fill=False, padding=0)
+        self._expander_box.pack_start(
+            self.no_effect_infobar, expand=False, fill=False, padding=0)
+        self._expander_box.pack_start(
+            self._vbox, expand=False, fill=False, padding=0)
         self._expander_box.show_all()
         self.add(self._expander_box)
         self.hide()
 
         effects_actions_group = Gio.SimpleActionGroup()
-        self.treeview.insert_action_group("clipproperties-effects", effects_actions_group)
-        buttons_box.insert_action_group("clipproperties-effects", effects_actions_group)
+        self.treeview.insert_action_group(
+            "clipproperties-effects", effects_actions_group)
+        buttons_box.insert_action_group(
+            "clipproperties-effects", effects_actions_group)
 
         self.remove_effect_action = Gio.SimpleAction.new("remove-effect", None)
         self.remove_effect_action.connect("activate", self._remove_effect_cb)
         effects_actions_group.add_action(self.remove_effect_action)
-        self.app.set_accels_for_action("clipproperties-effects.remove-effect", ["Delete"])
+        self.app.set_accels_for_action(
+            "clipproperties-effects.remove-effect", ["Delete"])
         self.remove_effect_action.set_enabled(False)
-        remove_effect_button.set_action_name("clipproperties-effects.remove-effect")
+        remove_effect_button.set_action_name(
+            "clipproperties-effects.remove-effect")
 
         # Connect all the widget signals
-        self.treeview_selection.connect("changed", self._treeview_selection_changed_cb)
+        self.treeview_selection.connect(
+            "changed", self._treeview_selection_changed_cb)
         self.connect("drag-motion", self._drag_motion_cb)
         self.connect("drag-leave", self._drag_leave_cb)
         self.connect("drag-data-received", self._drag_data_received_cb)
         self.treeview.connect("drag-motion", self._drag_motion_cb)
         self.treeview.connect("drag-leave", self._drag_leave_cb)
-        self.treeview.connect("drag-data-received", self._drag_data_received_cb)
-        self.treeview.connect("query-tooltip", self._tree_view_query_tooltip_cb)
+        self.treeview.connect("drag-data-received",
+                              self._drag_data_received_cb)
+        self.treeview.connect(
+            "query-tooltip", self._tree_view_query_tooltip_cb)
         self.app.project_manager.connect_after(
             "new-project-loaded", self._new_project_loaded_cb)
         self.connect('notify::expanded', self._expanded_cb)
@@ -267,7 +292,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._project = project
         if project:
             self._selection = project.ges_timeline.ui.selection
-            self._selection.connect('selection-changed', self._selection_changed_cb)
+            self._selection.connect(
+                'selection-changed', self._selection_changed_cb)
         self.__update_all()
 
     def _selection_changed_cb(self, selection):
@@ -335,7 +361,8 @@ class EffectProperties(Gtk.Expander, Loggable):
     def _remove_effect(self, effect):
         pipeline = self._project.pipeline
         with self.app.action_log.started("remove effect",
-                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         finalizing_action=CommitTimelineFinalizingAction(
+                                             pipeline),
                                          toplevel=True):
             self.__remove_configuration_widget()
             self.effects_properties_manager.clean_cache(effect)
@@ -375,7 +402,8 @@ class EffectProperties(Gtk.Expander, Loggable):
             effect_info = self.app.effects.get_info(factory_name)
             pipeline = self._project.pipeline
             with self.app.action_log.started("add effect",
-                                             finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                             finalizing_action=CommitTimelineFinalizingAction(
+                                                 pipeline),
                                              toplevel=True):
                 effect = self.clip.ui.add_effect(effect_info)
                 if effect:
@@ -428,7 +456,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         effect = effects[source_index]
         pipeline = self._project.ges_timeline.get_parent()
         with self.app.action_log.started("move effect",
-                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         finalizing_action=CommitTimelineFinalizingAction(
+                                             pipeline),
                                          toplevel=True):
             clip.set_top_effect_index(effect, drop_index)
 
@@ -454,7 +483,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         effect = self.storemodel.get_value(_iter, COL_TRACK_EFFECT)
         pipeline = self._project.ges_timeline.get_parent()
         with self.app.action_log.started("change active state",
-                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         finalizing_action=CommitTimelineFinalizingAction(
+                                             pipeline),
                                          toplevel=True):
             effect.props.active = not effect.props.active
         # This is not strictly necessary, but makes sure
@@ -495,7 +525,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         for effect in self.clip.get_top_effects():
             if effect.props.bin_description in HIDDEN_EFFECTS:
                 continue
-            effect_info = self.app.effects.get_info(effect.props.bin_description)
+            effect_info = self.app.effects.get_info(
+                effect.props.bin_description)
             to_append = [effect.props.active]
             track_type = effect.get_track_type()
             if track_type == GES.TrackType.AUDIO:
@@ -590,7 +621,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self._project = project
         if project:
             self._selection = project.ges_timeline.ui.selection
-            self._selection.connect('selection-changed', self._selection_changed_cb)
+            self._selection.connect(
+                'selection-changed', self._selection_changed_cb)
             self._project.pipeline.connect("position", self._position_cb)
 
     def __project_closed_cb(self, unused_project_manager, unused_project):
@@ -600,15 +632,21 @@ class TransformationProperties(Gtk.Expander, Loggable):
         clear_button = self.builder.get_object("clear_button")
         clear_button.connect("clicked", self._default_values_cb)
 
-        self._activate_keyframes_btn = self.builder.get_object("activate_keyframes_button")
-        self._activate_keyframes_btn.connect("toggled", self.__show_keyframes_toggled_cb)
+        self._activate_keyframes_btn = self.builder.get_object(
+            "activate_keyframes_button")
+        self._activate_keyframes_btn.connect(
+            "toggled", self.__show_keyframes_toggled_cb)
 
-        self._next_keyframe_btn = self.builder.get_object("next_keyframe_button")
-        self._next_keyframe_btn.connect("clicked", self.__go_to_keyframe_cb, True)
+        self._next_keyframe_btn = self.builder.get_object(
+            "next_keyframe_button")
+        self._next_keyframe_btn.connect(
+            "clicked", self.__go_to_keyframe_cb, True)
         self._next_keyframe_btn.set_sensitive(False)
 
-        self._prev_keyframe_btn = self.builder.get_object("prev_keyframe_button")
-        self._prev_keyframe_btn.connect("clicked", self.__go_to_keyframe_cb, False)
+        self._prev_keyframe_btn = self.builder.get_object(
+            "prev_keyframe_button")
+        self._prev_keyframe_btn.connect(
+            "clicked", self.__go_to_keyframe_cb, False)
         self._prev_keyframe_btn.set_sensitive(False)
 
         self.__setup_spin_button("xpos_spinbtn", "posx")
@@ -622,7 +660,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
         for prop in ["posx", "posy", "width", "height"]:
             prop_keyframes = self.__control_bindings[prop].props.control_source.get_all()
             keyframes_ts.extend([keyframe.timestamp for keyframe in prop_keyframes])
-
         return sorted(set(keyframes_ts))
 
     def __go_to_keyframe_cb(self, unused_button, next_keyframe):
@@ -656,9 +693,11 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self._prev_keyframe_btn.set_sensitive(False)
             self._next_keyframe_btn.set_sensitive(False)
             if self.__source_uses_keyframes():
-                self._activate_keyframes_btn.set_tooltip_text(_("Show keyframes"))
+                self._activate_keyframes_btn.set_tooltip_text(
+                    _("Show keyframes"))
             else:
-                self._activate_keyframes_btn.set_tooltip_text(_("Activate keyframes"))
+                self._activate_keyframes_btn.set_tooltip_text(
+                    _("Activate keyframes"))
             self.source.ui_element.show_default_keyframes()
         else:
             self._prev_keyframe_btn.set_sensitive(True)
@@ -689,7 +728,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
             # control_source.unset_all() can't be used here as it doesn't emit
             # the 'value-removed' signal, so the undo system wouldn't notice
             # the removed keyframes
-            keyframes_ts = [keyframe.timestamp for keyframe in control_source.get_all()]
+            keyframes_ts = [
+                keyframe.timestamp for keyframe in control_source.get_all()]
             for ts in keyframes_ts:
                 control_source.unset(ts)
             self.__own_bindings_change = True
@@ -711,7 +751,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 control_source = GstController.InterpolationControlSource()
                 control_source.props.mode = GstController.InterpolationMode.LINEAR
                 self.__own_bindings_change = True
-                self.source.set_control_source(control_source, prop, "direct-absolute")
+                self.source.set_control_source(
+                    control_source, prop, "direct-absolute")
                 self.__own_bindings_change = False
                 self.__set_default_keyframes_values(control_source, prop)
 
@@ -719,23 +760,27 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self.__control_bindings[prop] = binding
 
         if adding_kfs:
-            self.app.action_log.commit("Transformation properties keyframes activate")
+            self.app.action_log.commit(
+                "Transformation properties keyframes activate")
 
     def __set_default_keyframes_values(self, control_source, prop):
         res, val = self.source.get_child_property(prop)
         assert res
         control_source.set(self.source.props.in_point, val)
-        control_source.set(self.source.props.in_point + self.source.props.duration, val)
+        control_source.set(self.source.props.in_point +
+                           self.source.props.duration, val)
 
     def _default_values_cb(self, unused_widget):
         with self.app.action_log.started("Transformation properties reset default",
-                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                         finalizing_action=CommitTimelineFinalizingAction(
+                                             self._project.pipeline),
                                          toplevel=True):
             if self.__source_uses_keyframes():
                 self.__remove_control_bindings()
 
             for prop in ["posx", "posy", "width", "height"]:
-                self.source.set_child_property(prop, self.source.ui.default_position[prop])
+                self.source.set_child_property(
+                    prop, self.source.ui.default_position[prop])
 
         self.__update_keyframes_ui()
 
@@ -749,8 +794,10 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
                 # If the position is outside of the clip, take the property
                 # value at the start/end (whichever is closer) of the clip.
-                source_position = max(0, min(position - start, duration - 1)) + in_point
-                value = self.__control_bindings[prop].get_value(source_position)
+                source_position = max(
+                    0, min(position - start, duration - 1)) + in_point
+                value = self.__control_bindings[prop].get_value(
+                    source_position)
                 res = value is not None
                 return res, value
             except PipelineError:
@@ -809,22 +856,26 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
                 with self.app.action_log.started(
                         "Transformation property change",
-                        finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                        finalizing_action=CommitTimelineFinalizingAction(
+                            self._project.pipeline),
                         toplevel=True):
-                    self.__control_bindings[prop].props.control_source.set(source_position, value)
+                    self.__control_bindings[prop].props.control_source.set(
+                        source_position, value)
             except PipelineError:
                 self.warning("Could not get pipeline position")
                 return
         else:
             with self.app.action_log.started("Transformation property change",
-                                             finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                             finalizing_action=CommitTimelineFinalizingAction(
+                                                 self._project.pipeline),
                                              toplevel=True):
                 self.source.set_child_property(prop, value)
 
     def __setup_spin_button(self, widget_name, property_name):
         """Creates a SpinButton for editing a property value."""
         spinbtn = self.builder.get_object(widget_name)
-        handler_id = spinbtn.connect("value-changed", self._on_value_changed_cb, property_name)
+        handler_id = spinbtn.connect(
+            "value-changed", self._on_value_changed_cb, property_name)
         disable_scroll(spinbtn)
         self.spin_buttons[property_name] = spinbtn
         self.spin_buttons_handler_ids[property_name] = handler_id
@@ -846,8 +897,10 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def __set_source(self, source):
         if self.source:
             try:
-                self.source.disconnect_by_func(self.__source_property_changed_cb)
-                disconnect_all_by_func(self.source, self._control_bindings_changed)
+                self.source.disconnect_by_func(
+                    self.__source_property_changed_cb)
+                disconnect_all_by_func(
+                    self.source, self._control_bindings_changed)
             except TypeError:
                 pass
         self.source = source
@@ -856,9 +909,12 @@ class TransformationProperties(Gtk.Expander, Loggable):
             for prop in self.spin_buttons:
                 self.__update_spin_btn(prop)
             self.__update_keyframes_ui()
-            self.source.connect("deep-notify", self.__source_property_changed_cb)
-            self.source.connect("control-binding-added", self._control_bindings_changed)
-            self.source.connect("control-binding-removed", self._control_bindings_changed)
+            self.source.connect(
+                "deep-notify", self.__source_property_changed_cb)
+            self.source.connect("control-binding-added",
+                                self._control_bindings_changed)
+            self.source.connect("control-binding-removed",
+                                self._control_bindings_changed)
 
     def _selection_changed_cb(self, unused_timeline):
         if len(self._selection) == 1:

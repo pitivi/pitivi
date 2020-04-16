@@ -19,11 +19,11 @@
 from unittest import mock
 
 from gi.repository import Gtk
+from tests import common
+from tests.test_timeline_timeline import BaseTestTimeline
 
 from pitivi.clipproperties import EffectProperties
 from pitivi.clipproperties import TransformationProperties
-from tests import common
-from tests.test_timeline_timeline import BaseTestTimeline
 
 
 class EffectPropertiesTest(common.TestCase):
