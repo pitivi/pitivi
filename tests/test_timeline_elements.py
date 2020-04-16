@@ -24,12 +24,12 @@ from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk
 from matplotlib.backend_bases import MouseEvent
+from tests import common
+from tests.test_timeline_timeline import BaseTestTimeline
 
 from pitivi.timeline.elements import GES_TYPE_UI_TYPE
 from pitivi.undo.undo import UndoableActionLog
 from pitivi.utils.timeline import Zoomable
-from tests import common
-from tests.test_timeline_timeline import BaseTestTimeline
 
 
 class TestKeyframeCurve(BaseTestTimeline):
@@ -227,41 +227,16 @@ class TestVideoSource(BaseTestTimeline):
         self.assertEqual(project.videowidth, width)
         self.assertEqual(project.videoheight, height)
 
-        project.videowidth = sinfo.get_width() * 2
-        project.videoheight = sinfo.get_height() * 2
+        project.set_video_properties(sinfo.get_width() * 2, sinfo.get_height() * 2, project.videorate)
         width = video_source.get_child_property("width")[1]
         height = video_source.get_child_property("height")[1]
         self.assertEqual(project.videowidth, width)
         self.assertEqual(project.videoheight, height)
 
-        project.videowidth = 150
-        project.videoheight = 200
-        width = video_source.get_child_property("width")[1]
-        height = video_source.get_child_property("height")[1]
-
-        expected_width = project.videowidth
-        expected_height = int(sinfo.get_height() * (project.videowidth / sinfo.get_width()))
-        self.assertEqual(width, expected_width)
-        self.assertEqual(height, expected_height)
-
-        video_source.set_child_property("posx", 50)
-        width = video_source.get_child_property("width")[1]
-        height = video_source.get_child_property("height")[1]
-        self.assertEqual(width, expected_width)
-        self.assertEqual(height, expected_height)
-
-        project.videowidth = 1920
-        project.videoheight = 1080
-        self.assertEqual(width, expected_width)
-        self.assertEqual(height, expected_height)
-
-        expected_default_position = {
-            "width": 1920,
-            "height": 800,
-            "posx": 0,
-            "posy": 140}
-        self.assertEqual(video_source.ui.default_position,
-                         expected_default_position)
+        # GES won't ever break aspect ratio, neither should we!
+        project.set_video_properties(150, 200, project.videorate)
+        self.assertEqual(video_source.get_child_property("width").value, width)
+        self.assertEqual(video_source.get_child_property("height").value, height)
 
     def test_rotation(self):
         """Checks the size of the clips flipped 90 degrees."""
@@ -307,6 +282,76 @@ class TestVideoSource(BaseTestTimeline):
         height = video_source.get_child_property("height")[1]
         self.assertEqual(width, 960)
         self.assertEqual(height, 400)
+
+    @common.setup_project_with_clips
+    @common.setup_transformation_box
+    def test_change_set_project_size(self):
+        """Checks the size of the scaled clips after project settings changes."""
+        clip, = self.layer.get_clips()
+
+        def assert_child_props(clip, expectations):
+            # ellipsize position in expectation means 0
+            for prop in ['posx', 'posy']:
+                if prop not in expectations:
+                    expectations[prop] = 0
+            res = {}
+            for propname in expectations.keys():
+                res[propname] = clip.get_child_property(propname).value
+            self.assertEqual(res, expectations)
+
+        source = clip.find_track_element(None, GES.VideoUriSource)
+        sinfo = source.get_asset().get_stream_info()
+        # Check that the clip has its natural size
+        assert_child_props(clip, {"width": sinfo.get_width(), "height": sinfo.get_height()})
+
+        reset_clip_properties_button = self.transformation_box.builder.get_object("clear_button")
+
+        def check_set_pos_and_project_size(new_position, new_project_width,
+                                           new_project_height, expected_position):
+
+            self.timeline_container.timeline.selection.select([clip])
+            reset_clip_properties_button.clicked()
+
+            assert_child_props(source, {"width": self.project.videowidth, "height": self.project.videoheight})
+
+            for propname, value in new_position.items():
+                source.set_child_property(propname, value)
+            self.project.set_video_properties(new_project_width, new_project_height, self.project.videorate)
+            assert_child_props(source, expected_position)
+
+        # Rescale to half the size
+        check_set_pos_and_project_size(
+            {},
+            sinfo.get_width() / 2,
+            sinfo.get_height() / 2,
+            {"width": sinfo.get_width() / 2, "height": sinfo.get_height() / 2}
+        )
+
+        # Back to natural size
+        check_set_pos_and_project_size(
+            {},
+            sinfo.get_width(),
+            sinfo.get_height(),
+            {"width": sinfo.get_width(), "height": sinfo.get_height()}
+        )
+
+        # Put the video in the bottom left at its half size and rescale project
+        # to half, meaning video should be 1/4th of its size now
+        check_set_pos_and_project_size(
+            {
+                "width": sinfo.get_width() / 2,
+                "height": sinfo.get_height() / 2,
+                "posx": sinfo.get_width() / 2,
+                "posy": sinfo.get_height() / 2,
+            },
+            sinfo.get_width() / 2, sinfo.get_height() / 2,
+            {
+                "width": sinfo.get_width() / 4,
+                "height": sinfo.get_height() / 4,
+                "posx": sinfo.get_width() / 4,
+                "posy": sinfo.get_height() / 4,
+            },
+        )
 
 
 class TestClip(common.TestCase):

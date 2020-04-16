@@ -854,12 +854,12 @@ class VideoSource(TimelineElement):
         parent.connect("child-removed", self.__parent_child_removed_cb)
 
     def __parent_child_added_cb(self, unused_parent, unused_child):
-        self.__apply_new_size_if_needed()
+        self.__reset_position()
 
     def __parent_child_removed_cb(self, unused_parent, child):
         if child == self.__videoflip:
             self.__videoflip = None
-            self.__apply_new_size_if_needed()
+            self.__reset_position()
             disconnect_all_by_func(child, self.__track_element_deep_notify_cb)
             disconnect_all_by_func(child, self.__track_element_notify_active_cb)
 
@@ -870,17 +870,22 @@ class VideoSource(TimelineElement):
         self._project_height = project.videoheight
 
     def _project_video_size_changed_cb(self, unused_project):
-        self.__apply_new_size_if_needed()
+        # GES handles repositionning clips on project size change, make sure to
+        # take that into account.
+        self.__retrieve_project_size()
+        self.default_position = self._get_default_position()
 
-    def __apply_new_size_if_needed(self):
-        using_defaults = True
+    def __has_default_position(self):
         for name, default_value in self.default_position.items():
             res, value = self._ges_elem.get_child_property(name)
             assert res
             if value != default_value:
-                using_defaults = False
-                break
+                return False
 
+        return True
+
+    def __reset_position(self):
+        using_defaults = self.__has_default_position()
         self.__retrieve_project_size()
         self.default_position = self._get_default_position()
         if using_defaults:
@@ -945,11 +950,11 @@ class VideoSource(TimelineElement):
 
     def __track_element_deep_notify_cb(self, unused_source, unused_gstelement,
                                        unused_pspec):
-        self.__apply_new_size_if_needed()
+        self.__reset_position()
 
     def __track_element_notify_active_cb(self, unused_track_element,
                                          unused_pspec):
-        self.__apply_new_size_if_needed()
+        self.__reset_position()
 
     def _get_background(self):
         return VideoBackground()

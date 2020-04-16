@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Tests for the pitivi.clipproperties module."""
-# pylint: disable=protected-access,no-self-use
+# pylint: disable=protected-access,no-self-use,import-outside-toplevel,no-member
 from unittest import mock
 
 from gi.repository import GES
@@ -322,7 +322,6 @@ class ClipPropertiesTest(BaseTestUndoTimeline, BaseTestTimeline):
         # Wait until the project creates a layer in the timeline.
         common.create_main_loop().run(until_empty=True)
 
-        # pylint: disable=import-outside-toplevel
         from pitivi.timeline.timeline import TimelineContainer
         timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
         timeline_container.set_project(self.project)

@@ -16,6 +16,7 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Useful objects for testing."""
 # pylint: disable=protected-access
+import collections
 import contextlib
 import gc
 import locale
@@ -183,6 +184,60 @@ class CheckedOperationDuration:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         signal.alarm(0)
+
+
+def setup_project_with_clips(func, assets_names=None):
+    """Sets up a Pitivi instance with the specified assets on the timeline."""
+    if assets_names is None:
+        assets_names = {"1sec_simpsons_trailer.mp4"}
+
+    def wrapper(self):
+        with cloned_sample(*list(assets_names)):
+            self.app = create_pitivi()
+            self.project = self.app.project_manager.new_blank_project()
+            self.timeline = self.project.ges_timeline
+            self.layer = self.timeline.append_layer()
+            self.action_log = self.app.action_log
+            project = self.app.project_manager.current_project
+            self.timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
+            self.timeline_container.set_project(project)
+
+            timeline = self.timeline_container.timeline
+            timeline.app.project_manager.current_project = project
+            timeline.get_parent = mock.MagicMock(return_value=self.timeline_container)
+            uris = collections.deque([get_sample_uri(fname) for fname in assets_names])
+            mainloop = create_main_loop()
+
+            def loaded_cb(project, timeline):
+                project.add_uris([uris.popleft()])
+
+            def progress_cb(project, progress, estimated_time):
+                if progress == 100:
+                    if uris:
+                        project.add_uris([uris.popleft()])
+                    else:
+                        mainloop.quit()
+
+            project.connect_after("loaded", loaded_cb)
+            project.connect_after("asset-loading-progress", progress_cb)
+            mainloop.run()
+
+            project.disconnect_by_func(loaded_cb)
+            project.disconnect_by_func(progress_cb)
+
+            assets = project.list_assets(GES.UriClip)
+            self.timeline_container.insert_assets(assets, self.timeline.props.duration)
+
+            func(self)
+
+        del self.app
+        del self.project
+        del self.timeline
+        del self.layer
+        del self.action_log
+        del self.timeline_container
+
+    return wrapper
 
 
 def setup_transformation_box(func):
