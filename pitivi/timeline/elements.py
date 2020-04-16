@@ -64,6 +64,9 @@ CURSORS = {
 NORMAL_CURSOR = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
 DRAG_CURSOR = Gdk.Cursor.new(Gdk.CursorType.HAND1)
 
+major, minor, __, __ = GES.version()
+GES_HANDLES_POSITIONING = major >= 1 and minor >= 17
+
 
 def get_pspec(element_factory_name, propname):
     element = Gst.ElementFactory.make(element_factory_name)
@@ -871,25 +874,32 @@ class VideoSource(TimelineElement):
 
     def _project_video_size_changed_cb(self, unused_project):
         self.__apply_new_size_if_needed()
+        self.__retrieve_project_size()
+        self.default_position = self._get_default_position()
 
-    def __apply_new_size_if_needed(self):
-        using_defaults = True
+    def __has_default_position(self):
         for name, default_value in self.default_position.items():
             res, value = self._ges_elem.get_child_property(name)
             assert res
             if value != default_value:
-                using_defaults = False
-                break
+                return False
 
+        return True
+
+    def __apply_new_size_if_needed(self, force=GES_HANDLES_POSITIONING):
+        using_defaults = self.__has_default_position()
         self.__retrieve_project_size()
         self.default_position = self._get_default_position()
         if using_defaults:
             self.debug("Applying default position")
-            self.__apply_default_position()
+            self.__apply_default_position(force)
         else:
             self.debug("Not using defaults")
 
-    def __apply_default_position(self):
+    def __apply_default_position(self, force=GES_HANDLES_POSITIONING):
+        if not force:
+            return
+
         video_source = self._ges_elem
         for name, value in self.default_position.items():
             video_source.set_child_property(name, value)
@@ -945,11 +955,11 @@ class VideoSource(TimelineElement):
 
     def __track_element_deep_notify_cb(self, unused_source, unused_gstelement,
                                        unused_pspec):
-        self.__apply_new_size_if_needed()
+        self.__apply_new_size_if_needed(True)
 
     def __track_element_notify_active_cb(self, unused_track_element,
                                          unused_pspec):
-        self.__apply_new_size_if_needed()
+        self.__apply_new_size_if_needed(True)
 
     def _get_background(self):
         return VideoBackground()
