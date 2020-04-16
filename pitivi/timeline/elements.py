@@ -870,7 +870,12 @@ class VideoSource(TimelineElement):
         self._project_height = project.videoheight
 
     def _project_video_size_changed_cb(self, unused_project):
-        self.__apply_new_size_if_needed()
+        major, minor, _, _ = GES.version()
+        if major >= 1 and minor >= 17:
+            self.__retrieve_project_size()
+            self.default_position = self._get_default_position()
+        else:
+            self.__apply_new_size_if_needed()
 
     def __apply_new_size_if_needed(self):
         using_defaults = True
