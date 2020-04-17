@@ -1460,6 +1460,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 clip.set_asset(replacement_asset)
         self._project.pipeline.commit_timeline()
 
+    def insert_asset(self, asset, position, layer):
+        """Adds asset at 'position' of specified layer."""
+        self._insert_clips_and_assets([asset], position, layer)
+
     def insert_assets(self, assets, position=None):
         """Creates clips out of the specified assets on the longest layer."""
         layer = self._get_longest_layer()
