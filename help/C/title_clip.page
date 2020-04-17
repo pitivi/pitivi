@@ -44,7 +44,7 @@
         <p>Background color: two buttons to the right of the text color buttons can be used to select the clip's background color from a pre-existing color palette or using an eye-dropper tool.</p>
       </item>
       <item>
-        <p>Alignment: alignment settings at the bottom can be used to change the text's horizontal or vertical alignment and to change its position within the clip.</p>
+        <p>Alignment: alignment settings at the bottom can be used to change the text's horizontal or vertical alignment and to change its position within the clip. Text can be snapped to the sides and center of the clip or be adjusted manually.</p>
       </item>
     </list>
     <p>Changes can be viewed in real time in Pitivi's viewer to the right of the <gui>middle pane.</gui></p>
