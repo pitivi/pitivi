@@ -85,22 +85,15 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     Displays a series of consecutive intervals. For each interval its beginning
     time is shown. If zoomed in enough, shows the frames in alternate colors.
-
-    Attributes:
-        timeline (TimelineContainer): The timeline container used to handle
-            scroll events.
-        _pipeline (Pipeline): The pipeline of the project.
     """
 
-    def __init__(self, timeline):
+    def __init__(self):
         Gtk.DrawingArea.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
         self.log("Creating new ScaleRuler")
 
-        self.timeline = timeline
-        self._pipeline = None
-        hadj = timeline.timeline.hadj
+        hadj = Gtk.Adjustment()
         hadj.connect("value-changed", self._hadj_value_changed_cb)
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK |
                         Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK |
@@ -113,24 +106,27 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.pixbuf_offset_painted = 0
 
         self.position = 0  # In nanoseconds
+        self.frame_rate = Gst.Fraction(1 / 1)
+        self.ns_per_frame = float(1 / self.frame_rate) * Gst.SECOND
+
+        self.scales = SCALES
 
     def _hadj_value_changed_cb(self, hadj):
         """Handles the adjustment value change."""
         self.pixbuf_offset = hadj.get_value()
         self.queue_draw()
 
-# Zoomable interface override
+    def focus_ruler(self):
+        # Check whether it has focus already, grab_focus always emits an event.
+        if not self.props.is_focus:
+            self.grab_focus()
 
+# Zoomable interface override
     def zoom_changed(self):
         self.queue_draw()
 
 # Timeline position changed method
-
-    def set_pipeline(self, pipeline):
-        self._pipeline = pipeline
-        self._pipeline.connect('position', self.timeline_position_cb)
-
-    def timeline_position_cb(self, unused_pipeline, position):
+    def set_position(self, position):
         self.position = position
         self.queue_draw()
 
@@ -191,30 +187,24 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         return False
 
     def do_button_press_event(self, event):
-        if not self._pipeline:
-            return False
-
         button = event.button
         if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
             self.debug("button pressed at x:%d", event.x)
             position = self.pixel_to_ns(event.x + self.pixbuf_offset)
-            self._pipeline.simple_seek(position)
-            self.__set_tooltip_text(position, True)
+            self.set_position(position)
+            self.__set_tooltip_text(position)
         return False
 
     def do_button_release_event(self, event):
         button = event.button
         if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
             self.debug("button released at x:%d", event.x)
-            self.app.gui.editor.focus_timeline()
+            self.focus_ruler()
             position = self.pixel_to_ns(event.x + self.pixbuf_offset)
             self.__set_tooltip_text(position)
         return False
 
     def do_motion_notify_event(self, event):
-        if not self._pipeline:
-            return False
-
         position = self.pixel_to_ns(event.x + self.pixbuf_offset)
 
         seek_mask = Gdk.ModifierType.BUTTON3_MASK
@@ -224,22 +214,18 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         seeking = event.state & seek_mask
         if seeking:
             self.debug("motion at event.x %d", event.x)
-            self._pipeline.simple_seek(position)
-        self.__set_tooltip_text(position, seeking)
+            self.set_position(position)
+        self.__set_tooltip_text(position)
 
         return False
 
     def do_scroll_event(self, event):
         self.timeline.timeline.do_scroll_event(event)
 
-    def __set_tooltip_text(self, position, seeking=False):
+    def __set_tooltip_text(self, position):
         """Updates the tooltip."""
-        if seeking:
-            timeline_duration = self.timeline.ges_timeline.props.duration
-            if position > timeline_duration:
-                position = timeline_duration
         human_time = beautify_length(position)
-        cur_frame = self.timeline.ges_timeline.get_frame_at(position) + 1
+        cur_frame = int(position / self.ns_per_frame) + 1
         self.set_tooltip_text(human_time + "\n" + _("Frame #%d") % cur_frame)
 
 # Drawing methods
@@ -364,11 +350,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         These are based on the project's framerate settings, not the actual
         frames on the assets.
         """
-        if not self.timeline.ges_timeline:
-            # Timeline not set yet
-            return
-
-        frame_width = self.ns_to_pixel(self.timeline.ges_timeline.get_frame_time(1))
+        frame_width = self.ns_to_pixel(self.ns_per_frame)
         if not frame_width >= FRAME_MIN_WIDTH_PIXELS:
             return
 
@@ -376,11 +358,13 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         height = context.get_target().get_height()
         y = int(height - FRAME_HEIGHT_PIXELS)
 
-        frame_num = self.timeline.ges_timeline.get_frame_at(self.pixel_to_ns(self.pixbuf_offset))
+        frame_num = int(
+            self.pixel_to_ns(self.pixbuf_offset) * float(self.frame_rate) / Gst.SECOND)
         paintpos = self.pixbuf_offset - offset
         max_pos = context.get_target().get_width() + self.pixbuf_offset
         while paintpos < max_pos:
-            paintpos = self.ns_to_pixel(self.timeline.ges_timeline.get_frame_time(frame_num))
+            paintpos = self.ns_to_pixel(
+                1 / float(self.frame_rate) * Gst.SECOND * frame_num)
             if frame_num % 2:
                 set_cairo_color(context, self._color_frame)
                 context.rectangle(
@@ -417,3 +401,88 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         context.line_to(xpos - semi_width, y - semi_height)
         context.close_path()
         context.stroke()
+
+
+class TimelineScaleRuler(ScaleRuler):
+    """Widget for displaying a ruler which is connected to a the timeline.
+
+    Attributes:
+        timeline (TimelineContainer): The timeline container used to handle
+            scroll events.
+        _pipeline (Pipeline): The pipeline of the project.
+    """
+
+    def __init__(self, timeline):
+        super().__init__()
+        self.log("Creating new TimelineScaleRuler")
+
+        self.timeline = timeline
+        self._pipeline = None
+
+        # hadj = timeline.timeline.hadj
+
+# Timeline position changed method
+    def set_pipeline(self, pipeline):
+        self._pipeline = pipeline
+        self._pipeline.connect('position', self.timeline_position_cb)
+
+    def timeline_position_cb(self, unused_pipeline, position):
+        self.position = position
+        self.queue_draw()
+
+# Gtk.Widget overrides
+
+    def do_button_press_event(self, event):
+        if not self._pipeline:
+            return False
+
+        button = event.button
+        if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
+            self.debug("button pressed at x:%d", event.x)
+            position = self.pixel_to_ns(event.x + self.pixbuf_offset)
+            self._pipeline.simple_seek(position)
+            self.__set_tooltip_text(position, True)
+        return False
+
+    def __set_tooltip_text(self, position, seeking=False):
+        """Updates the tooltip."""
+        if seeking:
+            timeline_duration = self.timeline.ges_timeline.props.duration
+            if position > timeline_duration:
+                position = timeline_duration
+        human_time = beautify_length(position)
+        cur_frame = int(position / self.ns_per_frame) + 1
+        self.set_tooltip_text(human_time + "\n" + _("Frame #%d") % cur_frame)
+
+# Drawing Methods
+    def draw_frame_boundaries(self, context):
+        """Draws the alternating rectangles that represent the project frames.
+
+        These are drawn only at high zoom levels.
+
+        These are based on the project's framerate settings, not the actual
+        frames on the assets.
+        """
+        if not self.timeline.ges_timeline:
+            # Timeline not set yet
+            return
+
+        frame_width = self.ns_to_pixel(self.timeline.ges_timeline.get_frame_time(1))
+        if not frame_width >= FRAME_MIN_WIDTH_PIXELS:
+            return
+
+        offset = self.pixbuf_offset % frame_width
+        height = context.get_target().get_height()
+        y = int(height - FRAME_HEIGHT_PIXELS)
+
+        frame_num = self.timeline.ges_timeline.get_frame_at(self.pixel_to_ns(self.pixbuf_offset))
+        paintpos = self.pixbuf_offset - offset
+        max_pos = context.get_target().get_width() + self.pixbuf_offset
+        while paintpos < max_pos:
+            paintpos = self.ns_to_pixel(self.timeline.ges_timeline.get_frame_time(frame_num))
+            if frame_num % 2:
+                set_cairo_color(context, self._color_frame)
+                context.rectangle(
+                    0.5 + paintpos - self.pixbuf_offset, y, frame_width, height)
+                context.fill()
+            frame_num += 1
