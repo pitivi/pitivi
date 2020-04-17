@@ -27,9 +27,13 @@ from gi.repository import Gtk
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.pipeline import AssetPipeline
+from pitivi.utils.ui import BinWithNaturalWidth
+from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import TimeWidget
+from pitivi.utils.widgets import ToggleWidget
 from pitivi.viewer.overlay_stack import OverlayStack
+
 
 GlobalSettings.add_config_section("viewer")
 GlobalSettings.add_config_option("viewerDocked", section="viewer",
@@ -241,9 +245,24 @@ class ViewerContainer(Gtk.Box, Loggable):
         bbox.set_margin_right(SPACING)
         self.pack_end(bbox, False, False, 0)
 
+        self.show_guidelines_toggle = ToggleWidget()
+        self.show_guidelines_toggle.set_widget_value(True)
+
+        self.guidelines_toggles = set()
+        self.three_by_three_toggle = self.__setup_guidelines_toggle_widget()
+        self.vert_horiz_center_toggle = self.__setup_guidelines_toggle_widget()
+        self.diagonals_toggle = self.__setup_guidelines_toggle_widget()
+
+        self.guidelines_checkbox = Gtk.MenuButton.new()
+        self.guidelines_checkbox.props.image = Gtk.Image.new_from_icon_name("view-grid-symbolic", Gtk.IconSize.BUTTON)
+        self.guidelines_checkbox.set_relief(Gtk.ReliefStyle.NONE)
+        self.guidelines_checkbox.set_popover(self.__create_guidelines_popover())
+        self.guidelines_checkbox.set_tooltip_text(_("Select composition guidelines"))
+
+        bbox.pack_start(self.guidelines_checkbox, False, False, 0)
+
         self.start_button = Gtk.Button.new_from_icon_name("media-skip-backward-symbolic",
                                                           Gtk.IconSize.BUTTON)
-
         self.start_button.connect("clicked", self._start_button_clicked_cb)
         self.start_button.set_relief(Gtk.ReliefStyle.NONE)
         self.start_button.set_tooltip_text(
@@ -319,6 +338,85 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.buttons_container = bbox
         self.external_vbox.show_all()
+
+    def __setup_guidelines_toggle_widget(self):
+        toggle = ToggleWidget()
+        self.guidelines_toggles.add(toggle)
+        return toggle
+
+    def __create_guidelines_popover(self):
+        popover = Gtk.Popover()
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, margin=PADDING)
+        label = Gtk.Label(_("Composition Guidelines"))
+        label.props.wrap = True
+        box.pack_start(label, False, False, 0)
+
+        grid = Gtk.Grid()
+        grid.props.row_spacing = SPACING
+        grid.props.column_spacing = PADDING
+        grid.props.margin_left = SPACING
+        grid.props.margin_top = SPACING * 2
+
+        self.__setup_toggle_button(grid, Gtk.Label("Show Guidelines"),
+                                   self.show_guidelines_toggle, self.__show_guidelines_toggle_cb, 0)
+
+        grid.attach(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), 0, 1, 3, 1)
+
+        self.__setup_toggle_button(grid, Gtk.Label("3 x 3"),
+                                   self.three_by_three_toggle, self.__three_by_three_toggle_cb, 2)
+
+        self.__setup_toggle_button(grid, Gtk.Label("Vertical/Horizontal"),
+                                   self.vert_horiz_center_toggle, self.__vert_horiz_center_toggle_cb, 3)
+
+        self.__setup_toggle_button(grid, Gtk.Label("Diagonals"),
+                                   self.diagonals_toggle, self.__diagonals_toggle_cb, 4)
+
+        box.pack_start(grid, False, False, 0)
+
+        wrapper_bin = BinWithNaturalWidth(box, width=225)
+        wrapper_bin.show_all()
+        popover.add(wrapper_bin)
+        return popover
+
+    def __setup_toggle_button(self, grid, label, toggle_widget, callback, row):
+        label.props.halign = Gtk.Align.START
+        label.props.wrap = True
+        label.props.xalign = 0
+        grid.attach(label, 0, row, 1, 1)
+        toggle_widget.connect_value_changed(callback)
+        grid.attach(toggle_widget, 1, row, 1, 1)
+
+    def toggle_composition_guidelines_cb(self, unused_entry, unused_parameter):
+        self.show_guidelines_toggle.set_widget_value(not self.show_guidelines_toggle.get_widget_value())
+        self.__show_guidelines_toggle_cb(None)
+
+    def __show_guidelines_toggle_cb(self, unused_entry):
+        if self.show_guidelines_toggle.get_widget_value():
+            self.overlay_stack.composition_guidelines_overlay.show()
+            for toggle in self.guidelines_toggles:
+                toggle.switch_button.set_sensitive(True)
+        else:
+            self.overlay_stack.composition_guidelines_overlay.hide()
+            for toggle in self.guidelines_toggles:
+                toggle.switch_button.set_sensitive(False)
+
+    def __three_by_three_toggle_cb(self, unused_entry):
+        self.__guidelines_toggle_widget_helper_cb(self.three_by_three_toggle,
+                                                  self.overlay_stack.composition_guidelines_overlay.three_by_three)
+
+    def __vert_horiz_center_toggle_cb(self, unused_entry):
+        self.__guidelines_toggle_widget_helper_cb(self.vert_horiz_center_toggle,
+                                                  self.overlay_stack.composition_guidelines_overlay.vertical_horizontal_center)
+
+    def __diagonals_toggle_cb(self, unused_entry):
+        self.__guidelines_toggle_widget_helper_cb(self.diagonals_toggle,
+                                                  self.overlay_stack.composition_guidelines_overlay.diagonals)
+
+    def __guidelines_toggle_widget_helper_cb(self, toggle_widget, drawing_function):
+        if toggle_widget.get_widget_value():
+            self.overlay_stack.composition_guidelines_overlay.add_guideline(drawing_function)
+        else:
+            self.overlay_stack.composition_guidelines_overlay.remove_guideline(drawing_function)
 
     def __corner_draw_cb(self, unused_widget, cr, lines, space, margin):
         cr.set_line_width(1)
