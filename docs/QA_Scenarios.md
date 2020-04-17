@@ -333,7 +333,7 @@ on GitLab, indicating:
 
 1. Create and open a new Pitivi project
 2. Import 'mp3_sample.mp3' from the 'tests/samples' directory into the media library
-3. Insert a 'mp3_sample.mp3' clip into the timeline
+3. Insert a 'mp3_sample.mp3' clip from the media library into the timeline
     -   The timeline should only contain the 'mp3_sample.mp3' clip and nothing else
 4. Position the seeker at the beginning of the clip on the timeline
 5. Press the 'play' button on the viewer controls
