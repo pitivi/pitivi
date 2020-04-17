@@ -25,7 +25,6 @@ from pitivi.clipproperties import TransformationProperties
 from tests import common
 from tests.test_timeline_timeline import BaseTestTimeline
 
-
 class EffectPropertiesTest(common.TestCase):
     """Tests for the EffectProperties class."""
 

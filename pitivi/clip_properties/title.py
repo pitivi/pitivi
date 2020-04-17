@@ -14,12 +14,12 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
-import os
+"""Widgets to control title clip properties."""
 import html
+import os
 from gettext import gettext as _
 
 from gi.repository import GES
-from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import Pango
@@ -28,19 +28,18 @@ from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.timeline import SELECT
 from pitivi.utils.ui import argb_to_gdk_rgba
-from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import gdk_rgba_to_argb
 from pitivi.utils.widgets import ColorPickerButton
 
-GlobalSettings.add_config_option('titleClipLength',
+
+GlobalSettings.add_config_option("titleClipLength",
                                  section="user-interface",
                                  key="title-clip-length",
                                  default=5000,
                                  notify=True)
 
-PreferencesDialog.add_numeric_preference('titleClipLength',
+PreferencesDialog.add_numeric_preference("titleClipLength",
                                          section="timeline",
                                          label=_("Title clip duration"),
                                          description=_(
@@ -54,7 +53,7 @@ DEFAULT_VALIGNMENT = "absolute"
 DEFAULT_HALIGNMENT = "absolute"
 
 
-class TitleEditor(Loggable):
+class TitleProperties(Gtk.Expander, Loggable):
     """Widget for configuring a title.
 
     Attributes:
@@ -64,6 +63,9 @@ class TitleEditor(Loggable):
 
     def __init__(self, app):
         Loggable.__init__(self)
+        Gtk.Expander.__init__(self)
+        self.set_label(_("Title"))
+        self.set_expanded(True)
         self.app = app
         self.settings = {}
         self.source = None
@@ -74,19 +76,18 @@ class TitleEditor(Loggable):
         self._children_props_handler = None
 
         self._create_ui()
-        # Updates the UI.
-        self.set_source(None)
-
+        
         self.app.project_manager.connect_after(
-            "new-project-loaded", self._new_project_loaded_cb)
+            "new-project-loaded", self.new_project_loaded_cb)
+        self.app.project_manager.connect_after(
+            "project-closed", self.__project_closed_cb)
 
     def _create_ui(self):
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "titleeditor.ui"))
         builder.connect_signals(self)
-        self.widget = builder.get_object("box1")  # To be used by tabsmanager
-        self.infobar = builder.get_object("infobar")
-        fix_infobar(self.infobar)
+        # Create UI
+        self.add(builder.get_object("box1"))
         self.editing_box = builder.get_object("base_table")
 
         self.textarea = builder.get_object("textview")
@@ -125,6 +126,9 @@ class TitleEditor(Loggable):
                                ("center", _("Center")),
                                ("right", _("Right"))):
             self.settings["halignment"].append(value_id, text)
+        # Show UI
+        self.show_all()
+        self.hide()
 
     def _set_child_property(self, name, value):
         with self.app.action_log.started("Title change property",
@@ -189,9 +193,9 @@ class TitleEditor(Loggable):
             # Nothing to update.
             return
 
-        escaped_text = html.escape(self.textbuffer.props.text)
-        self.log("Source text updated to %s", escaped_text)
-        self._set_child_property("text", escaped_text)
+        text = self.textbuffer.props.text
+        self.log("Source text updated to %s", text)
+        self._set_child_property("text", text)
 
     def _update_source_cb(self, updated_obj):
         """Handles changes in the advanced property widgets at the bottom."""
@@ -218,7 +222,7 @@ class TitleEditor(Loggable):
         visible = self.settings["halignment"].get_active_id() == "absolute"
         self.settings["x-absolute"].set_visible(visible)
 
-    def set_source(self, source):
+    def __set_source(self, source):
         """Sets the clip to be edited with this editor.
 
         Args:
@@ -233,20 +237,16 @@ class TitleEditor(Loggable):
             assert isinstance(source, (GES.TextOverlay, GES.TitleSource))
             self._update_from_source(source)
             self.source = source
-            self.infobar.hide()
-            self.editing_box.show()
             self._children_props_handler = self.source.connect('deep-notify',
                                                                self._source_deep_notify_cb)
-        else:
-            self.infobar.show()
-            self.editing_box.hide()
 
-    def _create_cb(self, unused_button):
+    def create_cb(self, unused_button):
         title_clip = GES.TitleClip()
         duration = self.app.settings.titleClipLength * Gst.MSECOND
         title_clip.set_duration(duration)
         with self.app.action_log.started("add title clip", toplevel=True):
-            self.app.gui.editor.timeline_ui.insert_clips_on_first_layer([title_clip])
+            self.app.gui.editor.timeline_ui.insert_clips_on_first_layer([
+                title_clip])
             # Now that the clip is inserted in the timeline, it has a source which
             # can be used to set its properties.
             source = title_clip.get_children(False)[0]
@@ -259,27 +259,23 @@ class TitleEditor(Loggable):
             for prop, value in properties.items():
                 res = source.set_child_property(prop, value)
                 assert res, prop
-        self._selection.set_selection([title_clip], SELECT)
 
     def _source_deep_notify_cb(self, source, unused_gstelement, pspec):
         """Handles updates in the TitleSource backing the current TitleClip."""
         if self._setting_props:
             self._project.pipeline.commit_timeline()
             return
-
         control_binding = self.source.get_control_binding(pspec.name)
         if control_binding:
             self.debug("Not handling %s as it is being interpolated",
                        pspec.name)
             return
-
         if pspec.name == "text":
-            res, escaped_text = self.source.get_child_property(pspec.name)
+            res, value = self.source.get_child_property(pspec.name)
             assert res, pspec.name
-            text = html.unescape(escaped_text)
-            if self.textbuffer.props.text == text or "":
+            if self.textbuffer.props.text == value or "":
                 return
-            self.textbuffer.props.text = text
+            self.textbuffer.props.text = value
         elif pspec.name in ["x-absolute", "y-absolute"]:
             res, value = self.source.get_child_property(pspec.name)
             assert res, pspec.name
@@ -314,10 +310,9 @@ class TitleEditor(Loggable):
             if color == self.background_color_button.get_rgba():
                 return
             self.background_color_button.set_rgba(color)
-
         self._project.pipeline.commit_timeline()
 
-    def _new_project_loaded_cb(self, unused_project_manager, project):
+    def new_project_loaded_cb(self, unused_project_manager, project):
         if self._selection is not None:
             self._selection.disconnect_by_func(self._selection_changed_cb)
             self._selection = None
@@ -333,6 +328,11 @@ class TitleEditor(Loggable):
             for child in selected_clip.get_children(False):
                 if isinstance(child, GES.TitleSource):
                     source = child
-                    break
+                    self.show()
+                    self.__set_source(source)
+                    return
+        self.__set_source(source)
+        self.hide()
 
-        self.set_source(source)
+    def __project_closed_cb(self, unused_project_manager, unused_project):
+        self._project = None
