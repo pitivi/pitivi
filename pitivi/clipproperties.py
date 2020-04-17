@@ -26,6 +26,7 @@ from gi.repository import GstController
 from gi.repository import Gtk
 from gi.repository import Pango
 
+from pitivi.clip_properties.title import TitleProperties
 from pitivi.configure import get_ui_dir
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
@@ -71,29 +72,44 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         vbox.show()
         viewport.add(vbox)
 
-        self.infobar_box = Gtk.Box()
-        self.infobar_box.set_orientation(Gtk.Orientation.VERTICAL)
-        self.infobar_box.show()
-        vbox.pack_start(self.infobar_box, False, False, 0)
+        self.clips_box = Gtk.Box()
+        self.clips_box.set_orientation(Gtk.Orientation.VERTICAL)
+        self.clips_box.show()
+        vbox.pack_start(self.clips_box, False, False, 0)
 
         transformation_expander = TransformationProperties(app)
         transformation_expander.set_vexpand(False)
         vbox.pack_start(transformation_expander, False, False, 0)
 
+        self.title_expander = TitleProperties(app)
+        self.title_expander.set_vexpand(False)
+        vbox.pack_start(self.title_expander, False, False, 0)
+
         self.effect_expander = EffectProperties(app, self)
         self.effect_expander.set_vexpand(False)
         vbox.pack_start(self.effect_expander, False, False, 0)
 
-    def create_info_bar(self, text):
-        """Creates an infobar to be displayed at the top."""
-        label = Gtk.Label(label=text)
+    def create_clips_box(self):
+        """Creates the widgets to display when no clip is selected."""
+        box = Gtk.Grid()
+        box.insert_row(0)
+        box.insert_row(1)
+        box.insert_column(0)
+        box.insert_column(1)
+        label = Gtk.Label(label=_("Select a clip on the timeline to configure its properties and effects or create a new clip:"))
         label.set_line_wrap(True)
-        infobar = Gtk.InfoBar()
-        fix_infobar(infobar)
-        infobar.props.message_type = Gtk.MessageType.OTHER
-        infobar.get_content_area().add(label)
-        self.infobar_box.pack_start(infobar, False, False, 0)
-        return infobar
+        label.set_xalign(0)
+        box.attach(label, 0, 0, 2, 1)
+        title_label = Gtk.Label(label=_("Create a title clip:"))
+        title_label.set_line_wrap(True)
+        title_label.set_xalign(0)
+        box.attach(title_label, 0, 1, 1, 1)
+        title_clip_button = Gtk.Button()
+        title_clip_button.set_label(_("Title"))
+        title_clip_button.connect("clicked", self.title_expander.create_cb)
+        box.attach(title_clip_button, 2, 1, 1, 1)
+        self.clips_box.pack_start(box, False, False, 0)
+        return box
 
 
 class EffectProperties(Gtk.Expander, Loggable):
@@ -215,8 +231,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview_selection = self.treeview.get_selection()
         self.treeview_selection.set_mode(Gtk.SelectionMode.SINGLE)
 
-        self._infobar = clip_properties.create_info_bar(
-            _("Select a clip on the timeline to configure its associated effects"))
+        self._infobar = clip_properties.create_clips_box()
         self._infobar.show_all()
 
         # Prepare the main container widgets and lay out everything

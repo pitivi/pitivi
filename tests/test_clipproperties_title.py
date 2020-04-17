@@ -14,19 +14,18 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
-"""Tests for the titleeditor module."""
-# pylint: disable=protected-access
+"""Tests for the TitleProperties class."""
 from unittest import mock
 
 from gi.repository import GES
-
-from pitivi.titleeditor import TitleEditor
 from tests import common
 from tests.test_undo_timeline import BaseTestUndoTimeline
 
+from pitivi.clip_properties.title import TitleProperties
 
-class TitleEditorTest(BaseTestUndoTimeline):
-    """Tests for the TitleEditor class."""
+
+class TitlePropertiesTest(BaseTestUndoTimeline):
+    """Tests for the TitleProperties class."""
 
     def _get_title_source_child_props(self):
         clips = self.layer.get_clips()
@@ -45,17 +44,17 @@ class TitleEditorTest(BaseTestUndoTimeline):
         # Wait until the project creates a layer in the timeline.
         common.create_main_loop().run(until_empty=True)
 
-        title_editor = TitleEditor(self.app)
+        title_editor = TitleProperties(self.app)
 
         from pitivi.timeline.timeline import TimelineContainer
         timeline_container = TimelineContainer(self.app)
         timeline_container.set_project(self.project)
         self.app.gui.editor.timeline_ui = timeline_container
 
-        title_editor._new_project_loaded_cb(None, self.project)
+        title_editor.new_project_loaded_cb(None, self.project)
         self.project.pipeline.get_position = mock.Mock(return_value=0)
 
-        title_editor._create_cb(None)
+        title_editor.create_cb(None)
         ps1 = self._get_title_source_child_props()
 
         self.action_log.undo()
