@@ -28,7 +28,7 @@ from pitivi.viewer.title_overlay import TitleOverlay
 class OverlayStack(Gtk.Overlay, Loggable):
     """Manager for the viewer overlays."""
 
-    def __init__(self, app, sink_widget):
+    def __init__(self, app, sink_widget, guidelines_overlay):
         Gtk.Overlay.__init__(self)
         Loggable.__init__(self)
         self.__overlays = {}
@@ -61,6 +61,9 @@ class OverlayStack(Gtk.Overlay, Loggable):
         self.resize_status = Gtk.Label(name="resize_status")
         self.revealer.add(self.resize_status)
         self.add_overlay(self.revealer)
+
+        self.add_overlay(guidelines_overlay)
+
         sink_widget.connect("size-allocate", self.__sink_widget_size_allocate_cb)
 
     def __size_allocate_cb(self, widget, rectangle):

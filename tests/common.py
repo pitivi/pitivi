@@ -30,6 +30,7 @@ from unittest import mock
 
 from gi.repository import Gdk
 from gi.repository import GES
+from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -91,6 +92,8 @@ def create_pitivi_mock(**settings):
     app.settings = __create_settings(**settings)
     app.proxy_manager = ProxyManager(app)
 
+    app.gui.editor.viewer.action_group = Gio.SimpleActionGroup()
+
     # TODO: Get rid of Zoomable.app.
     Zoomable.app = app
 
@@ -106,8 +109,12 @@ def create_project():
 def create_pitivi(**settings):
     app = Pitivi()
     app._setup()
+
     app.gui = mock.Mock()
+    app.gui.editor.viewer.action_group = Gio.SimpleActionGroup()
+
     app.settings = __create_settings(**settings)
+
     return app
 
 

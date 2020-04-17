@@ -1814,6 +1814,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                self.forward_one_second_action,
                                _("Seek forward one second"))
 
+        # Viewer actions.
+        self.timeline.layout.insert_action_group("viewer", self.app.gui.editor.viewer.action_group)
+
         self.update_actions()
 
     def _scroll_to_pixel(self, x):

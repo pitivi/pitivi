@@ -19,6 +19,7 @@ from gettext import gettext as _
 
 from gi.repository import Gdk
 from gi.repository import GES
+from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
@@ -29,7 +30,9 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.pipeline import AssetPipeline
 from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import TimeWidget
+from pitivi.viewer.guidelines import GuidelinesPopover
 from pitivi.viewer.overlay_stack import OverlayStack
+
 
 GlobalSettings.add_config_section("viewer")
 GlobalSettings.add_config_option("viewerDocked", section="viewer",
@@ -88,7 +91,9 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.target = None
 
         self.overlay_stack = None
+        self.guidelines_popover = None
         self._create_ui()
+        self._create_actions()
 
         if not self.settings.viewerDocked:
             self.undock()
@@ -148,7 +153,11 @@ class ViewerContainer(Gtk.Box, Loggable):
     def __create_new_viewer(self):
         _, sink_widget = self.project.pipeline.create_sink()
 
-        self.overlay_stack = OverlayStack(self.app, sink_widget)
+        self.guidelines_popover = GuidelinesPopover()
+        self.guidelines_button.set_popover(self.guidelines_popover)
+        self.overlay_stack = OverlayStack(self.app,
+                                          sink_widget,
+                                          self.guidelines_popover.overlay)
         self.target = ViewerWidget(self.overlay_stack)
         self._reset_viewer_aspect_ratio(self.project)
 
@@ -241,9 +250,14 @@ class ViewerContainer(Gtk.Box, Loggable):
         bbox.set_margin_right(SPACING)
         self.pack_end(bbox, False, False, 0)
 
+        self.guidelines_button = Gtk.MenuButton.new()
+        self.guidelines_button.props.image = Gtk.Image.new_from_icon_name("view-grid-symbolic", Gtk.IconSize.BUTTON)
+        self.guidelines_button.set_relief(Gtk.ReliefStyle.NONE)
+        self.guidelines_button.set_tooltip_text(_("Select composition guidelines"))
+        bbox.pack_start(self.guidelines_button, False, False, 0)
+
         self.start_button = Gtk.Button.new_from_icon_name("media-skip-backward-symbolic",
                                                           Gtk.IconSize.BUTTON)
-
         self.start_button.connect("clicked", self._start_button_clicked_cb)
         self.start_button.set_relief(Gtk.ReliefStyle.NONE)
         self.start_button.set_tooltip_text(
@@ -319,6 +333,22 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.buttons_container = bbox
         self.external_vbox.show_all()
+
+    def _create_actions(self):
+        self.action_group = Gio.SimpleActionGroup()
+        self.insert_action_group("viewer", self.action_group)
+        self.app.shortcuts.register_group("viewer", _("Viewer"), position=60)
+
+        self.toggle_guidelines_action = Gio.SimpleAction.new("toggle-composition-guidelines", None)
+        self.toggle_guidelines_action.connect("activate", self.__toggle_guidelines_cb)
+        self.action_group.add_action(self.toggle_guidelines_action)
+        self.app.shortcuts.add("viewer.toggle-composition-guidelines",
+                               ["<Primary><Shift>c"],
+                               self.toggle_guidelines_action,
+                               _("Toggle the currently selected composition guidelines"))
+
+    def __toggle_guidelines_cb(self, unused_action, unused_parameter):
+        self.guidelines_popover.toggle()
 
     def __corner_draw_cb(self, unused_widget, cr, lines, space, margin):
         cr.set_line_width(1)

@@ -42,6 +42,7 @@ pitivi/render.py
 pitivi/settings.py
 pitivi/tabsmanager.py
 pitivi/transitions.py
+pitivi/viewer/guidelines_popover.py
 pitivi/viewer/viewer.py
 
 pitivi/timeline/elements.py
