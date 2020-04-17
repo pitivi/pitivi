@@ -329,21 +329,17 @@ on GitLab, indicating:
 -   test keyboard shortcuts
     -   try to locate a specific frame using only the keyboard
 
-## Test Peak Meter Level
+## Test Peak Meter
 
-1. Start with a clip that contains audio in the project and timeline
-2. Position the seeker at the beginning of the clip
-3. Press the 'Play/Pause' button on the viewer
-    -   The height of the peak meter should start changing during playback of the clip
-
-## Test Peak Meter Color
-1. Start with a clip that contains audio in the project and timeline
-2. Position the seeker at the beginning of the clip
-3. Press the 'Play/Pause' button on the viewer
-    -   The color of the peak meter should change with the rise and fall of the meter
-    -   A low level (<50%) should result in a green meter
-    -   A medium level (>50% but <75%) should result in a yellow meter
-    -   A high level (>75%) should result in a red meter
+1. Create and open a new Pitivi project
+2. Import and insert 'mp3_sample.mp3' from the 'tests/samples' directory into the timeline
+3. Position the seeker at the beginning of the clip on the timeline
+4. Press the 'play' button on the viewer controls
+    -   The height of the two peak meters should start changing during playback of the clip but should stop once the clip ends
+5. Detach the viewer by pressing the 'detach viewer' button on the viewer controls
+    -   The peak meters should appear in the external viewer window that pops up on the right side of the viewer
+6. Close the external viewer window
+    -   The peak meters should appear again in their original location on the right side of the viewer
 
 ## Test Preferences
 
