@@ -39,7 +39,7 @@ from pitivi.timeline.layer import LayerControls
 from pitivi.timeline.layer import SpacedSeparator
 from pitivi.timeline.markers import MarkersBox
 from pitivi.timeline.previewers import Previewer
-from pitivi.timeline.ruler import ScaleRuler
+from pitivi.timeline.ruler import TimelineScaleRuler
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import asset_get_duration
@@ -1600,7 +1600,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                    adjustment=self.timeline.hadj)
         hscrollbar.get_style_context().add_class("background")
 
-        self.ruler = ScaleRuler(self)
+        self.ruler = TimelineScaleRuler(self)
         self.ruler.props.hexpand = True
 
         builder = Gtk.Builder()
