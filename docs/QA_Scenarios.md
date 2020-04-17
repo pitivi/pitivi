@@ -332,13 +332,15 @@ on GitLab, indicating:
 ## Test Peak Meter
 
 1. Create and open a new Pitivi project
-2. Import and insert 'mp3_sample.mp3' from the 'tests/samples' directory into the timeline
-3. Position the seeker at the beginning of the clip on the timeline
-4. Press the 'play' button on the viewer controls
+2. Import 'mp3_sample.mp3' from the 'tests/samples' directory into the media library
+3. Insert a 'mp3_sample.mp3' clip into the timeline
+    -   The timeline should only contain the 'mp3_sample.mp3' clip and nothing else
+4. Position the seeker at the beginning of the clip on the timeline
+5. Press the 'play' button on the viewer controls
     -   The height of the two peak meters should start changing during playback of the clip but should stop once the clip ends
-5. Detach the viewer by pressing the 'detach viewer' button on the viewer controls
-    -   The peak meters should appear in the external viewer window that pops up on the right side of the viewer
-6. Close the external viewer window
+6. Detach the viewer by pressing the 'detach viewer' button on the viewer controls
+    -   The peak meters should appear on the right side of the viewer in the external viewer window that pops up
+7. Close the external viewer window
     -   The peak meters should appear again in their original location on the right side of the viewer
 
 ## Test Preferences
