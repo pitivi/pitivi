@@ -32,6 +32,7 @@ from pitivi.utils.widgets import TimeWidget
 from pitivi.viewer.overlay_stack import OverlayStack
 from pitivi.viewer.peak_meter import Channel
 from pitivi.viewer.peak_meter import PeakMeter
+from pitivi.viewer.peak_meter import PeakMeterScale
 
 GlobalSettings.add_config_section("viewer")
 GlobalSettings.add_config_option("viewerDocked", section="viewer",
@@ -239,6 +240,12 @@ class ViewerContainer(Gtk.Box, Loggable):
         corner.connect("button-release-event", self.__corner_button_release_cb)
         corner.connect("motion-notify-event", self.__corner_motion_notify_cb, hpane, vpane)
         self.pack_end(corner, False, False, 0)
+
+        # Peak Meter Scale
+        self.peak_meter_scale = PeakMeterScale()
+        self.peak_meter_scale.set_property("valign", Gtk.Align.CENTER)
+        self.peak_meter_scale.set_property("halign", Gtk.Align.CENTER)
+        self.viewer_subcontainer.pack_end(self.peak_meter_scale, False, False, 0)
 
         # Right Peak Meter
         self.right_peakmeter = PeakMeter()

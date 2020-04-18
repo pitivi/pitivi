@@ -4,11 +4,17 @@ import enum
 import cairo
 from gi.repository import Gtk
 
+from pitivi.utils.ui import gtk_style_context_get_color
+from pitivi.utils.ui import NORMAL_FONT
+from pitivi.utils.ui import set_cairo_color
+
 WIDTH = 6
 HEIGHT = 200
 PADDING = 1
 CELL_COUNT = 20
 MIN_PEAK = -60
+FONT_SIZE = 13
+SCALE_COUNT = 2
 
 
 class Channel(enum.Enum):
@@ -25,7 +31,6 @@ class PeakMeter(Gtk.DrawingArea):
         self.full_height = HEIGHT + PADDING * 2
         self.full_width = WIDTH + PADDING * 2
         self.set_size_request(self.full_width, self.full_height)
-        self.pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.full_width, self.full_height)
         self.set_gradients()
         style_context = self.get_style_context()
         style_context.add_class("frame")
@@ -34,15 +39,15 @@ class PeakMeter(Gtk.DrawingArea):
         self.show()
 
     def do_draw(self, context):
-        pixbuf = self.pixbuf
+        pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.full_width, self.full_height)
 
         drawing_context = cairo.Context(pixbuf)
-        self.draw_background(drawing_context)
+        self.draw_frame(drawing_context)
         self.draw_bar(drawing_context)
         self.draw_cells(drawing_context)
         pixbuf.flush()
 
-        context.set_source_surface(self.pixbuf, 0.0, 0.0)
+        context.set_source_surface(pixbuf, 0.0, 0.0)
         context.paint()
 
         return False
@@ -78,9 +83,8 @@ class PeakMeter(Gtk.DrawingArea):
 
         context.stroke()
 
-    def draw_background(self, context):
+    def draw_frame(self, context):
         style_context = self.get_style_context()
-        Gtk.render_background(style_context, context, 0, 0, self.full_width, self.full_height)
         Gtk.render_frame(style_context, context, 0, 0, self.full_width, self.full_height)
 
     def normalize_peak(self, peak):
@@ -89,3 +93,42 @@ class PeakMeter(Gtk.DrawingArea):
     def update_peakmeter(self, peak):
         self.peak = self.normalize_peak(peak)
         self.queue_draw()
+
+
+class PeakMeterScale(Gtk.DrawingArea):
+    """A scale for the peak meter."""
+
+    def __init__(self):
+        Gtk.DrawingArea.__init__(self)
+        self.full_height = HEIGHT + FONT_SIZE * 2
+        self.full_width = WIDTH + FONT_SIZE * 2
+        self.set_size_request(self.full_width, self.full_height)
+
+        self.show()
+
+    def do_draw(self, context):
+        pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.full_width, self.full_height)
+
+        drawing_context = cairo.Context(pixbuf)
+        self.draw_scale(drawing_context)
+        pixbuf.flush()
+
+        context.set_source_surface(pixbuf, 0.0, 0.0)
+        context.paint()
+
+        return False
+
+    def draw_scale(self, context):
+        section_height = HEIGHT / SCALE_COUNT
+
+        style_context = self.get_style_context()
+        color = gtk_style_context_get_color(style_context, Gtk.StateFlags.NORMAL)
+
+        set_cairo_color(context, color)
+        context.set_font_size(FONT_SIZE)
+        context.set_font_face(NORMAL_FONT)
+        text_extent = context.text_extents('0')
+
+        for i in range(SCALE_COUNT + 1):
+            context.move_to(0, section_height * i + FONT_SIZE + text_extent.height / 2)
+            context.show_text(str((MIN_PEAK // SCALE_COUNT) * i))
