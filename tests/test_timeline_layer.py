@@ -63,3 +63,15 @@ class TestLayer(common.TestCase):
         # height of layer.control_ui, which now it should not be set.
         self.assertFalse(hasattr(ges_layer, "control_ui"))
         unused_layer = Layer(ges_layer, timeline)
+
+
+class TestAudioRecorder(common.TestCase):
+
+    def test_pipeline(self):
+        # Initialize timeline and layer
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+
+        # Clip 'Record Audio' button
+        ges_layer.control_ui.record_audio_action.activate()

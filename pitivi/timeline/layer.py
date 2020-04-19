@@ -242,108 +242,8 @@ class LayerControls(Gtk.EventBox, Loggable):
             self.__icon = icon
 
     def __record_audio_cb(self, *_):
-        """Records audio and adds it to a new layer."""
-        filename = 'recording-' + '-'.join(str(dt.now()).split(' ')) + ".oga"
-        # Save file in project directory or user's home if 'Untitled'
-        file_path = ""
-        if self.app.project_manager.current_project.uri is not None:
-            file_path = os.path.dirname(path_from_uri(
-                self.app.project_manager.current_project.uri))
-        else:
-            file_path = os.getenv("HOME")
-        file_path = os.path.join(file_path, filename)
-        file_uri = Gst.filename_to_uri(file_path)
-
-        # Store current playhead position
-        playhead_pos = None
-        try:
-            playhead_pos = self.app.project_manager.current_project.pipeline.get_position()
-        except PipelineError:
-            playhead_pos = 0
-        # Start moving playhead during the recording
-        self.app.project_manager.current_project.pipeline.play()
-
-        # Create new layer
-        self.ges_timeline.append_layer()
-        # Select last layer (newly created)
-        layer = self.ges_timeline.get_layers()[-1]
-
-        def add_recording_to_new_layer():
-            # Add recording to the playhead position on a new layer
-            self.app.project_manager.current_project.create_asset(
-                file_uri, GES.UriClip)
-
-            def asset_added_cb(project, asset):
-                self.app.project_manager.current_project.disconnect(handler)
-                self.app.gui.editor.timeline_ui.insert_asset(
-                    asset, playhead_pos, layer)
-
-            handler = self.app.project_manager.current_project.connect(
-                "asset-added", asset_added_cb)
-
-        def record(device):
-
-            def stop(loop):
-                # If Stop or Pause key is pressed, stop recording
-                if self.app.project_manager.current_project.pipeline.get_simple_state() != Gst.State.PLAYING:
-                    loop.quit()
-                    return False
-
-                return True
-
-            # Create pipeline
-            _pipeline = Gst.ElementFactory.make("pipeline", None)
-            source = device.create_element()
-            transcodebin = Gst.ElementFactory.make("transcodebin", None)
-
-            transcodebin.props.profile = self.app.proxy_manager.get_encoding_profile(
-                "prores-opus-in-matroska.gep")
-
-            filesink = Gst.ElementFactory.make("filesink", None)
-            filesink.props.location = file_path
-
-            _pipeline.add(source, transcodebin, filesink)
-            source.link(transcodebin)
-            transcodebin.link(filesink)
-
-            pipeline = SimplePipeline(_pipeline)
-
-            pipeline.set_simple_state(Gst.State.PLAYING)
-
-            loop = GLib.MainLoop()
-            GLib.timeout_add_seconds(1, stop, loop)
-            loop.run()
-
-            pipeline.set_simple_state(Gst.State.NULL)
-
-        monitor = Gst.DeviceMonitor.new()
-        monitor.add_filter("Audio/Source", Gst.Caps("audio/x-raw"))
-        devices = monitor.get_devices()
-
-        def file_changed_cb(file_monitor, file, other_file, event_type):
-            if event_type == Gio.FileMonitorEvent.CHANGED:
-                GES.Asset.needs_reload(GES.UriClip, file_uri)
-
-                def asset_loaded_cb(_, res):
-                    asset = GES.Asset.request_finish(res)
-                    duration = asset.props.duration
-                    if Gst.SECOND / 2 <= duration <= Gst.SECOND:
-                        add_recording_to_new_layer()
-                    elif duration > Gst.SECOND:
-                        # Update track on the timeline
-                        for clip in layer.get_clips():
-                            clip.set_duration(duration)
-                        self.app.gui.editor.timeline_ui.update_clips_asset(asset, None)
-
-                GES.Asset.request_async(
-                    GES.UriClip, file_uri, None, asset_loaded_cb)
-
-        gio_file = Gio.File.new_for_path(file_path)
-        file_monitor = gio_file.monitor_file(Gio.FileMonitorFlags.NONE, None)
-        file_monitor.set_rate_limit(1)
-        file_monitor.connect("changed", file_changed_cb)
-
-        record(devices[0])
+        audio_recorder = AudioRecorder(self.ges_layer, self.ges_timeline, self.app)
+        audio_recorder.record()
 
 
 class Layer(Gtk.Layout, Zoomable, Loggable):
@@ -500,3 +400,125 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
 
         for child in self._children:
             self.propagate_draw(child, cr)
+
+
+class AudioRecorder():
+    """Functionality for audio record."""
+
+    def __init__(self, ges_layer, ges_timeline, app):
+        self.ges_layer = ges_layer
+        self.ges_timeline = ges_timeline
+        self.app = app
+        self.file_path = self._gen_file_path()
+        self.file_uri = Gst.filename_to_uri(self.file_path)
+        self.pipeline = self.__setup_pipeline(self._get_device())
+        self.playhead_pos = self._get_playhead_position()
+        self.layer = self.__create_new_layer()
+        self.added = False
+        self.loop = GLib.MainLoop()
+        self.duration = 0
+
+    def _gen_file_path(self):
+        filename = 'recording-' + '-'.join(str(dt.now()).split(' ')) + ".opus"
+        # Save file in project directory or user's home if 'Untitled'
+        file_path = ""
+        current_project_uri = self.app.project_manager.current_project.uri
+        file_path = os.path.dirname(path_from_uri(
+            current_project_uri)) if current_project_uri else os.path.expanduser("~")
+        file_path = os.path.join(file_path, filename)
+        return file_path
+
+    def _get_playhead_position(self):
+        # Store current playhead position
+        playhead_pos = None
+        try:
+            playhead_pos = self.app.project_manager.current_project.pipeline.get_position()
+        except PipelineError:
+            playhead_pos = 0
+        return playhead_pos
+
+    def __setup_pipeline(self, device):
+        _pipeline = Gst.ElementFactory.make("pipeline", None)
+        source = device.create_element()
+        transcodebin = Gst.ElementFactory.make("transcodebin", None)
+
+        transcodebin.props.profile = self.app.proxy_manager.get_encoding_profile(
+            "prores-opus-in-matroska.gep")
+
+        filesink = Gst.ElementFactory.make("filesink", None)
+        filesink.props.location = self.file_path
+
+        _pipeline.add(source, transcodebin, filesink)
+        source.link(transcodebin)
+        transcodebin.link(filesink)
+
+        pipeline = SimplePipeline(_pipeline)
+        return pipeline
+
+    def _get_device(self):
+        """Returns first device from list."""
+        self.monitor = Gst.DeviceMonitor.new()
+        self.monitor.add_filter("Audio/Source", Gst.Caps("audio/x-raw"))
+        devices = self.monitor.get_devices()
+        return devices[0]
+
+    def record(self):
+        gio_file = Gio.File.new_for_path(self.file_path)
+        file_monitor = gio_file.monitor_file(Gio.FileMonitorFlags.NONE, None)
+        file_monitor.set_rate_limit(1)
+        file_monitor.connect("changed", self._file_changed_cb)
+        self.pipeline.set_simple_state(Gst.State.PLAYING)
+
+        # GLib.timeout_add_seconds(1, stop, loop, self.pipeline)
+        print("Recording started")
+        self.loop.run()
+        self.pipeline.set_simple_state(Gst.State.NULL)
+        asset = GES.UriClipAsset.request_sync(self.file_uri)
+        duration = asset.props.duration
+        print("END asset duration:" + str(duration / Gst.SECOND))
+
+    def _file_changed_cb(self, file_monitor, file, other_file, event_type):
+        if event_type == Gio.FileMonitorEvent.CHANGED:
+            print("Needs reload:" +
+                  str(GES.Asset.needs_reload(GES.UriClip, self.file_uri)))
+
+            def asset_loaded_cb(_, res):
+                asset = GES.Asset.request_finish(res)
+                duration = asset.props.duration
+                print("Asset duration:" + str(duration / Gst.SECOND))
+                if duration > 0 and not self.added:
+                    self.__add_recording_to_new_layer()
+                    print("added to timeline")
+                    self.added = True
+                elif duration > Gst.SECOND * 2:
+                    # Update track on the timeline
+                    for clip in self.layer.get_clips():
+                        clip.set_duration(duration)
+                    self.app.gui.editor.timeline_ui.update_clips_asset(
+                        asset, None)
+                    print("update done")
+
+                if duration > Gst.SECOND * 3:
+                    self.loop.quit()
+
+            GES.Asset.request_async(
+                GES.UriClip, self.file_uri, None, asset_loaded_cb)
+
+    def __add_recording_to_new_layer(self):
+        # Add recording to the playhead position on a new layer
+        self.app.project_manager.current_project.create_asset(
+            self.file_uri, GES.UriClip)
+        print("asset add called")
+
+        def asset_added_cb(project, asset, playhead_pos, layer):
+            self.app.project_manager.current_project.disconnect(handler)
+            self.app.gui.editor.timeline_ui.insert_asset(
+                asset, playhead_pos, layer)
+
+        handler = self.app.project_manager.current_project.connect(
+            "asset-added", asset_added_cb, self.playhead_pos, self.layer)
+
+    def __create_new_layer(self):
+        self.ges_timeline.append_layer()
+        # Select last layer (newly created)
+        return self.ges_timeline.get_layers()[-1]
