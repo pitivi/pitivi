@@ -77,8 +77,8 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
         self._mouse_x = 0
         self._mouse_y = 0
 
-        self.connect("button-release-event", self._button_release_event_cb)
-        self.connect("motion-notify-event", self._motion_notify_event_cb)
+        self.connect('button-release-event', self._button_release_event_cb)
+        self.connect('motion-notify-event', self._motion_notify_event_cb)
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK)
 
         self.app.project_manager.connect_after(
@@ -90,7 +90,7 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
             self._selection = None
         if project:
             self._selection = project.ges_timeline.ui.selection
-            self._selection.connect("selection-changed", self._selection_changed_cb)
+            self._selection.connect('selection-changed', self._selection_changed_cb)
         self._project = project
 
     def _get_clip_position(self):
@@ -98,18 +98,22 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
         y = self.source.get_child_property("posy").value
         return x, y
 
-    def _get_clip_size(self):
+    def _get_clip_width_height(self):
         width = self.source.get_child_property("width").value
         height = self.source.get_child_property("height").value
         return width, height
 
     def _set_clip_position(self, new_x, new_y):
+        # Set the posx of the clip
         self.source.set_child_property("posx", new_x)
+        # Set the posy of the clip
         self.source.set_child_property("posy", new_y)
 
-    def _set_clip_size(self, width, height):
-        self.source.set_child_property("width", width)
-        self.source.set_child_property("height", height)
+    def _set_clip_width_height(self, new_width, new_height):
+        # Set the new width of the clip
+        self.source.set_child_property("width", new_width)
+        # Set the new height of the clip
+        self.source.set_child_property("height", new_height)
 
     def __draw_rectangle(self, cr, x, y, w, h):
         cr.rectangle(x, y, w, h)
@@ -135,49 +139,48 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
             cr.set_source_rgb(1, 1, 1)
         else:
             cr.set_source_rgb(0, 0, 0)
-        self._draw_frame(cr)
         # Draw the widget
-        # cr.move_to(180, 90)
-        # cr.line_to(180, 110)
+        cr.move_to(180, 90)
+        cr.line_to(180, 110)
 
-        # cr.move_to(180, 210)
-        # cr.line_to(180, 230)
+        cr.move_to(180, 210)
+        cr.line_to(180, 230)
 
-        # cr.move_to(90, 160)
-        # cr.line_to(110, 160)
+        cr.move_to(90, 160)
+        cr.line_to(110, 160)
 
-        # cr.move_to(250, 160)
-        # cr.line_to(270, 160)
+        cr.move_to(250, 160)
+        cr.line_to(270, 160)
 
-        # cr.move_to(100, 100)
-        # cr.line_to(100, 60)
+        cr.move_to(100, 100)
+        cr.line_to(100, 60)
 
-        # cr.move_to(100, 100)
-        # cr.line_to(60, 100)
+        cr.move_to(100, 100)
+        cr.line_to(60, 100)
 
-        # cr.move_to(100, 220)
-        # cr.line_to(100, 260)
+        cr.move_to(100, 220)
+        cr.line_to(100, 260)
 
-        # cr.move_to(100, 220)
-        # cr.line_to(60, 220)
+        cr.move_to(100, 220)
+        cr.line_to(60, 220)
 
-        # cr.move_to(260, 100)
-        # cr.line_to(260, 60)
+        cr.move_to(260, 100)
+        cr.line_to(260, 60)
 
-        # cr.move_to(260, 100)
-        # cr.line_to(300, 100)
+        cr.move_to(260, 100)
+        cr.line_to(300, 100)
 
-        # cr.move_to(260, 220)
-        # cr.line_to(300, 220)
+        cr.move_to(260, 220)
+        cr.line_to(300, 220)
 
-        # cr.move_to(260, 220)
-        # cr.line_to(260, 260)
+        cr.move_to(260, 220)
+        cr.line_to(260, 260)
 
-        # x = 100
-        # y = 100
-        # w = 160
-        # h = 120
-        # self.__draw_rectangle(cr, x, y, w, h)
+        x = 100
+        y = 100
+        w = 160
+        h = 120
+        self.__draw_rectangle(cr, x, y, w, h)
         cr.stroke()
         # Highlight the box that the cursor is hovering over
         current_box, x, y = self.get_cursor_positons()
@@ -186,28 +189,6 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
             cr.set_source_rgb(1, 0.1, 0)
             cr.fill()
             cr.stroke()
-
-    def _draw_frame(self, cr):
-        width = self.get_allocated_width()
-        height = self.get_allocated_height()
-        width_padding = width * 0.1
-        height_padding = height * 0.1
-        # How far the line should be displaced from the edge of the widget
-        line_offset = 2.5
-
-        cr.move_to(width_padding, height_padding * line_offset)
-        cr.line_to(width - width_padding, height_padding * line_offset)
-
-        cr.move_to(width_padding, height - height_padding * line_offset)
-        cr.line_to(width - width_padding, height - height_padding * line_offset)
-
-        cr.move_to(width_padding * line_offset, height_padding)
-        cr.line_to(width_padding * line_offset, height - height_padding)
-
-        cr.move_to(width - width_padding * line_offset, height_padding)
-        cr.line_to(width - width_padding * line_offset, height - height_padding)
-
-        cr.stroke()
 
     def get_cursor_positons(self):
         """Returns position of mouse and which box it is located in.
@@ -279,9 +260,8 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
         if self.source:
             self.source.connect("deep-notify", self.__source_property_changed_cb)
 
-    def __source_property_changed_cb(self, source, unused_element, param):
-        if source is GES.VideoSource:
-            self._set_object_values()
+    def __source_property_changed_cb(self, unused_source, unused_element, param):
+        self._set_object_values()
 
     def _selection_changed_cb(self, unused_timeline):
         if len(self._selection) == 1:
@@ -304,8 +284,8 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
         # Get all the necessary information
         project_height = self._project.videoheight
         project_width = self._project.videowidth
-        video_height = self._get_clip_size()[1]
-        video_width = self._get_clip_size()[0]
+        video_height = self._get_clip_width_height()[1]
+        video_width = self._get_clip_width_height()[0]
         middle_x = video_width / 2
         middle_y = video_height / 2
         # Set all the values for the left, outside the viewer
