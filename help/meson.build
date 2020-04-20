@@ -1,5 +1,6 @@
 sources = [
     'about.page',
+    'alignment.page',
     'cheatsheet.page',
     'codecscontainers.page',
     'effects.page',
@@ -31,6 +32,7 @@ media = [
   'figures/fadestep1.png',
   'figures/fadestep2.png',
   'figures/fadestep3.png',
+  'figures/interactivealignment.png',
   'figures/keyframecurves.png',
   'figures/layers.png',
   'figures/logo.png',

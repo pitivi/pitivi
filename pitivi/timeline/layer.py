@@ -58,9 +58,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.app = app
         self.__icon = None
 
-        tracks = self.ges_timeline.get_tracks()
-        self.timeline_audio_tracks = [track for track in tracks if track.props.track_type == GES.TrackType.AUDIO]
-
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(hbox)
 
@@ -86,13 +83,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__update_name()
         name_row.pack_start(self.name_entry, True, True, 0)
 
-        self.mute_toggle_button = Gtk.ToggleButton.new()
-        self.mute_toggle_button.props.valign = Gtk.Align.CENTER
-        self.mute_toggle_button.props.relief = Gtk.ReliefStyle.NONE
-        self.mute_toggle_button.connect("toggled", self.__mute_button_toggled_cb)
-        self.__update_mute_button()
-        name_row.pack_start(self.mute_toggle_button, False, False, 0)
-
         self.menubutton = Gtk.MenuButton.new()
         self.menubutton.props.valign = Gtk.Align.CENTER
         self.menubutton.props.relief = Gtk.ReliefStyle.NONE
@@ -108,7 +98,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         vbox.pack_start(space, False, False, 0)
 
         self.ges_layer.connect("notify::priority", self.__layer_priority_changed_cb)
-        self.ges_layer.connect("active-changed", self.__layer_active_changed_cb)
         self.ges_timeline.connect("layer-added", self.__timeline_layer_added_cb)
         self.ges_timeline.connect("layer-removed", self.__timeline_layer_removed_cb)
         self.__update_actions()
@@ -223,20 +212,6 @@ class LayerControls(Gtk.EventBox, Loggable):
             index = len(self.ges_timeline.get_layers()) - 1
         self.ges_timeline.ui.move_layer(self.ges_layer, index)
         self.app.project_manager.current_project.pipeline.commit_timeline()
-
-    def __mute_button_toggled_cb(self, button):
-        self.ges_layer.set_active_for_tracks(not button.get_active(), self.timeline_audio_tracks)
-        self.app.project_manager.current_project.pipeline.commit_timeline()
-
-    def __update_mute_button(self):
-        muted = all([not self.ges_layer.get_active_for_track(t) for t in self.timeline_audio_tracks])
-        self.mute_toggle_button.set_active(muted)
-        icon_name = "audio-volume-muted-symbolic" if muted else "audio-volume-high-symbolic"
-        image = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
-        self.mute_toggle_button.set_image(image)
-
-    def __layer_active_changed_cb(self, ges_layer, active, tracks):
-        self.__update_mute_button()
 
     def update(self, media_types):
         self.props.height_request = self.ges_layer.ui.props.height_request

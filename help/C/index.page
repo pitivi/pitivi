@@ -30,8 +30,8 @@
   <section id="timeline" style="2column">
     <title>Basic Editing with the Timeline</title>
   </section>
-  <section id="effectstransitions" style="2column">
-    <title>Effects and Transitions</title>
+  <section id="effectstransitionsalignment" style="2column">
+    <title>Effects, Transitions and Alignment</title>
   </section>
   <section id="rendering" style="2column">
     <title>Exporting Your Finished Movie</title>

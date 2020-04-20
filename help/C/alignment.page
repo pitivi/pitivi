@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="alignment">
+  <info>
+    <link type="guide" xref="index#effectstransitionsalignment"/>
+    <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="draft"/>
+    <credit type="author">
+      <name>Cordell Rhoads</name>
+      <email>rhoadscordell7@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Jackson Eickhoff</name>
+      <email>jacksoneick@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Tanner Skelton</name>
+      <email>tskelton@huskers.unl.edu</email>
+    </credit>
+    <desc>Alignment of clips in and out of frame</desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+  <title>Clip Alignment</title>
+  <section id="vieweralignment">
+    <title>Click and Drag Alignment</title>
+    <p>Users have an ability to manually align their clips within the project frame. This can be done by clicking on the clip in the <gui>Viewer</gui> and dragging the clip to the desired location.</p>
+    <figure>
+      <title>Viewer Alignment</title>
+      <desc>Click and drag the clip to re-align in the viewer.</desc>
+      <media type="image" src="figures/vieweralignment.png" mime="image/png" style="right"/>
+    </figure>
+  </section>
+  <section id="titlealignment">
+    <title>Manual Horizontal/Vertical Alignment</title>
+    <p>You also have the ability to set the horizontal and vertical alignment within the <gui>Title</gui> tab located in the <gui>Contextual Tabs</gui>.</p>
+    <p>This feature offers the following options for horizontal alignment: Absolute, Left, Center, Right.</p>
+    <p>For vertical alignment, you have the following options: Absolute, Top, Center, Bottom, Baseline.</p>
+    <figure>
+      <title>Manual Clip Alignment</title>
+      <desc>This gives the ability for manual horizontal and vertical clip alignment.</desc>
+      <media type="image" src="figures/manualalignment.png" mime="image/png" style="right"/>
+    </figure>
+  </section>
+  <section id="presetalignment">
+    <title>Preset Alignment</title>
+    <p>Alternatively, you can use preset alignments using the interactive alignment tool under the <gui>Alignment</gui> tab within the <gui>Context Box</gui> that is shown at the top of the <gui>Main Window</gui>.</p>
+    <p>The inner box contained within the interactive alignment tool represents in-frame placement. This tool allows you to align clips both in and out of frame by clicking on one of the preset choices.</p>
+    <figure>
+      <title>Using interactive alignment tool</title>
+      <desc>The clip will be positioned at the top left corner in frame by left-clicking in the highlighted area.</desc>
+      <media type="image" src="figures/interactivealignment.png" mime="image/png" style="right"/>
+    </figure>
+  </section>
+</page>
