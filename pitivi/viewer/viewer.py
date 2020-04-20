@@ -88,6 +88,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.target = None
 
         self.overlay_stack = None
+
         self._create_ui()
 
         if not self.settings.viewerDocked:

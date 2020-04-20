@@ -117,8 +117,8 @@ class EditorPerspective(Perspective, Loggable):
         css_provider.load_from_data(EDITOR_PERSPECTIVE_CSS.encode("UTF-8"))
         screen = Gdk.Screen.get_default()
         style_context = self.app.gui.get_style_context()
-        style_context.add_provider_for_screen(screen, css_provider,
-                                              Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        style_context.add_provider_for_screen(
+            screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     def __focus_in_event_cb(self, unused_widget, unused_event):
         ges_timeline = self.timeline_ui.timeline.ges_timeline
@@ -196,10 +196,12 @@ class EditorPerspective(Perspective, Loggable):
         self.main_tabs = BaseTabs(self.app)
         self.medialibrary = MediaLibraryWidget(self.app)
         self.effectlist = EffectListWidget(self.app)
-        self.main_tabs.append_page("Media Library",
-                                   self.medialibrary, Gtk.Label(label=_("Media Library")))
-        self.main_tabs.append_page("Effect Library",
-                                   self.effectlist, Gtk.Label(label=_("Effect Library")))
+        self.main_tabs.append_page(
+            "Media Library", self.medialibrary, Gtk.Label(
+                label=_("Media Library")))
+        self.main_tabs.append_page(
+            "Effect Library", self.effectlist, Gtk.Label(
+                label=_("Effect Library")))
         self.medialibrary.connect('play', self._media_library_play_cb)
         self.medialibrary.show()
         self.effectlist.show()
@@ -209,12 +211,15 @@ class EditorPerspective(Perspective, Loggable):
         self.clipconfig = ClipProperties(self.app)
         self.trans_list = TransitionsListWidget(self.app)
         self.title_editor = TitleEditor(self.app)
-        self.context_tabs.append_page("Clip",
-                                      self.clipconfig, Gtk.Label(label=_("Clip")))
-        self.context_tabs.append_page("Transition",
-                                      self.trans_list, Gtk.Label(label=_("Transition")))
-        self.context_tabs.append_page("Title",
-                                      self.title_editor.widget, Gtk.Label(label=_("Title")))
+        self.context_tabs.append_page(
+            "Clip", self.clipconfig, Gtk.Label(
+                label=_("Clip")))
+        self.context_tabs.append_page(
+            "Transition", self.trans_list, Gtk.Label(
+                label=_("Transition")))
+        self.context_tabs.append_page(
+            "Title", self.title_editor.widget, Gtk.Label(
+                label=_("Title")))
         # Show by default the Title tab, as the Clip and Transition tabs
         # are useful only when a clip or transition is selected, but
         # the Title tab allows adding titles.
@@ -227,6 +232,7 @@ class EditorPerspective(Perspective, Loggable):
 
         # Viewer
         self.viewer = ViewerContainer(self.app)
+
         self.mainhpaned.pack2(self.viewer, resize=True, shrink=False)
 
         # Now, the lower part: the timeline
@@ -256,7 +262,8 @@ class EditorPerspective(Perspective, Loggable):
             self._set_default_positions()
         self.secondhpaned.set_position(self.settings.mainWindowHPanePosition)
         self.mainhpaned.set_position(self.settings.mainWindowMainHPanePosition)
-        self.toplevel_widget.set_position(self.settings.mainWindowVPanePosition)
+        self.toplevel_widget.set_position(
+            self.settings.mainWindowVPanePosition)
 
     def _set_default_positions(self):
         window_width = self.app.gui.get_size()[0]
@@ -328,17 +335,27 @@ class EditorPerspective(Perspective, Loggable):
         self.render_button.set_sensitive(False)  # The only one we have to set.
         self.render_button.connect("clicked", self._render_cb)
 
-        undo_redo_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        undo_redo_box = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         undo_redo_box.get_style_context().add_class("linked")
-        undo_redo_box.pack_start(undo_button, expand=False, fill=False, padding=0)
-        undo_redo_box.pack_start(redo_button, expand=False, fill=False, padding=0)
+        undo_redo_box.pack_start(
+            undo_button,
+            expand=False,
+            fill=False,
+            padding=0)
+        undo_redo_box.pack_start(
+            redo_button,
+            expand=False,
+            fill=False,
+            padding=0)
         headerbar.pack_start(undo_redo_box)
 
         self.builder.add_from_file(
             os.path.join(get_ui_dir(), "mainmenubutton.ui"))
 
         self.menu_button = self.builder.get_object("menubutton")
-        self.keyboard_shortcuts_button = self.builder.get_object("menu_shortcuts")
+        self.keyboard_shortcuts_button = self.builder.get_object(
+            "menu_shortcuts")
 
         headerbar.pack_end(self.menu_button)
         headerbar.pack_end(self.save_button)
@@ -351,6 +368,7 @@ class EditorPerspective(Perspective, Loggable):
         group = Gio.SimpleActionGroup()
         self.toplevel_widget.insert_action_group("editor", group)
         self.headerbar.insert_action_group("editor", group)
+        self.viewer.insert_action_group("editor", group)
 
         # pylint: disable=attribute-defined-outside-init
         self.save_action = Gio.SimpleAction.new("save", None)
@@ -367,32 +385,53 @@ class EditorPerspective(Perspective, Loggable):
                                self.save_as_action,
                                _("Save the current project as"), group="win")
 
-        self.revert_to_saved_action = Gio.SimpleAction.new("revert-to-saved", None)
-        self.revert_to_saved_action.connect("activate", self.__revert_to_saved_cb)
+        self.revert_to_saved_action = Gio.SimpleAction.new(
+            "revert-to-saved", None)
+        self.revert_to_saved_action.connect(
+            "activate", self.__revert_to_saved_cb)
         group.add_action(self.revert_to_saved_action)
-
-        self.export_project_action = Gio.SimpleAction.new("export-project", None)
-        self.export_project_action.connect("activate", self.__export_project_cb)
+        self.export_project_action = Gio.SimpleAction.new(
+            "export-project", None)
+        self.export_project_action.connect(
+            "activate", self.__export_project_cb)
         group.add_action(self.export_project_action)
 
         self.save_frame_action = Gio.SimpleAction.new("save-frame", None)
         self.save_frame_action.connect("activate", self.__save_frame_cb)
         group.add_action(self.save_frame_action)
 
-        self.project_settings_action = Gio.SimpleAction.new("project-settings", None)
-        self.project_settings_action.connect("activate", self.__project_settings_cb)
+        self.project_settings_action = Gio.SimpleAction.new(
+            "project-settings", None)
+        self.project_settings_action.connect(
+            "activate", self.__project_settings_cb)
         group.add_action(self.project_settings_action)
 
         group.add_action(self.intro.intro_action)
-        self.app.shortcuts.add("editor.interactive-intro", [], self.intro.intro_action,
-                               _("Quick intros to Pitivi"), group="win")
+        self.app.shortcuts.add(
+            "editor.interactive-intro",
+            [],
+            self.intro.intro_action,
+            _("Quick intros to Pitivi"),
+            group="win")
 
         self.import_asset_action = Gio.SimpleAction.new("import-asset", None)
         self.import_asset_action.connect("activate", self.__import_asset_cb)
         group.add_action(self.import_asset_action)
-        self.app.shortcuts.add("editor.import-asset", ["<Primary>i"],
-                               self.import_asset_action,
-                               _("Add media files to your project"), group="win")
+        self.app.shortcuts.add(
+            "editor.import-asset",
+            ["<Primary>i"],
+            self.import_asset_action,
+            _("Add media files to your project"),
+            group="win")
+
+        self.toggle_safe_areas_action = Gio.SimpleAction.new("toggle-safe-areas", None)
+        self.toggle_safe_areas_action.connect("activate", self.__toggle_safe_areas_cb)
+        group.add_action(self.toggle_safe_areas_action)
+        self.app.shortcuts.add("editor.toggle-safe-areas", ["<Primary>apostrophe"], self.toggle_safe_areas_action,
+                               _("Toggle safe area overlay on preview"), group="win")
+
+    def __toggle_safe_areas_cb(self, unused_action, unused_param):
+        self.viewer.overlay_stack.safe_areas_overlay.toggle_safe_areas()
 
     def __import_asset_cb(self, unused_action, unused_param):
         self.medialibrary.show_import_assets_dialog()
@@ -443,7 +482,8 @@ class EditorPerspective(Perspective, Loggable):
         self.app.project_manager.revert_to_saved_project()
 
     def __export_project_cb(self, unused_action, unused_param):
-        uri = self._show_export_dialog(self.app.project_manager.current_project)
+        uri = self._show_export_dialog(
+            self.app.project_manager.current_project)
         result = None
         if uri:
             result = self.app.project_manager.export_project(
@@ -495,13 +535,16 @@ class EditorPerspective(Perspective, Loggable):
         if project.ges_timeline.props.duration != 0:
             self.render_button.set_sensitive(True)
 
-    def _project_manager_save_project_failed_cb(self, unused_project_manager, uri, exception=None):
+    def _project_manager_save_project_failed_cb(
+            self, unused_project_manager, uri, exception=None):
         project_filename = unquote(uri.split("/")[-1])
-        dialog = Gtk.MessageDialog(transient_for=self.app.gui,
-                                   modal=True,
-                                   message_type=Gtk.MessageType.ERROR,
-                                   buttons=Gtk.ButtonsType.OK,
-                                   text=_('Unable to save project "%s"') % project_filename)
+        dialog = Gtk.MessageDialog(
+            transient_for=self.app.gui,
+            modal=True,
+            message_type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.OK,
+            text=_('Unable to save project "%s"') %
+            project_filename)
         if exception:
             dialog.set_property("secondary-use-markup", True)
             dialog.set_property("secondary-text", unquote(str(exception)))
@@ -510,7 +553,11 @@ class EditorPerspective(Perspective, Loggable):
         dialog.destroy()
         self.error("failed to save project")
 
-    def _project_manager_project_saved_cb(self, unused_project_manager, unused_project, unused_uri):
+    def _project_manager_project_saved_cb(
+            self,
+            unused_project_manager,
+            unused_project,
+            unused_uri):
         self.update_title()
         self.save_action.set_enabled(False)
 
@@ -595,18 +642,21 @@ class EditorPerspective(Perspective, Loggable):
         self.render_button.set_sensitive(False)
         return False
 
-    def _project_manager_reverting_to_saved_cb(self, unused_project_manager, unused_project):
+    def _project_manager_reverting_to_saved_cb(
+            self, unused_project_manager, unused_project):
         if self.app.project_manager.current_project.has_unsaved_modifications():
-            dialog = Gtk.MessageDialog(transient_for=self.app.gui,
-                                       modal=True,
-                                       message_type=Gtk.MessageType.WARNING,
-                                       buttons=Gtk.ButtonsType.NONE,
-                                       text=_("Revert to saved project version?"))
+            dialog = Gtk.MessageDialog(
+                transient_for=self.app.gui,
+                modal=True,
+                message_type=Gtk.MessageType.WARNING,
+                buttons=Gtk.ButtonsType.NONE,
+                text=_("Revert to saved project version?"))
             dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.NO,
                                Gtk.STOCK_REVERT_TO_SAVED, Gtk.ResponseType.YES)
             dialog.set_resizable(False)
-            dialog.set_property("secondary-text",
-                                _("This will reload the current project. All unsaved changes will be lost."))
+            dialog.set_property(
+                "secondary-text",
+                _("This will reload the current project. All unsaved changes will be lost."))
             dialog.set_default_response(Gtk.ResponseType.NO)
             dialog.set_transient_for(self.app.gui)
             response = dialog.run()
@@ -615,7 +665,12 @@ class EditorPerspective(Perspective, Loggable):
                 return False
         return True
 
-    def _project_manager_missing_uri_cb(self, project_manager, project, unused_error, asset):
+    def _project_manager_missing_uri_cb(
+            self,
+            project_manager,
+            project,
+            unused_error,
+            asset):
         if project.at_least_one_asset_missing:
             # One asset is already missing so no point in spamming the user
             # with more file-missing dialogs, as we need all of them.
@@ -636,10 +691,11 @@ class EditorPerspective(Perspective, Loggable):
                 project_manager.close_running_project()
                 # Signal the project loading failure.
                 # You have to do this *after* successfully creating a blank project,
-                # or the startupwizard will still be connected to that signal too.
-                reason = _("No replacement file was provided for \"<i>%s</i>\".\n\n"
-                           "Pitivi does not currently support partial projects.") % \
-                    info_name(asset)
+                # or the startupwizard will still be connected to that signal
+                # too.
+                reason = _(
+                    "No replacement file was provided for \"<i>%s</i>\".\n\n"
+                    "Pitivi does not currently support partial projects.") % info_name(asset)
                 project_manager.emit("new-project-failed", project.uri, reason)
 
         dialog.destroy()
@@ -652,7 +708,8 @@ class EditorPerspective(Perspective, Loggable):
 
     def _disconnect_from_project(self, project):
         project.disconnect_by_func(self._project_changed_cb)
-        project.ges_timeline.disconnect_by_func(self._timeline_duration_changed_cb)
+        project.ges_timeline.disconnect_by_func(
+            self._timeline_duration_changed_cb)
 
     def _timeline_duration_changed_cb(self, timeline, unused_duration):
         """Updates the render button.
@@ -768,8 +825,10 @@ class EditorPerspective(Perspective, Loggable):
         Returns:
             List[str]: The full path and the mimetype if successful, None otherwise.
         """
-        chooser = Gtk.FileChooserDialog(title=_("Save As..."),
-                                        transient_for=self.app.gui, action=Gtk.FileChooserAction.SAVE)
+        chooser = Gtk.FileChooserDialog(
+            title=_("Save As..."),
+            transient_for=self.app.gui,
+            action=Gtk.FileChooserAction.SAVE)
         chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                             _("Save"), Gtk.ResponseType.OK)
         chooser.set_default_response(Gtk.ResponseType.OK)
@@ -860,7 +919,8 @@ class PreviewAssetWindow(Gtk.Window):
         max_height = 0.85 * mainwindow_height
 
         controls_height = self._previewer.bbox.get_preferred_size()[0].height
-        if img_width < max_width and (img_height + controls_height) < max_height:
+        if img_width < max_width and (
+                img_height + controls_height) < max_height:
             # The video is small enough, keep it 1:1
             return img_width, img_height + controls_height
         else:
