@@ -27,7 +27,7 @@
   <p>It is easier to think of layers in terms of images painted on glass. With several pieces of glass stacked on top of each other, each of these pieces of glass is a layer. If the top piece of glass is completely painted over, none of the pieces of glass underneath will be visible. If, on the other hand, you only paint over a portion of a piece of glass, you will be able to see what is underneath the non-painted parts.</p>
   <section id="opacity">
     <title>Opacity (how solid “opaque” things are)</title>
-    <p>Each layer (and each clip) has its own transparency. To continue the paint on glass metaphor, if the paint is thin enough, it can be seen through. Visually, an opacity of 100% means you cannot see the clips below that layer or clip, and an opacity of of 50% means you can partly see them.</p>
+    <p>Each layer (and each clip) has its own transparency. To continue the paint on glass metaphor, if the paint is thin enough, it can be seen through. Visually, an opacity of 100% means you cannot see the clips below that layer or clip, and an opacity of 50% means you can partly see them.</p>
   </section>
   <section id="ui">
     <title>How this translates in terms of user interface</title>
@@ -40,10 +40,23 @@
       <p>Clips located on a layer above will block the clips below from view, unless they have an opacity value lower than 100% (as shown with the two topmost layers in the previous illustration).</p>
     </note>
   </section>
+  <section id="renaming">
+    <title>Renaming a layer</title>
+    <p>To rename a layer, click the layer's name, which is an editable text field.</p>
+  </section>
+  <section id="adjusting">
+    <title>Adjusting layer positioning</title>
+    <p>To move a layer to the top of the layer order, click <guiseq><gui>Layer icon</gui><gui>Move layer to top</gui></guiseq>. To move a layer to the one position higher in the layer order, click <guiseq><gui>Layer icon</gui><gui>Move layer up</gui></guiseq>.</p>
+    <p>To move a layer to the one position lower in the layer order, click <guiseq><gui>Layer icon</gui><gui>Move layer down</gui></guiseq>. To move a layer to the bottom of the layer order, click <guiseq><gui>Layer icon</gui><gui>Move layer to bottom</gui></guiseq>.</p>
+  </section>
   <section id="adding">
     <title>Adding and removing layers</title>
     <p>To create a layer, drag a clip to the middle space between two existing layers or just above the top layer or just below the bottom layer. Once the thin space between the layers is highlighted, release the clip.</p>
     <p>To remove a layer, click <guiseq><gui>Layer icon</gui><gui>Delete layer</gui></guiseq>. The <gui>Layer icon</gui> can be found at the right of the layer name field.</p>
+  </section>
+  <section id ="muting">
+    <title>Muting a layer</title>
+    <p>To mute a layer, click <gui>Volume icon</gui>. The icon will be toggled to show the layer has been muted. To unmute a layer, click <gui>Volume icon</gui> again.</p>
   </section>
   <section id="audio">
     <title>What about audio layers?</title>

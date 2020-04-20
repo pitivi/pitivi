@@ -23,6 +23,8 @@ from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk
 
+from pitivi.undo.timeline import TimelineObserver
+from pitivi.undo.undo import UndoableActionLog
 from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import SEPARATOR_HEIGHT
@@ -826,17 +828,17 @@ class TestClipsEdges(BaseTestTimeline):
 
 class TestDragFromOutside(BaseTestTimeline):
 
-    def test_adding_overlap_clip(self):
-        """Checks asset drag&drop on top of an existing clip."""
+    def setUp(self):
+        super().setUp()
+
         timeline_container = common.create_timeline_container()
-        timeline_ui = timeline_container.timeline
+        self.ges_timeline = timeline_container.timeline.ges_timeline
 
-        asset = GES.UriClipAsset.request_sync(
-            common.get_sample_uri("tears_of_steel.webm"))
-        layer, = timeline_ui.ges_timeline.get_layers()
-        layer.add_asset(asset, 0, 0, 10, GES.TrackType.UNKNOWN)
+        timeline_container.app.action_log = UndoableActionLog()
+        self.timeline_observer = TimelineObserver(timeline_container.ges_timeline, timeline_container.app.action_log)
 
-        # Events emitted while dragging an asset over a clip in the timeline:
+    def check_drag_assets_to_timeline(self, timeline_ui, assets):
+        # Events emitted while dragging assets over a clip in the timeline:
         # motion, receive, motion.
         with mock.patch.object(Gdk, "drag_status") as _drag_status_mock:
             with mock.patch.object(Gtk, "drag_finish") as _drag_finish_mock:
@@ -850,11 +852,11 @@ class TestDragFromOutside(BaseTestTimeline):
                 self.assertFalse(timeline_ui.drop_data_ready)
                 selection_data = mock.Mock()
                 selection_data.get_data_type = mock.Mock(return_value=target)
-                selection_data.get_uris.return_value = [asset.props.id]
+                selection_data.get_uris.return_value = [asset.props.id for asset in assets]
                 self.assertIsNone(timeline_ui.drop_data)
                 self.assertFalse(timeline_ui.drop_data_ready)
                 timeline_ui._drag_data_received_cb(None, None, 0, 0, selection_data, None, 0)
-                self.assertEqual(timeline_ui.drop_data, [asset.props.id])
+                self.assertEqual(timeline_ui.drop_data, [asset.props.id for asset in assets])
                 self.assertTrue(timeline_ui.drop_data_ready)
 
                 timeline_ui.drag_get_data.reset_mock()
@@ -869,3 +871,29 @@ class TestDragFromOutside(BaseTestTimeline):
                 self.assertFalse(timeline_ui.drag_get_data.called)
                 self.assertIsNone(timeline_ui.dragging_element)
                 self.assertFalse(timeline_ui.dropping_clips)
+
+    def test_adding_overlap_clip(self):
+        """Checks asset drag&drop on top of an existing clip."""
+        asset = GES.UriClipAsset.request_sync(
+            common.get_sample_uri("tears_of_steel.webm"))
+
+        layer, = self.ges_timeline.get_layers()
+        layer.add_asset(asset, 0, 0, 10, GES.TrackType.UNKNOWN)
+        clips = layer.get_clips()
+
+        self.check_drag_assets_to_timeline(self.ges_timeline.ui, [asset])
+        self.assertEqual(layer.get_clips(), clips)
+
+    def test_dragging_multiple_clips_over_timeline(self):
+        """Checks drag&drop two assets when only the first one can be placed."""
+        asset = GES.UriClipAsset.request_sync(
+            common.get_sample_uri("tears_of_steel.webm"))
+
+        layer, = self.ges_timeline.get_layers()
+        start = asset.get_duration()
+        layer.add_asset(asset, start, 0, 10, GES.TrackType.UNKNOWN)
+        clips = layer.get_clips()
+
+        # Use same asset to mimic dragging multiple assets
+        self.check_drag_assets_to_timeline(self.ges_timeline.ui, [asset, asset])
+        self.assertEqual(layer.get_clips(), clips)
