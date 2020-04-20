@@ -241,24 +241,26 @@ class ViewerContainer(Gtk.Box, Loggable):
         corner.connect("motion-notify-event", self.__corner_motion_notify_cb, hpane, vpane)
         self.pack_end(corner, False, False, 0)
 
-        # Peak Meter Scale
-        self.peak_meter_scale = PeakMeterScale()
-        self.peak_meter_scale.set_property("valign", Gtk.Align.CENTER)
-        self.peak_meter_scale.set_property("halign", Gtk.Align.CENTER)
-        self.viewer_subcontainer.pack_end(self.peak_meter_scale, False, False, 0)
-
         # Right Peak Meter
         self.right_peakmeter = PeakMeter()
         self.right_peakmeter.set_property("valign", Gtk.Align.CENTER)
         self.right_peakmeter.set_property("halign", Gtk.Align.CENTER)
         self.right_peakmeter.set_margin_right(SPACING)
-        self.viewer_subcontainer.pack_end(self.right_peakmeter, False, False, 0)
 
         # Left Peak Meter
         self.left_peakmeter = PeakMeter()
         self.left_peakmeter.set_property("valign", Gtk.Align.CENTER)
         self.left_peakmeter.set_property("halign", Gtk.Align.CENTER)
         self.left_peakmeter.set_margin_left(SPACING)
+
+        # Peak Meter Scale
+        self.peakmeter_scale = PeakMeterScale(self.right_peakmeter)
+        self.peakmeter_scale.set_property("valign", Gtk.Align.CENTER)
+        self.peakmeter_scale.set_property("halign", Gtk.Align.CENTER)
+        self.peakmeter_scale.set_margin_right(SPACING)
+
+        self.viewer_subcontainer.pack_end(self.peakmeter_scale, False, False, 0)
+        self.viewer_subcontainer.pack_end(self.right_peakmeter, False, False, 0)
         self.viewer_subcontainer.pack_end(self.left_peakmeter, False, False, 0)
 
         # Buttons/Controls
@@ -347,6 +349,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.undock_button.get_accessible().set_name("undock_button")
         self.right_peakmeter.get_accessible().set_name("right_peakmeter")
         self.left_peakmeter.get_accessible().set_name("left_peakmeter")
+        self.peakmeter_scale.get_accessible().set_name("peakmeter_scale")
 
         self.buttons_container = bbox
         self.external_vbox.show_all()
