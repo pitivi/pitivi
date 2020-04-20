@@ -738,3 +738,21 @@ class TestExportSettings(common.TestCase):
         project.set_rendering(False)
         self.assertEqual(project.videowidth, 960)
         self.assertEqual(project.videoheight, 400)
+
+    def test_set_safe_area_sizes(self):
+        """Checks to ensure that the safe areas values are set correctly."""
+        project = common.create_project()
+        title_horizontal_factor = 0.8
+        title_vertical_factor = 0.9
+        action_horizontal_factor = 0.6
+        action_vertical_factor = 0.7
+
+        project.set_safe_areas_sizes(title_horizontal_factor,
+                                     title_vertical_factor,
+                                     action_horizontal_factor,
+                                     action_vertical_factor)
+
+        self.assertEqual(project.title_safe_area_horizontal, title_horizontal_factor)
+        self.assertEqual(project.title_safe_area_vertical, title_vertical_factor)
+        self.assertEqual(project.action_safe_area_horizontal, action_horizontal_factor)
+        self.assertEqual(project.action_safe_area_vertical, action_vertical_factor)

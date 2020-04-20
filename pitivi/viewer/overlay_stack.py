@@ -22,6 +22,7 @@ from gi.repository import Gtk
 
 from pitivi.utils.loggable import Loggable
 from pitivi.viewer.move_scale_overlay import MoveScaleOverlay
+from pitivi.viewer.safe_areas_overlay import SafeAreasOverlay
 from pitivi.viewer.title_overlay import TitleOverlay
 
 
@@ -64,6 +65,9 @@ class OverlayStack(Gtk.Overlay, Loggable):
 
         self.guidelines_overlay = guidelines_overlay
         self.add_overlay(guidelines_overlay)
+
+        self.safe_areas_overlay = SafeAreasOverlay(self)
+        self.add_overlay(self.safe_areas_overlay)
 
         sink_widget.connect("size-allocate", self.__sink_widget_size_allocate_cb)
 

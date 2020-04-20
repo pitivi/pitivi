@@ -44,4 +44,12 @@
       <p>When you import the first video file the project settings are automatically changed to match. See <link xref="importing">Getting media</link> for details.</p>
     </note>
   </section>
+  <section id="safeareas">
+    <title>Preventing cropping of essential content on television screens</title>
+    <p>Depending on how a television is built, the video may be cropped when being displayed on its screen. The essential content can be placed in the <em>action-safe area</em>, which is a centered rectangular area safe from cropping. Similarly, titles can be placed in the smaller <em>title-safe area</em> to prevent the text sticking to the screen edges.</p>
+    <p>The safe areas are displayed on the <gui>viewer</gui> as an overlay and will not affect the video of a project. The size of the action-safe area and the title-safe area can be specified in the <link xref="#projectsettings">Project Settings</link>. For example, a size of 90% vertical × 80% horizontal corresponds to a 5% margin at the top and bottom and a 10% horizontal margin at the left and right of the video. Producers use their own guidelines since no television standard defines the <link href="https://en.wikipedia.org/wiki/Safe_area_(television)">safe areas</link>.</p>
+    <note style="tip">
+      <p>To toggle Safe Areas on and off, press <key>'</key>.</p>
+    </note>
+  </section>
 </page>

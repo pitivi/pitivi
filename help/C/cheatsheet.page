@@ -91,4 +91,12 @@
       <!--item><p><key>.</key> and <key>,</key>: Go to the next or previous property keyframe.</p></item-->
     </list>
   </section>
+  <section id="viewer">
+    <title>Viewer</title>
+    <list>
+      <item>
+        <p><key>'</key>: Toggle the safe areas</p>
+      </item>
+    </list>
+  </section>
 </page>

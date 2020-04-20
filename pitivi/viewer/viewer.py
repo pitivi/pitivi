@@ -347,8 +347,20 @@ class ViewerContainer(Gtk.Box, Loggable):
                                self.toggle_guidelines_action,
                                _("Toggle the currently selected composition guidelines"))
 
+        self.toggle_safe_areas_action = Gio.SimpleAction.new("toggle-safe-areas", None)
+        self.toggle_safe_areas_action.connect("activate", self.__toggle_safe_areas_cb)
+        self.action_group.add_action(self.toggle_safe_areas_action)
+        self.app.shortcuts.add("viewer.toggle-safe-areas",
+                               ["apostrophe"],
+                               self.toggle_safe_areas_action,
+                               _("Toggle safe areas on viewer"))
+
     def __toggle_guidelines_cb(self, unused_action, unused_parameter):
         self.guidelines_popover.toggle()
+
+    def __toggle_safe_areas_cb(self, unused_action, unused_parameter):
+        overlay = self.overlay_stack.safe_areas_overlay
+        overlay.set_visible(not overlay.get_visible())
 
     def __corner_draw_cb(self, unused_widget, cr, lines, space, margin):
         cr.set_line_width(1)
