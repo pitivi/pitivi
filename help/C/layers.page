@@ -27,7 +27,7 @@
   <p>It is easier to think of layers in terms of images painted on glass. With several pieces of glass stacked on top of each other, each of these pieces of glass is a layer. If the top piece of glass is completely painted over, none of the pieces of glass underneath will be visible. If, on the other hand, you only paint over a portion of a piece of glass, you will be able to see what is underneath the non-painted parts.</p>
   <section id="opacity">
     <title>Opacity (how solid “opaque” things are)</title>
-    <p>Each layer (and each clip) has its own transparency. To continue the paint on glass metaphor, if the paint is thin enough, it can be seen through. Visually, an opacity of 100% means you cannot see the clips below that layer or clip, and an opacity of of 50% means you can partly see them.</p>
+    <p>Each layer (and each clip) has its own transparency. To continue the paint on glass metaphor, if the paint is thin enough, it can be seen through. Visually, an opacity of 100% means you cannot see the clips below that layer or clip, and an opacity of 50% means you can partly see them.</p>
   </section>
   <section id="ui">
     <title>How this translates in terms of user interface</title>
