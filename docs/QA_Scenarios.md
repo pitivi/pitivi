@@ -342,6 +342,8 @@ on GitLab, indicating:
     -   The peak meters should appear on the right side of the viewer in the external viewer window that pops up
 7. Close the external viewer window
     -   The peak meters should appear again in their original location on the right side of the viewer
+8. Drag the corner on the viewer container to resize the viewer container to the minimum size
+    -   The peak meters should now be sized smaller in response to the smaller viewer container
 
 ## Test Preferences
 
