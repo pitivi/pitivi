@@ -242,13 +242,13 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pack_end(corner, False, False, 0)
 
         # Right Peak Meter
-        self.right_peakmeter = PeakMeter()
+        self.right_peakmeter = PeakMeter(self.app)
         self.right_peakmeter.set_property("valign", Gtk.Align.CENTER)
         self.right_peakmeter.set_property("halign", Gtk.Align.CENTER)
         self.right_peakmeter.set_margin_right(SPACING)
 
         # Left Peak Meter
-        self.left_peakmeter = PeakMeter()
+        self.left_peakmeter = PeakMeter(self.app)
         self.left_peakmeter.set_property("valign", Gtk.Align.CENTER)
         self.left_peakmeter.set_property("halign", Gtk.Align.CENTER)
         self.left_peakmeter.set_margin_left(SPACING)

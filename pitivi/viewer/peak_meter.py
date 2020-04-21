@@ -42,26 +42,34 @@ class PeakMeter(Gtk.DrawingArea):
                                None, (GObject.TYPE_INT,))
     }
 
-    def __init__(self):
+    def __init__(self, app):
         Gtk.DrawingArea.__init__(self)
+        self.app = app
         self.peak = MIN_PEAK
+        self.pixel_buffer = None
         height = HEIGHT + PADDING * 2
         width = WIDTH + PADDING * 2
         self.set_size_request(width, height)
         self.__set_gradients()
+
         style_context = self.get_style_context()
         style_context.add_class("frame")
-        style_context.add_class("trough")
+
+        self.connect("size-allocate", self.__size_allocate_cb)
 
     def do_draw(self, context):
+        if self.pixel_buffer is None:
+            return False
+
         width = self.get_allocated_width()
         height = self.get_allocated_height()
         bar_height = self.__get_bar_height()
         bar_width = self.__get_bar_width()
 
-        pixel_buffer = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+        pixel_buffer = self.pixel_buffer
 
         drawing_context = cairo.Context(pixel_buffer)
+        self.__draw_background(drawing_context, width, height)
         self.__draw_frame(drawing_context, width, height)
         self.__draw_bar(drawing_context, bar_width, bar_height)
         self.__draw_cells(drawing_context, bar_width, bar_height)
@@ -70,9 +78,14 @@ class PeakMeter(Gtk.DrawingArea):
         context.set_source_surface(pixel_buffer, 0.0, 0.0)
         context.paint()
 
-        pixel_buffer.finish()
-
         return False
+
+    def __size_allocate_cb(self, unused_event, allocation):
+        if self.pixel_buffer is not None:
+            self.pixel_buffer.finish()
+            self.pixel_buffer = None
+
+        self.pixel_buffer = cairo.ImageSurface(cairo.FORMAT_ARGB32, allocation.width, allocation.height)
 
     def do_configure_event(self, unused_event):
         padding = FONT_SIZE * 3
@@ -117,6 +130,10 @@ class PeakMeter(Gtk.DrawingArea):
         style_context = self.get_style_context()
         Gtk.render_frame(style_context, context, 0, 0, width, height)
 
+    def __draw_background(self, context, width, height):
+        style_context = self.app.gui.get_style_context()
+        Gtk.render_background(style_context, context, 0, 0, width, height)
+
     def __set_gradients(self):
         bar_height = self.__get_bar_height()
         bar_width = self.__get_bar_width()
@@ -151,25 +168,30 @@ class PeakMeterScale(Gtk.DrawingArea):
 
     def __init__(self, peak_meter):
         Gtk.DrawingArea.__init__(self)
+        self.peak_meter = peak_meter
+        self.pixel_buffer = None
         height = HEIGHT + FONT_SIZE * 2
         width = FONT_SIZE * 2
         self.set_size_request(width, height)
-        self.peak_meter = peak_meter
+
         self.peak_meter.connect("peak-meter-resized", self.__peak_meter_resized_cb)
+        self.connect("size-allocate", self.__size_allocate_cb)
 
     def do_draw(self, context):
+        if self.pixel_buffer is None:
+            return False
+
         width = self.get_allocated_width()
         height = self.get_allocated_height()
-        pixel_buffer = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+        pixel_buffer = self.pixel_buffer
 
         drawing_context = cairo.Context(pixel_buffer)
+        self.__draw_background(drawing_context, width, height)
         self.__draw_scale(drawing_context)
         pixel_buffer.flush()
 
         context.set_source_surface(pixel_buffer, 0.0, 0.0)
         context.paint()
-
-        pixel_buffer.finish()
 
         return False
 
@@ -189,8 +211,19 @@ class PeakMeterScale(Gtk.DrawingArea):
             context.move_to(0, section_height * i + FONT_SIZE + text_extent.height / 2)
             context.show_text(str((MIN_PEAK // (SCALE_COUNT - 1)) * i))
 
+    def __draw_background(self, context, width, height):
+        style_context = self.peak_meter.app.gui.get_style_context()
+        Gtk.render_background(style_context, context, 0, 0, width, height)
+
     def __get_bar_height(self):
         return self.get_allocated_height() - FONT_SIZE * 2
+
+    def __size_allocate_cb(self, unused_event, allocation):
+        if self.pixel_buffer is not None:
+            self.pixel_buffer.finish()
+            self.pixel_buffer = None
+
+        self.pixel_buffer = cairo.ImageSurface(cairo.FORMAT_ARGB32, allocation.width, allocation.height)
 
     def __peak_meter_resized_cb(self, unused_event, bar_height):
         height = bar_height + FONT_SIZE * 2
