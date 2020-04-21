@@ -49,12 +49,6 @@ class CompositionGuidelinesOverlay(Gtk.DrawingArea, Loggable):
         size = self.__get_size()
         return size[0] / size[1]
 
-    def on_hover(self, cursor_pos):
-        # we don't need the on_hover method, I just put this stuff here to make pylint happy
-        if cursor_pos[0] > 0:
-            return True
-        return True
-
     @property
     def guidelines_to_draw(self):
         return self.__guidelines_to_draw

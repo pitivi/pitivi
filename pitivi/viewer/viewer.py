@@ -401,18 +401,18 @@ class ViewerContainer(Gtk.Box, Loggable):
                 toggle.switch_button.set_sensitive(False)
 
     def __three_by_three_toggle_cb(self, unused_entry):
-        self.__guidelines_toggle_widget_helper_cb(self.three_by_three_toggle,
-                                                  self.overlay_stack.composition_guidelines_overlay.three_by_three)
+        self.__guidelines_toggle_widget_helper(self.three_by_three_toggle,
+                                               self.overlay_stack.composition_guidelines_overlay.three_by_three)
 
     def __vert_horiz_center_toggle_cb(self, unused_entry):
-        self.__guidelines_toggle_widget_helper_cb(self.vert_horiz_center_toggle,
-                                                  self.overlay_stack.composition_guidelines_overlay.vertical_horizontal_center)
+        self.__guidelines_toggle_widget_helper(self.vert_horiz_center_toggle,
+                                               self.overlay_stack.composition_guidelines_overlay.vertical_horizontal_center)
 
     def __diagonals_toggle_cb(self, unused_entry):
-        self.__guidelines_toggle_widget_helper_cb(self.diagonals_toggle,
-                                                  self.overlay_stack.composition_guidelines_overlay.diagonals)
+        self.__guidelines_toggle_widget_helper(self.diagonals_toggle,
+                                               self.overlay_stack.composition_guidelines_overlay.diagonals)
 
-    def __guidelines_toggle_widget_helper_cb(self, toggle_widget, drawing_function):
+    def __guidelines_toggle_widget_helper(self, toggle_widget, drawing_function):
         if toggle_widget.get_widget_value():
             self.overlay_stack.composition_guidelines_overlay.add_guideline(drawing_function)
         else:
