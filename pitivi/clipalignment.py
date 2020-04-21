@@ -98,7 +98,7 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
         y = self.source.get_child_property("posy").value
         return x, y
 
-    def _get_clip_width_height(self):
+    def _get_clip_size(self):
         width = self.source.get_child_property("width").value
         height = self.source.get_child_property("height").value
         return width, height
@@ -109,11 +109,9 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
         # Set the posy of the clip
         self.source.set_child_property("posy", new_y)
 
-    def _set_clip_width_height(self, new_width, new_height):
-        # Set the new width of the clip
-        self.source.set_child_property("width", new_width)
-        # Set the new height of the clip
-        self.source.set_child_property("height", new_height)
+    def _set_clip_size(self, width, height):
+        self.source.set_child_property("width", width)
+        self.source.set_child_property("height", height)
 
     def __draw_rectangle(self, cr, x, y, w, h):
         cr.rectangle(x, y, w, h)
