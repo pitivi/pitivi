@@ -21,6 +21,7 @@ from gi.repository import GLib
 from gi.repository import Gtk
 
 from pitivi.utils.loggable import Loggable
+from pitivi.viewer.composition_guidelines_overlay import CompositionGuidelinesOverlay
 from pitivi.viewer.move_scale_overlay import MoveScaleOverlay
 from pitivi.viewer.title_overlay import TitleOverlay
 
@@ -61,6 +62,10 @@ class OverlayStack(Gtk.Overlay, Loggable):
         self.resize_status = Gtk.Label(name="resize_status")
         self.revealer.add(self.resize_status)
         self.add_overlay(self.revealer)
+        self.composition_guidelines_overlay = CompositionGuidelinesOverlay(self, self.app.action_log)
+        self.add_overlay(self.composition_guidelines_overlay)
+        self.composition_guidelines_overlay.hide()
+
         sink_widget.connect("size-allocate", self.__sink_widget_size_allocate_cb)
 
     def __size_allocate_cb(self, widget, rectangle):

@@ -1814,6 +1814,20 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                self.forward_one_second_action,
                                _("Seek forward one second"))
 
+        # Viewer actions.
+        viewer_group = Gio.SimpleActionGroup()
+        self.timeline.layout.insert_action_group("viewer", viewer_group)
+        self.toolbar.insert_action_group("viewer", viewer_group)
+        self.app.shortcuts.register_group("viewer", _("Viewer"), position=60)
+
+        self.toggle_guidelines_action = Gio.SimpleAction.new("toggle-composition-guidelines", None)
+        self.toggle_guidelines_action.connect("activate", self.app.gui.editor.viewer.toggle_composition_guidelines_cb)
+        viewer_group.add_action(self.toggle_guidelines_action)
+        self.app.shortcuts.add("viewer.toggle-composition-guidelines",
+                               ["<Primary><Shift>c"],
+                               self.toggle_guidelines_action,
+                               _("Toggle the currently selected composition guidelines"))
+
         self.update_actions()
 
     def _scroll_to_pixel(self, x):
