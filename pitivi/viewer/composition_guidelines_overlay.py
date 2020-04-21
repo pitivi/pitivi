@@ -38,7 +38,7 @@ class CompositionGuidelinesOverlay(Gtk.DrawingArea, Loggable):
                                          project.videoheight])
 
         self.__guidelines_to_draw = set()
-        self.update_from_source()
+        self.queue_draw()
 
     def _canvas_size_changed_cb(self, project):
         project = self.stack.app.project_manager.current_project
@@ -74,16 +74,13 @@ class CompositionGuidelinesOverlay(Gtk.DrawingArea, Loggable):
 
     def add_guideline(self, guideline):
         self.__guidelines_to_draw.add(guideline)
-        self.update_from_source()
+        self.queue_draw()
 
     def remove_guideline(self, guideline):
         try:
             self.__guidelines_to_draw.remove(guideline)
-            self.update_from_source()
         except ValueError:
             raise ValueError("The guideline %r not in guidelines to draw %r" % (guideline, self.__guidelines_to_draw))
-
-    def update_from_source(self):
         self.queue_draw()
 
     def do_draw(self, cr):
