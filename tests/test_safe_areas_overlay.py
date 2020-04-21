@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-# Copyright (c) 2014, Alex Băluț <alexandru.balut@gmail.com>
+# Copyright (c) 2020, Guy Richard <guy.richard99@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -54,30 +54,30 @@ class TestSafeAreasOverlay(common.TestCase):
         numpy.testing.assert_array_equal(safe_area_size, SafeAreasOverlay.compute_new_safe_area_size(
             self, project_width, project_height, new_width_percentage, new_height_percentage))
 
-    def test_widget_is_shown(self):
+    def test_safe_areas_overlay_is_visible(self):
         """Checks to ensure that, upon the user turning a safe area on, the safe areas overlay is added to the overlay stack."""
         app = common.create_pitivi_mock()
-        editor_perspective = EditorPerspective(app)
-        editor_perspective.setup_ui()
+        editorperspective = EditorPerspective(app)
+        editorperspective.setup_ui()
 
         _, sink = SimplePipeline.create_sink(self)
         overlay_stack = OverlayStack(app, sink)
 
-        editor_perspective.viewer.overlay_stack = overlay_stack
+        editorperspective.viewer.overlay_stack = overlay_stack
 
-        editor_perspective.viewer.overlay_stack.safe_areas_overlay.toggle_safe_areas()
+        editorperspective.viewer.overlay_stack.safe_areas_overlay.toggle_safe_areas()
 
-        self.assertEqual(editor_perspective.viewer.overlay_stack.safe_areas_overlay.get_visible(), True)
+        self.assertEqual(editorperspective.viewer.overlay_stack.safe_areas_overlay.get_visible(), True)
 
-    def test_widget_is_hidden(self):
+    def test_safe_areas_overlay_is_hidden(self):
         """Checks to ensure that, upon the user turning a safe area off, the safe areas overlay is removed from the overlay stack."""
         app = common.create_pitivi_mock()
-        editor_perspective = EditorPerspective(app)
-        editor_perspective.setup_ui()
+        editorperspective = EditorPerspective(app)
+        editorperspective.setup_ui()
 
         _, sink = SimplePipeline.create_sink(self)
         overlay_stack = OverlayStack(app, sink)
 
-        editor_perspective.viewer.overlay_stack = overlay_stack
+        editorperspective.viewer.overlay_stack = overlay_stack
 
-        self.assertEqual(editor_perspective.viewer.overlay_stack.safe_areas_overlay.get_visible(), False)
+        self.assertEqual(editorperspective.viewer.overlay_stack.safe_areas_overlay.get_visible(), False)

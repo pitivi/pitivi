@@ -82,7 +82,6 @@ class OverlayStack(Gtk.Overlay, Loggable):
             overlay = TitleOverlay(self, source)
         else:
             overlay = MoveScaleOverlay(self, self.app.action_log, source)
-
         self.add_overlay(overlay)
         self.__overlays[source] = overlay
         return overlay

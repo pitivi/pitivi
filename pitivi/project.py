@@ -699,10 +699,10 @@ class Project(Loggable, GES.Project):
 
         self.register_meta(GES.MetaFlag.READWRITE, "scaled_proxy_width", 0)
         self.register_meta(GES.MetaFlag.READWRITE, "scaled_proxy_height", 0)
-        self.register_meta(GES.MetaFlag.READWRITE, "title_safe_area_vertical", DEFAULT_TITLE_AREA_VERTICAL)
-        self.register_meta(GES.MetaFlag.READWRITE, "title_safe_area_horizontal", DEFAULT_TITLE_AREA_HORIZONTAL)
-        self.register_meta(GES.MetaFlag.READWRITE, "action_safe_area_vertical", DEFAULT_ACTION_AREA_VERTICAL)
-        self.register_meta(GES.MetaFlag.READWRITE, "action_safe_area_horizontal", DEFAULT_ACTION_AREA_HORIZONTAL)
+        self.register_meta(GES.MetaFlag.READWRITE, "pitivi::title_safe_area_vertical", DEFAULT_TITLE_AREA_VERTICAL)
+        self.register_meta(GES.MetaFlag.READWRITE, "pitivi::title_safe_area_horizontal", DEFAULT_TITLE_AREA_HORIZONTAL)
+        self.register_meta(GES.MetaFlag.READWRITE, "pitivi::action_safe_area_vertical", DEFAULT_ACTION_AREA_VERTICAL)
+        self.register_meta(GES.MetaFlag.READWRITE, "pitivi::action_safe_area_horizontal", DEFAULT_ACTION_AREA_HORIZONTAL)
 
         # The rendering settings.
         self.set_meta("render-scale", 100.0)
@@ -1153,45 +1153,45 @@ class Project(Loggable, GES.Project):
 
     @title_safe_area_vertical.setter
     def title_safe_area_vertical(self, percentage):
-        if percentage == self.get_meta("title_safe_area_vertical"):
+        if percentage == self.get_meta("pitivi::title_safe_area_vertical"):
             return
-        self.set_meta("title_safe_area_vertical", percentage)
+        self.set_meta("pitivi::title_safe_area_vertical", percentage)
         self.emit("safe-area-size-changed")
         self._emit_change("title_safe_area_vertical")
 
     @property
     def title_safe_area_horizontal(self):
-        return self.get_meta("title_safe_area_horizontal")
+        return self.get_meta("pitivi::title_safe_area_horizontal")
 
     @title_safe_area_horizontal.setter
     def title_safe_area_horizontal(self, percentage):
-        if percentage == self.get_meta("title_safe_area_horizontal"):
+        if percentage == self.get_meta("pitivi::title_safe_area_horizontal"):
             return
-        self.set_meta("title_safe_area_horizontal", percentage)
+        self.set_meta("pitivi::title_safe_area_horizontal", percentage)
         self.emit("safe-area-size-changed")
         self._emit_change("title_safe_area_horizontal")
 
     @property
     def action_safe_area_vertical(self):
-        return self.get_meta("action_safe_area_vertical")
+        return self.get_meta("pitivi::action_safe_area_vertical")
 
     @action_safe_area_vertical.setter
     def action_safe_area_vertical(self, percentage):
-        if percentage == self.get_meta("action_safe_area_vertical"):
+        if percentage == self.get_meta("pitivi::action_safe_area_vertical"):
             return
-        self.set_meta("action_safe_area_vertical", percentage)
+        self.set_meta("pitivi::action_safe_area_vertical", percentage)
         self.emit("safe-area-size-changed")
         self._emit_change("action_safe_area_vertical")
 
     @property
     def action_safe_area_horizontal(self):
-        return self.get_meta("action_safe_area_horizontal")
+        return self.get_meta("pitivi::action_safe_area_horizontal")
 
     @action_safe_area_horizontal.setter
     def action_safe_area_horizontal(self, percentage):
-        if percentage == self.get_meta("action_safe_area_horizontal"):
+        if percentage == self.get_meta("pitivi::action_safe_area_horizontal"):
             return
-        self.set_meta("action_safe_area_horizontal", percentage)
+        self.set_meta("pitivi::action_safe_area_horizontal", percentage)
         self.emit("safe-area-size-changed")
         self._emit_change("action_safe_area_horizontal")
 
@@ -2340,15 +2340,11 @@ class ProjectSettingsDialog:
                 self.frame_rate_fraction_widget.get_widget_value())
 
             # Store values as a decimal value
-            self.project.set_safe_areas_sizes(
-                int(self.title_vertical_spinbutton.get_value()) / 100,
-                int(self.title_horizontal_spinbutton.get_value()) / 100,
-                int(self.action_vertical_spinbutton.get_value()) / 100,
-                int(self.action_horizontal_spinbutton.get_value()) / 100)
+            self.project.set_safe_areas_sizes(int(self.title_vertical_spinbutton.get_value()) / 100, int(self.title_horizontal_spinbutton.get_value()) / 100,
+                                              int(self.action_vertical_spinbutton.get_value()) / 100, int(self.action_horizontal_spinbutton.get_value()) / 100)
 
             self.project.audiochannels = get_combo_value(self.channels_combo)
             self.project.audiorate = get_combo_value(self.sample_rate_combo)
-
             proxy_width = int(self.scaled_proxy_width_spin.get_value())
             proxy_height = int(self.scaled_proxy_height_spin.get_value())
 

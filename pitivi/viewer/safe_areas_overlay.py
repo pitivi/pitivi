@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-# Copyright (c) 2016, Lubosz Sarnecki <lubosz.sarnecki@collabora.co.uk>
+# Copyright (c) 2020, Guy Richard <guy.richard99@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -47,7 +47,6 @@ class SafeAreasOverlay(Gtk.DrawingArea):
     def toggle_safe_areas(self):
         self.safe_areas_enabled = not self.safe_areas_enabled
         self.__update_safe_areas()
-
         self.set_visible(self.safe_areas_enabled)
 
     def __resize_safe_areas_display(self):
@@ -75,14 +74,13 @@ class SafeAreasOverlay(Gtk.DrawingArea):
         return numpy.array([safe_area_width, safe_area_height])
 
     def __draw_safe_area(self, cr, safe_area_position, safe_area_size):
-        if not self.safe_areas_enabled:
-            return
-
         x_position, y_position = [int(position_value) for position_value in safe_area_position]
         width, height = [int(size_value) for size_value in safe_area_size]
         cr.rectangle(x_position, y_position, width, height)
 
     def do_draw(self, cr):
+        if not self.safe_areas_enabled:
+            return
         cr.save()
 
         #  Transparent Background
