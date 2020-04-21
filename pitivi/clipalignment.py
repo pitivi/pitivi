@@ -190,22 +190,24 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
     def _draw_frame(self, cr):
         width = self.get_allocated_width()
         height = self.get_allocated_height()
-        width_padding = width * 0.1
-        height_padding = height * 0.1
+        self.set_margin_start(width * 0.1)
+        self.set_margin_end(width * 0.1)
+        self.set_margin_top(height * 0.1)
+        self.set_margin_bottom(height * 0.1)
         # How far the line should be displaced from the edge of the widget
-        line_offset = 2.5
+        line_offset = width * (1 / 7)
 
-        cr.move_to(width_padding, height_padding * line_offset)
-        cr.line_to(width - width_padding, height_padding * line_offset)
+        cr.move_to(0, line_offset)
+        cr.line_to(width - 0, line_offset)
 
-        cr.move_to(width_padding, height - height_padding * line_offset)
-        cr.line_to(width - width_padding, height - height_padding * line_offset)
+        cr.move_to(0, height - line_offset)
+        cr.line_to(width - 0, height - line_offset)
 
-        cr.move_to(width_padding * line_offset, height_padding)
-        cr.line_to(width_padding * line_offset, height - height_padding)
+        cr.move_to(line_offset, 0)
+        cr.line_to(line_offset, height - 0)
 
-        cr.move_to(width - width_padding * line_offset, height_padding)
-        cr.line_to(width - width_padding * line_offset, height - height_padding)
+        cr.move_to(width - line_offset, 0)
+        cr.line_to(width - line_offset, height - 0)
 
         cr.stroke()
 
@@ -304,8 +306,7 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
         # Get all the necessary information
         project_height = self._project.videoheight
         project_width = self._project.videowidth
-        video_height = self._get_clip_size()[1]
-        video_width = self._get_clip_size()[0]
+        video_width, video_height = self._get_clip_size()
         middle_x = video_width / 2
         middle_y = video_height / 2
         # Set all the values for the left, outside the viewer
