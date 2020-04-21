@@ -1451,6 +1451,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.timeline.connect("size-allocate", self.__timeline_size_allocate_cb)
 
+        self.editor_state = app.gui.editor.editor_state
+
     # Public API
 
     def update_clips_asset(self, asset, proxy):
@@ -1561,7 +1563,14 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.ruler.set_pipeline(project.pipeline)
             self.ruler.zoom_changed()
 
-            self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
+            self._project.pipeline.simple_seek(self.editor_state.get_value('playhead-position'))
+            zoom_level = self.editor_state.get_value('zoom-level')
+            self.log("zoom level got %d", zoom_level)
+            # -1 used as default for int type, because None has no type.
+            if not zoom_level == -1:
+                Zoomable.set_zoom_level(zoom_level)
+            else:
+                self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
             self.timeline.update_snapping_distance()
             self.markers.markers_container = project.ges_timeline.get_marker_list("markers")
 

@@ -34,6 +34,7 @@ from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
 from pitivi.perspective import Perspective
 from pitivi.project import ProjectSettingsDialog
+from pitivi.settings import EditorState
 from pitivi.settings import GlobalSettings
 from pitivi.tabsmanager import BaseTabs
 from pitivi.timeline.previewers import ThumbnailCache
@@ -81,6 +82,7 @@ class EditorPerspective(Perspective, Loggable):
 
         self.app = app
         self.settings = app.settings
+        self.editor_state = EditorState(self.app)
 
         self.builder = Gtk.Builder()
 

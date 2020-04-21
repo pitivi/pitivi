@@ -16,15 +16,180 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Tests for the pitivi.settings module."""
 # pylint: disable=no-self-use
+import configparser
+import datetime
 import os
 import tempfile
+import uuid
 from unittest import mock
 
 from gi.repository import Gdk
 
+from pitivi.project import ProjectManager
 from pitivi.settings import ConfigError
+from pitivi.settings import EditorState
 from pitivi.settings import GlobalSettings
 from tests import common
+
+
+class TestEditorState(common.TestCase):
+    """Tests the EditorState class."""
+
+    def setUp(self):
+        self.app = common.create_pitivi_mock()
+        self.app.project_manager = ProjectManager(self.app)
+        self.project = self.app.project_manager.new_blank_project()
+        self.editor_state = EditorState(self.app)
+
+    def tearDown(self):
+        pass
+
+    def __load_editor_state(self, editor_state, timestamp):
+        """Loads the given editor state into self.editor_state.
+
+        This way it can be used with editor_state.get_value.
+        """
+        path = self.editor_state.get_file_path()
+        contents = {
+            'metadata': {
+                'timestamp': timestamp
+            },
+            'timeline': {
+                'playhead-position': editor_state['playhead-position'],
+                'zoom-level': editor_state['zoom-level'],
+                'hadjustment': editor_state['hadjustment'],
+                'selection': editor_state['selection']
+            }
+        }
+        self.__write_editor_state_file(path, contents)
+        self.editor_state.load_editor_state(self.project)
+
+    def __write_editor_state_file(self, file_path, contents):
+        config = configparser.ConfigParser()
+        for section in contents:
+            config.add_section(section)
+            for option in contents[section]:
+                config.set(section, option, str(contents[section][option]))
+        with open(file_path, 'w') as file:
+            config.write(file)
+
+    def test_save_load_editor_state_file(self):
+        editor_state = {
+            'playhead-position': 5000000000,
+            'zoom-level': 50,
+            'hadjustment': 50.0,
+            'selection': []
+        }
+        timestamp = datetime.datetime.now().timestamp()
+        self.editor_state.save_editor_state(editor_state, timestamp)
+        self.assertEqual(self.editor_state.load_editor_state(self.project), editor_state)
+        self.assertEqual(self.editor_state.get_timestamp(), timestamp)
+
+    def test_editor_state_file_already_exists_on_load(self):
+        editor_state = {
+            'playhead-position': 5000000000,
+            'zoom-level': 50,
+            'hadjustment': 50.0,
+            'selection': []
+        }
+        timestamp = datetime.datetime.now().timestamp()
+        self.__load_editor_state(editor_state, timestamp)
+        self.assertEqual(self.editor_state.load_editor_state(self.project), editor_state)
+        self.assertEqual(self.editor_state.get_timestamp(), timestamp)
+
+    def test_editor_state_file_already_exists_on_save(self):
+        editor_state = {
+            'playhead-position': 5000000000,
+            'zoom-level': 50,
+            'hadjustment': 50.0,
+            'selection': []
+        }
+        timestamp = datetime.datetime.now().timestamp()
+        self.__load_editor_state(editor_state, timestamp)
+        timestamp = datetime.datetime.now().timestamp()
+        self.editor_state.save_editor_state(editor_state, timestamp)
+        self.assertEqual(self.editor_state.load_editor_state(self.project), editor_state)
+        self.assertEqual(self.editor_state.get_timestamp(), timestamp)
+
+    def test_editor_state_file_missing(self):
+        """Associated editor state file is missing."""
+        editor_state = EditorState.get_default()
+        project_id = uuid.uuid4().hex
+        self.project.set_string('project-id', project_id)
+        self.assertEqual(self.editor_state.load_editor_state(self.project), editor_state)
+
+    def test_no_editor_state_file(self):
+        """No associated editor state file."""
+        editor_state = EditorState.get_default()
+        self.assertEqual(self.editor_state.load_editor_state(self.project), editor_state)
+
+    def test_missing_section_on_save(self):
+        """Existing editor state file with missing section."""
+        timestamp = datetime.datetime.now().timestamp()
+        path = self.editor_state.get_file_path()
+        contents = {
+            'metadata': {
+                'timestamp': timestamp
+            }
+        }
+        self.__write_editor_state_file(path, contents)
+        editor_state = {
+            'playhead-position': 5000000000,
+            'zoom-level': 50,
+            'hadjustment': 50.0,
+            'selection': []
+        }
+        self.editor_state.save_editor_state(editor_state, timestamp)
+        self.assertEqual(self.editor_state.load_editor_state(self.project), editor_state)
+        self.assertEqual(self.editor_state.get_timestamp(), timestamp)
+
+    def test_missing_section_on_load(self):
+        """Existing editor state file with missing section."""
+        timestamp = datetime.datetime.now().timestamp()
+        path = self.editor_state.get_file_path()
+        contents = {
+            'metadata': {
+                'timestamp': timestamp
+            }
+        }
+        self.__write_editor_state_file(path, contents)
+        editor_state = EditorState.get_default()
+        self.assertEqual(self.editor_state.load_editor_state(self.project), editor_state)
+        self.assertEqual(self.editor_state.get_timestamp(), timestamp)
+
+    def test_missing_values(self):
+        """Existing editor state file with missing values."""
+        path = self.editor_state.get_file_path()
+        contents = {
+            'metadata': {
+                'timestamp': ""
+            },
+            'timeline': {
+                'playhead-position': "",
+                'zoom-level': "",
+                'hadjustment': "",
+                'selection': ""
+            }
+        }
+        self.__write_editor_state_file(path, contents)
+        editor_state = EditorState.get_default()
+        self.assertEqual(self.editor_state.load_editor_state(self.project), editor_state)
+
+    def test_editor_state_full_cycle(self):
+        common.create_timeline_container()
+        editor_state = {
+            'playhead-position': 5000000000,
+            'zoom-level': 50,
+            'hadjustment': 50.0,
+            'selection': []
+        }
+        timestamp = datetime.datetime.now().timestamp()
+        self.__load_editor_state(editor_state, timestamp)
+        timestamp = datetime.datetime.now().timestamp()
+        self.editor_state.load_editor_state(self.project)
+        self.editor_state.save_editor_state(None, timestamp)
+        self.assertEqual(self.editor_state.load_editor_state(self.project), editor_state)
+        self.assertEqual(self.editor_state.get_timestamp(), timestamp)
 
 
 class TestGlobalSettings(common.TestCase):

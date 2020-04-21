@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 import configparser
+import datetime
 import os
+import uuid
 
 from gi.repository import Gdk
 from gi.repository import GLib
@@ -23,6 +25,8 @@ from gi.repository import GObject
 
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import unicode_error_dialog
+from pitivi.utils.pipeline import PipelineError
+from pitivi.utils.timeline import Zoomable
 
 
 def get_bool_env(var):
@@ -106,6 +110,168 @@ class Notification:
     def __set__(self, instance, value):
         setattr(instance, self.attrname, value)
         instance.emit(self.signame)
+
+
+class EditorState(GObject.Object, Loggable):
+    """Pitivi editor state.
+
+    Loads the editor state from the editor state folder.
+    """
+
+    def __init__(self, app):
+        GObject.Object.__init__(self)
+        Loggable.__init__(self)
+
+        self.project_manager = app.project_manager
+        self.project = None
+        self.project_id = None
+        self._conf_folder_path = None
+        self._conf_file_path = None
+        self._editor_state = EditorState.get_default()
+        self._timestamp = None
+        self._config = configparser.ConfigParser()
+        self.project_manager.connect("new-project-loaded",
+                                     self._project_manager_new_project_loaded_cb)
+        self.project_manager.connect("project-saved",
+                                     self._project_saved_cb)
+        # TODO: Disconnect on destroyed.
+
+    def get_timestamp(self):
+        return self._timestamp
+
+    def get_file_path(self):
+        self.project = self.project_manager.current_project
+        self._set_file_path()
+        return self._conf_file_path
+
+    def get_value(self, key):
+        """Get a value from the loaded editor state."""
+        value = self._editor_state[key]
+        if value:
+            return value
+        else:
+            return EditorState.get_default()[key]
+
+    def _project_saved_cb(self, unused_project_manager, unused_project, uri):
+        self.save_editor_state()
+        self.debug("editor_state: project saved.")
+
+    def _project_manager_new_project_loaded_cb(self, project_manager, project):
+        self.project = project
+        self.load_editor_state()
+        self.debug("editor_state: project loaded.")
+
+    def save_editor_state(self, editor_state=None, timestamp=None):
+        """Save the current editor state to the editor state file."""
+        if not editor_state:
+            self._set_editor_state()
+            editor_state = self._editor_state
+        if not timestamp:
+            timestamp = datetime.datetime.now().timestamp()
+        self._set_file_path()
+        self._write_value('metadata', 'timestamp', timestamp)
+        for key in editor_state:
+            self._write_value('timeline', key, editor_state[key])
+        self._write_editor_state_to_configuration_file()
+        return editor_state
+
+    def load_editor_state(self, project=None):
+        """Load an editor state file into the current editor state."""
+        if project:
+            self.project = project
+        self._set_file_path()
+        self._read_editor_state_from_configuration_file()
+        if not os.path.isfile(self._conf_file_path):
+            return self._editor_state
+
+        for key in self._editor_state:
+            try:
+                value = self._read_value('timeline', key, type(self._editor_state[key]))
+                if value:
+                    self._editor_state[key] = value
+            except ValueError:
+                self.warning("Editor state %s could not be read.", key)
+
+        try:
+            self._timestamp = self._read_value('metadata', 'timestamp', float)
+        except ValueError:
+            self.warning("Editor state timestamp could not be read.")
+        return self._editor_state
+
+    def _read_value(self, section, key, type_):
+        """Read a value from the configuration file."""
+        if not self._config.has_section(section):
+            self.debug("The editor state file has no section %s", section)
+            return None
+        if type_ == int:
+            value = self._config.getint(section, key)
+        elif type_ == float:
+            value = self._config.getfloat(section, key)
+        elif type_ == list:
+            # TODO: Fix handling of elements so they work with empty lists
+            # tmp_value = self._config.get(section, key)
+            # and with objects.
+            # value = [token.strip('[]') for token in tmp_value.split(', ') if token]
+            value = []
+        else:
+            value = self._config.get(section, key)
+        return value
+
+    def _write_value(self, section, key, value):
+        """Write a value to the configuration file."""
+        if not self._config.has_section(section):
+            self._config.add_section(section)
+        self._config.set(section, key, str(value))
+
+    def _read_editor_state_from_configuration_file(self):
+        """Reads the editor state from the configuration file."""
+        self._config.read(self._conf_file_path)
+
+    def _write_editor_state_to_configuration_file(self):
+        """Writes the editor state to the configuration file."""
+        with open(self._conf_file_path, 'w') as file:
+            self._config.write(file)
+
+    def _set_editor_state(self):
+        """Sets the editor state dictionary to the current state of the project editor."""
+        try:
+            self._editor_state['playhead-position'] = self.project.pipeline.get_position()
+            self._editor_state['zoom-level'] = Zoomable.get_current_zoom_level()
+            # TODO: Update the dict to the current timeline scroll ('hadjustment')
+            # TODO: Update the dict to the current selected clip ('selection')
+            # self._editor_state['hadjustment'] = LayersLayout(self.project.ges_timeline).get_hadjustment().get_value())
+            # self._editor_state['selection'] = Selection(self.project.ges_timeline).get_selected_track_elements())
+        except PipelineError:
+            self.warning("There was an error retrieving values for the editor state.")
+
+    def _set_file_path(self):
+        self.project_id = self._get_project_id()
+        self._conf_folder_path = xdg_config_home("editor_state")
+        self._conf_file_path = os.path.join(self._conf_folder_path, self.project_id) + ".conf"
+
+    def _get_project_id(self):
+        self.project = self.project_manager.current_project
+        if not self.project:
+            return ""
+        project_id = self.project.get_string('project-id')
+        if project_id:
+            self.log("Got project id %s", project_id)
+            return project_id
+        else:
+            project_id = uuid.uuid4().hex
+            self.project.set_string('project-id', project_id)
+            self.log("Assigned new project id %s", project_id)
+            return project_id
+
+    @staticmethod
+    def get_default():
+        editor_state = {
+            'playhead-position': 0,
+            'zoom-level': -1,   # -1 used as default for int type.
+            'hadjustment': 0.0,
+            'selection': []
+        }
+        return editor_state
 
 
 class GlobalSettings(GObject.Object, Loggable):
