@@ -59,16 +59,18 @@ class PeakMeter(Gtk.DrawingArea):
         bar_height = self.__get_bar_height()
         bar_width = self.__get_bar_width()
 
-        pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+        pixel_buffer = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
 
-        drawing_context = cairo.Context(pixbuf)
+        drawing_context = cairo.Context(pixel_buffer)
         self.__draw_frame(drawing_context, width, height)
         self.__draw_bar(drawing_context, bar_width, bar_height)
         self.__draw_cells(drawing_context, bar_width, bar_height)
-        pixbuf.flush()
+        pixel_buffer.flush()
 
-        context.set_source_surface(pixbuf, 0.0, 0.0)
+        context.set_source_surface(pixel_buffer, 0.0, 0.0)
         context.paint()
+
+        pixel_buffer.finish()
 
         return False
 
@@ -158,14 +160,16 @@ class PeakMeterScale(Gtk.DrawingArea):
     def do_draw(self, context):
         width = self.get_allocated_width()
         height = self.get_allocated_height()
-        pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+        pixel_buffer = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
 
-        drawing_context = cairo.Context(pixbuf)
+        drawing_context = cairo.Context(pixel_buffer)
         self.__draw_scale(drawing_context)
-        pixbuf.flush()
+        pixel_buffer.flush()
 
-        context.set_source_surface(pixbuf, 0.0, 0.0)
+        context.set_source_surface(pixel_buffer, 0.0, 0.0)
         context.paint()
+
+        pixel_buffer.finish()
 
         return False
 
