@@ -85,19 +85,24 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
 
     Displays a series of consecutive intervals. For each interval its beginning
     time is shown. If zoomed in enough, shows the frames in alternate colors.
+
+    Attributes:
+        zoom (pitivi.utils.timeline.Zoomable): Zoom controller.
+        settings (pitivi.settings.GlobalSettings): The settings of the app.
+        style_context (Gtk.StyleContext): The style context for drawing.
+        _pipeline (pitivi.utils.pipeline.Pipeline): The pipeline of the project.
     """
 
-    def __init__(self, settings, hadj=None):
+    def __init__(self, zoom, settings, style_context):
         Gtk.DrawingArea.__init__(self)
         Loggable.__init__(self)
         self.log("Creating new ScaleRuler")
 
+        self.zoom = zoom
         self.settings = settings
+        self.style_context = style_context
         self._pipeline = None
         self.ges_timeline = None
-
-        if hadj:
-            hadj.connect("value-changed", self._hadj_value_changed_cb)
 
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK |
                         Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK |
@@ -110,11 +115,6 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
         self.pixbuf_offset_painted = 0
 
         self.position = 0  # In nanoseconds
-
-    def _hadj_value_changed_cb(self, hadj):
-        """Handles the adjustment value change."""
-        self.pixbuf_offset = hadj.get_value()
-        self.queue_draw()
 
 # Timeline position changed method
 
@@ -165,9 +165,8 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
         return False
 
     def do_draw(self, context):
-        print('Draw')
         if self.pixbuf is None:
-            self.info('No buffer to paint')
+            self.info("No buffer to paint")
             return False
 
         pixbuf = self.pixbuf
@@ -200,13 +199,9 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
         button = event.button
         if button == 3 or (button == 1 and self.settings.leftClickAlsoSeeks):
             self.debug("button released at x:%d", event.x)
-            self.clicked()
             position = self.pixel_to_ns(event.x + self.pixbuf_offset)
             self.__set_tooltip_text(position)
         return False
-
-    def clicked(self):
-        pass
 
     def do_motion_notify_event(self, event):
         if not self._pipeline:
@@ -241,8 +236,7 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
     def draw_background(self, context):
         width = context.get_target().get_width()
         height = context.get_target().get_height()
-        style_context = self.get_style_context()
-        Gtk.render_background(style_context, context, 0, 0, width, height)
+        Gtk.render_background(self.style_context, context, 0, 0, width, height)
 
     def draw_ruler(self, context):
         context.set_font_face(NORMAL_FONT)
@@ -258,14 +252,14 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
         # The longest timestamp we display is 0:00:00 because
         # when we display millis, they are displayed by themselves.
         min_interval_width = context.text_extents("0:00:00")[2] * 1.3
-        zoom = self._get_zoom()
+        zoomratio = self.zoom.zoomratio
         for interval_seconds, ticks in SCALES:
-            interval_width = interval_seconds * zoom
+            interval_width = interval_seconds * zoomratio
             if interval_width >= min_interval_width:
                 return interval_width, interval_seconds, ticks
         raise Exception(
             "Failed to find an interval size for textwidth:%s, zoom:%s" %
-            (min_interval_width, zoom))
+            (min_interval_width, zoomratio))
 
     def draw_ticks(self, context, offset, spacing, interval_seconds, ticks):
         for tick_interval, height_ratio in reversed(ticks):
@@ -297,7 +291,7 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
     def draw_times(self, context, offset, spacing, interval_seconds):
         # figure out what the optimal offset is
         interval = int(Gst.SECOND * interval_seconds)
-        current_time = self.pixel_to_ns(self.pixbuf_offset)
+        current_time = self.zoom.pixel_to_ns(self.pixbuf_offset)
         paintpos = TIMES_LEFT_MARGIN_PIXELS
         if offset > 0:
             current_time = current_time - (current_time % interval) + interval
@@ -350,18 +344,6 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
             if small:
                 context.set_font_size(NORMAL_FONT_SIZE)
 
-    def _get_zoom(self):
-        return 1
-
-    def ns_to_pixel(self, duration):
-        return int((float(duration) / Gst.SECOND) * self._get_zoom())
-
-    def pixel_to_ns(self, pixel):
-        return int(pixel * Gst.SECOND / self._get_zoom())
-
-    def zoom_changed(self):
-        pass
-
     def draw_frame_boundaries(self, context):
         """Draws the alternating rectangles that represent the project frames.
 
@@ -374,7 +356,7 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
             # Timeline not set yet
             return
 
-        frame_width = self.ns_to_pixel(self.ges_timeline.get_frame_time(1))
+        frame_width = self.zoom.ns_to_pixel(self.ges_timeline.get_frame_time(1))
         if frame_width < FRAME_MIN_WIDTH_PIXELS:
             return
 
@@ -382,11 +364,11 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
         height = context.get_target().get_height()
         y = int(height - FRAME_HEIGHT_PIXELS)
 
-        frame_num = self.ges_timeline.get_frame_at(self.pixel_to_ns(self.pixbuf_offset))
+        frame_num = self.ges_timeline.get_frame_at(self.zoom.pixel_to_ns(self.pixbuf_offset))
         paintpos = self.pixbuf_offset - offset
         max_pos = context.get_target().get_width() + self.pixbuf_offset
         while paintpos < max_pos:
-            paintpos = self.ns_to_pixel(self.ges_timeline.get_frame_time(frame_num))
+            paintpos = self.zoom.ns_to_pixel(self.ges_timeline.get_frame_time(frame_num))
             if frame_num % 2:
                 set_cairo_color(context, self._color_frame)
                 context.rectangle(
@@ -408,7 +390,7 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
 
         # Add 0.5 so that the line center is at the middle of the pixel,
         # without this the line appears blurry.
-        xpos = self.ns_to_pixel(self.position) - self.pixbuf_offset + 0.5
+        xpos = self.zoom.ns_to_pixel(self.position) - self.pixbuf_offset + 0.5
         set_cairo_color(context, PLAYHEAD_COLOR)
 
         context.set_line_width(PLAYHEAD_WIDTH)
@@ -426,34 +408,26 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
 
 
 class TimelineScaleRuler(ScaleRuler, Zoomable):
-    """Widget for displaying a ruler which is connected to a the timeline.
+    """Widget for displaying a ruler which is connected to a timeline.
 
     Attributes:
-        timeline (TimelineContainer): The timeline container used to handle
-            scroll events.
-        _pipeline (Pipeline): The pipeline of the project.
+        timeline_container (TimelineContainer): The timeline container for
+            handling scroll events.
     """
 
-    def __init__(self, timeline):
-        ScaleRuler.__init__(self, self.app.settings, timeline.timeline.hadj)
+    def __init__(self, timeline_container):
         Zoomable.__init__(self)
+        ScaleRuler.__init__(self, self, self.app.settings, self.app.gui.get_style_context())
         self.log("Creating new TimelineScaleRuler")
 
-        self.timeline = timeline
+        self.timeline_container = timeline_container
 
-# Overrides ScaleRuler
+        timeline_container.timeline.hadj.connect("value-changed", self._hadj_value_changed_cb)
 
-    def clicked(self):
-        self.app.gui.editor.focus_timeline()
-
-    def _get_zoom(self):
-        return Zoomable.zoomratio
-
-    def draw_background(self, context):
-        width = context.get_target().get_width()
-        height = context.get_target().get_height()
-        style_context = self.app.gui.get_style_context()
-        Gtk.render_background(style_context, context, 0, 0, width, height)
+    def _hadj_value_changed_cb(self, hadj):
+        """Handles the adjustment value change."""
+        self.pixbuf_offset = hadj.get_value()
+        self.queue_draw()
 
 # Zoomable interface override
 
@@ -463,4 +437,4 @@ class TimelineScaleRuler(ScaleRuler, Zoomable):
 # Gtk.Widget overrides
 
     def do_scroll_event(self, event):
-        self.timeline.timeline.do_scroll_event(event)
+        self.timeline_container.timeline.do_scroll_event(event)
