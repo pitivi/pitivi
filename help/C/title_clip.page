@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="trimming">
+  <info>
+    <link type="guide" xref="index#timeline"/>
+    <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
+    <credit type="author">
+      <name>Aaron Byington</name>
+      <email>aabyington4@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Matt Lowe</name>
+      <email>mattlowe13@huskers.unl.edu</email>
+    </credit>
+    <credit type="contributor">
+      <name>Michael Westberg</name>
+      <email>michael.westberg@huskers.unl.edu</email>
+    </credit>
+    <desc>
+      Creating a new title clip for a project.
+    </desc>
+  </info>
+  <title>Title Clips</title>
+  <p><em>Title Clips</em> are clips within a Pitivi project that allow the creator to add a simple clip containing text.</p>
+  <section id="creating">
+    <title>Creating Title Clips</title>
+    <p>To create a new title clip, first open a Pitivi project and go to <guiseq><gui>middle pane</gui><gui>Clip</gui></guiseq> while having no clip selected.</p>
+    <p>You can then click the "Create" button within this tab to create a new title clip.</p>
+    <p>The newly created title clip should appear in the top layer of the pitivi project, and can then be moved between layers as needed. Its duration and start time can also be altered like any other clip.</p>
+  </section>
+  <section id="editing">
+    <title>Editing Title Clips</title>
+    <p>To edit the title clip, go to <guiseq><gui>middle pane</gui><gui>Clip</gui><gui>Title</gui></guiseq>. Within this dropdown are various properties that you can edit to adjust the title clip:</p>
+    <list>
+      <item>
+        <p>Text: a text box at the top can be used to edit the title clip's text.</p>
+      </item>
+      <item>
+        <p>Font style and size: a button right below the text box on the left side can be used to edit the text's font style and size.</p>
+      </item>
+      <item>
+        <p>Text color: two buttons to the right of the font button can be used to select the clip's text color from a pre-existing color palette or using an eye-dropper tool.</p>
+      </item>
+      <item>
+        <p>Background color: two buttons to the right of the text color buttons can be used to select the clip's background color from a pre-existing color palette or using an eye-dropper tool.</p>
+      </item>
+      <item>
+        <p>Alignment: alignment settings at the bottom can be used to change the text's horizontal or vertical alignment and to change its position within the clip. Text can be snapped to the sides and center of the clip or be adjusted manually.</p>
+      </item>
+    </list>
+    <p>Changes can be viewed in real time in Pitivi's viewer to the right of the <gui>middle pane.</gui></p>
+  </section>
+</page>
