@@ -650,7 +650,8 @@ class EditorPerspective(Perspective, Loggable):
                 # or the startupwizard will still be connected to that signal
                 # too.
                 reason = _("No replacement file was provided for \"<i>%s</i>\".\n\n"
-                           "Pitivi does not currently support partial projects.") % info_name(asset)
+                           "Pitivi does not currently support partial projects.") % \
+                    info_name(asset)
                 project_manager.emit("new-project-failed", project.uri, reason)
 
         dialog.destroy()
@@ -778,10 +779,8 @@ class EditorPerspective(Perspective, Loggable):
         Returns:
             List[str]: The full path and the mimetype if successful, None otherwise.
         """
-        chooser = Gtk.FileChooserDialog(
-            title=_("Save As..."),
-            transient_for=self.app.gui,
-            action=Gtk.FileChooserAction.SAVE)
+        chooser = Gtk.FileChooserDialog(title=_("Save As..."),
+                                        transient_for=self.app.gui, action=Gtk.FileChooserAction.SAVE)
         chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                             _("Save"), Gtk.ResponseType.OK)
         chooser.set_default_response(Gtk.ResponseType.OK)

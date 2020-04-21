@@ -2091,6 +2091,7 @@ class ProjectSettingsDialog:
 
         self.sar = 0
         self.proxy_aspect_ratio = Gst.Fraction(1, 0)
+
         self._create_ui()
         self.window.set_transient_for(parent_window)
         self._setup_ui_constraints()
@@ -2345,9 +2346,9 @@ class ProjectSettingsDialog:
 
             self.project.audiochannels = get_combo_value(self.channels_combo)
             self.project.audiorate = get_combo_value(self.sample_rate_combo)
+
             proxy_width = int(self.scaled_proxy_width_spin.get_value())
             proxy_height = int(self.scaled_proxy_height_spin.get_value())
-
             # Update scaled proxy meta-data and trigger proxy regen
             if not self.project.has_scaled_proxy_size() or \
                     self.project.scaled_proxy_width != proxy_width or \
