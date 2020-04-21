@@ -27,8 +27,6 @@ from gi.repository import Gtk
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.pipeline import AssetPipeline
-from pitivi.utils.ui import BinWithNaturalWidth
-from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import TimeWidget
 from pitivi.utils.widgets import ToggleWidget
@@ -346,18 +344,16 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def __create_guidelines_popover(self):
         popover = Gtk.Popover()
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, margin=PADDING)
-        label = Gtk.Label(_("Composition Guidelines"))
-        label.props.wrap = True
-        box.pack_start(label, False, False, 0)
 
         grid = Gtk.Grid()
         grid.props.row_spacing = SPACING
-        grid.props.column_spacing = PADDING
-        grid.props.margin_left = SPACING
+        grid.props.column_spacing = SPACING
+        grid.props.margin_left = SPACING * 2
+        grid.props.margin_right = SPACING
         grid.props.margin_top = SPACING * 2
+        grid.props.margin_bottom = SPACING * 2
 
-        self.__setup_toggle_button(grid, Gtk.Label(_("Show Guidelines")),
+        self.__setup_toggle_button(grid, Gtk.Label(_("Composition Guidelines")),
                                    self.show_guidelines_toggle, self.__show_guidelines_toggle_cb, 0)
 
         grid.attach(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), 0, 1, 3, 1)
@@ -371,11 +367,8 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.__setup_toggle_button(grid, Gtk.Label(_("Diagonals")),
                                    self.diagonals_toggle, self.__diagonals_toggle_cb, 4)
 
-        box.pack_start(grid, False, False, 0)
-
-        wrapper_bin = BinWithNaturalWidth(box, width=225)
-        wrapper_bin.show_all()
-        popover.add(wrapper_bin)
+        grid.show_all()
+        popover.add(grid)
         return popover
 
     def __setup_toggle_button(self, grid, label, toggle_widget, callback, row):
