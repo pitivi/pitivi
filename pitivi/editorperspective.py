@@ -647,8 +647,7 @@ class EditorPerspective(Perspective, Loggable):
                 project_manager.close_running_project()
                 # Signal the project loading failure.
                 # You have to do this *after* successfully creating a blank project,
-                # or the startupwizard will still be connected to that signal
-                # too.
+                # or the startupwizard will still be connected to that signal too.
                 reason = _("No replacement file was provided for \"<i>%s</i>\".\n\n"
                            "Pitivi does not currently support partial projects.") % \
                     info_name(asset)
