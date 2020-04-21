@@ -1149,7 +1149,7 @@ class Project(Loggable, GES.Project):
 
     @property
     def title_safe_area_vertical(self):
-        return self.get_meta("title_safe_area_vertical")
+        return self.get_meta("pitivi::title_safe_area_vertical")
 
     @title_safe_area_vertical.setter
     def title_safe_area_vertical(self, percentage):
