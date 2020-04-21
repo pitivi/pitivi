@@ -387,11 +387,15 @@ class ViewerContainer(Gtk.Box, Loggable):
         grid.attach(toggle_widget, 1, row, 1, 1)
 
     def toggle_composition_guidelines_cb(self, unused_entry, unused_parameter):
-        self.show_guidelines_toggle.set_widget_value(not self.show_guidelines_toggle.get_widget_value())
-        self.__show_guidelines_toggle_cb(None)
+        state = not self.show_guidelines_toggle.get_widget_value()
+        self.show_guidelines_toggle.set_widget_value(state)
+        self.__toggle_composition_guidelines(state)
 
     def __show_guidelines_toggle_cb(self, unused_entry):
-        if self.show_guidelines_toggle.get_widget_value():
+        self.__toggle_composition_guidelines(self.show_guidelines_toggle.get_widget_value())
+
+    def __toggle_composition_guidelines(self, state):
+        if state:
             self.overlay_stack.composition_guidelines_overlay.show()
             for toggle in self.guidelines_toggles:
                 toggle.switch_button.set_sensitive(True)
