@@ -136,49 +136,8 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
         else:
             cr.set_source_rgb(0, 0, 0)
         self._draw_frame(cr)
-        # Draw the widget
-        # cr.move_to(180, 90)
-        # cr.line_to(180, 110)
-
-        # cr.move_to(180, 210)
-        # cr.line_to(180, 230)
-
-        # cr.move_to(90, 160)
-        # cr.line_to(110, 160)
-
-        # cr.move_to(250, 160)
-        # cr.line_to(270, 160)
-
-        # cr.move_to(100, 100)
-        # cr.line_to(100, 60)
-
-        # cr.move_to(100, 100)
-        # cr.line_to(60, 100)
-
-        # cr.move_to(100, 220)
-        # cr.line_to(100, 260)
-
-        # cr.move_to(100, 220)
-        # cr.line_to(60, 220)
-
-        # cr.move_to(260, 100)
-        # cr.line_to(260, 60)
-
-        # cr.move_to(260, 100)
-        # cr.line_to(300, 100)
-
-        # cr.move_to(260, 220)
-        # cr.line_to(300, 220)
-
-        # cr.move_to(260, 220)
-        # cr.line_to(260, 260)
-
-        # x = 100
-        # y = 100
-        # w = 160
-        # h = 120
-        # self.__draw_rectangle(cr, x, y, w, h)
         cr.stroke()
+
         # Highlight the box that the cursor is hovering over
         current_box, x, y = self.get_cursor_positons()
         if current_box is not None:
