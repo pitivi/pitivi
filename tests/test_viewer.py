@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-# Copyright (c) 2014, Alex Băluț <alexandru.balut@gmail.com>
+# Copyright (c) 2020, Jaden Goter <jadengoter@huskers.unl.edu>
+# Copyright (c) 2020, Jessie Guo <jessie.guo@huskers.unl.edu>,
+# Copyright (c) 2020, Daniel Rudebusch <daniel.rudebusch@huskers.unl.edu>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public

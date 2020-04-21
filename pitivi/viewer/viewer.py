@@ -357,18 +357,18 @@ class ViewerContainer(Gtk.Box, Loggable):
         grid.props.margin_left = SPACING
         grid.props.margin_top = SPACING * 2
 
-        self.__setup_toggle_button(grid, Gtk.Label("Show Guidelines"),
+        self.__setup_toggle_button(grid, Gtk.Label(_("Show Guidelines")),
                                    self.show_guidelines_toggle, self.__show_guidelines_toggle_cb, 0)
 
         grid.attach(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), 0, 1, 3, 1)
 
-        self.__setup_toggle_button(grid, Gtk.Label("3 x 3"),
+        self.__setup_toggle_button(grid, Gtk.Label(_("3 by 3")),
                                    self.three_by_three_toggle, self.__three_by_three_toggle_cb, 2)
 
-        self.__setup_toggle_button(grid, Gtk.Label("Vertical/Horizontal"),
+        self.__setup_toggle_button(grid, Gtk.Label(_("Vertical/Horizontal")),
                                    self.vert_horiz_center_toggle, self.__vert_horiz_center_toggle_cb, 3)
 
-        self.__setup_toggle_button(grid, Gtk.Label("Diagonals"),
+        self.__setup_toggle_button(grid, Gtk.Label(_("Diagonals")),
                                    self.diagonals_toggle, self.__diagonals_toggle_cb, 4)
 
         box.pack_start(grid, False, False, 0)
