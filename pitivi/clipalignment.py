@@ -77,8 +77,8 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
         self._mouse_x = 0
         self._mouse_y = 0
 
-        self.connect("button-release-event", self._button_release_event_cb)
-        self.connect("motion-notify-event", self._motion_notify_event_cb)
+        self.connect('button-release-event', self._button_release_event_cb)
+        self.connect('motion-notify-event', self._motion_notify_event_cb)
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK)
 
         self.app.project_manager.connect_after(
@@ -90,7 +90,7 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
             self._selection = None
         if project:
             self._selection = project.ges_timeline.ui.selection
-            self._selection.connect("selection-changed", self._selection_changed_cb)
+            self._selection.connect('selection-changed', self._selection_changed_cb)
         self._project = project
 
     def _get_clip_position(self):
@@ -98,18 +98,22 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
         y = self.source.get_child_property("posy").value
         return x, y
 
-    def _get_clip_size(self):
+    def _get_clip_width_height(self):
         width = self.source.get_child_property("width").value
         height = self.source.get_child_property("height").value
         return width, height
 
     def _set_clip_position(self, new_x, new_y):
+        # Set the posx of the clip
         self.source.set_child_property("posx", new_x)
+        # Set the posy of the clip
         self.source.set_child_property("posy", new_y)
 
-    def _set_clip_size(self, width, height):
-        self.source.set_child_property("width", width)
-        self.source.set_child_property("height", height)
+    def _set_clip_width_height(self, new_width, new_height):
+        # Set the new width of the clip
+        self.source.set_child_property("width", new_width)
+        # Set the new height of the clip
+        self.source.set_child_property("height", new_height)
 
     def __draw_rectangle(self, cr, x, y, w, h):
         cr.rectangle(x, y, w, h)
@@ -240,9 +244,8 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
         if self.source:
             self.source.connect("deep-notify", self.__source_property_changed_cb)
 
-    def __source_property_changed_cb(self, source, unused_element, param):
-        if source is GES.VideoSource:
-            self._set_object_values()
+    def __source_property_changed_cb(self, unused_source, unused_element, param):
+        self._set_object_values()
 
     def _selection_changed_cb(self, unused_timeline):
         if len(self._selection) == 1:
