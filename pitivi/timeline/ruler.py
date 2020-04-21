@@ -165,6 +165,7 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
         return False
 
     def do_draw(self, context):
+        print('Draw')
         if self.pixbuf is None:
             self.info('No buffer to paint')
             return False
@@ -447,6 +448,12 @@ class TimelineScaleRuler(ScaleRuler, Zoomable):
 
     def _get_zoom(self):
         return Zoomable.zoomratio
+
+    def draw_background(self, context):
+        width = context.get_target().get_width()
+        height = context.get_target().get_height()
+        style_context = self.app.gui.get_style_context()
+        Gtk.render_background(style_context, context, 0, 0, width, height)
 
 # Zoomable interface override
 
