@@ -38,7 +38,6 @@ from pitivi.settings import GlobalSettings
 from pitivi.tabsmanager import BaseTabs
 from pitivi.timeline.previewers import ThumbnailCache
 from pitivi.timeline.timeline import TimelineContainer
-from pitivi.titleeditor import TitleEditor
 from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import path_from_uri
@@ -208,13 +207,10 @@ class EditorPerspective(Perspective, Loggable):
         self.context_tabs = BaseTabs(self.app)
         self.clipconfig = ClipProperties(self.app)
         self.trans_list = TransitionsListWidget(self.app)
-        self.title_editor = TitleEditor(self.app)
         self.context_tabs.append_page("Clip",
                                       self.clipconfig, Gtk.Label(label=_("Clip")))
         self.context_tabs.append_page("Transition",
                                       self.trans_list, Gtk.Label(label=_("Transition")))
-        self.context_tabs.append_page("Title",
-                                      self.title_editor.widget, Gtk.Label(label=_("Title")))
         # Show by default the Title tab, as the Clip and Transition tabs
         # are useful only when a clip or transition is selected, but
         # the Title tab allows adding titles.
@@ -282,7 +278,7 @@ class EditorPerspective(Perspective, Loggable):
             ges_clip (GES.SourceClip): The clip which has been focused.
         """
         if isinstance(ges_clip, GES.TitleClip):
-            page = 2
+            page = 0
         elif isinstance(ges_clip, GES.SourceClip):
             page = 0
         elif isinstance(ges_clip, GES.TransitionClip):

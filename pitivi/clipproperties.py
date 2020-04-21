@@ -22,10 +22,12 @@ from gettext import gettext as _
 from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gio
+from gi.repository import Gst
 from gi.repository import GstController
 from gi.repository import Gtk
 from gi.repository import Pango
 
+from pitivi.clip_properties.title import TitleProperties
 from pitivi.configure import get_ui_dir
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
@@ -34,6 +36,7 @@ from pitivi.utils.custom_effect_widgets import setup_custom_effect_widgets
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.pipeline import PipelineError
+from pitivi.utils.timeline import SELECT
 from pitivi.utils.ui import disable_scroll
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.ui import fix_infobar
@@ -46,6 +49,12 @@ from pitivi.utils.ui import SPACING
  COL_NAME_TEXT,
  COL_DESC_TEXT,
  COL_TRACK_EFFECT) = list(range(6))
+
+FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White
+BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
+DEFAULT_FONT_DESCRIPTION = "Sans 36"
+DEFAULT_VALIGNMENT = "absolute"
+DEFAULT_HALIGNMENT = "absolute"
 
 
 class ClipProperties(Gtk.ScrolledWindow, Loggable):
@@ -71,29 +80,94 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         vbox.show()
         viewport.add(vbox)
 
-        self.infobar_box = Gtk.Box()
-        self.infobar_box.set_orientation(Gtk.Orientation.VERTICAL)
-        self.infobar_box.show()
-        vbox.pack_start(self.infobar_box, False, False, 0)
+        self.clips_box = Gtk.Box()
+        self.clips_box.set_orientation(Gtk.Orientation.VERTICAL)
+        self.clips_box.show()
+        vbox.pack_start(self.clips_box, False, False, 0)
 
         transformation_expander = TransformationProperties(app)
         transformation_expander.set_vexpand(False)
         vbox.pack_start(transformation_expander, False, False, 0)
 
+        self.title_expander = TitleProperties(app)
+        self.title_expander.set_vexpand(False)
+        vbox.pack_start(self.title_expander, False, False, 0)
+
         self.effect_expander = EffectProperties(app, self)
         self.effect_expander.set_vexpand(False)
         vbox.pack_start(self.effect_expander, False, False, 0)
+        self._project = None
+        self._selection = None
+        self.app.project_manager.connect_after(
+            "new-project-loaded", self.new_project_loaded_cb)
+        self.app.project_manager.connect_after(
+            "project-closed", self.__project_closed_cb)
 
-    def create_info_bar(self, text):
-        """Creates an infobar to be displayed at the top."""
-        label = Gtk.Label(label=text)
+    def create_clips_box(self):
+        """Creates the widgets to display when no clip is selected."""
+        box = Gtk.Grid()
+        box.insert_row(0)
+        box.insert_row(1)
+        box.insert_column(0)
+        box.insert_column(1)
+        label = Gtk.Label(label=_("Select a clip on the timeline to configure its properties and effects or create a new clip:"))
         label.set_line_wrap(True)
-        infobar = Gtk.InfoBar()
-        fix_infobar(infobar)
-        infobar.props.message_type = Gtk.MessageType.OTHER
-        infobar.get_content_area().add(label)
-        self.infobar_box.pack_start(infobar, False, False, 0)
-        return infobar
+        label.set_xalign(0)
+        box.attach(label, 0, 0, 2, 1)
+        title_label = Gtk.Label(label=_("Create a title clip:"))
+        title_label.set_line_wrap(True)
+        title_label.set_xalign(0)
+        box.attach(title_label, 0, 1, 1, 1)
+        title_clip_button = Gtk.Button()
+        title_clip_button.set_label(_("Title"))
+        title_clip_button.connect("clicked", self.create_cb)
+        box.attach(title_clip_button, 2, 1, 1, 1)
+        self.clips_box.pack_start(box, False, False, 0)
+        return box
+
+    def create_cb(self, unused_button):
+        title_clip = GES.TitleClip()
+        duration = self.app.settings.titleClipLength * Gst.MSECOND
+        title_clip.set_duration(duration)
+        with self.app.action_log.started("add title clip", toplevel=True):
+            self.app.gui.editor.timeline_ui.insert_clips_on_first_layer([
+                title_clip])
+            # Now that the clip is inserted in the timeline, it has a source which
+            # can be used to set its properties.
+            source = title_clip.get_children(False)[0]
+            properties = {"text": "",
+                          "foreground-color": BACKGROUND_DEFAULT_COLOR,
+                          "color": FOREGROUND_DEFAULT_COLOR,
+                          "font-desc": DEFAULT_FONT_DESCRIPTION,
+                          "valignment": DEFAULT_VALIGNMENT,
+                          "halignment": DEFAULT_HALIGNMENT}
+            for prop, value in properties.items():
+                res = source.set_child_property(prop, value)
+                assert res, prop
+        self._selection.set_selection([title_clip], SELECT)
+
+    def new_project_loaded_cb(self, unused_project_manager, project):
+        if self._selection is not None:
+            self._selection.disconnect_by_func(self._selection_changed_cb)
+            self._selection = None
+        if project:
+            self._selection = project.ges_timeline.ui.selection
+            self._selection.connect('selection-changed', self._selection_changed_cb)
+        self._project = project
+
+    def _selection_changed_cb(self, selection):
+        selected_clip = selection.get_single_clip(GES.TitleClip)
+        source = None
+        if selected_clip:
+            for child in selected_clip.get_children(False):
+                if isinstance(child, GES.TitleSource):
+                    source = child
+                    TitleProperties.set_source(self, source)
+                    break
+        TitleProperties.set_source(self, source)
+
+    def __project_closed_cb(self, unused_project_manager, unused_project):
+        self._project = None
 
 
 class EffectProperties(Gtk.Expander, Loggable):
@@ -124,10 +198,10 @@ class EffectProperties(Gtk.Expander, Loggable):
         no_effect_label = Gtk.Label(
             _("To apply an effect to the clip, drag it from the Effect Library."))
         no_effect_label.set_line_wrap(True)
-        self.no_effect_infobar = Gtk.InfoBar()
-        fix_infobar(self.no_effect_infobar)
-        self.no_effect_infobar.props.message_type = Gtk.MessageType.OTHER
-        self.no_effect_infobar.get_content_area().add(no_effect_label)
+        self.no_effect_clips_box = Gtk.InfoBar()
+        fix_infobar(self.no_effect_clips_box)
+        self.no_effect_clips_box.props.message_type = Gtk.MessageType.OTHER
+        self.no_effect_clips_box.get_content_area().add(no_effect_label)
 
         # The toolbar that will go between the list of effects and properties
         buttons_box = Gtk.ButtonBox()
@@ -215,9 +289,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview_selection = self.treeview.get_selection()
         self.treeview_selection.set_mode(Gtk.SelectionMode.SINGLE)
 
-        self._infobar = clip_properties.create_info_bar(
-            _("Select a clip on the timeline to configure its associated effects"))
-        self._infobar.show_all()
+        self._clip_box = clip_properties.create_clips_box()
+        self._clip_box.show_all()
 
         # Prepare the main container widgets and lay out everything
         self._expander_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -345,7 +418,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         """Highlights some widgets to indicate it can receive drag&drop."""
         self.debug(
             "Something is being dragged in the clip properties' effects list")
-        self.no_effect_infobar.drag_highlight()
+        self.no_effect_clips_box.drag_highlight()
         # It would be nicer to highlight only the treeview, but
         # it does not seem to have a visible effect.
         self._vbox.drag_highlight()
@@ -354,7 +427,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         """Unhighlights the widgets which can receive drag&drop."""
         self.debug(
             "The item being dragged has left the clip properties' effects list")
-        self.no_effect_infobar.drag_unhighlight()
+        self.no_effect_clips_box.drag_unhighlight()
         self._vbox.drag_unhighlight()
 
     def _drag_data_received_cb(self, widget, drag_context, x, y, selection_data, unused_info, timestamp):
@@ -480,7 +553,7 @@ class EffectProperties(Gtk.Expander, Loggable):
     def __update_all(self, path=None):
         if self.clip:
             self.show()
-            self._infobar.hide()
+            self._clip_box.hide()
             self._update_treeview()
             if path:
                 self.treeview_selection.select_path(path)
@@ -488,7 +561,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             self.hide()
             self.__remove_configuration_widget()
             self.storemodel.clear()
-            self._infobar.show()
+            self._clip_box.show()
 
     def _update_treeview(self):
         self.storemodel.clear()
@@ -508,7 +581,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             to_append.append(effect)
             self.storemodel.append(to_append)
         has_effects = len(self.storemodel) > 0
-        self.no_effect_infobar.set_visible(not has_effects)
+        self.no_effect_clips_box.set_visible(not has_effects)
         self._vbox.set_visible(has_effects)
 
     def _treeview_selection_changed_cb(self, unused_treeview):
