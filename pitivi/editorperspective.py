@@ -24,6 +24,7 @@ from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import Gtk
 
+from pitivi.clipalignment import AlignmentEditor
 from pitivi.clipproperties import ClipProperties
 from pitivi.configure import APPNAME
 from pitivi.configure import get_ui_dir
@@ -209,12 +210,15 @@ class EditorPerspective(Perspective, Loggable):
         self.clipconfig = ClipProperties(self.app)
         self.trans_list = TransitionsListWidget(self.app)
         self.title_editor = TitleEditor(self.app)
+        self.alignment_editor = AlignmentEditor(self.app)
         self.context_tabs.append_page("Clip",
                                       self.clipconfig, Gtk.Label(label=_("Clip")))
         self.context_tabs.append_page("Transition",
                                       self.trans_list, Gtk.Label(label=_("Transition")))
         self.context_tabs.append_page("Title",
                                       self.title_editor.widget, Gtk.Label(label=_("Title")))
+        self.context_tabs.append_page("Alignment",
+                                      self.alignment_editor, Gtk.Label(label=_("Alignment")))
         # Show by default the Title tab, as the Clip and Transition tabs
         # are useful only when a clip or transition is selected, but
         # the Title tab allows adding titles.
