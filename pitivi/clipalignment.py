@@ -129,46 +129,49 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
     def _motion_notify_event_cb(self, widget, event):
         self._mouse_x = event.x
         self._mouse_y = event.y
+        # print(event.x, event.y)
         self.queue_draw()
 
     def do_draw(self, cr):
+        width = self.get_allocated_width()
+        height = self.get_allocated_height()
         # Determine what color to draw widget depending on Pitivi theme
         if self.app.settings.useDarkTheme:
             cr.set_source_rgb(1, 1, 1)
         else:
             cr.set_source_rgb(0, 0, 0)
-        self._draw_frame(cr)
+        self._draw_frame(cr, width, height)
         cr.stroke()
 
         # Highlight the box that the cursor is hovering over
         current_box, x, y = self.get_cursor_positons()
         if current_box is not None:
-            self.__draw_rectangle(cr, x, y, 80, 60)
+            self.__draw_rectangle(cr, x, y, width / 4, height / 4)
             cr.set_source_rgb(1, 0.1, 0)
             cr.fill()
             cr.stroke()
 
-    def _draw_frame(self, cr):
-        width = self.get_allocated_width()
-        height = self.get_allocated_height()
+    def _draw_frame(self, cr, width, height):
+        print('draw ', height)
         self.set_margin_start(width * 0.1)
         self.set_margin_end(width * 0.1)
         self.set_margin_top(height * 0.1)
         self.set_margin_bottom(height * 0.1)
         # How far the line should be displaced from the edge of the widget
-        line_offset = width * (1 / 7)
+        line_offset_x = width * 0.25
+        line_offset_y = height * 0.25
 
-        cr.move_to(0, line_offset)
-        cr.line_to(width - 0, line_offset)
+        cr.move_to(0, line_offset_y)
+        cr.line_to(width - 0, line_offset_y)
 
-        cr.move_to(0, height - line_offset)
-        cr.line_to(width - 0, height - line_offset)
+        cr.move_to(0, height - line_offset_y)
+        cr.line_to(width - 0, height - line_offset_y)
 
-        cr.move_to(line_offset, 0)
-        cr.line_to(line_offset, height - 0)
+        cr.move_to(line_offset_x, 0)
+        cr.line_to(line_offset_x, height - 0)
 
-        cr.move_to(width - line_offset, 0)
-        cr.line_to(width - line_offset, height - 0)
+        cr.move_to(width - line_offset_x, 0)
+        cr.line_to(width - line_offset_x, height - 0)
 
         cr.stroke()
 
@@ -180,60 +183,118 @@ class AlignmentEditor(Gtk.EventBox, Loggable):
         2) x - x axis point for top left of rectangle to be drawn.
         3) y - y axis point for top left of rectangle to be drawn.
         """
-        if 20 < self._mouse_x <= 100 and 60 < self._mouse_y <= 99:
-            return Position.TOP_LEFT_CORNER_OUT, 20, 40
-        if 20 < self._mouse_x <= 100 < self._mouse_y <= 140:
-            return Position.LEFT_TOP_OUT, 20, 100
-        if 20 < self._mouse_x <= 100 and 141 < self._mouse_y <= 181:
-            return Position.LEFT_CENTER_OUT, 20, 130
-        if 20 < self._mouse_x <= 100 and 182 < self._mouse_y <= 221:
-            return Position.LEFT_BOTTOM_OUT, 20, 160
-        if 20 < self._mouse_x <= 100 and 221 < self._mouse_y <= 280:
-            return Position.BOTTOM_LEFT_CORNER_OUT, 20, 220
-
-        if 100 < self._mouse_x <= 153 and 60 < self._mouse_y <= 99:
-            return Position.TOP_LEFT_OUT, 100, 40
-        if 100 < self._mouse_x <= 153 and 100 < self._mouse_y <= 140:
-            return Position.TOP_LEFT, 100, 100
-        if 100 < self._mouse_x <= 153 and 141 < self._mouse_y <= 181:
-            return Position.LEFT_CENTER, 100, 130
-        if 100 < self._mouse_x <= 153 and 182 < self._mouse_y <= 221:
-            return Position.BOTTOM_LEFT, 100, 160
-        if 100 < self._mouse_x <= 153 and 221 < self._mouse_y <= 280:
-            return Position.BOTTOM_LEFT_OUT, 100, 220
-
-        if 154 < self._mouse_x <= 204 and 60 < self._mouse_y <= 99:
-            return Position.TOP_CENTER_OUT, 140, 40
-        if 154 < self._mouse_x <= 204 and 100 < self._mouse_y <= 140:
-            return Position.TOP_CENTER, 140, 100
-        if 154 < self._mouse_x <= 204 and 141 < self._mouse_y <= 181:
-            return Position.CENTER, 140, 130
-        if 154 < self._mouse_x <= 204 and 182 < self._mouse_y <= 221:
-            return Position.BOTTOM_CENTER, 140, 160
-        if 154 < self._mouse_x <= 204 and 221 < self._mouse_y <= 280:
-            return Position.BOTTOM_CENTER_OUT, 140, 220
-
-        if 205 < self._mouse_x <= 260 and 60 < self._mouse_y <= 99:
-            return Position.TOP_RIGHT_OUT, 180, 40
-        if 205 < self._mouse_x <= 260 and 100 < self._mouse_y <= 140:
-            return Position.TOP_RIGHT, 180, 100
-        if 205 < self._mouse_x <= 260 and 141 < self._mouse_y <= 181:
-            return Position.RIGHT_CENTER, 180, 130
-        if 205 < self._mouse_x <= 260 and 182 < self._mouse_y <= 221:
-            return Position.BOTTOM_RIGHT, 180, 160
-        if 205 < self._mouse_x <= 260 and 221 < self._mouse_y <= 280:
-            return Position.BOTTOM_RIGHT_OUT, 180, 220
-
-        if 261 < self._mouse_x <= 320 and 60 < self._mouse_y <= 99:
-            return Position.TOP_RIGHT_CORNER_OUT, 261, 40
-        if 261 < self._mouse_x <= 320 and 100 < self._mouse_y <= 140:
-            return Position.RIGHT_TOP_OUT, 261, 100
-        if 261 < self._mouse_x <= 320 and 141 < self._mouse_y <= 181:
-            return Position.RIGHT_CENTER_OUT, 261, 130
-        if 261 < self._mouse_x <= 320 and 182 < self._mouse_y <= 221:
-            return Position.RIGHT_BOTTOM_OUT, 261, 160
-        if 261 < self._mouse_x <= 320 and 221 < self._mouse_y <= 280:
-            return Position.BOTTOM_RIGHT_CORNER_OUT, 261, 220
+        width = self.get_allocated_width()
+        height = self.get_allocated_height()
+        print(height)
+        # Sizes of selection areas that the mouse will hover over
+        selection_width = width / 7
+        selection_height = height / 7
+        box_size = (width / 4, height / 4)   # Size of box that will be drawn
+        # Column 0
+        if 0 < self._mouse_x <= selection_width and 0 < self._mouse_y <= selection_height:
+            return (0, 0), 0, 0
+        if 0 < self._mouse_x <= selection_width and selection_height < self._mouse_y <= selection_height * 2:
+            return (0, 1), 0, box_size[1] / 2
+        if 0 < self._mouse_x <= selection_width and selection_height * 2 < self._mouse_y <= selection_height * 3:
+            return (0, 2), 0, box_size[1]
+        if 0 < self._mouse_x <= selection_width and selection_height * 3 < self._mouse_y <= selection_height * 4:
+            return (0, 3), 0, box_size[1] * 1.5
+        if 0 < self._mouse_x <= selection_width and selection_height * 4 < self._mouse_y <= selection_height * 5:
+            return (0, 4), 0, box_size[1] * 2
+        if 0 < self._mouse_x <= selection_width and selection_height * 5 < self._mouse_y <= selection_height * 6:
+            return (0, 5), 0, box_size[1] * 2.5
+        if 0 < self._mouse_x <= selection_width and selection_height * 6 < self._mouse_y <= selection_height * 7:
+            return (0, 6), 0, box_size[1] * 3
+        # Column 1
+        if selection_width < self._mouse_x <= selection_width * 2 and 0 < self._mouse_y <= selection_height:
+            return (1, 0), box_size[0] / 2, 0
+        if selection_width < self._mouse_x <= selection_width * 2 and selection_height < self._mouse_y <= selection_height * 2:
+            return (1, 1), box_size[0] / 2, box_size[1] / 2
+        if selection_width < self._mouse_x <= selection_width * 2 and selection_height * 2 < self._mouse_y <= selection_height * 3:
+            return (1, 2), box_size[0] / 2, box_size[1]
+        if selection_width < self._mouse_x <= selection_width * 2 and selection_height * 3 < self._mouse_y <= selection_height * 4:
+            return (1, 3), box_size[0] / 2, box_size[1] * 1.5
+        if selection_width < self._mouse_x <= selection_width * 2 and selection_height * 4 < self._mouse_y <= selection_height * 5:
+            return (1, 4), box_size[0] / 2, box_size[1] * 2
+        if selection_width < self._mouse_x <= selection_width * 2 and selection_height * 5 < self._mouse_y <= selection_height * 6:
+            return (1, 5), box_size[0] / 2, box_size[1] * 2.5
+        if selection_width < self._mouse_x <= selection_width * 2 and selection_height * 6 < self._mouse_y <= selection_height * 7:
+            return (1, 6), box_size[0] / 2, box_size[1] * 3
+        # Column 2
+        if selection_width * 2 < self._mouse_x <= selection_width * 3 and 0 < self._mouse_y <= selection_height:
+            return (2, 0), box_size[0], 0
+        if selection_width * 2 < self._mouse_x <= selection_width * 3 and selection_height < self._mouse_y <= selection_height * 2:
+            return (2, 1), box_size[0], box_size[1] / 2
+        if selection_width * 2 < self._mouse_x <= selection_width * 3 and selection_height * 2 < self._mouse_y <= selection_height * 3:
+            return (2, 2), box_size[0], box_size[1]
+        if selection_width * 2 < self._mouse_x <= selection_width * 3 and selection_height * 3 < self._mouse_y <= selection_height * 4:
+            return (2, 3), box_size[0], box_size[1] * 1.5
+        if selection_width * 2 < self._mouse_x <= selection_width * 3 and selection_height * 4 < self._mouse_y <= selection_height * 5:
+            return (2, 4), box_size[0], box_size[1] * 2
+        if selection_width * 2 < self._mouse_x <= selection_width * 3 and selection_height * 5 < self._mouse_y <= selection_height * 6:
+            return (2, 5), box_size[0], box_size[1] * 2.5
+        if selection_width * 2 < self._mouse_x <= selection_width * 3 and selection_height * 6 < self._mouse_y <= selection_height * 7:
+            return (2, 6), box_size[0], box_size[1] * 3
+        # Column 3
+        if selection_width * 3 < self._mouse_x <= selection_width * 4 and 0 < self._mouse_y <= selection_height:
+            return (3, 0), box_size[0] * 1.5, 0
+        if selection_width * 3 < self._mouse_x <= selection_width * 4 and selection_height < self._mouse_y <= selection_height * 2:
+            return (3, 1), box_size[0] * 1.5, box_size[1] / 2
+        if selection_width * 3 < self._mouse_x <= selection_width * 4 and selection_height * 2 < self._mouse_y <= selection_height * 3:
+            return (3, 2), box_size[0] * 1.5, box_size[1]
+        if selection_width * 3 < self._mouse_x <= selection_width * 4 and selection_height * 3 < self._mouse_y <= selection_height * 4:
+            return (3, 3), box_size[0] * 1.5, box_size[1] * 1.5
+        if selection_width * 3 < self._mouse_x <= selection_width * 4 and selection_height * 4 < self._mouse_y <= selection_height * 5:
+            return (3, 4), box_size[0] * 1.5, box_size[1] * 2
+        if selection_width * 3 < self._mouse_x <= selection_width * 4 and selection_height * 5 < self._mouse_y <= selection_height * 6:
+            return (3, 5), box_size[0] * 1.5, box_size[1] * 2.5
+        if selection_width * 3 < self._mouse_x <= selection_width * 4 and selection_height * 6 < self._mouse_y <= selection_height * 7:
+            return (3, 6), box_size[0] * 1.5, box_size[1] * 3
+        # Column 4
+        if selection_width * 4 < self._mouse_x <= selection_width * 5 and 0 < self._mouse_y <= selection_height:
+            return (4, 0), box_size[0] * 2, 0
+        if selection_width * 4 < self._mouse_x <= selection_width * 5 and selection_height < self._mouse_y <= selection_height * 2:
+            return (4, 1), box_size[0] * 2, box_size[1] / 2
+        if selection_width * 4 < self._mouse_x <= selection_width * 5 and selection_height * 2 < self._mouse_y <= selection_height * 3:
+            return (4, 2), box_size[0] * 2, box_size[1]
+        if selection_width * 4 < self._mouse_x <= selection_width * 5 and selection_height * 3 < self._mouse_y <= selection_height * 4:
+            return (4, 3), box_size[0] * 2, box_size[1] * 1.5
+        if selection_width * 4 < self._mouse_x <= selection_width * 5 and selection_height * 4 < self._mouse_y <= selection_height * 5:
+            return (4, 4), box_size[0] * 2, box_size[1] * 2
+        if selection_width * 4 < self._mouse_x <= selection_width * 5 and selection_height * 5 < self._mouse_y <= selection_height * 6:
+            return (4, 5), box_size[0] * 2, box_size[1] * 2.5
+        if selection_width * 4 < self._mouse_x <= selection_width * 5 and selection_height * 6 < self._mouse_y <= selection_height * 7:
+            return (4, 6), box_size[0] * 2, box_size[1] * 3
+        # Column 5
+        if selection_width * 5 < self._mouse_x <= selection_width * 6 and 0 < self._mouse_y <= selection_height:
+            return (5, 0), box_size[0] * 2.5, 0
+        if selection_width * 5 < self._mouse_x <= selection_width * 6 and selection_height < self._mouse_y <= selection_height * 2:
+            return (5, 1), box_size[0] * 2.5, box_size[1] / 2
+        if selection_width * 5 < self._mouse_x <= selection_width * 6 and selection_height * 2 < self._mouse_y <= selection_height * 3:
+            return (5, 2), box_size[0] * 2.5, box_size[1]
+        if selection_width * 5 < self._mouse_x <= selection_width * 6 and selection_height * 3 < self._mouse_y <= selection_height * 4:
+            return (5, 3), box_size[0] * 2.5, box_size[1] * 1.5
+        if selection_width * 5 < self._mouse_x <= selection_width * 6 and selection_height * 4 < self._mouse_y <= selection_height * 5:
+            return (5, 4), box_size[0] * 2.5, box_size[1] * 2
+        if selection_width * 5 < self._mouse_x <= selection_width * 6 and selection_height * 5 < self._mouse_y <= selection_height * 6:
+            return (5, 5), box_size[0] * 2.5, box_size[1] * 2.5
+        if selection_width * 5 < self._mouse_x <= selection_width * 6 and selection_height * 6 < self._mouse_y <= selection_height * 7:
+            return (5, 6), box_size[0] * 2.5, box_size[1] * 3
+        # Column 6
+        if selection_width * 6 < self._mouse_x <= selection_width * 7 and 0 < self._mouse_y <= selection_height:
+            return (6, 0), box_size[0] * 3, 0
+        if selection_width * 6 < self._mouse_x <= selection_width * 7 and selection_height < self._mouse_y <= selection_height * 2:
+            return (6, 1), box_size[0] * 3, box_size[1] / 2
+        if selection_width * 6 < self._mouse_x <= selection_width * 7 and selection_height * 2 < self._mouse_y <= selection_height * 3:
+            return (6, 2), box_size[0] * 3, box_size[1]
+        if selection_width * 6 < self._mouse_x <= selection_width * 7 and selection_height * 3 < self._mouse_y <= selection_height * 4:
+            return (6, 3), box_size[0] * 3, box_size[1] * 1.5
+        if selection_width * 6 < self._mouse_x <= selection_width * 7 and selection_height * 4 < self._mouse_y <= selection_height * 5:
+            return (6, 4), box_size[0] * 3, box_size[1] * 2
+        if selection_width * 6 < self._mouse_x <= selection_width * 7 and selection_height * 5 < self._mouse_y <= selection_height * 6:
+            return (6, 5), box_size[0] * 3, box_size[1] * 2.5
+        if selection_width * 6 < self._mouse_x <= selection_width * 7 and selection_height * 6 < self._mouse_y <= selection_height * 7:
+            return (6, 6), box_size[0] * 3, box_size[1] * 3
 
         return None, 0, 0
 
