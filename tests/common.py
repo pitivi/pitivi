@@ -36,6 +36,7 @@ from gi.repository import Gtk
 
 from pitivi.application import Pitivi
 from pitivi.project import ProjectManager
+from pitivi.settings import EditorState
 from pitivi.settings import GlobalSettings
 from pitivi.timeline.previewers import Previewer
 from pitivi.timeline.previewers import PreviewGeneratorManager
@@ -89,6 +90,7 @@ def create_pitivi_mock(**settings):
     app = mock.MagicMock()
     app.write_action = mock.MagicMock(spec=Pitivi.write_action)
     app.settings = __create_settings(**settings)
+    app.gui.editor.editor_state = EditorState(app)
     app.proxy_manager = ProxyManager(app)
 
     # TODO: Get rid of Zoomable.app.
@@ -108,6 +110,7 @@ def create_pitivi(**settings):
     app._setup()
     app.gui = mock.Mock()
     app.settings = __create_settings(**settings)
+    app.gui.editor.editor_state = EditorState(app)
     return app
 
 
