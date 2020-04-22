@@ -35,7 +35,7 @@
       <p>Primary tabs: media library and effects library</p>
     </item>
     <item>
-      <p>Contextual tabs: clip properties, transitions, titles</p>
+      <p>Contextual tabs: clip properties, transitions, titles, alignment (not pictured)</p>
     </item>
     <item>
       <p>Viewer</p>
@@ -162,6 +162,6 @@
   </section>
   <section id="middle">
     <title>Middle pane</title>
-    <p>The middle pane contains <gui>Clip configuration</gui>, <gui>Transitions</gui> and <gui>Title editor</gui>. You can switch between them by selecting the appropriate tab. The <gui>Clip configuration</gui> allows you to activate, deactivate or configure settings of effects applied to a selected clip. <gui>Transitions</gui> let you pick and configure the transition type when two clips overlap in the timeline. With <gui>Title editor</gui> you can create new clips with titles or add titles to existing ones.</p>
+    <p>The middle pane contains <gui>Clip configuration</gui>, <gui>Transitions</gui>, <gui>Title editor</gui> and <gui>Alignment editor</gui>. You can switch between them by selecting the appropriate tab. The <gui>Clip configuration</gui> allows you to activate, deactivate or configure settings of effects applied to a selected clip. <gui>Transitions</gui> let you pick and configure the transition type when two clips overlap in the timeline. With <gui>Title editor</gui> you can create new clips with titles or add titles to existing ones. The <gui>Alignment editor</gui> allows you to edit the alignment of your clips both inside and outside of the frame.</p>
   </section>
 </page>

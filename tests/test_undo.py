@@ -89,10 +89,6 @@ class TestUndoableActionLog(common.TestCase):
     def tearDown(self):
         self._disconnect_from_undoable_action_log()
 
-    def check_signals(self, *expected_signals):
-        signals = [item[0] for item in self.signals]
-        self.assertListEqual(signals, list(expected_signals))
-
     def _undo_action_log_signal_cb(self, log, *args):
         args = list(args)
         signal_name = args.pop(-1)
@@ -223,34 +219,18 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
         self.log.begin("meh")
-        self.check_signals("begin")
+        self.assertEqual(len(self.signals), 1)
         name, (_stack,) = self.signals[0]
         self.assertEqual(name, "begin")
         self.assertTrue(self.log.is_in_transaction())
 
-        action = mock.Mock(spec=UndoableAction)
-        self.log.push(action)
-
         self.log.rollback()
-
-        action.undo.assert_called_once_with()
-
-        self.check_signals("begin", "push", "rollback")
-        name, (_stack,) = self.signals[2]
+        self.assertEqual(len(self.signals), 2)
+        name, (_stack,) = self.signals[1]
         self.assertEqual(name, "rollback")
         self.assertFalse(self.log.is_in_transaction())
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
-
-    def test_rollback_noop(self):
-        """Checks a rollback which does not act."""
-        self.log.begin("meh")
-
-        action = mock.Mock(spec=UndoableAction)
-        self.log.push(action)
-
-        self.log.rollback(undo=False)
-        action.undo.assert_not_called()
 
     def test_nested_rollback(self):
         """Checks two nested rollbacks."""

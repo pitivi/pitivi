@@ -949,39 +949,27 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         assets = self._project.assets_for_uris(self.drop_data)
         if not assets:
             self._project.add_uris(self.drop_data)
-            return
+            return False
 
         ges_clips = []
-        self.app.action_log.begin("Add clips")
         for asset in assets:
+
             ges_layer, unused_on_sep = self.get_layer_at(y)
             if not placement:
                 placement = self.pixel_to_ns(x)
             placement = max(0, placement)
 
-            self.debug("Adding %s at %s on layer %s", asset.props.id, Gst.TIME_ARGS(placement), ges_layer)
-            self.app.action_log.begin("Add one clip")
+            self.debug("Creating %s at %s", asset.props.id, Gst.TIME_ARGS(placement))
+
             ges_clip = self.add_clip_to_layer(ges_layer, asset, placement)
             if not ges_clip:
-                # The clip cannot be placed.
-
-                # Rollback the current "Add one asset" transaction without
-                # doing anything, since nothing really changed but GES still
-                # emitted signals as if it added AND removed the clip.
-                self.app.action_log.rollback(undo=False)
-                # Rollback the rest of the "Add assets" transaction.
-                self.app.action_log.rollback()
-                return
-
-            self.app.action_log.commit("Add one clip")
+                return False
 
             placement += ges_clip.props.duration
             ges_clip.first_placement = True
             self._project.pipeline.commit_timeline()
 
             ges_clips.append(ges_clip)
-
-        self.app.action_log.commit("Add clips")
 
         if ges_clips:
             ges_clip = ges_clips[0]
@@ -992,6 +980,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.selection.set_selection(ges_clips, SELECT)
 
             self.dragging_group = self.selection.group()
+
+        return True
 
     def _drag_motion_cb(self, widget, context, x, y, timestamp):
         target = self.drag_dest_find_target(context, None)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="effects">
   <info>
-    <link type="guide" xref="index#effectstransitions"/>
+    <link type="guide" xref="index#effectstransitionsalignment"/>
     <link type="seealso" xref="gstreamer"/>
     <revision pkgversion="0.96" version="0.3" date="2016-02-17" status="incomplete"/>
     <credit type="author">

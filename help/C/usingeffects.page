@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="usingeffects">
   <info>
-    <link type="guide" xref="index#effectstransitions"/>
+    <link type="guide" xref="index#effectstransitionsalignment"/>
     <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="draft"/>
     <credit type="author">
       <name>Tomáš Karger</name>
