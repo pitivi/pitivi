@@ -227,6 +227,7 @@ class EditorPerspective(Perspective, Loggable):
 
         # Viewer
         self.viewer = ViewerContainer(self.app)
+
         self.mainhpaned.pack2(self.viewer, resize=True, shrink=False)
 
         # Now, the lower part: the timeline
@@ -351,6 +352,7 @@ class EditorPerspective(Perspective, Loggable):
         group = Gio.SimpleActionGroup()
         self.toplevel_widget.insert_action_group("editor", group)
         self.headerbar.insert_action_group("editor", group)
+        self.viewer.insert_action_group("editor", group)
 
         # pylint: disable=attribute-defined-outside-init
         self.save_action = Gio.SimpleAction.new("save", None)
@@ -370,7 +372,6 @@ class EditorPerspective(Perspective, Loggable):
         self.revert_to_saved_action = Gio.SimpleAction.new("revert-to-saved", None)
         self.revert_to_saved_action.connect("activate", self.__revert_to_saved_cb)
         group.add_action(self.revert_to_saved_action)
-
         self.export_project_action = Gio.SimpleAction.new("export-project", None)
         self.export_project_action.connect("activate", self.__export_project_cb)
         group.add_action(self.export_project_action)
@@ -393,6 +394,15 @@ class EditorPerspective(Perspective, Loggable):
         self.app.shortcuts.add("editor.import-asset", ["<Primary>i"],
                                self.import_asset_action,
                                _("Add media files to your project"), group="win")
+
+        self.toggle_safe_areas_action = Gio.SimpleAction.new("toggle-safe-areas", None)
+        self.toggle_safe_areas_action.connect("activate", self.__toggle_safe_areas_cb)
+        group.add_action(self.toggle_safe_areas_action)
+        self.app.shortcuts.add("editor.toggle-safe-areas", ["<Primary>apostrophe"], self.toggle_safe_areas_action,
+                               _("Toggle safe area overlay on preview"), group="win")
+
+    def __toggle_safe_areas_cb(self, unused_action, unused_param):
+        self.viewer.overlay_stack.safe_areas_overlay.toggle_safe_areas()
 
     def __import_asset_cb(self, unused_action, unused_param):
         self.medialibrary.show_import_assets_dialog()
@@ -501,7 +511,8 @@ class EditorPerspective(Perspective, Loggable):
                                    modal=True,
                                    message_type=Gtk.MessageType.ERROR,
                                    buttons=Gtk.ButtonsType.OK,
-                                   text=_('Unable to save project "%s"') % project_filename)
+                                   text=_('Unable to save project "%s"') %
+                                   project_filename)
         if exception:
             dialog.set_property("secondary-use-markup", True)
             dialog.set_property("secondary-text", unquote(str(exception)))
@@ -715,8 +726,7 @@ class EditorPerspective(Perspective, Loggable):
     def _show_save_as_dialog(self):
         self.log("Save URI requested")
         chooser = Gtk.FileChooserDialog(title=_("Save As..."),
-                                        transient_for=self.app.gui,
-                                        action=Gtk.FileChooserAction.SAVE)
+                                        transient_for=self.app.gui, action=Gtk.FileChooserAction.SAVE)
         chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                             _("Save"), Gtk.ResponseType.OK)
         chooser.set_default_response(Gtk.ResponseType.OK)

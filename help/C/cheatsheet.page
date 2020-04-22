@@ -41,6 +41,9 @@
       <item>
         <p><key>F1</key>: Show the user manual</p>
       </item>
+      <item>
+        <p><keyseq><key>Ctrl</key><key>'</key></keyseq>: Toggle Safe Areas</p>
+      </item>
     </list>
   </section>
   <section id="medialibrary">

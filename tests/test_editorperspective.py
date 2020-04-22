@@ -23,6 +23,8 @@ from pitivi.dialogs.missingasset import MissingAssetDialog
 from pitivi.editorperspective import EditorPerspective
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import disconnect_all_by_func
+from pitivi.utils.pipeline import SimplePipeline
+from pitivi.viewer.overlay_stack import OverlayStack
 from tests import common
 
 
@@ -108,3 +110,37 @@ class TestEditorPerspective(common.TestCase):
     def test_loading_project_with_proxy(self):
         """Checks loading failure with proxies."""
         self.__loading_failure(has_proxy=True)
+
+    def test_safe_areas_toggle_on(self):
+        """Checks to ensure that, upon the user input turning safe areas on, the safe area state is enabled."""
+        app = common.create_pitivi_mock()
+        editorperspective = EditorPerspective(app)
+        editorperspective.setup_ui()
+
+        _, sink = SimplePipeline.create_sink(self)
+        overlay_stack = OverlayStack(app, sink)
+
+        editorperspective.viewer.overlay_stack = overlay_stack
+
+        editorperspective.toggle_safe_areas_action.set_enabled(True)
+        editorperspective.toggle_safe_areas_action.activate()
+
+        self.assertEqual(editorperspective.viewer.overlay_stack.safe_areas_overlay.safe_areas_enabled, True)
+
+    def test_safe_areas_toggle_off(self):
+        """Checks to ensure that, upon the user input turning safe areas off, the safe area state is disabled."""
+        app = common.create_pitivi_mock()
+        editorperspective = EditorPerspective(app)
+        editorperspective.setup_ui()
+
+        _, sink = SimplePipeline.create_sink(self)
+        overlay_stack = OverlayStack(app, sink)
+
+        editorperspective.viewer.overlay_stack = overlay_stack
+
+        editorperspective.viewer.overlay_stack.safe_areas_overlay.safe_areas_enabled = mock.MagicMock(False)
+
+        editorperspective.save_action.set_enabled(True)
+        editorperspective.toggle_safe_areas_action.activate()
+
+        self.assertEqual(editorperspective.viewer.overlay_stack.safe_areas_overlay.safe_areas_enabled, False)
