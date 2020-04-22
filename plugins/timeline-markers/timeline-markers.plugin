@@ -1,0 +1,4 @@
+[Plugin]
+Module=timeline_markers
+Name=Timeline Markers
+Loader=Python3
