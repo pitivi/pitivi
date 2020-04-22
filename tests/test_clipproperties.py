@@ -18,12 +18,15 @@
 # pylint: disable=protected-access,no-self-use
 from unittest import mock
 
+from gi.repository import GES
 from gi.repository import Gtk
 
+from pitivi.clipproperties import ClipProperties
 from pitivi.clipproperties import EffectProperties
 from pitivi.clipproperties import TransformationProperties
 from tests import common
 from tests.test_timeline_timeline import BaseTestTimeline
+from tests.test_undo_timeline import BaseTestUndoTimeline
 
 
 class EffectPropertiesTest(common.TestCase):
@@ -323,3 +326,44 @@ class TransformationPropertiesTest(BaseTestTimeline):
             ret, value = source.get_child_property(prop)
             self.assertTrue(ret)
             self.assertEqual(value, source.ui.default_position[prop])
+
+
+class ClipPropertiesTest(BaseTestUndoTimeline):
+    """Tests for the TitleProperties class."""
+
+    def _get_title_source_child_props(self):
+        clips = self.layer.get_clips()
+        self.assertEqual(len(clips), 1, clips)
+        self.assertIsInstance(clips[0], GES.TitleClip)
+        source, = clips[0].get_children(False)
+        return [source.get_child_property(p) for p in ("text",
+                                                       "x-absolute", "y-absolute",
+                                                       "valignment", "halignment",
+                                                       "font-desc",
+                                                       "color",
+                                                       "foreground-color")]
+
+    def test_create_title(self):
+        """Exercise creating a title clip."""
+        # Wait until the project creates a layer in the timeline.
+        common.create_main_loop().run(until_empty=True)
+
+        from pitivi.timeline.timeline import TimelineContainer
+        timeline_container = TimelineContainer(self.app)
+        timeline_container.set_project(self.project)
+        self.app.gui.editor.timeline_ui = timeline_container
+
+        clipproperties = ClipProperties(self.app)
+        clipproperties.new_project_loaded_cb(None, self.project)
+        self.project.pipeline.get_position = mock.Mock(return_value=0)
+
+        clipproperties.create_cb(None)
+        ps1 = self._get_title_source_child_props()
+
+        self.action_log.undo()
+        clips = self.layer.get_clips()
+        self.assertEqual(len(clips), 0, clips)
+
+        self.action_log.redo()
+        ps2 = self._get_title_source_child_props()
+        self.assertListEqual(ps1, ps2)

@@ -36,7 +36,7 @@ class TestEditorPerspective(common.TestCase):
         editorperspective = EditorPerspective(app)
         editorperspective.setup_ui()
         for expected_tab, b_element in [
-                (2, GES.TitleClip()),
+                (0, GES.TitleClip()),
                 (0, GES.SourceClip()),
                 (1, GES.TransitionClip())]:
             editorperspective.switch_context_tab(b_element)
