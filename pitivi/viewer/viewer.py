@@ -30,6 +30,9 @@ from pitivi.utils.pipeline import AssetPipeline
 from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import TimeWidget
 from pitivi.viewer.overlay_stack import OverlayStack
+from pitivi.viewer.peak_meter import Channel
+from pitivi.viewer.peak_meter import PeakMeter
+from pitivi.viewer.peak_meter import PeakMeterScale
 
 GlobalSettings.add_config_section("viewer")
 GlobalSettings.add_config_option("viewerDocked", section="viewer",
@@ -59,7 +62,7 @@ GlobalSettings.add_config_option("pointColor", section="viewer",
 
 
 class ViewerContainer(Gtk.Box, Loggable):
-    """Wiget holding a viewer and the controls.
+    """Widget holding a viewer, the controls, and a peak meter.
 
     Attributes:
         pipeline (SimplePipeline): The displayed pipeline.
@@ -136,6 +139,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         project.pipeline.connect("state-change", self._pipeline_state_changed_cb)
         project.pipeline.connect("position", self._position_cb)
         project.pipeline.connect("duration-changed", self._duration_changed_cb)
+        project.pipeline.get_bus().connect("message::element", self._bus_level_message_cb)
         self.project = project
 
         self.__create_new_viewer()
@@ -151,14 +155,15 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.overlay_stack = OverlayStack(self.app, sink_widget)
         self.target = ViewerWidget(self.overlay_stack)
         self._reset_viewer_aspect_ratio(self.project)
+        self.viewer_subcontainer.pack_start(self.target, expand=True, fill=True, padding=0)
 
         if self.docked:
-            self.pack_start(self.target, expand=True, fill=True, padding=0)
+            self.pack_start(self.viewer_subcontainer, expand=True, fill=True, padding=0)
         else:
-            self.external_vbox.pack_start(self.target, expand=True, fill=False, padding=0)
-            self.external_vbox.child_set(self.target, fill=True)
+            self.external_vbox.pack_start(self.viewer_subcontainer, expand=True, fill=False, padding=0)
+            self.external_vbox.child_set(self.viewer_subcontainer, fill=True)
 
-        self.target.show_all()
+        self.viewer_subcontainer.show_all()
 
         # Wait for 1s to make sure that the viewer has completely realized
         # and then we can mark the resize status as showable.
@@ -208,6 +213,10 @@ class ViewerContainer(Gtk.Box, Loggable):
             "configure-event", self._external_window_configure_cb)
         self.external_vbox = vbox
 
+        # This holds the peak meter and the viewer.
+        self.viewer_subcontainer = Gtk.Box()
+        self.viewer_subcontainer.set_orientation(Gtk.Orientation.HORIZONTAL)
+
         # Corner marker.
         corner = Gtk.DrawingArea()
         # Number of lines to draw in the corner marker.
@@ -231,6 +240,28 @@ class ViewerContainer(Gtk.Box, Loggable):
         corner.connect("button-release-event", self.__corner_button_release_cb)
         corner.connect("motion-notify-event", self.__corner_motion_notify_cb, hpane, vpane)
         self.pack_end(corner, False, False, 0)
+
+        # Right Peak Meter
+        self.right_peakmeter = PeakMeter(self.app)
+        self.right_peakmeter.set_property("valign", Gtk.Align.CENTER)
+        self.right_peakmeter.set_property("halign", Gtk.Align.CENTER)
+        self.right_peakmeter.set_margin_right(SPACING)
+
+        # Left Peak Meter
+        self.left_peakmeter = PeakMeter(self.app)
+        self.left_peakmeter.set_property("valign", Gtk.Align.CENTER)
+        self.left_peakmeter.set_property("halign", Gtk.Align.CENTER)
+        self.left_peakmeter.set_margin_left(SPACING)
+
+        # Peak Meter Scale
+        self.peakmeter_scale = PeakMeterScale(self.right_peakmeter)
+        self.peakmeter_scale.set_property("valign", Gtk.Align.CENTER)
+        self.peakmeter_scale.set_property("halign", Gtk.Align.CENTER)
+        self.peakmeter_scale.set_margin_right(SPACING)
+
+        self.viewer_subcontainer.pack_end(self.peakmeter_scale, False, False, 0)
+        self.viewer_subcontainer.pack_end(self.right_peakmeter, False, False, 0)
+        self.viewer_subcontainer.pack_end(self.left_peakmeter, False, False, 0)
 
         # Buttons/Controls
         bbox = Gtk.Box()
@@ -316,9 +347,18 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.end_button.get_accessible().set_name("end_button")
         self.timecode_entry.get_accessible().set_name("timecode_entry")
         self.undock_button.get_accessible().set_name("undock_button")
+        self.right_peakmeter.get_accessible().set_name("right_peakmeter")
+        self.left_peakmeter.get_accessible().set_name("left_peakmeter")
+        self.peakmeter_scale.get_accessible().set_name("peakmeter_scale")
 
         self.buttons_container = bbox
         self.external_vbox.show_all()
+
+    def _bus_level_message_cb(self, unused_bus, message):
+        peak = message.get_structure().get_value("peak")
+        if peak is not None:
+            self.left_peakmeter.update_peakmeter(peak[Channel.LEFT_PEAK.value])
+            self.right_peakmeter.update_peakmeter(peak[Channel.RIGHT_PEAK.value])
 
     def __corner_draw_cb(self, unused_widget, cr, lines, space, margin):
         cr.set_line_width(1)
@@ -426,7 +466,8 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.overlay_stack.enable_resize_status(False)
             position = self.project.pipeline.get_position()
             self.project.pipeline.set_simple_state(Gst.State.NULL)
-            self.remove(self.target)
+            self.remove(self.viewer_subcontainer)
+            self.viewer_subcontainer.remove(self.target)
             self.__create_new_viewer()
         self.buttons_container.set_margin_bottom(SPACING)
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
@@ -470,7 +511,8 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.overlay_stack.enable_resize_status(False)
             position = self.project.pipeline.get_position()
             self.project.pipeline.set_simple_state(Gst.State.NULL)
-            self.external_vbox.remove(self.target)
+            self.external_vbox.remove(self.viewer_subcontainer)
+            self.viewer_subcontainer.remove(self.target)
             self.__create_new_viewer()
 
         self.undock_button.show()

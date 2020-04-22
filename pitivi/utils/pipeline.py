@@ -548,6 +548,8 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         self._commit_wanted = False
         self._prevent_commits = 0
 
+        self.props.audio_sink = Gst.parse_bin_from_description("level ! audioconvert ! audioresample ! autoaudiosink", True)
+
         if "watchdog" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ''):
             watchdog = Gst.ElementFactory.make("watchdog", None)
             if watchdog:
