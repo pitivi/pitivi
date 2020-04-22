@@ -770,6 +770,21 @@ def create_model(columns, data):
     return ret
 
 
+def create_frame_rates_model(extra_frames=None):
+    processed_frames_list = []
+
+    for fps in standard_frames_list:
+        processed_fps = (format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps))
+        processed_frames_list.append(processed_fps)
+
+    if extra_frames is not None:
+        for frame in extra_frames:
+            processed_frames_list.append((format_framerate(frame), frame))
+
+    new_fr = create_model((str, object), processed_frames_list)
+    return new_fr
+
+
 def set_combo_value(combo, value):
     def select_specific_row(model, unused_path, iter_, found):
         model_value = model.get_value(iter_, 1)
@@ -845,21 +860,20 @@ AUDIO_CHANNELS = create_model((str, int),
                               [(format_audiochannels(ch), ch)
                                for ch in (8, 6, 4, 2, 1)])
 
-FRAME_RATES = create_model((str, object),
-                           [(format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps)) for fps in (
-                               (12, 1),
-                               (15, 1),
-                               (20, 1),
-                               (24000, 1001),
-                               (24, 1),
-                               (25, 1),
-                               (30000, 1001),
-                               (30, 1),
-                               (50, 1),
-                               (60000, 1001),
-                               (60, 1),
-                               (120, 1)
-                           )])
+standard_frames_list = [(12, 1),
+                        (15, 1),
+                        (20, 1),
+                        (24000, 1001),
+                        (24, 1),
+                        (25, 1),
+                        (30000, 1001),
+                        (30, 1),
+                        (50, 1),
+                        (60000, 1001),
+                        (60, 1),
+                        (120, 1)
+                        ]
+FRAME_RATES = create_frame_rates_model()
 
 AUDIO_RATES = create_model((str, int),
                            [(format_audiorate(rate), rate) for rate in (
