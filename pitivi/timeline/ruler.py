@@ -223,6 +223,7 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
 
     def __set_tooltip_text(self, position, seeking=False):
         """Updates the tooltip."""
+        position = max(0, position)
         if seeking:
             timeline_duration = self.ges_timeline.props.duration
             if position > timeline_duration:
