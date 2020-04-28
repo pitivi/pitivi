@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.20.0 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkActionGroup" id="actiongroup1"/>
@@ -42,11 +42,12 @@
     <property name="margin_bottom">6</property>
     <property name="row_spacing">6</property>
     <property name="column_spacing">6</property>
-    <property name="column_homogeneous">True</property>
+    <property name="row_homogeneous">True</property>
     <child>
       <object class="GtkLabel" id="label11">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="halign">end</property>
         <property name="label" translatable="yes">Y:</property>
         <property name="xalign">0</property>
       </object>
@@ -88,21 +89,10 @@
       </packing>
     </child>
     <child>
-      <object class="GtkLabel" id="label4">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="label" translatable="yes">Width:</property>
-        <property name="xalign">0</property>
-      </object>
-      <packing>
-        <property name="left_attach">0</property>
-        <property name="top_attach">2</property>
-      </packing>
-    </child>
-    <child>
       <object class="GtkLabel" id="label5">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="halign">end</property>
         <property name="label" translatable="yes">Height:</property>
         <property name="xalign">0</property>
       </object>
@@ -146,6 +136,7 @@
       <object class="GtkLabel" id="label10">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="halign">end</property>
         <property name="label" translatable="yes">X:</property>
         <property name="xalign">0</property>
       </object>
@@ -158,10 +149,11 @@
       <object class="GtkButtonBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="halign">center</property>
         <property name="layout_style">expand</property>
         <child>
           <object class="GtkButton" id="prev_keyframe_button">
-            <property name="label" translatable="no">&lt;</property>
+            <property name="label">&lt;</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="focus_on_click">False</property>
@@ -177,7 +169,7 @@
         </child>
         <child>
           <object class="GtkButton" id="next_keyframe_button">
-            <property name="label" translatable="no">&gt;</property>
+            <property name="label">&gt;</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="focus_on_click">False</property>
@@ -193,7 +185,7 @@
         </child>
         <child>
           <object class="GtkToggleButton" id="activate_keyframes_button">
-            <property name="label" translatable="no">◇</property>
+            <property name="label">◇</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="focus_on_click">False</property>
@@ -226,7 +218,39 @@
       <packing>
         <property name="left_attach">0</property>
         <property name="top_attach">4</property>
-        <property name="width">4</property>
+        <property name="width">5</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel" id="label4">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="halign">end</property>
+        <property name="label" translatable="yes">Width:</property>
+        <property name="xalign">0</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="clip_alignment">
+        <property name="width_request">175</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_left">25</property>
+        <property name="margin_right">25</property>
+        <property name="margin_top">25</property>
+        <property name="margin_bottom">25</property>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+      <packing>
+        <property name="left_attach">4</property>
+        <property name="top_attach">0</property>
+        <property name="height">4</property>
       </packing>
     </child>
   </object>

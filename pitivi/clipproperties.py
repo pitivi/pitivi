@@ -27,6 +27,7 @@ from gi.repository import GstController
 from gi.repository import Gtk
 from gi.repository import Pango
 
+from pitivi.clip_properties.alignment import AlignmentEditor
 from pitivi.clip_properties.color import ColorProperties
 from pitivi.clip_properties.title import TitleProperties
 from pitivi.configure import get_ui_dir
@@ -658,9 +659,6 @@ class EffectProperties(Gtk.Expander, Loggable):
 class TransformationProperties(Gtk.Expander, Loggable):
     """Widget for configuring the placement and size of the clip."""
 
-    __signals__ = {
-        'selection-changed': []}
-
     def __init__(self, app):
         Gtk.Expander.__init__(self)
         Loggable.__init__(self)
@@ -672,15 +670,23 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.spin_buttons = {}
         self.spin_buttons_handler_ids = {}
         self.set_label(_("Transformation"))
+        self.set_expanded(True)
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(),
                                                 "cliptransformation.ui"))
+
+        alignment_editor_container = self.builder.get_object("clip_alignment")
+        self.alignment_editor = AlignmentEditor()
+        self.alignment_editor.connect("align", self.__alignment_editor_align_cb)
+        alignment_editor_container.pack_start(self.alignment_editor, True, True, 0)
+
         self.__control_bindings = {}
         # Used to make sure self.__control_bindings_changed doesn't get called
         # when bindings are changed from this class
         self.__own_bindings_change = False
         self.add(self.builder.get_object("transform_box"))
+
         self._init_buttons()
         self.show_all()
         self.hide()
@@ -706,6 +712,15 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
     def __project_closed_cb(self, unused_project_manager, unused_project):
         self._project = None
+
+    def __alignment_editor_align_cb(self, widget):
+        """Callback method to align a clip from the AlignmentEditor widget."""
+        x, y = self.alignment_editor.get_clip_position(self._project, self.source)
+        with self.app.action_log.started("Position change",
+                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                         toplevel=True):
+            self.__set_prop("posx", x)
+            self.__set_prop("posy", y)
 
     def _init_buttons(self):
         clear_button = self.builder.get_object("clear_button")
@@ -936,22 +951,13 @@ class TransformationProperties(Gtk.Expander, Loggable):
                     return
                 source_position = position - start + in_point
 
-                with self.app.action_log.started(
-                        "Transformation property change",
-                        finalizing_action=CommitTimelineFinalizingAction(
-                            self._project.pipeline),
-                        toplevel=True):
-                    self.__control_bindings[prop].props.control_source.set(
-                        source_position, value)
+                self.__control_bindings[prop].props.control_source.set(
+                    source_position, value)
             except PipelineError:
                 self.warning("Could not get pipeline position")
                 return
         else:
-            with self.app.action_log.started("Transformation property change",
-                                             finalizing_action=CommitTimelineFinalizingAction(
-                                                 self._project.pipeline),
-                                             toplevel=True):
-                self.source.set_child_property(prop, value)
+            self.source.set_child_property(prop, value)
 
     def __setup_spin_button(self, widget_name, property_name):
         """Creates a SpinButton for editing a property value."""
@@ -973,7 +979,10 @@ class TransformationProperties(Gtk.Expander, Loggable):
             return
 
         if value != cvalue:
-            self.__set_prop(prop, value)
+            with self.app.action_log.started("Transformation property change",
+                                             finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                             toplevel=True):
+                self.__set_prop(prop, value)
             self.app.gui.editor.viewer.overlay_stack.update(self.source)
 
     def __set_source(self, source):
