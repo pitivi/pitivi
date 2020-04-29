@@ -23,6 +23,7 @@ from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk
+from matplotlib.backend_bases import MouseButton
 from matplotlib.backend_bases import MouseEvent
 
 from pitivi.timeline.elements import GES_TYPE_UI_TYPE
@@ -163,7 +164,6 @@ class TestKeyframeCurve(common.TestCase):
             values = [item.timestamp for item in control_source.get_all()]
             self.assertIn(inpoint + offset, values)
 
-        # Remove keyframes by simulating mouse double-clicks.
         for offset_px in offsets_px:
             offset = Zoomable.pixel_to_ns(start_px + offset_px) - start
             xdata, ydata = inpoint + offset, 1
@@ -200,6 +200,90 @@ class TestKeyframeCurve(common.TestCase):
 
             values = [item.timestamp for item in control_source.get_all()]
             self.assertNotIn(inpoint + offset, values)
+
+    def test_axis_lock(self):
+        """Checks keyframes moving."""
+        timeline_container = common.create_timeline_container()
+        timeline_container.app.action_log = UndoableActionLog()
+        timeline = timeline_container.timeline
+        timeline.get_window = mock.Mock()
+        pipeline = timeline._project.pipeline
+        ges_layer = timeline.ges_timeline.append_layer()
+        ges_clip = self.add_clip(ges_layer, 0, duration=Gst.SECOND)
+
+        start = ges_clip.props.start
+        inpoint = ges_clip.props.in_point
+        duration = ges_clip.props.duration
+        timeline.selection.select([ges_clip])
+
+        ges_video_source = ges_clip.find_track_element(None, GES.VideoSource)
+        binding = ges_video_source.get_control_binding("alpha")
+        control_source = binding.props.control_source
+        keyframe_curve = ges_video_source.ui.keyframe_curve
+        values = [item.timestamp for item in control_source.get_all()]
+        self.assertEqual(values, [inpoint, inpoint + duration])
+
+        # Add a keyframe.
+        position = start + int(duration / 2)
+        with mock.patch.object(pipeline, "get_position") as get_position:
+            get_position.return_value = position
+            timeline_container._keyframe_cb(None, None)
+
+        # Start dragging the keyframe.
+        x, y = keyframe_curve._ax.transData.transform((position, 1))
+        event = MouseEvent(
+            name="button_press_event",
+            canvas=keyframe_curve,
+            x=x,
+            y=y,
+            button=MouseButton.LEFT
+        )
+        event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+        self.assertIsNone(keyframe_curve._offset)
+        keyframe_curve._mpl_button_press_event_cb(event)
+        self.assertIsNotNone(keyframe_curve._offset)
+
+        # Drag and make sure x and y are not locked.
+        timeline_container.control_mask = False
+        event = mock.Mock(
+            x=x + 1,
+            y=y + 1,
+            xdata=position + 1,
+            ydata=0.9,
+        )
+        with mock.patch.object(keyframe_curve,
+                               "_move_keyframe") as _move_keyframe:
+            keyframe_curve._mpl_motion_event_cb(event)
+            # Check the keyframe is moved exactly where the cursor is.
+            _move_keyframe.assert_called_once_with(position, position + 1, 0.9)
+
+        # Drag locked horizontally.
+        timeline_container.control_mask = True
+        event = mock.Mock(
+            x=x + 1,
+            y=y + 2,
+            xdata=position + 2,
+            ydata=0.8,
+        )
+        with mock.patch.object(keyframe_curve,
+                               "_move_keyframe") as _move_keyframe:
+            keyframe_curve._mpl_motion_event_cb(event)
+            # Check the keyframe is kept on the same timestamp.
+            _move_keyframe.assert_called_once_with(position + 1, position, 0.8)
+
+        # Drag locked vertically.
+        timeline_container.control_mask = True
+        event = mock.Mock(
+            x=x + 2,
+            y=y + 1,
+            xdata=position + 3,
+            ydata=0.7,
+        )
+        with mock.patch.object(keyframe_curve,
+                               "_move_keyframe") as _move_keyframe:
+            keyframe_curve._mpl_motion_event_cb(event)
+            # Check the keyframe is kept on the same value.
+            _move_keyframe.assert_called_once_with(position, position + 3, 1)
 
     def test_no_clip_selected(self):
         """Checks nothing happens when no clip is selected."""

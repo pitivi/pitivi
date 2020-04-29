@@ -60,7 +60,7 @@
         <p>Remove a keyframe by double-clicking on it.</p>
       </item>
       <item>
-        <p>Adjust the time and value of a keyframe by moving it with the mouse.</p>
+        <p>Adjust the time and value of a keyframe by moving it with the mouse. When moving the keyframe, hold down <key>Ctrl</key> to lock the keyframe horizontally or vertically.</p>
       </item>
       <item>
         <p>Click-and-drag on a segment of a curve between two keyframes to adjust the vertical position of the segment.</p>
