@@ -112,7 +112,6 @@ class TitleProperties(Gtk.Expander, Loggable):
             self.settings["halignment"].append(value_id, text)
 
         self.show_all()
-        self.hide()
 
     def _set_child_property(self, name, value):
         with self.app.action_log.started("Title change property",
@@ -125,11 +124,7 @@ class TitleProperties(Gtk.Expander, Loggable):
                 self._setting_props = False
 
     def _color_picker_value_changed_cb(self, widget, color_button, color_layer):
-        argb = 0
-        argb += (1 * 255) * 256 ** 3
-        argb += float(widget.color_r) * 256 ** 2
-        argb += float(widget.color_g) * 256 ** 1
-        argb += float(widget.color_b) * 256 ** 0
+        argb = widget.calculate_argb()
         self.debug("Setting text %s to %x", color_layer, argb)
         self._set_child_property(color_layer, argb)
         rgba = argb_to_gdk_rgba(argb)

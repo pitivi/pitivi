@@ -963,11 +963,32 @@ class TitleSource(VideoSource):
         for spec in self._ges_elem.list_children_properties():
             if spec.name == "alpha":
                 return spec
-            return None
+        return None
 
     def _get_previewer(self):
         previewer = TitlePreviewer(self._ges_elem)
         previewer.get_style_context().add_class("TitleSource")
+        return previewer
+
+    def _get_default_position(self):
+        return {"posx": 0,
+                "posy": 0,
+                "width": self._project_width,
+                "height": self._project_height}
+
+
+class VideoTestSource(VideoSource):
+
+    __gtype_name__ = "PitiviVideoTestSource"
+
+    def _get_default_mixing_property(self):
+        for spec in self._ges_elem.list_children_properties():
+            if spec.name == "alpha":
+                return spec
+        return None
+
+    def _get_previewer(self):
+        previewer = ImagePreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
         return previewer
 
     def _get_default_position(self):
@@ -1415,6 +1436,26 @@ class UriClip(SourceClip):
             self.video_widget.set_visible(True)
 
 
+class TestClip(SourceClip):
+    __gtype_name__ = "PitiviTestClip"
+
+    def __init__(self, layer, ges_clip):
+        SourceClip.__init__(self, layer, ges_clip)
+        self.get_style_context().add_class("TestClip")
+
+    def _add_child(self, ges_timeline_element):
+        SourceClip._add_child(self, ges_timeline_element)
+
+        if not isinstance(ges_timeline_element, GES.Source):
+            return
+
+        if ges_timeline_element.get_track_type() == GES.TrackType.VIDEO:
+            self.video_widget = VideoTestSource(ges_timeline_element, self.timeline)
+            ges_timeline_element.ui = self.video_widget
+            self._elements_container.pack_start(self.video_widget, True, False, 0)
+            self.video_widget.set_visible(True)
+
+
 class TitleClip(SourceClip):
     __gtype_name__ = "PitiviTitleClip"
 
@@ -1486,5 +1527,6 @@ class TransitionClip(Clip):
 GES_TYPE_UI_TYPE = {
     GES.UriClip.__gtype__: UriClip,
     GES.TitleClip.__gtype__: TitleClip,
-    GES.TransitionClip.__gtype__: TransitionClip
+    GES.TransitionClip.__gtype__: TransitionClip,
+    GES.TestClip.__gtype__: TestClip
 }

@@ -283,6 +283,8 @@ class EditorPerspective(Perspective, Loggable):
             page = 0
         elif isinstance(ges_clip, GES.TransitionClip):
             page = 1
+        elif isinstance(ges_clip, GES.TestClip):
+            page = 0
         else:
             self.warning("Unknown clip type: %s", ges_clip)
             return

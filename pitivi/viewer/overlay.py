@@ -54,7 +54,7 @@ class Overlay(Gtk.DrawingArea, Loggable):
     def _select(self):
         self.stack.selected_overlay = self
         self.stack.app.gui.editor.timeline_ui.timeline.selection.set_selection([self._source], SELECT)
-        if isinstance(self._source, (GES.TitleSource, GES.VideoUriSource)):
+        if isinstance(self._source, (GES.TitleSource, GES.VideoUriSource, GES.VideoTestSource)):
             page = 0
         else:
             self.warning("Unknown clip type: %s", self._source)

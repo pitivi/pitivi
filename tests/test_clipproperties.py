@@ -357,7 +357,7 @@ class ClipPropertiesTest(BaseTestUndoTimeline):
         clipproperties.new_project_loaded_cb(None, self.project)
         self.project.pipeline.get_position = mock.Mock(return_value=0)
 
-        clipproperties.create_cb(None)
+        clipproperties.create_title_clip_cb(None)
         ps1 = self._get_title_source_child_props()
 
         self.action_log.undo()

@@ -404,7 +404,10 @@ class Previewer(GObject.Object):
 
 
 class ImagePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
-    """An image previewer widget, drawing thumbnails."""
+    """A previewer widget drawing the same thumbnail repeatedly.
+
+    Can be used for Image clips or Color clips.
+    """
 
     # We could define them in Previewer, but for some reason they are ignored.
     __gsignals__ = PREVIEW_GENERATOR_SIGNALS
@@ -418,9 +421,7 @@ class ImagePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         self.get_style_context().add_class("VideoPreviewer")
 
         self.ges_elem = ges_elem
-
-        # Guard against malformed URIs
-        self.uri = quote_uri(get_proxy_target(ges_elem).props.id)
+        self.uri = get_proxy_target(ges_elem).props.id
 
         self.__start_id = 0
 
@@ -431,6 +432,9 @@ class ImagePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         self.thumb_width = 0
 
         self.ges_elem.connect("notify::duration", self._duration_changed_cb)
+
+        if isinstance(self.ges_elem, GES.VideoTestSource):
+            self.ges_elem.connect("deep-notify", self._source_deep_notify_cb)
 
         self.become_controlled()
 
@@ -445,15 +449,31 @@ class ImagePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
 
         self.__start_id = None
 
-        self.debug("Generating thumbnail for image: %s", path_from_uri(self.uri))
-        self.__image_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-            Gst.uri_get_location(self.uri), -1, self.thumb_height, True)
+        self.__image_pixbuf = self._generate_thumbnail()
         self.thumb_width = self.__image_pixbuf.props.width
+
         self._update_thumbnails()
         self.emit("done")
 
         # Stop calling me, I started already.
         return False
+
+    def _generate_thumbnail(self):
+        if isinstance(self.ges_elem, GES.ImageSource):
+            self.debug("Generating thumbnail for image: %s", path_from_uri(self.uri))
+            return GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                Gst.uri_get_location(self.uri), -1, self.thumb_height, True)
+
+        if isinstance(self.ges_elem, GES.VideoTestSource):
+            self.debug("Generating thumbnail for color")
+            pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, THUMB_HEIGHT, THUMB_HEIGHT)
+            res, argb = self.ges_elem.get_child_property("foreground-color")
+            assert res
+            rgba = ((argb & 0xffffff) << 8) | ((argb & 0xff000000) >> 24)
+            pixbuf.fill(rgba)
+            return pixbuf
+
+        raise Exception("Unsupported ges_source type: %s" % type(self.ges_elem))
 
     def _update_thumbnails(self):
         """Updates the thumbnail widgets for the clip at the current zoom."""
@@ -493,6 +513,11 @@ class ImagePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         """Handles the changing of the duration of the clip."""
         self._update_thumbnails()
 
+    def _source_deep_notify_cb(self, source, unused_gstelement, pspec):
+        """Handles updates in the VideoTestSource."""
+        if pspec.name == "foreground-color":
+            self.become_controlled()
+
     def set_selected(self, selected):
         if selected:
             opacity = 0.5
@@ -503,8 +528,7 @@ class ImagePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
             thumb.props.opacity = opacity
 
     def start_generation(self):
-        self.debug("Waiting for UI to become idle for: %s",
-                   path_from_uri(self.uri))
+        self.debug("Waiting for UI to become idle for: %s", self.uri)
         self.__start_id = GLib.idle_add(self._start_thumbnailing_cb,
                                         priority=GLib.PRIORITY_LOW)
 

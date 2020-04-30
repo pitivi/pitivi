@@ -2,7 +2,7 @@
 <page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="usingclips">
   <info>
     <link type="guide" xref="index#gettingstarted"/>
-    <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
+    <revision pkgversion="0.96" version="0.2" date="2020-04-21" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -14,6 +14,10 @@
     <credit type="contributor">
       <name>Tomáš Karger</name>
       <email>tomkarger@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>UNL SOFT261 - Team 3</name>
+      <email>troy.ogden@huskers.unl.edu</email>
     </credit>
     <desc>
       Learn the difference between clips and files and how to do basic operations on clips in the timeline.
@@ -69,5 +73,10 @@
       </steps>
       <p>You can release and press <key>Shift</key> at any time during the drag operation to disable or enable ripple editing.</p>
     </section>
+  </section>
+  <section id="color">
+    <title>Using Color Clips</title>
+    <p>You can create custom color clips using the <gui>Create a color clip</gui> button located in the <guiseq><gui>middle pane</gui><gui>Clip</gui></guiseq> tab. The button is available when no clip is <link xref="selectiongrouping#selection">selected</link>.</p>
+    <p>Select a color clip to change its color. When a new color clip is created, it is automatically selected. The color can be changed using the <guiseq><gui>middle pane</gui><gui>Clip</gui><gui>Color</gui></guiseq> expander. The <gui>color</gui> button opens a dialog for selecting a color or entering a hexadecimal color value. Alternatively, any color on the screen can be picked by using the <gui>color picker</gui> button.</p>
   </section>
 </page>

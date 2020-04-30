@@ -1454,3 +1454,12 @@ class ColorPickerButton(Gtk.Button):
         self.dropper_grab_widget.grab_remove()
         self.pointer_device = None
         self.dropper_grab_widget = None
+
+    def calculate_argb(self):
+        argb = 0
+        argb += (1 * 255) * 256 ** 3
+        argb += float(self.color_r) * 256 ** 2
+        argb += float(self.color_g) * 256 ** 1
+        argb += float(self.color_b) * 256 ** 0
+        argb = int(argb)
+        return argb
