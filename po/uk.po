@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-05-01 21:29+0000\n"
-"PO-Revision-Date: 2020-05-02 09:25+0300\n"
+"POT-Creation-Date: 2020-05-02 11:52+0000\n"
+"PO-Revision-Date: 2020-05-03 09:51+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -120,6 +120,11 @@ msgstr "<b><big>Виконання автовирівнювання</big></b>"
 #: data/ui/alignmentprogress.ui:38 pitivi/render.py:1175
 msgid "Estimating..."
 msgstr "Визначення оцінки…"
+
+#: data/ui/clipcolor.ui:21
+#| msgid "Pick a text color"
+msgid "Pick the clip color"
+msgstr "Вибрати колір кліпу"
 
 #: data/ui/clipmediaprops.ui:8
 msgid "Clip Properties"
@@ -914,7 +919,6 @@ msgid "Create a title clip"
 msgstr "Створення кліпу субтитрів"
 
 #: pitivi/clipproperties.py:134
-#| msgid "Create a title clip"
 msgid "Create a color clip"
 msgstr "Створити кольоровий кліп"
 
@@ -958,6 +962,10 @@ msgstr "Задіяти ключові кадри"
 #: pitivi/clipproperties.py:787
 msgid "Hide keyframes"
 msgstr "Приховати ключові кадри"
+
+#: pitivi/clip_properties/color.py:53 plugins/console/console.py:125
+msgid "Color"
+msgstr "Колір"
 
 #: pitivi/clip_properties/title.py:43
 msgid "Title clip duration"
@@ -2331,10 +2339,6 @@ msgstr "Показано %d наносекунд, бо ми можемо"
 #: plugins/console/console.py:123
 msgid "Console"
 msgstr "Консоль"
-
-#: plugins/console/console.py:125
-msgid "Color"
-msgstr "Колір"
 
 #. Translators: The color of the content from stderr.
 #: plugins/console/console.py:130
