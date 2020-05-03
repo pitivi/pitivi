@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-05-02 11:52+0000\n"
-"PO-Revision-Date: 2020-05-03 09:51+0300\n"
+"POT-Creation-Date: 2020-05-03 11:46+0000\n"
+"PO-Revision-Date: 2020-05-03 14:59+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -122,7 +122,6 @@ msgid "Estimating..."
 msgstr "Визначення оцінки…"
 
 #: data/ui/clipcolor.ui:21
-#| msgid "Pick a text color"
 msgid "Pick the clip color"
 msgstr "Вибрати колір кліпу"
 
@@ -671,11 +670,11 @@ msgstr ""
 msgid "Rendering"
 msgstr "Обробка"
 
-#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:736
+#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:766
 msgid "Pause"
 msgstr "Пауза"
 
-#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:728
+#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:758
 #: pitivi/timeline/timeline.py:1785
 msgid "Play"
 msgstr "Пуск"
@@ -1717,27 +1716,49 @@ msgstr "Зробити різкішим"
 msgid "Smooth"
 msgstr "Згладити"
 
-#: pitivi/viewer/viewer.py:74
+#: pitivi/viewer/guidelines.py:52
+msgid "3 by 3"
+msgstr "3 на 3"
+
+#: pitivi/viewer/guidelines.py:53
+#| msgid "Horizontal:"
+msgid "Vertical/Horizontal"
+msgstr "Вертикальні/Горизонтальні"
+
+#: pitivi/viewer/guidelines.py:54
+msgid "Diagonals"
+msgstr "Діагоналі"
+
+#: pitivi/viewer/guidelines.py:85
+#| msgid "Compositing"
+msgid "Composition Guidelines"
+msgstr "Напрямні композиції"
+
+#: pitivi/viewer/viewer.py:77
 msgid "Currently playing"
 msgstr "Триває відтворення"
 
-#: pitivi/viewer/viewer.py:250
+#: pitivi/viewer/viewer.py:256
+msgid "Select composition guidelines"
+msgstr "Виберіть напрямні композиції"
+
+#: pitivi/viewer/viewer.py:264
 msgid "Go to the beginning of the timeline"
 msgstr "Перейти до початку запису на монтажному столі"
 
-#: pitivi/viewer/viewer.py:259
+#: pitivi/viewer/viewer.py:273
 msgid "Go back one second"
 msgstr "Повернутися на одну секунду"
 
-#: pitivi/viewer/viewer.py:272
+#: pitivi/viewer/viewer.py:286
 msgid "Go forward one second"
 msgstr "Вперед на одну секунду"
 
-#: pitivi/viewer/viewer.py:281
+#: pitivi/viewer/viewer.py:295
 msgid "Go to the end of the timeline"
 msgstr "Перейти в кінець запису на монтажному столі"
 
-#: pitivi/viewer/viewer.py:288
+#: pitivi/viewer/viewer.py:302
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1745,7 +1766,7 @@ msgstr ""
 "Введіть значення часової позначки або номер кадру\n"
 "і натисніть клавішу Enter, щоб перейти до відповідної позиції"
 
-#: pitivi/viewer/viewer.py:299
+#: pitivi/viewer/viewer.py:313
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1753,11 +1774,21 @@ msgstr ""
 "Від’єднати вікно перегляду\n"
 "Повернути його в основне вікно можна закриттям новоствореного вікна."
 
-#: pitivi/viewer/viewer.py:440 pitivi/viewer/viewer.py:498
+#: pitivi/viewer/viewer.py:340
+#| msgid "View error"
+#| msgid_plural "View errors"
+msgid "Viewer"
+msgstr "Переглядач"
+
+#: pitivi/viewer/viewer.py:348
+msgid "Toggle the currently selected composition guidelines"
+msgstr "Увімкнути або вимкнути вибрані напрямні композиції"
+
+#: pitivi/viewer/viewer.py:470 pitivi/viewer/viewer.py:528
 msgid "Show this window in fullscreen"
 msgstr "Розтягти це вікно на весь екран"
 
-#: pitivi/viewer/viewer.py:495
+#: pitivi/viewer/viewer.py:525
 msgid "Exit fullscreen mode"
 msgstr "Вийти з повноекранного режиму"
 
