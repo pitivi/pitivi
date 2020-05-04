@@ -152,6 +152,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__update_name()
 
     def __name_focus_out_cb(self, unused_widget, unused_event):
+        self.name_entry.delete_selection()
         current_name = self.ges_layer.ui.get_name()
         name = self.name_entry.get_text()
         if name == current_name:
