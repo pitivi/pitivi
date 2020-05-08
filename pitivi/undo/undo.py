@@ -114,7 +114,7 @@ class FinalizingAction:
         raise NotImplementedError()
 
 
-class UndoableActionStack(UndoableAction):
+class UndoableActionStack(UndoableAction, Loggable):
     """A stack of UndoableAction objects.
 
     Attributes:
@@ -127,6 +127,7 @@ class UndoableActionStack(UndoableAction):
 
     def __init__(self, action_group_name, finalizing_action=None):
         UndoableAction.__init__(self)
+        Loggable.__init__(self)
         self.action_group_name = action_group_name
         self.done_actions = []
         self.finalizing_action = finalizing_action
@@ -144,6 +145,7 @@ class UndoableActionStack(UndoableAction):
 
     def _run_action(self, actions, method_name):
         for action in actions:
+            self.log("Performing %s.%s()", action, method_name)
             method = getattr(action, method_name)
             method()
         self.finish_operation()
