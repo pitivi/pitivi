@@ -55,7 +55,7 @@ class Guideline(Enum):
 
     def __init__(self, label, func):
         self.label = label
-        self.draw_func = func
+        self.draw_func = func.__func__
 
 
 class GuidelinesPopover(Gtk.Popover):
