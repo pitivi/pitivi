@@ -62,6 +62,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
         self.revealer.add(self.resize_status)
         self.add_overlay(self.revealer)
 
+        self.guidelines_overlay = guidelines_overlay
         self.add_overlay(guidelines_overlay)
 
         sink_widget.connect("size-allocate", self.__sink_widget_size_allocate_cb)
@@ -154,16 +155,24 @@ class OverlayStack(Gtk.Overlay, Loggable):
         self.selected_overlay.queue_draw()
 
     def hide_overlays(self):
-        if not self.__hide_all_overlays:
-            for overlay in self.__visible_overlays:
-                overlay.hide()
-            self.__hide_all_overlays = True
+        if self.__hide_all_overlays:
+            # The overlays are already hidden.
+            return
+
+        self.guidelines_overlay.hide()
+        for overlay in self.__visible_overlays:
+            overlay.hide()
+        self.__hide_all_overlays = True
 
     def show_overlays(self):
-        if self.__hide_all_overlays:
-            for overlay in self.__visible_overlays:
-                overlay.show()
-            self.__hide_all_overlays = False
+        if not self.__hide_all_overlays:
+            # The overlays are already visible.
+            return
+
+        self.guidelines_overlay.show()
+        for overlay in self.__visible_overlays:
+            overlay.show()
+        self.__hide_all_overlays = False
 
     def set_cursor(self, name):
         cursor = None
