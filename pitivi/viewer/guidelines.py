@@ -21,6 +21,7 @@ from gettext import gettext as _
 
 from gi.repository import Gtk
 
+from pitivi.utils.misc import round05
 from pitivi.utils.ui import SPACING
 
 
@@ -30,17 +31,23 @@ class Guideline(Enum):
     @staticmethod
     def __three_by_three_draw_func(cr, width, height):
         for i in range(1, 3):
-            cr.move_to(i * width / 3, 0)
-            cr.line_to(i * width / 3, height)
-            cr.move_to(0, i * height / 3)
-            cr.line_to(width, i * height / 3)
+            x = round05(i * width / 3)
+            cr.move_to(x, 0)
+            cr.line_to(x, height)
+
+            y = round05(i * height / 3)
+            cr.move_to(0, y)
+            cr.line_to(width, y)
 
     @staticmethod
     def __vertical_horizontal_center_draw_func(cr, width, height):
-        cr.move_to(width / 2, 0)
-        cr.line_to(width / 2, height)
-        cr.move_to(0, height / 2)
-        cr.line_to(width, height / 2)
+        x = round05(width / 2)
+        cr.move_to(x, 0)
+        cr.line_to(x, height)
+
+        y = round05(height / 2)
+        cr.move_to(0, y)
+        cr.line_to(width, y)
 
     @staticmethod
     def __diagonals_draw_func(cr, width, height):

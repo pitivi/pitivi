@@ -25,8 +25,8 @@ from urllib.parse import urlparse
 from urllib.parse import urlsplit
 
 from gi.repository import GdkPixbuf
-from gi.repository import GLib
 from gi.repository import GES
+from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
 
@@ -228,6 +228,10 @@ class PathWalker(Thread):
 
 def quantize(value, interval):
     return (value // interval) * interval
+
+
+def round05(value):
+    return (2 * value) // 2 + 0.5
 
 
 def show_user_manual(page=None):
@@ -459,6 +463,7 @@ def video_info_get_natural_height(video_info):
         return _get_square_width(video_info)
 
     return video_info.get_height()
+
 
 def asset_get_duration(asset):
     assert isinstance(asset, GES.UriClipAsset)
