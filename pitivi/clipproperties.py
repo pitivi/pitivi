@@ -87,9 +87,9 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.clips_box.show()
         vbox.pack_start(self.clips_box, False, False, 0)
 
-        transformation_expander = TransformationProperties(app)
-        transformation_expander.set_vexpand(False)
-        vbox.pack_start(transformation_expander, False, False, 0)
+        self.transformation_expander = TransformationProperties(app)
+        self.transformation_expander.set_vexpand(False)
+        vbox.pack_start(self.transformation_expander, False, False, 0)
 
         self.title_expander = TitleProperties(app)
         self.title_expander.set_vexpand(False)

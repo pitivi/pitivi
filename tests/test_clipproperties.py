@@ -328,7 +328,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
             self.assertEqual(value, source.ui.default_position[prop])
 
 
-class ClipPropertiesTest(BaseTestUndoTimeline):
+class ClipPropertiesTest(BaseTestUndoTimeline, BaseTestTimeline):
     """Tests for the TitleProperties class."""
 
     def _get_title_source_child_props(self):
@@ -367,3 +367,55 @@ class ClipPropertiesTest(BaseTestUndoTimeline):
         self.action_log.redo()
         ps2 = self._get_title_source_child_props()
         self.assertListEqual(ps1, ps2)
+
+    def test_alignment_editor(self):
+        """Exercise aligning a clip using the alignment editor."""
+        # Wait until the project creates a layer in the timeline.
+        common.create_main_loop().run(until_empty=True)
+
+        from pitivi.timeline.timeline import TimelineContainer
+        timeline_container = TimelineContainer(self.app)
+        timeline_container.set_project(self.project)
+        self.app.gui.editor.timeline_ui = timeline_container
+
+        clipproperties = ClipProperties(self.app)
+        clipproperties.new_project_loaded_cb(None, self.project)
+        self.project.pipeline.get_position = mock.Mock(return_value=0)
+
+        transformation_box = TransformationProperties(self.app)
+        transformation_box._new_project_loaded_cb(self.app, self.project)
+
+        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
+        clip = self.add_clips_simple(timeline, 1)[0]
+        timeline.selection.select([clip])
+        source = transformation_box.source
+        self.assertIsNotNone(source)
+
+        x = source.get_child_property("posx").value
+        y = source.get_child_property("posy").value
+
+        self.assertEqual(x, 0)
+        self.assertEqual(x, 0)
+
+        alignment_editor = transformation_box.alignment_editor
+        alignment_editor._hovered_box = [0, 0]
+        alignment_editor._button_release_event_cb(alignment_editor, None)
+
+        x = source.get_child_property("posx").value
+        y = source.get_child_property("posy").value
+        self.assertEqual(x, -source.get_child_property("width").value)
+        self.assertEqual(y, -source.get_child_property("height").value)
+
+        self.action_log.undo()
+
+        x = source.get_child_property("posx").value
+        y = source.get_child_property("posy").value
+        self.assertEqual(x, 0)
+        self.assertEqual(y, 0)
+
+        self.action_log.redo()
+
+        x = source.get_child_property("posx").value
+        y = source.get_child_property("posy").value
+        self.assertEqual(x, -source.get_child_property("width").value)
+        self.assertEqual(y, -source.get_child_property("height").value)
