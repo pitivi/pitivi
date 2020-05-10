@@ -60,7 +60,7 @@ from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import AUDIO_CHANNELS
 from pitivi.utils.ui import AUDIO_RATES
 from pitivi.utils.ui import beautify_time_delta
-from pitivi.utils.ui import FRAME_RATES
+from pitivi.utils.ui import create_frame_rates_model
 from pitivi.utils.ui import get_combo_value
 from pitivi.utils.ui import set_combo_value
 from pitivi.utils.ui import SPACING
@@ -2075,7 +2075,6 @@ class ProjectSettingsDialog:
         self.frame_rate_fraction_widget.show()
 
         # Populate comboboxes.
-        self.frame_rate_combo.set_model(FRAME_RATES)
         self.channels_combo.set_model(AUDIO_CHANNELS)
         self.sample_rate_combo.set_model(AUDIO_RATES)
 
@@ -2172,8 +2171,11 @@ class ProjectSettingsDialog:
 
     def _update_frame_rate_combo_func(self, unused, combo_widget, fraction_widget):
         """Updates the combo_widget to match the fraction_widget."""
-        # This can fail when there is no corresponding value in combo's model.
-        set_combo_value(combo_widget, fraction_widget.get_widget_value())
+        widget_value = fraction_widget.get_widget_value()
+        fr_datum = (widget_value.num, widget_value.denom)
+        model = create_frame_rates_model(fr_datum)
+        self.frame_rate_combo.set_model(model)
+        set_combo_value(combo_widget, widget_value)
 
     def __video_preset_loaded_cb(self, unused_mgr):
         self.sar = self.get_sar()

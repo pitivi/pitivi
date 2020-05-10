@@ -879,7 +879,6 @@ standard_frames_list = [(12, 1),
                         (60, 1),
                         (120, 1)
                         ]
-FRAME_RATES = create_frame_rates_model()
 
 AUDIO_RATES = create_model((str, int),
                            [(format_audiorate(rate), rate) for rate in (

@@ -38,7 +38,6 @@ from pitivi.utils.ui import AUDIO_CHANNELS
 from pitivi.utils.ui import AUDIO_RATES
 from pitivi.utils.ui import beautify_eta
 from pitivi.utils.ui import create_frame_rates_model
-from pitivi.utils.ui import FRAME_RATES
 from pitivi.utils.ui import get_combo_value
 from pitivi.utils.ui import set_combo_value
 from pitivi.utils.widgets import GstElementSettingsDialog
@@ -549,7 +548,7 @@ class RenderDialog(Loggable):
         self.audio_settings_button = builder.get_object(
             "audio_settings_button")
         self.frame_rate_combo = builder.get_object("frame_rate_combo")
-        self.frame_rate_combo.set_model(FRAME_RATES)
+        self.frame_rate_combo.set_model(create_frame_rates_model())
         self.scale_spinbutton = builder.get_object("scale_spinbutton")
         self.channels_combo = builder.get_object("channels_combo")
         self.channels_combo.set_model(AUDIO_CHANNELS)
