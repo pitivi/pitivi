@@ -382,10 +382,10 @@ class ClipPropertiesTest(BaseTestUndoTimeline, BaseTestTimeline):
         clipproperties.new_project_loaded_cb(None, self.project)
         self.project.pipeline.get_position = mock.Mock(return_value=0)
 
-        transformation_box = TransformationProperties(self.app)
+        transformation_box = clipproperties.transformation_expander
         transformation_box._new_project_loaded_cb(self.app, self.project)
 
-        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
+        timeline = timeline_container.timeline
         clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
         source = transformation_box.source
@@ -402,7 +402,7 @@ class ClipPropertiesTest(BaseTestUndoTimeline, BaseTestTimeline):
         event.x = 0
         event.y = 0
         alignment_editor._motion_notify_event_cb(None, event)
-        alignment_editor._button_release_event_cb(alignment_editor, None)
+        alignment_editor._button_release_event_cb(None, None)
 
         self.assertEqual(source.get_child_property("posx").value, -width)
         self.assertEqual(source.get_child_property("posy").value, -height)
