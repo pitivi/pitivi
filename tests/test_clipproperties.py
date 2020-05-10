@@ -391,31 +391,28 @@ class ClipPropertiesTest(BaseTestUndoTimeline, BaseTestTimeline):
         source = transformation_box.source
         self.assertIsNotNone(source)
 
-        x = source.get_child_property("posx").value
-        y = source.get_child_property("posy").value
+        height = source.get_child_property("height").value
+        width = source.get_child_property("width").value
 
-        self.assertEqual(x, 0)
-        self.assertEqual(x, 0)
+        self.assertEqual(source.get_child_property("posx").value, 0)
+        self.assertEqual(source.get_child_property("posy").value, 0)
 
         alignment_editor = transformation_box.alignment_editor
-        alignment_editor._hovered_box = [0, 0]
+        event = mock.MagicMock()
+        event.x = 0
+        event.y = 0
+        alignment_editor._motion_notify_event_cb(None, event)
         alignment_editor._button_release_event_cb(alignment_editor, None)
 
-        x = source.get_child_property("posx").value
-        y = source.get_child_property("posy").value
-        self.assertEqual(x, -source.get_child_property("width").value)
-        self.assertEqual(y, -source.get_child_property("height").value)
+        self.assertEqual(source.get_child_property("posx").value, -width)
+        self.assertEqual(source.get_child_property("posy").value, -height)
 
         self.action_log.undo()
 
-        x = source.get_child_property("posx").value
-        y = source.get_child_property("posy").value
-        self.assertEqual(x, 0)
-        self.assertEqual(y, 0)
+        self.assertEqual(source.get_child_property("posx").value, 0)
+        self.assertEqual(source.get_child_property("posy").value, 0)
 
         self.action_log.redo()
 
-        x = source.get_child_property("posx").value
-        y = source.get_child_property("posy").value
-        self.assertEqual(x, -source.get_child_property("width").value)
-        self.assertEqual(y, -source.get_child_property("height").value)
+        self.assertEqual(source.get_child_property("posx").value, -width)
+        self.assertEqual(source.get_child_property("posy").value, -height)
