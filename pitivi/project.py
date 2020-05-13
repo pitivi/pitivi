@@ -1061,11 +1061,12 @@ class Project(Loggable, GES.Project):
             self.set_modification_state(True)
 
     @property
-    def audiochannels(self):
-        return self.audio_profile.get_restriction()[0]["channels"]
+    def audiochannels(self) -> int:
+        # The map does not always contain "channels".
+        return self.audio_profile.get_restriction()[0]["channels"] or 0
 
     @audiochannels.setter
-    def audiochannels(self, value):
+    def audiochannels(self, value: int):
         if self._set_audio_restriction("channels", int(value)):
             self.set_modification_state(True)
 

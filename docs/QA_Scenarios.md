@@ -329,6 +329,24 @@ on GitLab, indicating:
 -   test keyboard shortcuts
     -   try to locate a specific frame using only the keyboard
 
+## Test Peak Meter
+
+1. Create and open a new Pitivi project
+2. Import 'mp3_sample.mp3' from the 'tests/samples' directory into the media library
+3. Insert a 'mp3_sample.mp3' clip from the media library into the timeline
+    -   The timeline should only contain the 'mp3_sample.mp3' clip and nothing else
+4. Position the seeker at the beginning of the clip on the timeline
+5. Press the 'play' button on the viewer controls
+    -   The height of the two peak meters should start changing during playback of the clip but should stop once the clip ends
+6. Detach the viewer by pressing the 'detach viewer' button on the viewer controls
+    -   The peak meters should appear on the right side of the viewer in the external viewer window that pops up
+7. Close the external viewer window
+    -   The peak meters should appear again in their original location on the right side of the viewer
+8. Drag the corner on the viewer container to resize the viewer container to the minimum size
+    -   The peak meters should now be sized smaller in response to the smaller viewer container
+9. Go to project settings and set the number of audio channels to '8 (7.1)'
+    -   There should now be eight peak bars in total displayed next to the viewer
+
 ## Test Preferences
 
 # User provided Scenarios

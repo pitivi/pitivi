@@ -32,6 +32,10 @@ from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import TimeWidget
 from pitivi.viewer.guidelines import GuidelinesPopover
 from pitivi.viewer.overlay_stack import OverlayStack
+from pitivi.viewer.peak_meter import PEAK_METER_MAX_HEIGHT
+from pitivi.viewer.peak_meter import PEAK_METER_MIN_HEIGHT
+from pitivi.viewer.peak_meter import PeakMeter
+from pitivi.viewer.peak_meter import PeakMeterScale
 
 
 GlobalSettings.add_config_section("viewer")
@@ -62,7 +66,7 @@ GlobalSettings.add_config_option("pointColor", section="viewer",
 
 
 class ViewerContainer(Gtk.Box, Loggable):
-    """Wiget holding a viewer and the controls.
+    """Widget holding a viewer, the controls, and a peak meter.
 
     Attributes:
         pipeline (SimplePipeline): The displayed pipeline.
@@ -112,11 +116,28 @@ class ViewerContainer(Gtk.Box, Loggable):
     def _project_video_size_changed_cb(self, project):
         """Handles Project metadata changes."""
         self._reset_viewer_aspect_ratio(project)
+        self.__update_peak_meters(project)
 
     def _reset_viewer_aspect_ratio(self, project):
         """Resets the viewer aspect ratio."""
         self.target.update_aspect_ratio(project)
         self.timecode_entry.set_framerate(project.videorate)
+
+    def __update_peak_meters(self, project):
+        for peak_meter in self.peak_meters:
+            self.peak_meter_box.remove(peak_meter)
+
+        for i in range(project.audiochannels):
+            if i > len(self.peak_meters) - 1:
+                new_peak_meter = PeakMeter()
+                new_peak_meter.set_property("valign", Gtk.Align.FILL)
+                new_peak_meter.set_property("halign", Gtk.Align.CENTER)
+                new_peak_meter.set_margin_bottom(SPACING)
+                new_peak_meter.set_margin_top(SPACING)
+                self.peak_meters.append(new_peak_meter)
+            self.peak_meter_box.pack_start(self.peak_meters[i], False, False, 0)
+
+        self.peak_meter_box.show_all()
 
     def set_project(self, project):
         """Sets the displayed project.
@@ -135,8 +156,10 @@ class ViewerContainer(Gtk.Box, Loggable):
         project.pipeline.connect("state-change", self._pipeline_state_changed_cb)
         project.pipeline.connect("position", self._position_cb)
         project.pipeline.connect("duration-changed", self._duration_changed_cb)
+        project.pipeline.get_bus().connect("message::element", self._bus_level_message_cb)
         self.project = project
 
+        self.__update_peak_meters(project)
         self.__create_new_viewer()
         self._set_ui_active()
 
@@ -156,14 +179,15 @@ class ViewerContainer(Gtk.Box, Loggable):
                                           self.guidelines_popover.overlay)
         self.target = ViewerWidget(self.overlay_stack)
         self._reset_viewer_aspect_ratio(self.project)
+        self.viewer_row_box.pack_start(self.target, expand=True, fill=True, padding=0)
 
         if self.docked:
-            self.pack_start(self.target, expand=True, fill=True, padding=0)
+            self.pack_start(self.viewer_row_box, expand=True, fill=True, padding=0)
         else:
-            self.external_vbox.pack_start(self.target, expand=True, fill=False, padding=0)
-            self.external_vbox.child_set(self.target, fill=True)
+            self.external_vbox.pack_start(self.viewer_row_box, expand=True, fill=False, padding=0)
+            self.external_vbox.child_set(self.viewer_row_box, fill=True)
 
-        self.target.show_all()
+        self.viewer_row_box.show_all()
 
         # Wait for 1s to make sure that the viewer has completely realized
         # and then we can mark the resize status as showable.
@@ -213,6 +237,10 @@ class ViewerContainer(Gtk.Box, Loggable):
             "configure-event", self._external_window_configure_cb)
         self.external_vbox = vbox
 
+        # This holds the viewer and the peak meters box.
+        self.viewer_row_box = Gtk.Box()
+        self.viewer_row_box.set_orientation(Gtk.Orientation.HORIZONTAL)
+
         # Corner marker.
         corner = Gtk.DrawingArea()
         # Number of lines to draw in the corner marker.
@@ -236,6 +264,25 @@ class ViewerContainer(Gtk.Box, Loggable):
         corner.connect("button-release-event", self.__corner_button_release_cb)
         corner.connect("motion-notify-event", self.__corner_motion_notify_cb, hpane, vpane)
         self.pack_end(corner, False, False, 0)
+
+        # Peak Meters
+        self.peak_meter_box = Gtk.Box()
+        self.peak_meter_box.set_margin_right(SPACING)
+        self.peak_meter_box.set_margin_left(SPACING)
+        self.peak_meter_box.set_margin_bottom(SPACING)
+        self.peak_meter_box.set_margin_top(SPACING)
+        self.peak_meter_box.set_property("valign", Gtk.Align.CENTER)
+
+        self.peak_meters = []
+
+        # Peak Meter Scale
+        self.peak_meter_scale = PeakMeterScale()
+        self.peak_meter_scale.set_property("valign", Gtk.Align.FILL)
+        self.peak_meter_scale.set_property("halign", Gtk.Align.CENTER)
+        self.peak_meter_scale.set_margin_left(SPACING)
+        self.peak_meter_box.pack_end(self.peak_meter_scale, False, False, 0)
+        self.viewer_row_box.pack_end(self.peak_meter_box, False, False, 0)
+        self.peak_meter_scale.connect("configure-event", self.__peak_meter_scale_configure_event_cb)
 
         # Buttons/Controls
         bbox = Gtk.Box()
@@ -358,6 +405,12 @@ class ViewerContainer(Gtk.Box, Loggable):
         overlay = self.overlay_stack.safe_areas_overlay
         overlay.set_visible(not overlay.get_visible())
 
+    def _bus_level_message_cb(self, unused_bus, message):
+        peak_values = message.get_structure().get_value("peak")
+        if peak_values:
+            for count, peak in enumerate(peak_values):
+                self.peak_meters[count].update_peakmeter(peak)
+
     def __corner_draw_cb(self, unused_widget, cr, lines, space, margin):
         cr.set_line_width(1)
 
@@ -395,6 +448,15 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         hpane.set_position(event.x_root - self.__translation[0])
         vpane.set_position(event.y_root - self.__translation[1])
+
+    def __peak_meter_scale_configure_event_cb(self, unused_widget, unused_event):
+        container_height = self.viewer_row_box.get_allocated_height()
+        margins = self.peak_meter_box.get_allocated_height() - self.peak_meter_scale.get_bar_height() + SPACING * 4
+
+        bar_height = max(min(PEAK_METER_MAX_HEIGHT, container_height - margins), PEAK_METER_MIN_HEIGHT)
+        box_height = bar_height + SPACING * 2
+
+        self.peak_meter_box.set_property("height_request", box_height)
 
     def activate_compact_mode(self):
         self.back_button.hide()
@@ -464,7 +526,8 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.overlay_stack.enable_resize_status(False)
             position = self.project.pipeline.get_position()
             self.project.pipeline.set_simple_state(Gst.State.NULL)
-            self.remove(self.target)
+            self.remove(self.viewer_row_box)
+            self.viewer_row_box.remove(self.target)
             self.__create_new_viewer()
         self.buttons_container.set_margin_bottom(SPACING)
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
@@ -508,7 +571,8 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.overlay_stack.enable_resize_status(False)
             position = self.project.pipeline.get_position()
             self.project.pipeline.set_simple_state(Gst.State.NULL)
-            self.external_vbox.remove(self.target)
+            self.external_vbox.remove(self.viewer_row_box)
+            self.viewer_row_box.remove(self.target)
             self.__create_new_viewer()
 
         self.undock_button.show()
