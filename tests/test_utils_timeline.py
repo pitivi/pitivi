@@ -143,9 +143,10 @@ class TestEditingContext(common.TestCase):
         # Add the clips to a layer so they have TrackElements.
         project = common.create_project()
         layer = project.ges_timeline.append_layer()
-        layer.add_clip(audio_clip)
-        layer.add_clip(video_clip)
-        layer.add_clip(audio_video_clip)
+        self.assertTrue(layer.add_clip(audio_clip))
+        self.assertTrue(layer.add_clip(video_clip))
+        audio_video_clip.props.start = video_clip.props.duration
+        self.assertTrue(layer.add_clip(audio_video_clip))
 
         self.__check_with_video(audio_clip, False)
         self.__check_with_video(video_clip, True)
