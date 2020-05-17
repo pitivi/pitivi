@@ -17,6 +17,7 @@
 """Tests for the render module."""
 # pylint: disable=protected-access,no-self-use
 import os
+import shutil
 import tempfile
 from unittest import mock
 from unittest import skipUnless
@@ -26,9 +27,10 @@ from gi.repository import Gst
 from gi.repository import GstPbutils
 from gi.repository import Gtk
 
-from pitivi.preset import EncodingTargetManager
 from pitivi.render import Encoders
 from pitivi.render import extension_for_muxer
+from pitivi.render import PresetBoxRow
+from pitivi.render import PresetsManager
 from pitivi.timeline.timeline import TimelineContainer
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.ui import get_combo_value
@@ -54,13 +56,34 @@ def encoding_target_exists(tname):
     return False, "EncodingTarget %s not present on the system" % tname
 
 
-def find_preset_row_index(combo, name):
-    """Finds @name in @combo."""
-    for i, row in enumerate(combo.get_model()):
-        if row[0] == name:
-            return i
+def get_preset_model_row(model, name):
+    """Finds @name in preset model."""
+    for item in model:
+        if item.name == name:
+            return PresetBoxRow(item)
 
     return None
+
+
+def setup_render_presets(*profiles):
+    """Temporary directory setup for testing render profiles."""
+    def setup_wrapper(func):
+
+        def wrapped(self):
+            with tempfile.TemporaryDirectory() as tmp_presets_dir:
+                os.mkdir(os.path.join(tmp_presets_dir, "test"))
+
+                for profile in profiles:
+                    path = os.path.join(os.environ["PITIVI_TOP_LEVEL_DIR"], "tests/test-encoding-targets/test", profile + ".gep")
+                    tmp_path = os.path.join(tmp_presets_dir, "test", profile + ".gep")
+                    shutil.copy(path, tmp_path)
+
+                os.environ["GST_ENCODING_TARGET_PATH"] = tmp_presets_dir
+                func(self)
+
+        return wrapped
+
+    return setup_wrapper
 
 
 class TestRender(BaseTestMediaLibrary):
@@ -76,14 +99,13 @@ class TestRender(BaseTestMediaLibrary):
         project = self.create_simple_project()
         with mock.patch("pitivi.preset.xdg_data_home") as xdg_data_home:
             xdg_data_home.return_value = "/pitivi-dir-which-does-not-exist"
-            preset_manager = EncodingTargetManager(project.app)
+            preset_manager = PresetsManager(project.app)
             preset_manager.load_all()
-            self.assertTrue(preset_manager.presets)
-            for unused_name, container_profile in preset_manager.presets.items():
+            for preset_item in preset_manager.model:
                 # Preset name is only set when the project loads it
-                project.set_container_profile(container_profile)
-                muxer = container_profile.get_preset_name()
-                self.assertIsNotNone(extension_for_muxer(muxer), container_profile)
+                project.set_container_profile(preset_item.profile)
+                muxer = preset_item.profile.get_preset_name()
+                self.assertIsNotNone(extension_for_muxer(muxer), preset_item.profile)
 
     def create_simple_project(self):
         """Creates a Project with a layer a clip."""
@@ -160,18 +182,11 @@ class TestRender(BaseTestMediaLibrary):
 
     @skipUnless(*factory_exists("vorbisenc", "theoraenc", "oggmux",
                                 "opusenc", "vp8enc"))
+    @setup_render_presets("test")
     def test_loading_preset(self):
         """Checks preset values are properly exposed in the UI."""
-        def preset_changed_cb(combo, changed):
-            """Callback for the "combo::changed" signal."""
-            changed.append(1)
-
         project = self.create_simple_project()
         dialog = self.create_rendering_dialog(project)
-
-        preset_combo = dialog.render_presets.combo
-        changed = []
-        preset_combo.connect("changed", preset_changed_cb, changed)
 
         test_data = [
             ("test", {"aencoder": "vorbisenc",
@@ -208,13 +223,13 @@ class TestRender(BaseTestMediaLibrary):
             "muxer": dialog.muxer_combo,
         }
 
-        for preset_name, values in test_data:
-            i = find_preset_row_index(preset_combo, preset_name)
-            self.assertNotEqual(i, None)
+        dialog._preset_selection_menubutton_clicked_cb(None)
+        preset_listbox = dialog.preset_listbox
 
-            del changed[:]
-            preset_combo.set_active(i)
-            self.assertEqual(changed, [1], "Preset %s" % preset_name)
+        for preset_name, values in test_data:
+            row = get_preset_model_row(dialog.presets_manager.model, preset_name)
+            dialog._preset_listbox_row_activated_cb(preset_listbox, row)
+            self.assertEqual(dialog.presets_manager.cur_preset_item.name, preset_name)
 
             for attr, val in values.items():
                 val = val if isinstance(val, list) else [val]
@@ -229,41 +244,31 @@ class TestRender(BaseTestMediaLibrary):
 
     @skipUnless(*factory_exists("vorbisenc", "theoraenc", "oggmux",
                                 "opusenc", "vp8enc"))
+    @setup_render_presets("test-remove")
     def test_remove_profile(self):
         """Tests removing EncodingProfile and re-saving it."""
         project = self.create_simple_project()
         dialog = self.create_rendering_dialog(project)
-        preset_combo = dialog.render_presets.combo
-        i = find_preset_row_index(preset_combo, "test")
-        self.assertIsNotNone(i)
-        preset_combo.set_active(i)
+        self.set_preset_listbox_profile_for_dialog(dialog, "test-remove")
 
-        # Check the 'test' profile is selected
-        active_iter = preset_combo.get_active_iter()
-        self.assertEqual(preset_combo.props.model.get_value(active_iter, 0), "test")
+        # Check the "test" profile is selected
+        self.assertEqual(dialog.presets_manager.cur_preset_item.name, "test-remove")
 
-        # Remove current profile and verify it has been removed
-        dialog.render_presets.action_remove.activate()
-        profile_names = [i[0] for i in preset_combo.props.model]
-        active_iter = preset_combo.get_active_iter()
-        self.assertEqual(active_iter, None)
-        self.assertEqual(preset_combo.get_child().props.text, "")
+        # If EncodingTarget has single profile, PresetItem's name is same as that of the EncodingTarget.
+        profile_name = dialog.presets_manager.cur_preset_item.name
 
-        # Re save the current EncodingProfile calling it the same as before.
-        preset_combo.get_child().set_text("test")
-        self.assertTrue(dialog.render_presets.action_save.get_enabled())
-        dialog.render_presets.action_save.activate(None)
-        self.assertEqual([i[0] for i in preset_combo.props.model],
-                         sorted(profile_names + ["test"]))
-        active_iter = preset_combo.get_active_iter()
-        self.assertEqual(preset_combo.props.model.get_value(active_iter, 0), "test")
+        if self.assertEqual(profile_name, "test-remove"):
+            # Remove current profile and verify it has been removed
+            dialog.presets_manager.action_remove.activate()
+            self.assertIsNone(dialog.presets_manager.cur_preset_item)
+            self.assertEqual(dialog.preset_label.get_text(), "Custom")
 
     def setup_project_with_profile(self, profile_name):
         """Creates a simple project, open the render dialog and select @profile_name."""
         project = self.create_simple_project()
         dialog = self.create_rendering_dialog(project)
 
-        self.set_preset_combo_profile_for_dialog(dialog, profile_name)
+        self.set_preset_listbox_profile_for_dialog(dialog, profile_name)
 
         return project, dialog
 
@@ -429,19 +434,20 @@ class TestRender(BaseTestMediaLibrary):
         _, dialog = self.setup_project_with_profile("youtube")
         self.assertTrue(dialog.fileentry.get_text().endswith("mov"))
 
-        self.set_preset_combo_profile_for_dialog(dialog, "dvd")
+        self.set_preset_listbox_profile_for_dialog(dialog, "dvd")
         self.assertTrue(dialog.fileentry.get_text().endswith("mpeg"))
 
-        self.set_preset_combo_profile_for_dialog(dialog, "youtube")
+        self.set_preset_listbox_profile_for_dialog(dialog, "youtube")
         self.assertTrue(dialog.fileentry.get_text().endswith("mov"))
 
-    def set_preset_combo_profile_for_dialog(self, dialog, profile_name):
+    def set_preset_listbox_profile_for_dialog(self, dialog, profile_name):
         """Sets the preset value for an existing dialog."""
-        preset_combo = dialog.render_presets.combo
+        preset_model = dialog.presets_manager.model
+        preset_listbox = dialog.preset_listbox
         if profile_name:
-            i = find_preset_row_index(preset_combo, profile_name)
-            self.assertIsNotNone(i)
-            preset_combo.set_active(i)
+            row = get_preset_model_row(preset_model, profile_name)
+            self.assertIsNotNone(row)
+            dialog._preset_listbox_row_activated_cb(preset_listbox, row)
 
     @skipUnless(*encoding_target_exists("dvd"))
     def test_rendering_with_dvd_profile(self):

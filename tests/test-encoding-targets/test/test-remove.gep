@@ -1,0 +1,10 @@
+[GStreamer Encoding Target]
+name=test-remove
+category=test
+description=Just a test
+
+[profile-default]
+name=default
+description=Test ogg container
+type=container
+format=application/ogg

@@ -476,3 +476,7 @@ def asset_get_duration(asset):
         return duration
 
     return asset.get_duration()
+
+
+def cmp(item1, item2):
+    return (item1 > item2) - (item1 < item2)

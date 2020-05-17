@@ -20,17 +20,19 @@ import posixpath
 import time
 from gettext import gettext as _
 
+from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
+from gi.repository import GstPbutils
 from gi.repository import Gtk
 
 from pitivi import configure
 from pitivi.check import MISSING_SOFT_DEPS
-from pitivi.preset import EncodingTargetManager
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import cmp
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import show_user_manual
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
@@ -41,7 +43,275 @@ from pitivi.utils.ui import create_frame_rates_model
 from pitivi.utils.ui import get_combo_value
 from pitivi.utils.ui import set_combo_value
 from pitivi.utils.widgets import GstElementSettingsDialog
-from pitivi.utils.widgets import TextWidget
+
+
+# The category of GstPbutils.EncodingTarget objects holding
+# a GstPbutils.EncodingProfile used as a Pitivi render preset.
+PITIVI_ENCODING_TARGET_CATEGORY = "user-defined"
+
+
+def set_icon_and_title(icon, title, preset_item, icon_size=Gtk.IconSize.DND):
+    """Adds icon for the respective preset.
+
+    Args:
+        icon (Gtk.Image): The image widget to be updated.
+        title (Gtk.Label): The label widget to be updated.
+        preset_item (PresetItem): Preset profile related information.
+        icon_size (Gtk.IconSize): Size of the icon.
+    """
+    icon_files = {
+        "youtube": "youtube.png"
+    }
+    icon_names = {
+        "dvd": "media-optical-dvd-symbolic"
+    }
+
+    if not preset_item:
+        display_name = _("Custom")
+        icon_name = "applications-multimedia-symbolic"
+    else:
+        display_name = preset_item.display_name
+        icon_name = preset_item.name
+
+    title.props.label = display_name
+    title.set_xalign(0)
+    title.set_yalign(0)
+
+    if icon_name in icon_files:
+        icon_filename = icon_files[icon_name]
+        icon_path = os.path.join(configure.get_pixmap_dir(), "presets", icon_filename)
+
+        res, width, height = Gtk.IconSize.lookup(icon_size)
+        assert res
+
+        pic = GdkPixbuf.Pixbuf.new_from_file_at_scale(icon_path, height, width, True)
+        icon.set_from_pixbuf(pic)
+        return
+
+    icon_name = icon_names.get(icon_name, "applications-multimedia-symbolic")
+    icon.set_from_icon_name(icon_name, icon_size)
+    icon.props.valign = Gtk.Align.START
+
+
+class PresetItem(GObject.Object):
+
+    def __init__(self, name, target, profile):
+        GObject.Object.__init__(self)
+
+        name_dict = {
+            "youtube": _("YouTube"),
+            "dvd": _("DVD")
+        }
+
+        self.name = name
+        self.target = target
+        self.profile = profile
+        self.display_name = name_dict.get(name, name)
+
+    @staticmethod
+    def compare_func(item1, item2, *unused_data):
+        user_defined1 = item1.target.get_category() == PITIVI_ENCODING_TARGET_CATEGORY
+        user_defined2 = item2.target.get_category() == PITIVI_ENCODING_TARGET_CATEGORY
+        if user_defined1 != user_defined2:
+            return cmp(user_defined1, user_defined2)
+
+        return cmp(item1.name, item2.name)
+
+
+class PresetBoxRow(Gtk.ListBoxRow):
+    """ListBoxRow displaying a render preset.
+
+    Attributes:
+        preset_item (PresetItem): Preset profile related information.
+    """
+
+    def __init__(self, preset_item):
+        Gtk.ListBoxRow.__init__(self)
+
+        self.preset_item = preset_item
+        grid = Gtk.Grid()
+
+        title = Gtk.Label()
+        icon = Gtk.Image()
+        set_icon_and_title(icon, title, preset_item)
+
+        description = Gtk.Label(preset_item.target.get_description())
+        description.set_xalign(0)
+        description.set_line_wrap(True)
+        description.props.max_width_chars = 30
+
+        grid.attach(title, 1, 0, 1, 1)
+        grid.attach(description, 1, 1, 1, 1)
+        grid.attach(icon, 0, 0, 1, 2)
+        grid.set_row_spacing(6)
+        grid.set_column_spacing(10)
+        grid.set_row_homogeneous(False)
+        grid.props.margin = 6
+        self.add(grid)
+
+
+class PresetsManager(GObject.Object, Loggable):
+    """Manager of EncodingProfiles used as render presets.
+
+    The EncodingProfiles are retrieved from the available EncodingTargets.
+    An EncodingTarget can contain multiple EncodingProfiles.
+
+    The render presets created by us are stored as EncodingProfiles,
+    each in its own EncodingTarget.
+
+    Attributes:
+        cur_preset_item (PresetItem): The currently selected PresetItem.
+        model (Gio.ListStore): The model to store PresetItems for all the preset-profiles.
+        project (Project): The project holding the container_profile to be saved or turned into a new preset.
+    """
+
+    __gsignals__ = {
+        "profile-selected": (GObject.SignalFlags.RUN_LAST, None, (PresetItem,))
+    }
+
+    def __init__(self, project):
+        GObject.Object.__init__(self)
+        Loggable.__init__(self)
+
+        self.project = project
+
+        # menu button actions
+        self.action_new = None
+        self.action_remove = None
+        self.action_save = None
+
+        self.cur_preset_item = None
+        self.model = Gio.ListStore.new(PresetItem)          # preset profiles model
+
+        self.load_all()
+
+    def load_all(self):
+        """Loads profiles from GstEncodingTarget and add them to self.model."""
+        for target in GstPbutils.encoding_list_all_targets():
+            if target.get_category() != GstPbutils.ENCODING_CATEGORY_FILE_EXTENSION:
+                self._add_target(target)
+
+    def preset_menubutton_setup(self, button):
+        action_group = Gio.SimpleActionGroup()
+        menu_model = Gio.Menu()
+
+        action = Gio.SimpleAction.new("new", None)
+        action.connect("activate", self._add_preset_cb)
+        action_group.add_action(action)
+        menu_model.append(_("New"), "preset.%s" % action.get_name())
+        self.action_new = action
+
+        action = Gio.SimpleAction.new("remove", None)
+        action.connect("activate", self._remove_preset_cb)
+        action_group.add_action(action)
+        menu_model.append(_("Remove"), "preset.%s" % action.get_name())
+        self.action_remove = action
+
+        action = Gio.SimpleAction.new("save", None)
+        action.connect("activate", self._save_preset_cb)
+        action_group.add_action(action)
+        menu_model.append(_("Save"), "preset.%s" % action.get_name())
+        self.action_save = action
+
+        self.action_remove.set_enabled(False)
+        self.action_save.set_enabled(False)
+        menu = Gtk.Menu.new_from_model(menu_model)
+        menu.insert_action_group("preset", action_group)
+        button.set_popup(menu)
+
+    def _add_preset_cb(self, unused_action, unused_param):
+        preset_name = self.get_new_preset_name()
+        self.select_preset(self.create_preset(preset_name))
+
+    def _remove_preset_cb(self, unused_action, unused_param):
+        self.action_remove.set_enabled(False)
+        self.action_save.set_enabled(False)
+
+        if not self.cur_preset_item:
+            return
+
+        # There is only one EncodingProfile in the EncodingTarget.
+        preset_path = self.cur_preset_item.target.get_path()
+        if preset_path:
+            os.remove(preset_path)
+
+        res, pos = self.model.find(self.cur_preset_item)
+        assert res, self.cur_preset_item.name
+        self.model.remove(pos)
+
+        self.cur_preset_item = None
+        self.emit("profile-selected", None)
+
+    def _save_preset_cb(self, unused_action, unused_param):
+        name = self.cur_preset_item.target.get_name()
+
+        res, pos = self.model.find(self.cur_preset_item)
+        assert res, self.cur_preset_item.name
+        self.model.remove(pos)
+
+        self.cur_preset_item = self.create_preset(name)
+        self.emit("profile-selected", self.cur_preset_item)
+
+    def _add_target(self, encoding_target):
+        """Adds the profiles of the specified encoding_target as render presets.
+
+        Args:
+            encoding_target (GstPbutils.EncodingTarget): An encoding target.
+        """
+        preset_items = []
+        for profile in encoding_target.get_profiles():
+            # The name can be for example "youtube;yt"
+            name = encoding_target.get_name().split(";")[0]
+            if len(encoding_target.get_profiles()) != 1 and profile.get_name().lower() != "default":
+                name += "_" + profile.get_name()
+
+            preset_item = PresetItem(name, encoding_target, profile)
+            self.model.insert_sorted(preset_item, PresetItem.compare_func)
+            preset_items.append(preset_item)
+
+        return preset_items
+
+    def has_preset(self, name):
+        name = name.lower()
+        preset_names = (item.name for item in self.model)
+        return any(name == preset.lower() for preset in preset_names)
+
+    def create_preset(self, preset_name):
+        """Creates a preset, overwriting the preset with the same name if any.
+
+        Args:
+            preset_name (str): The name for the new preset created.
+            values (dict): The values of the new preset.
+        """
+        target = GstPbutils.EncodingTarget.new(preset_name, PITIVI_ENCODING_TARGET_CATEGORY,
+                                               "",
+                                               [self.project.container_profile])
+        target.save()
+        return self._add_target(target)[0]
+
+    def get_new_preset_name(self):
+        """Gets a unique name for a new preset."""
+        # Translators: This must contain exclusively low case alphanum and '-'
+        name = _("new-profile")
+        i = 1
+        while self.has_preset(name):
+            # Translators: This must contain exclusively low case alphanum and '-'
+            name = _("new-profile-%d") % i
+            i += 1
+        return name
+
+    def select_preset(self, preset_item):
+        """Selects preset from currently active row in preset listbox.
+
+        Args:
+            preset_item (PresetItem): The row representing the preset to be applied.
+        """
+        self.cur_preset_item = preset_item
+        writable = len(preset_item.target.get_profiles()) == 1 and os.access(preset_item.target.get_path(), os.W_OK)
+
+        self.action_remove.set_enabled(writable)
+        self.action_save.set_enabled(writable)
+        self.emit("profile-selected", preset_item)
 
 
 class Encoders(Loggable):
@@ -132,7 +402,7 @@ class Encoders(Loggable):
 
         for fact in Gst.ElementFactory.list_get_elements(
                 Gst.ELEMENT_FACTORY_TYPE_ENCODER, Gst.Rank.SECONDARY):
-            klist = fact.get_klass().split('/')
+            klist = fact.get_klass().split("/")
             if "Video" in klist or "Image" in klist:
                 self.vencoders.append(fact)
             elif "Audio" in klist:
@@ -421,14 +691,15 @@ class RenderDialog(Loggable):
         # {object: sigId}
         self._gst_signal_handlers_ids = {}
 
-        self.render_presets = EncodingTargetManager(project)
-        self.render_presets.connect('profile-selected', self._encoding_profile_selected_cb)
+        self.presets_manager = PresetsManager(project)
+        self.presets_manager.connect("profile-selected", self._presets_manager_profile_selected_cb)
 
         # Whether encoders changing are a result of changing the muxer.
         self.muxer_combo_changing = False
-        self._create_ui()
         self.progress = None
         self.dialog = None
+        self.preset_listbox = None
+        self._create_ui()
 
         # Directory and Filename
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
@@ -470,8 +741,7 @@ class RenderDialog(Loggable):
         self.widgets_group.add_vertex(self.muxer_combo, signal="changed")
         self.widgets_group.add_vertex(self.audio_encoder_combo, signal="changed")
         self.widgets_group.add_vertex(self.video_encoder_combo, signal="changed")
-        self.widgets_group.add_vertex(self.preset_menubutton,
-                                      update_func=self._update_preset_menu_button)
+        self.widgets_group.add_vertex(self.preset_menubutton, signal="clicked")
 
         self.widgets_group.add_edge(self.frame_rate_combo, self.preset_menubutton)
         self.widgets_group.add_edge(self.audio_encoder_combo, self.preset_menubutton)
@@ -480,8 +750,12 @@ class RenderDialog(Loggable):
         self.widgets_group.add_edge(self.channels_combo, self.preset_menubutton)
         self.widgets_group.add_edge(self.sample_rate_combo, self.preset_menubutton)
 
-    def _encoding_profile_selected_cb(self, unused_target, encoding_profile):
-        self._set_encoding_profile(encoding_profile)
+    def _presets_manager_profile_selected_cb(self, unused_target, preset_item):
+        """Handles the selection of a render preset."""
+        set_icon_and_title(self.preset_icon, self.preset_label, preset_item)
+
+        if preset_item:
+            self._set_encoding_profile(preset_item.profile)
 
     def _set_encoding_profile(self, encoding_profile, recursing=False):
         old_profile = self.project.container_profile
@@ -498,7 +772,7 @@ class RenderDialog(Loggable):
         self.project.set_container_profile(encoding_profile)
         self._setting_encoding_profile = True
 
-        if not set_combo_value(self.muxer_combo, factory('muxer')):
+        if not set_combo_value(self.muxer_combo, factory("muxer")):
             rollback()
             return
 
@@ -528,9 +802,6 @@ class RenderDialog(Loggable):
         self._update_file_extension()
         self._setting_encoding_profile = False
 
-    def _update_preset_menu_button(self, unused_source, unused_target):
-        self.render_presets.update_menu_actions()
-
     def _create_ui(self):
         builder = Gtk.Builder()
         builder.add_from_file(
@@ -559,16 +830,17 @@ class RenderDialog(Loggable):
         self.filebutton = builder.get_object("filebutton")
         self.fileentry = builder.get_object("fileentry")
         self.resolution_label = builder.get_object("resolution_label")
+        self.preset_selection_menubutton = builder.get_object("preset_selection_menubutton")
+        self.preset_label = builder.get_object("preset_label")
+        self.preset_icon = builder.get_object("preset_icon")
         self.preset_menubutton = builder.get_object("preset_menubutton")
-
-        text_widget = TextWidget(matches=r'^[a-z][a-z-0-9-]+$', combobox=True)
-        self.presets_combo = text_widget.combo
-        preset_table = builder.get_object("preset_table")
-        preset_table.attach(text_widget, 1, 0, 1, 1)
-        text_widget.show()
+        self.preset_popover = builder.get_object("preset_popover")
 
         self.__automatically_use_proxies = builder.get_object(
             "automatically_use_proxies")
+
+        set_icon_and_title(self.preset_icon, self.preset_label, None)
+        self.preset_selection_menubutton.connect("clicked", self._preset_selection_menubutton_clicked_cb)
 
         self.__always_use_proxies = builder.get_object("always_use_proxies")
         self.__always_use_proxies.props.group = self.__automatically_use_proxies
@@ -576,8 +848,7 @@ class RenderDialog(Loggable):
         self.__never_use_proxies = builder.get_object("never_use_proxies")
         self.__never_use_proxies.props.group = self.__automatically_use_proxies
 
-        self.render_presets.setup_ui(self.presets_combo, self.preset_menubutton)
-        self.render_presets.load_all()
+        self.presets_manager.preset_menubutton_setup(self.preset_menubutton)
 
         self.window.set_icon_name("system-run-symbolic")
         self.window.set_transient_for(self.app.gui)
@@ -589,6 +860,27 @@ class RenderDialog(Loggable):
 
         self.video_output_checkbutton.props.active = media_types & GES.TrackType.VIDEO
         self._update_video_widgets_sensitivity()
+
+        self.listbox_setup()
+
+    def listbox_setup(self):
+        self.preset_listbox = Gtk.ListBox()
+        self.preset_listbox.set_selection_mode(Gtk.SelectionMode.NONE)
+
+        self.preset_listbox.bind_model(self.presets_manager.model, self._create_preset_row_func)
+
+        self.preset_listbox.connect("row-activated", self._preset_listbox_row_activated_cb)
+        self.preset_popover.add(self.preset_listbox)
+
+    def _create_preset_row_func(self, preset_item):
+        return PresetBoxRow(preset_item)
+
+    def _preset_listbox_row_activated_cb(self, listbox, row):
+        self.presets_manager.select_preset(row.preset_item)
+        self.preset_popover.hide()
+
+    def _preset_selection_menubutton_clicked_cb(self, button):
+        self.preset_popover.show_all()
 
     def _rendering_settings_changed_cb(self, unused_project, unused_item):
         """Handles Project metadata changes."""
@@ -857,19 +1149,19 @@ class RenderDialog(Loggable):
 
         Args:
             factory (Gst.ElementFactory): The factory for editing.
-            media_type (str): String describing the media type ('audio' or 'video')
+            media_type (str): String describing the media type ("audio" or "video")
         """
         # Reconstitute the property name from the media type (vcodecsettings or acodecsettings)
-        properties = getattr(self.project, media_type[0] + 'codecsettings')
+        properties = getattr(self.project, media_type[0] + "codecsettings")
 
         self.dialog = GstElementSettingsDialog(factory, properties=properties,
-                                               caps=getattr(self.project, media_type + '_profile').get_format(),
+                                               caps=getattr(self.project, media_type + "_profile").get_format(),
                                                parent_window=self.window)
         self.dialog.ok_btn.connect(
             "clicked", self._ok_button_clicked_cb, media_type)
 
     def __additional_debug_info(self):
-        if self.project.vencoder == 'x264enc':
+        if self.project.vencoder == "x264enc":
             if self.project.videowidth % 2 or self.project.videoheight % 2:
                 return "\n\n%s\n\n" % _("<b>Make sure your rendering size is even, "
                                         "x264enc might not be able to render otherwise.</b>\n\n")
@@ -1034,11 +1326,11 @@ class RenderDialog(Loggable):
     # -- UI callbacks
     def _ok_button_clicked_cb(self, unused_button, media_type):
         assert media_type in ("audio", "video")
-        setattr(self.project, media_type[0] + 'codecsettings', self.dialog.get_settings())
+        setattr(self.project, media_type[0] + "codecsettings", self.dialog.get_settings())
 
         caps = self.dialog.get_caps()
         if caps:
-            getattr(self.project, media_type + '_profile').set_format(caps)
+            getattr(self.project, media_type + "_profile").set_format(caps)
         self.dialog.window.destroy()
 
     def _render_button_clicked_cb(self, unused_button):
@@ -1061,7 +1353,7 @@ class RenderDialog(Loggable):
         self.progress.connect("pause", self._pause_render)
         bus = self._pipeline.get_bus()
         bus.add_signal_watch()
-        self._gst_signal_handlers_ids[bus] = bus.connect('message', self._bus_message_cb)
+        self._gst_signal_handlers_ids[bus] = bus.connect("message", self._bus_message_cb)
         self.project.pipeline.connect("position", self._update_position_cb)
         # Force writing the config now, or the path will be reset
         # if the user opens the rendering dialog again
@@ -1253,7 +1545,7 @@ class RenderDialog(Loggable):
         if self._setting_encoding_profile:
             return
         factory = get_combo_value(self.video_encoder_combo)
-        self._element_settings_dialog(factory, 'video')
+        self._element_settings_dialog(factory, "video")
 
     def _channels_combo_changed_cb(self, combo):
         if self._setting_encoding_profile:
@@ -1279,7 +1571,7 @@ class RenderDialog(Loggable):
 
     def _audio_settings_button_clicked_cb(self, unused_button):
         factory = get_combo_value(self.audio_encoder_combo)
-        self._element_settings_dialog(factory, 'audio')
+        self._element_settings_dialog(factory, "audio")
 
     def _update_file_extension(self):
         # Update the extension of the filename.

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.36.0 -->
 <interface>
-  <requires lib="gtk+" version="3.10"/>
+  <requires lib="gtk+" version="3.22"/>
   <object class="GtkAdjustment" id="adjustment1">
     <property name="lower">1</property>
     <property name="upper">100</property>
-    <property name="value">1</property>
     <property name="step_increment">1</property>
     <property name="page_increment">1</property>
   </object>
@@ -13,6 +12,15 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">question-round-symbolic</property>
+  </object>
+  <object class="GtkPopover" id="preset_popover">
+    <property name="can_focus">False</property>
+    <property name="relative_to">preset_selection_menubutton</property>
+    <property name="position">right</property>
+    <property name="constrain_to">none</property>
+    <child>
+      <placeholder/>
+    </child>
   </object>
   <object class="GtkDialog" id="render-dialog">
     <property name="can_focus">False</property>
@@ -22,9 +30,6 @@
     <property name="window_position">center-on-parent</property>
     <property name="default_height">400</property>
     <property name="type_hint">dialog</property>
-    <child>
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox3">
         <property name="visible">True</property>
@@ -36,20 +41,6 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="closebutton">
-                <property name="label" translatable="yes">Close</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="_close_button_clicked_cb" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkButton" id="render_button">
                 <property name="label" translatable="yes">Render</property>
@@ -94,7 +85,6 @@
                     <property name="halign">start</property>
                     <property name="hexpand">True</property>
                     <property name="action">select-folder</property>
-                    <signal name="current-folder-changed" handler="_current_folder_changed_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -136,11 +126,24 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="activates_default">True</property>
-                    <signal name="changed" handler="_filename_changed_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
                     <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="label6">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="valign">start</property>
+                    <property name="xpad">0</property>
+                    <property name="label" translatable="yes">Preset:</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">2</property>
                   </packing>
                 </child>
                 <child>
@@ -202,15 +205,63 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkGrid" id="preset_table">
+                  <object class="GtkBox" id="preset_box">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="halign">end</property>
+                    <property name="baseline_position">top</property>
+                    <child>
+                      <object class="GtkMenuButton" id="preset_selection_menubutton">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="direction">right</property>
+                        <property name="popover">preset_popover</property>
+                        <child>
+                          <object class="GtkGrid" id="preset_button_grid">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_start">3</property>
+                            <property name="margin_end">3</property>
+                            <property name="margin_top">3</property>
+                            <property name="margin_bottom">3</property>
+                            <property name="row_spacing">4</property>
+                            <child>
+                              <object class="GtkImage" id="preset_icon">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="stock">gtk-missing-image</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="preset_label">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Custom</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
                     <child>
                       <object class="GtkMenuButton" id="preset_menubutton">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="valign">start</property>
                         <property name="relief">none</property>
                         <child>
                           <object class="GtkImage" id="image1">
@@ -221,34 +272,15 @@
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">0</property>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
                       </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label6">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="xpad">10</property>
-                        <property name="label" translatable="yes">Preset:</property>
-                        <attributes>
-                          <attribute name="weight" value="bold"/>
-                        </attributes>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
                     </child>
                   </object>
                   <packing>
-                    <property name="left_attach">0</property>
+                    <property name="left_attach">1</property>
                     <property name="top_attach">2</property>
-                    <property name="width">2</property>
                   </packing>
                 </child>
               </object>
@@ -303,7 +335,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="halign">start</property>
                                 <property name="invisible_char">•</property>
-                                <property name="text" translatable="no">1.0</property>
+                                <property name="text">1.0</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
                                 <property name="adjustment">adjustment1</property>
@@ -328,7 +360,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
-                                <property name="label" translatable="no">1000 x 1000</property>
+                                <property name="label">1000 x 1000</property>
                                 <property name="width_chars">12</property>
                                 <property name="xalign">0</property>
                                 <child internal-child="accessible">
@@ -665,6 +697,7 @@
 
 This option is a good trade-off between quality of the rendered video and stability.</property>
                     <property name="halign">start</property>
+                    <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
@@ -681,6 +714,7 @@ This option is a good trade-off between quality of the rendered video and stabil
                     <property name="receives_default">False</property>
                     <property name="tooltip_markup" translatable="yes">Render all proxied clips from the proxy assets. There might be some quality loss during the rendering process.</property>
                     <property name="halign">start</property>
+                    <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
@@ -698,6 +732,7 @@ This option is a good trade-off between quality of the rendered video and stabil
                     <property name="tooltip_markup" translatable="yes">Always use source assets for rendering. It is the best choice for the quality of the rendered video, but you might hit some bugs because of the use of not officially supported media formats.
 &lt;i&gt;Use at your own risk!&lt;/i&gt;</property>
                     <property name="halign">start</property>
+                    <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
@@ -723,8 +758,10 @@ This option is a good trade-off between quality of the rendered video and stabil
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">closebutton</action-widget>
       <action-widget response="0">render_button</action-widget>
     </action-widgets>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
   </object>
 </interface>
