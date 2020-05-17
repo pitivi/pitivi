@@ -24,7 +24,9 @@ from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gst
 
-from pitivi import medialibrary
+from pitivi.medialibrary import AssetThumbnail
+from pitivi.medialibrary import MediaLibraryWidget
+from pitivi.medialibrary import ViewType
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import ASSET_DURATION_META
 from pitivi.utils.misc import asset_get_duration
@@ -62,7 +64,7 @@ class BaseTestMediaLibrary(common.TestCase):
         self.check_no_transcoding = False
         self.app = common.create_pitivi_mock(**settings)
         self.app.project_manager = ProjectManager(self.app)
-        self.medialibrary = medialibrary.MediaLibraryWidget(self.app)
+        self.medialibrary = MediaLibraryWidget(self.app)
 
         if project_uri:
             self.app.project_manager.load_project(project_uri)
@@ -84,7 +86,7 @@ class BaseTestMediaLibrary(common.TestCase):
                             % progressbar.props.fraction)
 
         if progressbar.props.fraction == 1.0:
-            self.assertEqual(len(self.medialibrary.storemodel),
+            self.assertEqual(self.medialibrary.store.get_n_items(),
                              len(self.samples))
             self.mainloop.quit()
 
@@ -99,7 +101,7 @@ class BaseTestMediaLibrary(common.TestCase):
         """Simulates the user importing an asset."""
         self._custom_set_up(proxying_strategy=proxying_strategy,
                             num_transcoding_jobs=4,
-                            last_clip_view=medialibrary.SHOW_TREEVIEW,
+                            last_clip_view=ViewType.LIST,
                             auto_scaling_enabled=auto_scaling_enabled)
         self.check_no_transcoding = check_no_transcoding
 
@@ -117,11 +119,10 @@ class BaseTestMediaLibrary(common.TestCase):
 
         # Check the initial state of the asset, nothing should be going on.
         self.assertNotIn("Proxy creation progress:",
-                         self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+                         self.medialibrary.store[0].infotext)
         self.assertIn(
-            self.medialibrary.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state,
-            [medialibrary.AssetThumbnail.NO_PROXY,
-             medialibrary.AssetThumbnail.UNSUPPORTED])
+            self.medialibrary.store[0].thumb_decorator.state,
+            [AssetThumbnail.NO_PROXY, AssetThumbnail.UNSUPPORTED])
 
         # Check proxy creation.
         was_in_progress = False
@@ -136,34 +137,34 @@ class BaseTestMediaLibrary(common.TestCase):
                 nonlocal was_in_progress
                 was_in_progress = True
 
-        old_set_state = medialibrary.AssetThumbnail._set_state
-        medialibrary.AssetThumbnail._set_state = check_set_state
+        old_set_state = AssetThumbnail._set_state
+        AssetThumbnail._set_state = check_set_state
         try:
             project.use_proxies_for_assets([asset], scaled)
 
             self.assertIn("Proxy creation progress:",
-                          self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+                          self.medialibrary.store[0].infotext)
 
             self.mainloop.run(timeout_seconds=10)
         finally:
-            medialibrary.AssetThumbnail._set_state = old_set_state
+            AssetThumbnail._set_state = old_set_state
 
         if check_progress:
             self.assertTrue(was_in_progress)
 
         # Finally, check the final status of the asset after proxying.
         self.assertNotIn("Proxy creation progress:",
-                         self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+                         self.medialibrary.store[0].infotext)
         if scaled:
             self.assertEqual(
-                self.medialibrary.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state,
-                medialibrary.AssetThumbnail.SCALED)
+                self.medialibrary.store[0].thumb_decorator.state,
+                AssetThumbnail.SCALED)
         else:
             self.assertEqual(
-                self.medialibrary.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state,
-                medialibrary.AssetThumbnail.PROXIED)
+                self.medialibrary.store[0].thumb_decorator.state,
+                AssetThumbnail.PROXIED)
 
-        proxy = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+        proxy = self.medialibrary.store[0].asset
         self.assertEqual(proxy.props.proxy_target.props.id, asset.props.id)
         # Check if the asset is video or not
         if w:
@@ -182,7 +183,7 @@ class BaseTestMediaLibrary(common.TestCase):
             [proxy], delete_proxy_file=delete)
 
         self.assertIsNone(asset.get_proxy())
-        self.assertEqual(self.medialibrary.storemodel[0][medialibrary.COL_URI],
+        self.assertEqual(self.medialibrary.store[0].uri,
                          asset.props.id)
 
         self.assertEqual(os.path.exists(Gst.uri_get_location(proxy.props.id)),
@@ -211,7 +212,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         self.check_import([sample_name])
 
         asset_uri = common.get_sample_uri(sample_name)
-        proxy = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+        proxy = self.medialibrary.store[0].asset
 
         self.assertEqual(proxy.props.proxy_target.props.id, asset_uri)
 
@@ -219,10 +220,10 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         self.assertIn(proxy, project.list_assets(GES.UriClip))
         project.disable_proxies_for_assets([proxy], delete_proxies)
         self.assertNotIn(proxy, project.list_assets(GES.UriClip))
-        self.assertEqual(len(self.medialibrary.storemodel),
+        self.assertEqual(self.medialibrary.store.get_n_items(),
                          len(self.samples))
 
-        self.assertEqual(self.medialibrary.storemodel[0][medialibrary.COL_URI],
+        self.assertEqual(self.medialibrary.store[0].uri,
                          asset_uri)
 
     def test_transcoding_and_reusing(self):
@@ -295,7 +296,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         with common.cloned_sample(sample_name):
             self.stop_using_proxies(delete_proxies=True)
 
-            asset = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+            asset = self.medialibrary.store[0].asset
             proxy_uri = self.app.proxy_manager.get_proxy_uri(asset)
 
             # Requesting UriClip sync will return None if the asset is not in cache
@@ -312,7 +313,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
             # Check that the info column notifies the user about progress
             self.assertTrue("Proxy creation progress:" in
-                            self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+                            self.medialibrary.store[0].infotext)
 
             # Run the mainloop and let _progress_bar_cb stop it when the proxy is
             # ready
@@ -325,7 +326,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         sample_name = "30fps_numeroted_frames_red.mkv"
         with common.cloned_sample(sample_name):
             self.check_import([sample_name], proxying_strategy=ProxyingStrategy.NOTHING)
-            asset = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+            asset = self.medialibrary.store[0].asset
 
             # Create scaled proxy
             proxy = self.check_add_proxy(asset, scaled=True)
@@ -337,7 +338,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         sample_name = "30fps_numeroted_frames_red.mkv"
         with common.cloned_sample(sample_name):
             self.check_import([sample_name], proxying_strategy=ProxyingStrategy.NOTHING)
-            asset = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+            asset = self.medialibrary.store[0].asset
 
             # Create and disable scaled proxy
             proxy = self.check_add_proxy(asset, scaled=True)
@@ -372,7 +373,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.check_import([sample_name], proxying_strategy=ProxyingStrategy.NOTHING)
             timeline = self.app.project_manager.current_project.ges_timeline
 
-            asset = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+            asset = self.medialibrary.store[0].asset
             clip = timeline.append_layer().add_asset(asset, 0, 0, Gst.CLOCK_TIME_NONE, GES.TrackType.VIDEO)
 
             duration = 2.5 * Gst.SECOND
@@ -393,7 +394,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         sample_name = "30fps_numeroted_frames_red.mkv"
         with common.cloned_sample(sample_name):
             self.check_import([sample_name], proxying_strategy=ProxyingStrategy.NOTHING)
-            asset = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+            asset = self.medialibrary.store[0].asset
             asset_uri = common.get_sample_uri(sample_name)
 
             # Create scaled proxy
@@ -406,10 +407,10 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
             self.app.project_manager.current_project.regenerate_scaled_proxies()
             self.assertTrue("Proxy creation progress:" in
-                            self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+                            self.medialibrary.store[0].infotext)
             self.mainloop.run()
 
-            proxy = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+            proxy = self.medialibrary.store[0].asset
             self.assertNotEqual(proxy.props.id, proxy_uri)
 
             stream = proxy.get_info().get_video_streams()[0]
@@ -425,7 +426,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         sample_name = "1sec_simpsons_trailer.mp4"
         with common.cloned_sample(sample_name):
             self.check_import([sample_name], proxying_strategy=ProxyingStrategy.AUTOMATIC)
-            asset = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+            asset = self.medialibrary.store[0].asset
 
             # Mark all formats as unsupported
             with mock.patch.object(self.app.proxy_manager,
@@ -445,7 +446,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
                 self.mainloop.run()
 
                 # Check that we revert to HQ proxy
-                proxy = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+                proxy = self.medialibrary.store[0].asset
                 proxy_uri = self.app.proxy_manager.get_proxy_uri(asset, scaled=False)
                 self.assertEqual(proxy.props.id, proxy_uri)
 
@@ -463,7 +464,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         sample = "mp3_sample.mp3"
         with common.cloned_sample(sample):
             self.check_import([sample], proxying_strategy=ProxyingStrategy.NOTHING)
-            asset = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+            asset = self.medialibrary.store[0].asset
 
             project = self.app.project_manager.current_project
             project.use_proxies_for_assets([asset], scaled=True)
@@ -491,4 +492,4 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
         # Release click
         event = create_event(Gdk.EventType.BUTTON_RELEASE, button=3)
-        mlib._iconview_button_release_event_cb(mlib.iconview, event)
+        mlib._flowbox_button_release_event_cb(mlib.flowbox, event)

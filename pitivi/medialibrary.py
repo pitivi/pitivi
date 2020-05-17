@@ -3,6 +3,7 @@
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>
 # Copyright (c) 2012, Jean-François Fortin Tam <nekohayo@gmail.com>
+# Copyright (c) 2020, Abhishek Kumar Singh <kumarsinghabhishek59@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -64,9 +65,13 @@ from pitivi.utils.ui import SMALL_THUMB_WIDTH
 from pitivi.utils.ui import SPACING
 from pitivi.utils.ui import URI_TARGET_ENTRY
 
-# Values used in the settings file.
-SHOW_TREEVIEW = 1
-SHOW_ICONVIEW = 2
+
+class ViewType(IntEnum):
+    """How the assets can be displayed."""
+
+    LIST = 1
+    ICON = 2
+
 
 GlobalSettings.add_config_section('clip-library')
 GlobalSettings.add_config_option('lastImportFolder',
@@ -81,20 +86,23 @@ GlobalSettings.add_config_option('closeImportDialog',
 GlobalSettings.add_config_option('last_clip_view',
                                  section='clip-library',
                                  key='last-clip-view',
-                                 type_=int,
-                                 default=SHOW_ICONVIEW)
+                                 type_=str,
+                                 default=ViewType.ICON.name)
 
-STORE_MODEL_STRUCTURE = (
-    GdkPixbuf.Pixbuf, GdkPixbuf.Pixbuf,
-    str, object, str, str, object)
 
-(COL_ICON_64,
- COL_ICON_128,
- COL_INFOTEXT,
- COL_ASSET,
- COL_URI,
- COL_SEARCH_TEXT,
- COL_THUMB_DECORATOR) = list(range(len(STORE_MODEL_STRUCTURE)))
+class AssetStoreItem(GObject.GObject):
+    """Data for displaying an asset."""
+
+    def __init__(self, asset, thumb_decorator):
+        GObject.GObject.__init__(self)
+        self.icon_64 = thumb_decorator.small_thumb
+        self.icon_128 = thumb_decorator.large_thumb
+        self.infotext = beautify_asset(asset)
+        self.asset = asset
+        self.uri = self.asset.props.id
+        self.search_text = info_name(asset)
+        self.thumb_decorator = thumb_decorator
+
 
 # This whitelist is made from personal knowledge of file extensions in the wild,
 # from gst-inspect |grep demux,
@@ -496,11 +504,10 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.app = app
         self._errors = []
         self._project = None
-        self._dragged_paths = None
+        self._dragged_paths = []
         self.dragged = False
-        self.clip_view = self.app.settings.last_clip_view
-        if self.clip_view not in (SHOW_TREEVIEW, SHOW_ICONVIEW):
-            self.clip_view = SHOW_ICONVIEW
+        self.rubberbanding = False
+        self.clip_view = ViewType.__members__.get(self.app.settings.last_clip_view, ViewType.ICON)
         self.import_start_time = time.time()
         self._last_imported_uris = set()
         self.__last_proxying_estimate_time = _("Unknown")
@@ -535,97 +542,31 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._import_button = builder.get_object("media_import_button")
         self._clipprops_button = builder.get_object("media_props_button")
         self._listview_button = builder.get_object("media_listview_button")
-        search_entry = builder.get_object("media_search_entry")
+        self.search_entry = builder.get_object("media_search_entry")
 
-        # Store
-        self.storemodel = Gtk.ListStore(*STORE_MODEL_STRUCTURE)
-        self.storemodel.set_sort_func(
-            COL_URI, MediaLibraryWidget.compare_basename_func)
-        # Prefer to sort the media library elements by URI
-        # rather than show them randomly.
-        self.storemodel.set_sort_column_id(COL_URI, Gtk.SortType.ASCENDING)
-        self.storemodel.connect("row-deleted", self.__update_view_cb)
-        self.storemodel.connect("row-inserted", self.__update_view_cb)
-
-        # Scrolled Windows
-        self.treeview_scrollwin = Gtk.ScrolledWindow()
-        self.treeview_scrollwin.set_policy(
+        self.scrollwin = Gtk.ScrolledWindow()
+        self.scrollwin.set_policy(
             Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        self.treeview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
-        self.treeview_scrollwin.get_accessible().set_name(
-            "media_listview_scrollwindow")
+        self.scrollwin.get_accessible().set_name(
+            "media_flowbox_scrollwindow")
 
-        self.iconview_scrollwin = Gtk.ScrolledWindow()
-        self.iconview_scrollwin.set_policy(
-            Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        self.iconview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
-        self.iconview_scrollwin.get_accessible().set_name(
-            "media_iconview_scrollwindow")
+        self.store = Gio.ListStore()
+        self.store.connect("items-changed", self._store_items_changed_cb)
 
-        # Filtering model for the search box.
-        # Use this instead of using self.storemodel directly
-        self.model_filter = self.storemodel.filter_new()
-        self.model_filter.set_visible_func(
-            self._set_row_visible_func, data=search_entry)
+        self.flowbox = Gtk.FlowBox()
+        self.flowbox.set_valign(Gtk.Align.START)
+        self.flowbox.bind_model(self.store, self.create_iconview_widget_func)
+        # Setting up respective adjustments to allow automatic scrolling
+        self.flowbox.set_vadjustment(self.scrollwin.get_vadjustment())
+        self.flowbox.set_hadjustment(self.scrollwin.get_hadjustment())
+        self.scrollwin.add(self.flowbox)
 
-        # TreeView
-        # Displays icon, name, type, length
-        self.treeview = Gtk.TreeView(model=self.model_filter)
-        self.treeview_scrollwin.add(self.treeview)
-        self.treeview.connect(
-            "button-press-event", self._tree_view_button_press_event_cb)
-        self.treeview.connect(
-            "button-release-event", self._tree_view_button_release_event_cb)
-        self.treeview.connect("row-activated", self._iconview_item_or_row_activated_cb)
-        self.treeview.set_headers_visible(False)
-        self.treeview.set_property("search_column", COL_SEARCH_TEXT)
-        tsel = self.treeview.get_selection()
-        tsel.set_mode(Gtk.SelectionMode.MULTIPLE)
-        tsel.connect("changed", self._iconview_selection_changed_cb)
-
-        pixbufcol = Gtk.TreeViewColumn(_("Icon"))
-        pixbufcol.set_expand(False)
-        pixbufcol.set_spacing(SPACING)
-        self.treeview.append_column(pixbufcol)
-        pixcell = Gtk.CellRendererPixbuf()
-        pixcell.props.xpad = PADDING
-        pixcell.props.ypad = PADDING
-        pixcell.set_alignment(0, 0)
-        pixbufcol.pack_start(pixcell, True)
-        pixbufcol.add_attribute(pixcell, 'pixbuf', COL_ICON_64)
-
-        namecol = Gtk.TreeViewColumn(_("Information"))
-        self.treeview.append_column(namecol)
-        namecol.set_expand(True)
-        namecol.set_spacing(SPACING)
-        namecol.set_sizing(Gtk.TreeViewColumnSizing.GROW_ONLY)
-        namecol.set_min_width(150)
-        txtcell = Gtk.CellRendererText()
-        txtcell.set_property("ellipsize", Pango.EllipsizeMode.START)
-        txtcell.set_alignment(0, 0)
-        namecol.pack_start(txtcell, True)
-        namecol.add_attribute(txtcell, "markup", COL_INFOTEXT)
-
-        # IconView
-        self.iconview = Gtk.IconView(model=self.model_filter)
-        self.iconview_scrollwin.add(self.iconview)
-        self.iconview.connect(
-            "button-press-event", self._iconview_button_press_event_cb)
-        self.iconview.connect(
-            "button-release-event", self._iconview_button_release_event_cb)
-        self.iconview.connect("item-activated", self._iconview_item_or_row_activated_cb)
-        self.iconview.connect("selection-changed", self._iconview_selection_changed_cb)
-        self.iconview.set_item_orientation(Gtk.Orientation.VERTICAL)
-        self.iconview.set_property("has_tooltip", True)
-        self.iconview.set_tooltip_column(COL_INFOTEXT)
-        self.iconview.props.item_padding = PADDING / 2
-        self.iconview.props.margin = PADDING / 2
-        self.iconview_cursor_pos = None
-
-        cell = Gtk.CellRendererPixbuf()
-        self.iconview.pack_start(cell, False)
-        self.iconview.add_attribute(cell, "pixbuf", COL_ICON_128)
-        self.iconview.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
+        self.flowbox.connect("button-press-event", self._flowbox_button_press_event_cb)
+        self.flowbox.connect("button-release-event", self._flowbox_button_release_event_cb)
+        self.flowbox.set_activate_on_single_click(False)
+        self.flowbox.connect("child-activated", self._flowbox_child_activated_cb)
+        self.flowbox.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
+        self.flowbox.connect("selected-children-changed", self._flowbox_selected_children_changed_cb)
 
         # The _progressbar that shows up when importing clips
         self._progressbar = Gtk.ProgressBar()
@@ -647,11 +588,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.drag_dest_add_uri_targets()
         self.connect("drag_data_received", self._drag_data_received_cb)
 
-        self._setup_view_as_drag_and_drop_source(self.treeview)
-        self._setup_view_as_drag_and_drop_source(self.iconview)
-
-        # Hack so that the views have the same method as self
-        self.treeview.get_selected_items = self.get_selected_items
+        self._setup_view_as_drag_and_drop_source()
 
         actions_group = Gio.SimpleActionGroup()
         self.insert_action_group("medialibrary", actions_group)
@@ -674,18 +611,48 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._update_actions()
 
         # Set the state of the view mode toggle button.
-        self._listview_button.set_active(self.clip_view == SHOW_TREEVIEW)
+        self._listview_button.set_active(self.clip_view == ViewType.LIST)
         # Make sure the proper view is displayed.
-        self._display_clip_view()
+        self.scrollwin.show_all()
 
         # Add all the child widgets.
         self.pack_start(toolbar, False, False, 0)
         self.pack_start(self._welcome_infobar, False, False, 0)
         self.pack_start(self._project_settings_infobar, False, False, 0)
         self.pack_start(self._import_warning_infobar, False, False, 0)
-        self.pack_start(self.iconview_scrollwin, True, True, 0)
-        self.pack_start(self.treeview_scrollwin, True, True, 0)
+        self.pack_start(self.scrollwin, True, True, 0)
         self.pack_start(self._progressbar, False, False, 0)
+
+    def create_iconview_widget_func(self, item):
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        box.set_halign(Gtk.Align.CENTER)
+        box.props.margin = PADDING / 2
+
+        icon = Gtk.Image.new_from_pixbuf(item.icon_128)
+
+        box.pack_start(icon, False, False, 0)
+        box.set_tooltip_markup(item.infotext)
+        box.show_all()
+
+        return box
+
+    def create_listview_widget_func(self, item):
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        box.props.margin = PADDING
+        box.set_spacing(SPACING)
+
+        icon = Gtk.Image.new_from_pixbuf(item.icon_64)
+
+        label = Gtk.Label()
+        label.props.ellipsize = Pango.EllipsizeMode.START
+        label.set_markup(item.infotext)
+        label.set_yalign(0)
+
+        box.pack_start(icon, False, False, 0)
+        box.pack_start(label, False, False, 0)
+        box.show_all()
+
+        return box
 
     def finalize(self):
         self.debug("Finalizing %s", self)
@@ -708,8 +675,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     @staticmethod
     def compare_basename_func(model, iter1, iter2, user_data):
         """Compares two model elements."""
-        uri1 = model[iter1][COL_URI]
-        uri2 = model[iter2][COL_URI]
+        uri1 = model[iter1].uri
+        uri2 = model[iter2].uri
         basename1 = GLib.path_get_basename(uri1).lower()
         basename2 = GLib.path_get_basename(uri2).lower()
         if basename1 < basename2:
@@ -719,29 +686,16 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 return -1
         return 1
 
-    def get_asset_for_uri(self, uri):
-        for path in self.model_filter:
-            asset = path[COL_ASSET]
-            info = asset.get_info()
-            asset_uri = info.get_uri()
-            if asset_uri == uri:
-                self.debug("Found asset: %s for uri: %s", asset, uri)
-                return asset
-
-        self.warning("Did not find any asset for uri: %s", uri)
-        return None
-
-    def _setup_view_as_drag_and_drop_source(self, view):
-        view.drag_source_set(0, [], Gdk.DragAction.COPY)
-        view.enable_model_drag_source(
+    def _setup_view_as_drag_and_drop_source(self):
+        self.flowbox.drag_source_set(
             Gdk.ModifierType.BUTTON1_MASK, [URI_TARGET_ENTRY], Gdk.DragAction.COPY)
-        view.drag_source_add_uri_targets()
-        view.connect("drag-data-get", self._dnd_drag_data_get_cb)
-        view.connect_after("drag-begin", self._dnd_drag_begin_cb)
-        view.connect("drag-end", self._dnd_drag_end_cb)
+        self.flowbox.drag_source_add_uri_targets()
+        self.flowbox.connect("drag-data-get", self._flowbox_drag_data_get_cb)
+        self.flowbox.connect_after("drag-begin", self._flowbox_drag_begin_cb)
+        self.flowbox.connect("drag-end", self._flowbox_drag_end_cb)
 
-    def __update_view_cb(self, unused_model, unused_path, unused_iter=None):
-        if len(self.storemodel) == 0:
+    def _store_items_changed_cb(self, store_model, unused_position, unused_removed, unused_added):
+        if store_model.get_n_items() == 0:
             self._welcome_infobar.show_all()
         else:
             self._welcome_infobar.hide()
@@ -751,18 +705,10 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def _remove_assets_cb(self, unused_action, unused_parameter):
         """Removes the selected assets from the project."""
-        model = self.treeview.get_model()
-        paths = self.get_selected_paths()
-        if not paths:
-            return
-        # use row references so we don't have to care if a path has been
-        # removed
-        rows = [Gtk.TreeRowReference.new(model, path)
-                for path in paths]
+        assets = self.get_selected_assets()
 
         with self.app.action_log.started("assets-removal", toplevel=True):
-            for row in rows:
-                asset = model[row.get_path()][COL_ASSET]
+            for asset in assets:
                 target = asset.get_proxy_target()
                 self._project.remove_asset(asset)
                 self.app.gui.editor.timeline_ui.purge_asset(asset.props.id)
@@ -773,18 +719,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         # The treeview can make some of the remaining items selected, so
         # make sure none are selected.
-        self._unselect_all()
+        self.flowbox.unselect_all()
 
     def _insert_end_cb(self, unused_action, unused_parameter):
         self.app.gui.editor.timeline_ui.insert_assets(self.get_selected_assets(), -1)
 
-    def _search_entry_changed_cb(self, entry):
-        # With many hundred clips in an iconview with dynamic columns and
-        # ellipsizing, doing needless searches is very expensive.
-        # Realistically, nobody expects to search for only one character,
-        # and skipping that makes a huge difference in responsiveness.
-        if len(entry.get_text()) != 1:
-            self.model_filter.refilter()
+    def _search_entry_changed_cb(self, unused_entry):
+        self.filter_store()
 
     def _search_entry_icon_press_cb(self, entry, icon_pos, event):
         if icon_pos == Gtk.EntryIconPosition.SECONDARY:
@@ -792,20 +733,23 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         elif icon_pos == Gtk.EntryIconPosition.PRIMARY:
             self._select_unused_sources()
             # Focus the container so the user can use Ctrl+Delete, for example.
-            if self.clip_view == SHOW_TREEVIEW:
-                self.treeview.grab_focus()
-            elif self.clip_view == SHOW_ICONVIEW:
-                self.iconview.grab_focus()
+            self.flowbox.grab_focus()
 
-    def _set_row_visible_func(self, model, model_iter, data):
-        """Toggles the visibility of a liststore row."""
-        text = data.get_text().lower()
-        if not text:
-            # Avoid silly warnings.
-            return True
+    def filter_store(self):
+        text = self.search_entry.get_text().lower()
+        # With many hundred clips in an iconview with dynamic columns and
+        # ellipsizing, doing needless searches is very expensive.
+        # Realistically, nobody expects to search for only one character,
+        # and skipping that makes a huge difference in responsiveness.
+        if len(text) == 1:
+            self.flowbox.show_all()
+            return
+
         # We must convert to markup form to be able to search for &, ', etc.
         text = GLib.markup_escape_text(text)
-        return text in model.get_value(model_iter, COL_INFOTEXT).lower()
+        for i, row_widget in enumerate(self.flowbox):
+            matches = text in self.store[i].infotext.lower()
+            row_widget.set_visible(matches)
 
     def _connect_to_project(self, project):
         """Connects signal handlers to the specified project."""
@@ -815,30 +759,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         project.connect("error-loading-asset", self._error_creating_asset_cb)
         project.connect("proxying-error", self._proxying_error_cb)
         project.connect("settings-set-from-imported-asset", self.__project_settings_set_from_imported_asset_cb)
-
-    def _set_clip_view(self, view_type):
-        """Sets which clip view to use when medialibrary is showing clips.
-
-        Args:
-            view_type (int): One of SHOW_TREEVIEW or SHOW_ICONVIEW.
-        """
-        self.app.settings.last_clip_view = view_type
-        # Gather some info before switching views
-        paths = self.get_selected_paths()
-        self._view_unselect_all()
-        # Now that we've got all the info, we can actually change the view type
-        self.clip_view = view_type
-        self._display_clip_view()
-        for path in paths:
-            self._view_select_path(path)
-
-    def _display_clip_view(self):
-        if self.clip_view == SHOW_TREEVIEW:
-            self.iconview_scrollwin.hide()
-            self.treeview_scrollwin.show_all()
-        elif self.clip_view == SHOW_ICONVIEW:
-            self.treeview_scrollwin.hide()
-            self.iconview_scrollwin.show_all()
 
     def _filter_unsupported(self, filter_info):
         """Returns whether the specified item should be displayed."""
@@ -910,45 +830,38 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._flush_pending_assets()
 
     def update_asset_thumbs(self, asset_uris):
-        for row in self.storemodel:
-            if row[COL_ASSET].props.id in asset_uris:
-                row[COL_THUMB_DECORATOR].disregard_previewer()
+        for item in self.store:
+            if item.asset.props.id in asset_uris:
+                item.thumb_decorator.disregard_previewer()
 
     def _flush_pending_assets(self):
         self.debug("Flushing %d pending model rows", len(self._pending_assets))
         for asset in self._pending_assets:
-            thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
-            name = info_name(asset)
+            thumb_decorator = AssetThumbnail(asset, self.app.proxy_manager)
+            item = AssetStoreItem(asset, thumb_decorator)
+            self.store.append(item)
 
-            self.storemodel.append((thumbs_decorator.small_thumb,
-                                    thumbs_decorator.large_thumb,
-                                    beautify_asset(asset),
-                                    asset,
-                                    asset.props.id,
-                                    name,
-                                    thumbs_decorator))
-
-            thumbs_decorator.connect("thumb-updated", self.__thumb_updated_cb, asset)
+            thumb_decorator.connect("thumb-updated", self.__thumb_updated_cb, asset)
 
         del self._pending_assets[:]
 
     def __thumb_updated_cb(self, asset_thumbnail, asset):
         """Handles the thumb-updated signal of the AssetThumbnails in the model."""
-        tree_iter = None
-        for row in self.storemodel:
-            if asset == row[COL_ASSET]:
-                tree_iter = row.iter
+        pos = -1
+        for i, item in enumerate(self.store):
+            if asset == item.asset:
+                pos = i
                 break
 
-        if not tree_iter:
+        if pos == -1:
             return
 
-        self.storemodel.set_value(tree_iter,
-                                  COL_ICON_64,
-                                  asset_thumbnail.small_thumb)
-        self.storemodel.set_value(tree_iter,
-                                  COL_ICON_128,
-                                  asset_thumbnail.large_thumb)
+        self.store[pos].icon_64 = asset_thumbnail.small_thumb
+        self.store[pos].icon_128 = asset_thumbnail.large_thumb
+        selected = self.flowbox.get_child_at_index(pos).is_selected()
+        self.store.items_changed(pos, 1, 1)
+        if selected:
+            self.flowbox.select_child(self.flowbox.get_child_at_index(pos))
 
     # medialibrary callbacks
 
@@ -956,17 +869,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._progressbar.set_fraction(progress / 100)
 
         proxying_files = []
-        for row in self.storemodel:
-            asset = row[COL_ASSET]
-            row[COL_INFOTEXT] = beautify_asset(asset)
-
-            if not asset.ready:
-                proxying_files.append(asset)
-                asset_previewer = row[COL_THUMB_DECORATOR]
-                if asset_previewer.state != AssetThumbnail.IN_PROGRESS:
-                    asset_previewer.refresh()
-                    row[COL_ICON_64] = asset_previewer.small_thumb
-                    row[COL_ICON_128] = asset_previewer.large_thumb
+        for item in self.store:
+            item.infotext = beautify_asset(item.asset)
+            if not item.asset.ready:
+                proxying_files.append(item.asset)
+                if item.thumb_decorator.state != AssetThumbnail.IN_PROGRESS:
+                    item.thumb_decorator.refresh()
+                    item.icon_64 = item.thumb_decorator.small_thumb
+                    item.icon_128 = item.thumb_decorator.large_thumb
 
         if progress == 0:
             self._start_importing()
@@ -1023,9 +933,10 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         """Checks whether the asset added to the project should be shown."""
         self._last_imported_uris.add(asset.props.id)
 
-        if asset in [row[COL_ASSET] for row in self.storemodel]:
-            self.info("Asset %s already in!", asset.props.id)
-            return
+        for item in self.store:
+            if asset == item.asset:
+                self.info("Asset %s already in!", asset.props.id)
+                return
 
         if isinstance(asset, GES.UriClipAsset) and not asset.error:
             self.debug("Asset %s added: %s", asset, asset.props.id)
@@ -1051,9 +962,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         uri = asset.get_id()
         # Find the corresponding line in the storemodel and remove it.
         found = False
-        for row in self.storemodel:
-            if uri == row[COL_URI]:
-                self.storemodel.remove(row.iter)
+        for i, item in enumerate(self.store):
+            if uri == item.uri:
+                self.store.remove(i)
                 found = True
                 break
 
@@ -1160,27 +1071,10 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._select_sources(unused_sources_uris)
 
     def _select_sources(self, sources_uris):
-        # Hack around the fact that making selections (in a treeview/iconview)
-        # deselects what was previously selected
-        if self.clip_view == SHOW_TREEVIEW:
-            self.treeview.get_selection().select_all()
-        elif self.clip_view == SHOW_ICONVIEW:
-            self.iconview.select_all()
-
-        model = self.treeview.get_model()
-        selection = self.treeview.get_selection()
-        for row in model:
-            if row[COL_URI] not in sources_uris:
-                if self.clip_view == SHOW_TREEVIEW:
-                    selection.unselect_iter(row.iter)
-                elif self.clip_view == SHOW_ICONVIEW:
-                    self.iconview.unselect_path(row.path)
-
-    def _unselect_all(self):
-        if self.clip_view == SHOW_TREEVIEW:
-            self.treeview.get_selection().unselect_all()
-        elif self.clip_view == SHOW_ICONVIEW:
-            self.iconview.unselect_all()
+        self.flowbox.unselect_all()
+        for i, item in enumerate(self.store):
+            if item.uri in sources_uris:
+                self.flowbox.select_child(self.flowbox.get_child_at_index(i))
 
     # UI callbacks
 
@@ -1194,13 +1088,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         Allows selecting and applying them as the new project settings.
         """
-        paths = self.get_selected_paths()
-        if not paths:
+        assets = self.get_selected_assets()
+        if not assets:
             self.debug("No item selected")
             return
         # Only use the first item.
-        path = paths[0]
-        asset = self.storemodel[path][COL_ASSET]
+        asset = assets[0]
         dialog = ClipMediaPropsDialog(self._project, asset)
         dialog.dialog.set_transient_for(self.app.gui)
         dialog.run()
@@ -1233,70 +1126,20 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         error_dialogbox.window.show()
 
     def _toggle_view_type_cb(self, widget):
+        paths = self.get_selected_paths()
         if widget.get_active():
-            self._set_clip_view(SHOW_TREEVIEW)
+            self.clip_view = ViewType.LIST
+            func = self.create_listview_widget_func
         else:
-            self._set_clip_view(SHOW_ICONVIEW)
-
-    def __get_path_under_mouse(self, view, event):
-        """Gets the path of the item under the mouse cursor.
-
-        Returns:
-            Gtk.TreePath: The item at the current mouse position, if any.
-        """
-        if isinstance(view, Gtk.TreeView):
-            path = None
-            tup = view.get_path_at_pos(int(event.x), int(event.y))
-            if tup:
-                path, unused_column, unused_x, unused_y = tup
-            return path
-        elif isinstance(view, Gtk.IconView):
-            return view.get_path_at_pos(int(event.x), int(event.y))
-        else:
-            raise RuntimeError("Unknown view type: %s" % type(view))
-
-    def _row_under_mouse_selected(self, view, event):
-        path = self.__get_path_under_mouse(view, event)
-        if not path:
-            return False
-        if isinstance(view, Gtk.TreeView):
-            tree_selection = view.get_selection()
-            return tree_selection.path_is_selected(path)
-        elif isinstance(view, Gtk.IconView):
-            return view.path_is_selected(path)
-        else:
-            raise RuntimeError("Unknown view type: %s" % type(view))
-
-    def _view_get_first_selected(self):
-        paths = self.get_selected_paths()
-        return paths[0]
-
-    def _view_has_selection(self):
-        paths = self.get_selected_paths()
-        return bool(len(paths))
-
-    def _view_get_path_at_pos(self, event):
-        if self.clip_view == SHOW_TREEVIEW:
-            pathinfo = self.treeview.get_path_at_pos(
-                int(event.x), int(event.y))
-            return pathinfo[0]
-        elif self.clip_view == SHOW_ICONVIEW:
-            return self.iconview.get_path_at_pos(int(event.x), int(event.y))
-        raise RuntimeError("Unknown view: %s" % self.clip_view)
-
-    def _view_select_path(self, path):
-        if self.clip_view == SHOW_TREEVIEW:
-            selection = self.treeview.get_selection()
-            selection.select_path(path)
-        elif self.clip_view == SHOW_ICONVIEW:
-            self.iconview.select_path(path)
-
-    def _view_unselect_all(self):
-        if self.clip_view == SHOW_TREEVIEW:
-            selection = self.treeview.get_selection()
-            selection.unselect_all()
-        elif self.clip_view == SHOW_ICONVIEW:
-            self.iconview.unselect_all()
+            self.clip_view = ViewType.ICON
+            func = self.create_iconview_widget_func
+        self.app.settings.last_clip_view = self.clip_view.name
+        self.flowbox.bind_model(self.store, func)
+        for path in paths:
+            child = self.flowbox.get_child_at_index(path)
+            self.flowbox.select_child(child)
+        # In case the toggling is done when the items are filtered.
+        self.filter_store()
 
     def __stop_using_proxy_cb(self, unused_action, unused_parameter):
         prefer_original = self.app.settings.proxying_strategy == ProxyingStrategy.NOTHING
@@ -1466,144 +1309,86 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         return menu_model, action_group
 
-    def __maybe_show_popover_menu(self, view, event):
-        res, button = event.get_button()
-        if not res or button != 3:
-            return False
-
-        if not self._row_under_mouse_selected(view, event):
-            path = self.__get_path_under_mouse(view, event)
-            if path:
-                if isinstance(view, Gtk.IconView):
-                    view.unselect_all()
-                    view.select_path(path)
-                else:
-                    selection = view.get_selection()
-                    selection.unselect_all()
-                    selection.select_path(path)
-
-        model, action_group = self.__create_menu_model()
-        if not model or not model.get_n_items():
-            return True
-
-        popover = Gtk.Popover.new_from_model(view, model)
-        popover.insert_action_group("assets", action_group)
-        popover.props.position = Gtk.PositionType.BOTTOM
-
-        if self.clip_view == SHOW_TREEVIEW:
-            scrollwindow = self.treeview_scrollwin
-        elif self.clip_view == SHOW_ICONVIEW:
-            scrollwindow = self.iconview_scrollwin
-
-        rect = Gdk.Rectangle()
-        rect.x = event.x - scrollwindow.props.hadjustment.props.value
-        rect.y = event.y - scrollwindow.props.vadjustment.props.value
-        rect.width = 1
-        rect.height = 1
-        popover.set_pointing_to(rect)
-        popover.show_all()
-
-        return True
-
-    def _tree_view_button_press_event_cb(self, treeview, event):
-        self._update_dragged_paths(treeview, event)
-
-        Gtk.TreeView.do_button_press_event(treeview, event)
-
-        selection = self.treeview.get_selection()
-        if self._dragged_paths:
-            for path in self._dragged_paths:
-                selection.select_path(path)
-
-        return True
-
-    def _update_dragged_paths(self, view, event):
-        if event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
-            # It is possible to double-click outside of clips:
-            if self.get_selected_paths():
-                # Here we used to emit "play", but
-                # this is now handled by _itemOrRowActivatedCb instead.
-                pass
-            chain_up = False
-        elif not event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
-            chain_up = not self._row_under_mouse_selected(view, event)
-        else:
-            chain_up = True
-
-        if not chain_up:
-            self._dragged_paths = self.get_selected_paths()
-        else:
-            self._dragged_paths = None
-
-    def _tree_view_button_release_event_cb(self, treeview, event):
-        self._dragged_paths = None
-        selection = self.treeview.get_selection()
-        state = event.get_state() & (
-            Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)
-        path = self.treeview.get_path_at_pos(event.x, event.y)
-
-        if self.__maybe_show_popover_menu(treeview, event):
-            self.debug("Returning after showing popup menu")
-            return
-
-        if not state and not self.dragged:
-            selection.unselect_all()
-            if path:
-                selection.select_path(path[0])
-
-    def _iconview_selection_changed_cb(self, unused):
+    def _flowbox_selected_children_changed_cb(self, flowbox):
         self._update_actions()
 
     def _update_actions(self):
-        selected_count = len(self.get_selected_paths())
+        selected_count = len(self.flowbox.get_selected_children())
         self.remove_assets_action.set_enabled(selected_count)
         self.insert_at_end_action.set_enabled(selected_count)
         # Some actions can only be done on a single item at a time:
         self._clipprops_button.set_sensitive(selected_count == 1)
 
-    def _iconview_item_or_row_activated_cb(self, unused_view, path, *unused_args):
+    def _flowbox_child_activated_cb(self, unused_flowbox, child):
         """Plays the asset identified by the specified path.
 
         This can happen when an item is double-clicked, or
-        Space, Shift+Space, Return or Enter is pressed.
-        This method is the same for both iconview and treeview.
+        Space, Return or Enter is pressed.
         """
-        asset = self.model_filter[path][COL_ASSET]
-        self.emit('play', asset)
+        path = child.get_index()
+        self.emit("play", self.store[path].asset)
 
-    def _iconview_button_press_event_cb(self, iconview, event):
-        self._update_dragged_paths(iconview, event)
+    def _flowbox_button_press_event_cb(self, flowbox, event):
+        child = flowbox.get_child_at_pos(event.x, event.y)
+        if event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
+            # It is possible to double-click outside of clips
+            pass
+        else:
+            if not event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
+                # Ctrl or Shift key is not pressed.
+                # It is a left or right mouse click.
+                if child:
+                    # Reset the selection to only select the clicked asset.
+                    self.rubberbanding = False
+                    if not child.is_selected():
+                        self.flowbox.unselect_all()
+                        child.grab_focus()
+                        self.flowbox.select_child(child)
+                else:
+                    # The click was done over an empty space.
+                    # Clear the selection.
+                    self.rubberbanding = True
+                    self.flowbox.unselect_all()
+            else:
+                # Either Ctrl or Shift key is pressed.
+                self.rubberbanding = False
 
-        Gtk.IconView.do_button_press_event(iconview, event)
+        # Returning True propagates the signal further enabling the default
+        # behaviour of rubberband selection. Returning False stops the
+        # propagation to enable drag&drop of assets from the Media Library
+        # to the Timeline.
+        return self.rubberbanding
 
-        if self._dragged_paths:
-            for path in self._dragged_paths:
-                self.iconview.select_path(path)
+    def _flowbox_button_release_event_cb(self, flowbox, event):
+        if self.rubberbanding:
+            self.rubberbanding = False
 
-        self.iconview_cursor_pos = self.iconview.get_path_at_pos(
-            event.x, event.y)
-
-        return True
-
-    def _iconview_button_release_event_cb(self, iconview, event):
-        self._dragged_paths = None
-
-        control_mask = event.get_state() & Gdk.ModifierType.CONTROL_MASK
-        shift_mask = event.get_state() & Gdk.ModifierType.SHIFT_MASK
-        modifier_active = control_mask or shift_mask
-
-        if self.__maybe_show_popover_menu(iconview, event):
-            self.debug("Returning after showing popup menu")
+        res, button = event.get_button()
+        if not res or button != 3:
             return
 
-        if not modifier_active and self.iconview_cursor_pos:
-            current_cursor_pos = self.iconview.get_path_at_pos(
-                event.x, event.y)
+        child = self.flowbox.get_child_at_pos(event.x, event.y)
+        if child:
+            if not child.is_selected():
+                self.flowbox.unselect_all()
+                self.flowbox.select_child(child)
 
-            if current_cursor_pos == self.iconview_cursor_pos:
-                if iconview.path_is_selected(current_cursor_pos):
-                    iconview.unselect_all()
-                    iconview.select_path(current_cursor_pos)
+        model, action_group = self.__create_menu_model()
+        if not model or not model.get_n_items():
+            self.debug("Not showing popup menu")
+            return
+
+        popover = Gtk.Popover.new_from_model(self.flowbox, model)
+        popover.insert_action_group("assets", action_group)
+        popover.props.position = Gtk.PositionType.BOTTOM
+
+        rect = Gdk.Rectangle()
+        rect.x = event.x
+        rect.y = event.y
+        rect.width = 1
+        rect.height = 1
+        popover.set_pointing_to(rect)
+        popover.show_all()
 
     def __disconnect_from_project(self):
         self._project.disconnect_by_func(self._asset_added_cb)
@@ -1618,7 +1403,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         self._project = project
         self._reset_error_list()
-        self.storemodel.clear()
+        self.store.remove_all()
         self._welcome_infobar.show_all()
         self._connect_to_project(project)
 
@@ -1627,13 +1412,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._flush_pending_assets()
 
     def _new_project_failed_cb(self, project_manager, uri, reason):
-        self.storemodel.clear()
+        self.store.remove_all()
         self._project = None
 
     def _project_closed_cb(self, project_manager, project):
         self.__disconnect_from_project()
         self._project_settings_infobar.hide()
-        self.storemodel.clear()
+        self.store.remove_all()
         self._project = None
 
     def __paths_walked_cb(self, uris):
@@ -1664,23 +1449,20 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # import whatever can be imported.
         self.app.threads.add_thread(PathWalker, uris, self.__paths_walked_cb)
 
-    # Used with TreeView and IconView
-    def _dnd_drag_data_get_cb(self, view, context, data, info, timestamp):
-        paths = self.get_selected_paths()
-        uris = [self.model_filter[path][COL_URI] for path in paths]
+    def _flowbox_drag_data_get_cb(self, view, context, data, info, timestamp):
+        uris = [self.store[path].uri for path in self._dragged_paths]
         data.set_uris(uris)
 
-    def _dnd_drag_begin_cb(self, view, context):
-        self.info("Drag operation begun")
+    def _flowbox_drag_begin_cb(self, view, context):
         self.dragged = True
-        paths = self.get_selected_paths()
+        self._dragged_paths = self.get_selected_paths()
 
-        if not paths:
+        if not self._dragged_paths:
             context.drag_abort(int(time.time()))
         else:
-            row = self.model_filter[paths[0]]
+            row = self.store[self._dragged_paths[0]]
+            icon = row.icon_128
 
-            icon = row[COL_ICON_128]
             icon_height = icon.get_height()
             icon_width = icon.get_width()
 
@@ -1695,46 +1477,22 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
             Gtk.drag_set_icon_surface(context, surface)
 
-    def _dnd_drag_end_cb(self, view, context):
+    def _flowbox_drag_end_cb(self, view, context):
         self.info("Drag operation ended")
         self.dragged = False
 
     def get_selected_paths(self):
-        """Gets which treeview or iconview items are selected.
-
-        Returns:
-            List[Gtk.TreePath]: The paths identifying the items.
-        """
-        if self.clip_view == SHOW_TREEVIEW:
-            return self._get_selected_paths_tree_view()
-        elif self.clip_view == SHOW_ICONVIEW:
-            return self._get_selected_paths_icon_view()
-        raise RuntimeError("Unknown view: %s" % self.clip_view)
-
-    def _get_selected_paths_tree_view(self):
-        unused_model, rows = self.treeview.get_selection().get_selected_rows()
-        return rows
-
-    def _get_selected_paths_icon_view(self):
-        paths = self.iconview.get_selected_items()
-        paths.reverse()
+        selected_children = self.flowbox.get_selected_children()
+        paths = []
+        for child in selected_children:
+            paths.append(child.get_index())
         return paths
-
-    def get_selected_items(self):
-        """Gets the URIs of the selected items."""
-        if self._dragged_paths:
-            return [self.model_filter[path][COL_URI]
-                    for path in self._dragged_paths]
-        return [self.model_filter[path][COL_URI]
-                for path in self.get_selected_paths()]
 
     def get_selected_assets(self):
         """Gets the selected assets."""
-        if self._dragged_paths:
-            return [self.model_filter[path][COL_ASSET]
-                    for path in self._dragged_paths]
-        return [self.model_filter[path][COL_ASSET]
-                for path in self.get_selected_paths()]
+        paths = self.get_selected_paths()
+        return [self.store[path].asset
+                for path in paths]
 
     def activate_compact_mode(self):
         self._import_button.set_is_important(False)

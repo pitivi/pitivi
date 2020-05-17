@@ -26,7 +26,8 @@ from unittest import mock
 from gi.repository import GES
 from gi.repository import Gst
 
-from pitivi import medialibrary
+from pitivi.medialibrary import AssetThumbnail
+from pitivi.medialibrary import MediaLibraryWidget
 from pitivi.project import Project
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import path_from_uri
@@ -352,7 +353,7 @@ class TestProjectLoading(common.TestCase):
         app.recent_manager.remove_item = mock.Mock(return_value=True)
         proxy_manager = app.proxy_manager
         project_manager = app.project_manager
-        medialib = medialibrary.MediaLibraryWidget(app)
+        medialib = MediaLibraryWidget(app)
 
         mainloop = common.create_main_loop()
 
@@ -378,11 +379,11 @@ class TestProjectLoading(common.TestCase):
             mainloop, _app, medialib, proxy_uri = self.load_project_with_missing_proxy()
             mainloop.run()
 
-        self.assertEqual(len(medialib.storemodel), 1)
-        self.assertEqual(medialib.storemodel[0][medialibrary.COL_ASSET].props.id,
+        self.assertEqual(medialib.store.get_n_items(), 1)
+        self.assertEqual(medialib.store[0].asset.props.id,
                          proxy_uri)
-        self.assertEqual(medialib.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state,
-                         medialibrary.AssetThumbnail.PROXIED)
+        self.assertEqual(medialib.store[0].thumb_decorator.state,
+                         AssetThumbnail.PROXIED)
 
     def test_load_project_with_missing_proxy_progress_tracking(self):
         """Checks progress tracking of loading project with missing proxies."""
@@ -399,11 +400,11 @@ class TestProjectLoading(common.TestCase):
                 app.project_manager.connect("new-project-loaded", lambda x, y: mainloop.quit())
                 mainloop.run()
 
-        self.assertEqual(len(medialib.storemodel), 1)
-        self.assertEqual(medialib.storemodel[0][medialibrary.COL_ASSET].props.id,
+        self.assertEqual(medialib.store.get_n_items(), 1)
+        self.assertEqual(medialib.store[0].asset.props.id,
                          uri)
-        self.assertEqual(medialib.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state,
-                         medialibrary.AssetThumbnail.IN_PROGRESS)
+        self.assertEqual(medialib.store[0].thumb_decorator.state,
+                         AssetThumbnail.IN_PROGRESS)
 
     def test_load_project_with_missing_proxy_stop_generating_and_proxy(self):
         """Checks cancelling creation of a missing proxies and forcing it again."""
@@ -418,30 +419,30 @@ class TestProjectLoading(common.TestCase):
 
                 app.project_manager.connect("new-project-loaded", lambda x, y: mainloop.quit())
                 mainloop.run()
-                asset = medialib.storemodel[0][medialibrary.COL_ASSET]
+                asset = medialib.store[0].asset
                 app.project_manager.current_project.disable_proxies_for_assets([asset])
 
-            row = medialib.storemodel[0]
-            asset = row[medialibrary.COL_ASSET]
+            row = medialib.store[0]
+            asset = row.asset
             self.assertEqual(medialib._progressbar.get_fraction(), 1.0)
             uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
             self.assertEqual(asset.props.id, uri)
             self.assertEqual(asset.ready, True)
             self.assertEqual(asset.creation_progress, 100)
-            self.assertEqual(row[medialibrary.COL_THUMB_DECORATOR].state,
-                             medialibrary.AssetThumbnail.NO_PROXY)
+            self.assertEqual(row.thumb_decorator.state,
+                             AssetThumbnail.NO_PROXY)
 
             app.project_manager.current_project.use_proxies_for_assets([asset])
             mainloop.run()
 
-        row = medialib.storemodel[0]
-        asset = row[medialibrary.COL_ASSET]
+        row = medialib.store[0]
+        asset = row.asset
         self.assertEqual(medialib._progressbar.is_visible(), False)
         self.assertEqual(asset.props.id, proxy_uri)
         self.assertEqual(asset.ready, True)
         self.assertEqual(asset.creation_progress, 100)
-        self.assertEqual(row[medialibrary.COL_THUMB_DECORATOR].state,
-                         medialibrary.AssetThumbnail.PROXIED)
+        self.assertEqual(row.thumb_decorator.state,
+                         AssetThumbnail.PROXIED)
 
     def test_loading_project_with_moved_asset(self):
         """Loads a project with moved asset."""
@@ -456,7 +457,7 @@ class TestProjectLoading(common.TestCase):
             </project>
             </ges>""")
         project_manager = app.project_manager
-        medialib = medialibrary.MediaLibraryWidget(app)
+        medialib = MediaLibraryWidget(app)
 
         mainloop = common.create_main_loop()
 
@@ -499,7 +500,7 @@ class TestProjectLoading(common.TestCase):
 </project>
 </ges>""")
         project_manager = app.project_manager
-        medialib = medialibrary.MediaLibraryWidget(app)
+        medialib = MediaLibraryWidget(app)
 
         # Remove proxy
         with common.cloned_sample("1sec_simpsons_trailer.mp4", "tears_of_steel.webm"):
@@ -521,11 +522,11 @@ class TestProjectLoading(common.TestCase):
                              "missing_uri_cb should be called only once, got %s." % missing_uris)
             self.assertEqual(medialib._progressbar.get_fraction(), 1.0)
             mainloop.run()
-            self.assertEqual(len(medialib.storemodel), 2,
+            self.assertEqual(medialib.store.get_n_items(), 2,
                              "We should have one asset displayed in the MediaLibrary.")
 
-            self.assertEqual(medialib.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state, medialibrary.AssetThumbnail.PROXIED)
-            self.assertEqual(medialib.storemodel[1][medialibrary.COL_THUMB_DECORATOR].state, medialibrary.AssetThumbnail.PROXIED)
+            self.assertEqual(medialib.store[0].thumb_decorator.state, AssetThumbnail.PROXIED)
+            self.assertEqual(medialib.store[1].thumb_decorator.state, AssetThumbnail.PROXIED)
 
 
 class TestProjectSettings(common.TestCase):
