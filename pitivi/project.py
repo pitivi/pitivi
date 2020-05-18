@@ -1051,8 +1051,8 @@ class Project(Loggable, GES.Project):
             height (int): The new project height.
             framerate (Gst.Fraction): The new project framerate.
         """
-        changed = any([self._set_video_restriction("width", width),
-                       self._set_video_restriction("height", height),
+        changed = any([self._set_video_restriction("width", int(width)),
+                       self._set_video_restriction("height", int(height)),
                        self._set_video_restriction("framerate", framerate)])
         if changed:
             self.update_restriction_caps()
@@ -2029,12 +2029,14 @@ class Project(Loggable, GES.Project):
         if video_streams and self._has_default_video_settings:
             video = video_streams[0]
             if not video.is_image():
-                self.videowidth = video.get_natural_width()
-                self.videoheight = video.get_natural_height()
+                videowidth = video.get_natural_width()
+                videoheight = video.get_natural_height()
+                videorate = self.videorate
                 if video.get_framerate_num() > 0:
                     # The asset has a non-variable framerate.
-                    self.videorate = Gst.Fraction(video.get_framerate_num(),
-                                                  video.get_framerate_denom())
+                    videorate = Gst.Fraction(video.get_framerate_num(),
+                                             video.get_framerate_denom())
+                self.set_video_properties(videowidth, videoheight, videorate)
                 self._has_default_video_settings = False
                 emit = True
         audio_streams = info.get_audio_streams()
