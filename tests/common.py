@@ -36,6 +36,7 @@ from gi.repository import Gst
 from gi.repository import Gtk
 
 from pitivi.application import Pitivi
+from pitivi.clipproperties import TransformationProperties
 from pitivi.editorstate import EditorState
 from pitivi.project import ProjectManager
 from pitivi.settings import GlobalSettings
@@ -182,6 +183,24 @@ class CheckedOperationDuration:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         signal.alarm(0)
+
+
+def setup_transformation_box(func):
+    def wrapped(self):
+        has_container = hasattr(self, "timeline_container")
+        if not has_container:
+            self.timeline_container = create_timeline_container()
+        app = self.timeline_container.app
+        self.transformation_box = TransformationProperties(app)
+        self.transformation_box._new_project_loaded_cb(app, self.timeline_container._project)
+
+        func(self)
+
+        del self.transformation_box
+        if not has_container:
+            del self.timeline_container
+
+    return wrapped
 
 
 class TestCase(unittest.TestCase, Loggable):

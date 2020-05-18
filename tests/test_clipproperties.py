@@ -19,31 +19,21 @@
 from unittest import mock
 
 from gi.repository import GES
-
-from pitivi.clipproperties import ClipProperties
-from pitivi.clipproperties import TransformationProperties
 from tests import common
 from tests.test_timeline_timeline import BaseTestTimeline
 from tests.test_undo_timeline import BaseTestUndoTimeline
+
+from pitivi.clipproperties import ClipProperties
 
 
 class TransformationPropertiesTest(BaseTestTimeline):
     """Tests for the TransformationProperties widget."""
 
-    def setup_transformation_box(self):
-        """Creates a TransformationProperties widget."""
-        timeline_container = common.create_timeline_container()
-        app = timeline_container.app
-        transformation_box = TransformationProperties(app)
-        project = timeline_container._project
-        transformation_box._new_project_loaded_cb(app, project)
-
-        return transformation_box
-
+    @common.setup_transformation_box
     def test_spin_buttons_read(self):
         """Checks the spin buttons update when the source properties change."""
         # Create transformation box
-        transformation_box = self.setup_transformation_box()
+        transformation_box = self.transformation_box
         timeline = transformation_box.app.gui.editor.timeline_ui.timeline
         spin_buttons = transformation_box.spin_buttons
 
@@ -69,17 +59,17 @@ class TransformationPropertiesTest(BaseTestTimeline):
             spin_btn_value = spin_buttons[prop].get_value_as_int()
             self.assertEqual(new_val, spin_btn_value)
 
+    @common.setup_transformation_box
     def test_spin_buttons_write(self):
         """Checks the spin buttons changing updates the source properties."""
         # Create transformation box
-        transformation_box = self.setup_transformation_box()
-        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
-        spin_buttons = transformation_box.spin_buttons
+        timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline
+        spin_buttons = self.transformation_box.spin_buttons
 
         # Add a clip and select it
         clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
-        source = transformation_box.source
+        source = self.transformation_box.source
         self.assertIsNotNone(source)
 
         # Get current spin buttons values
@@ -103,17 +93,17 @@ class TransformationPropertiesTest(BaseTestTimeline):
                 self.assertTrue(ret)
                 self.assertEqual(current_spin_values[source_prop], source_value)
 
+    @common.setup_transformation_box
     def test_spin_buttons_source_change(self):
         """Checks the spin buttons update when the selected clip changes."""
         # Create transformation box
-        transformation_box = self.setup_transformation_box()
-        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
-        spin_buttons = transformation_box.spin_buttons
+        timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline
+        spin_buttons = self.transformation_box.spin_buttons
 
         # Add two clips and select the first one
         clips = self.add_clips_simple(timeline, 2)
         timeline.selection.select([clips[0]])
-        source = transformation_box.source
+        source = self.transformation_box.source
         self.assertIsNotNone(source)
 
         # Change the spin buttons values
@@ -124,7 +114,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         # Select the second clip and check the spin buttons values update
         # correctly
         timeline.selection.select([clips[1]])
-        source = transformation_box.source
+        source = self.transformation_box.source
         self.assertIsNotNone(source)
         for prop in ["posx", "posy", "width", "height"]:
             ret, source_value = source.get_child_property(prop)
@@ -136,16 +126,16 @@ class TransformationPropertiesTest(BaseTestTimeline):
         for prop in ["posx", "posy", "width", "height"]:
             self.assertEqual(spin_buttons[prop].get_value_as_int(), new_values[prop])
 
+    @common.setup_transformation_box
     def test_keyframes_activate(self):
         """Checks transformation properties keyframes activation."""
         # Create transformation box
-        transformation_box = self.setup_transformation_box()
-        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
+        timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline
 
         # Add a clip and select it
         clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
-        source = transformation_box.source
+        source = self.transformation_box.source
         self.assertIsNotNone(source)
         inpoint = source.props.in_point
         duration = source.props.duration
@@ -162,7 +152,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
             initial_values[prop] = value
 
         # Activate keyframes and check the default keyframes are created
-        transformation_box._activate_keyframes_btn.set_active(True)
+        self.transformation_box._activate_keyframes_btn.set_active(True)
         for prop in ["posx", "posy", "width", "height"]:
             control_binding = source.get_control_binding(prop)
             self.assertIsNotNone(control_binding)
@@ -171,25 +161,25 @@ class TransformationPropertiesTest(BaseTestTimeline):
             self.assertEqual(keyframes, [(inpoint, initial_values[prop]),
                                          (inpoint + duration, initial_values[prop])])
 
+    @common.setup_transformation_box
     def test_keyframes_add(self):
         """Checks keyframe creation."""
         # Create transformation box
-        transformation_box = self.setup_transformation_box()
-        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
+        timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline
         pipeline = timeline._project.pipeline
-        spin_buttons = transformation_box.spin_buttons
+        spin_buttons = self.transformation_box.spin_buttons
 
         # Add a clip and select it
         clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
-        source = transformation_box.source
+        source = self.transformation_box.source
         self.assertIsNotNone(source)
         start = source.props.start
         inpoint = source.props.in_point
         duration = source.props.duration
 
         # Activate keyframes
-        transformation_box._activate_keyframes_btn.set_active(True)
+        self.transformation_box._activate_keyframes_btn.set_active(True)
 
         # Add some more keyframes
         offsets = [1, int(duration / 2), duration - 1]
@@ -204,24 +194,24 @@ class TransformationPropertiesTest(BaseTestTimeline):
                 keyframes = [(item.timestamp, item.value) for item in control_source.get_all()]
                 self.assertEqual((timestamp, value), keyframes[index + 1])
 
+    @common.setup_transformation_box
     def test_keyframes_navigation(self):
         """Checks keyframe navigation."""
         # Create transformation box
-        transformation_box = self.setup_transformation_box()
-        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
+        timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline
         pipeline = timeline._project.pipeline
 
         # Add a clip and select it
         clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
-        source = transformation_box.source
+        source = self.transformation_box.source
         self.assertIsNotNone(source)
         start = source.props.start
         inpoint = source.props.in_point
         duration = source.props.duration
 
         # Activate keyframes and add some more keyframes
-        transformation_box._activate_keyframes_btn.set_active(True)
+        self.transformation_box._activate_keyframes_btn.set_active(True)
         offsets = [1, int(duration / 2), duration - 1]
         for prop in ["posx", "posy", "width", "height"]:
             for offset in offsets:
@@ -243,9 +233,9 @@ class TransformationPropertiesTest(BaseTestTimeline):
             with mock.patch.object(pipeline, "get_position") as get_position:
                 get_position.return_value = start + position
                 with mock.patch.object(pipeline, "simple_seek") as simple_seek:
-                    transformation_box._prev_keyframe_btn.clicked()
+                    self.transformation_box._prev_keyframe_btn.clicked()
                     simple_seek.assert_called_with(prev_keyframe_ts)
-                    transformation_box._next_keyframe_btn.clicked()
+                    self.transformation_box._next_keyframe_btn.clicked()
                     simple_seek.assert_called_with(next_keyframe_ts)
 
             if position + 1 == next_keyframe_ts and next_index + 1 < len(offsets):
@@ -253,16 +243,16 @@ class TransformationPropertiesTest(BaseTestTimeline):
             if position in offsets and position != 0:
                 prev_index += 1
 
+    @common.setup_transformation_box
     def test_reset_to_default(self):
         """Checks "reset to default" button."""
         # Create transformation box
-        transformation_box = self.setup_transformation_box()
-        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
+        timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline
 
         # Add a clip and select it
         clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
-        source = transformation_box.source
+        source = self.transformation_box.source
         self.assertIsNotNone(source)
 
         # Change source properties
@@ -271,10 +261,10 @@ class TransformationPropertiesTest(BaseTestTimeline):
             self.assertTrue(source.set_child_property(prop, new_val))
 
         # Activate keyframes
-        transformation_box._activate_keyframes_btn.set_active(True)
+        self.transformation_box._activate_keyframes_btn.set_active(True)
 
         # Press "reset to default" button
-        clear_button = transformation_box.builder.get_object("clear_button")
+        clear_button = self.transformation_box.builder.get_object("clear_button")
         clear_button.clicked()
 
         # Check that control bindings were erased and the properties were
@@ -306,6 +296,7 @@ class ClipPropertiesTest(BaseTestUndoTimeline, BaseTestTimeline):
         # Wait until the project creates a layer in the timeline.
         common.create_main_loop().run(until_empty=True)
 
+        # pylint: disable=import-outside-toplevel
         from pitivi.timeline.timeline import TimelineContainer
         timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
         timeline_container.set_project(self.project)
@@ -331,6 +322,7 @@ class ClipPropertiesTest(BaseTestUndoTimeline, BaseTestTimeline):
         # Wait until the project creates a layer in the timeline.
         common.create_main_loop().run(until_empty=True)
 
+        # pylint: disable=import-outside-toplevel
         from pitivi.timeline.timeline import TimelineContainer
         timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
         timeline_container.set_project(self.project)
