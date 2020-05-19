@@ -1814,6 +1814,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                self.forward_one_second_action,
                                _("Seek forward one second"))
 
+        # Markers actions.
+        self.timeline.layout.insert_action_group("markers", self.markers.action_group)
+
         # Viewer actions.
         self.timeline.layout.insert_action_group("viewer", self.app.gui.editor.viewer.action_group)
 

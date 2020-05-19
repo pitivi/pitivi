@@ -15,10 +15,15 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Markers display and management."""
+from gettext import gettext as _
+
 from gi.repository import Gdk
+from gi.repository import Gio
+from gi.repository import GLib
 from gi.repository import Gtk
 
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.pipeline import PipelineError
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import SPACING
 
@@ -44,7 +49,6 @@ class Marker(Gtk.EventBox, Loggable):
 
         self._selected = False
 
-    # pylint: disable=arguments-differ
     def do_get_request_mode(self):
         return Gtk.SizeRequestMode.CONSTANT_SIZE
 
@@ -123,6 +127,33 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
                         Gdk.EventMask.BUTTON_PRESS_MASK |
                         Gdk.EventMask.BUTTON_RELEASE_MASK)
 
+        self._create_actions()
+
+    def _create_actions(self):
+        self.action_group = Gio.SimpleActionGroup()
+        self.insert_action_group("markers", self.action_group)
+        self.app.shortcuts.register_group("markers", _("Markers"), position=70)
+
+        self.add_marker_action = Gio.SimpleAction.new("marker-add", GLib.VariantType("mx"))
+        self.add_marker_action.connect("activate", self._add_marker_cb)
+        self.action_group.add_action(self.add_marker_action)
+        self.app.shortcuts.add("markers.marker-add(@mx nothing)", ["<Primary><Shift>m"],
+                               self.add_marker_action, _("Add a marker"))
+
+    def _add_marker_cb(self, action, param):
+        maybe = param.get_maybe()
+        if maybe:
+            position = maybe.get_int64()
+        else:
+            try:
+                position = self.app.project_manager.current_project.pipeline.get_position(fails=False)
+            except PipelineError:
+                self.warning("Could not get pipeline position")
+                return
+
+        with self.app.action_log.started("Added marker", toplevel=True):
+            self.__markers_container.add(position)
+
     @property
     def markers_container(self):
         """Gets the GESMarkerContainer."""
@@ -162,7 +193,6 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
             position = self.ns_to_pixel(marker.position) - self.offset - MARKER_WIDTH / 2
             self.layout.move(marker, position, 0)
 
-    # pylint: disable=arguments-differ
     def do_button_press_event(self, event):
         event_widget = Gtk.get_event_widget(event)
         button = event.button
@@ -181,8 +211,8 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
 
             else:
                 position = self.pixel_to_ns(event.x + self.offset)
-                with self.app.action_log.started("Added marker", toplevel=True):
-                    self.__markers_container.add(position)
+                param = GLib.Variant.new_maybe(GLib.VariantType("x"), GLib.Variant.new_int64(position))
+                self.add_marker_action.activate(param)
                 self.marker_new.selected = True
 
     def do_button_release_event(self, event):
@@ -265,7 +295,6 @@ class MarkerPopover(Gtk.Popover):
         self.set_relative_to(self.marker)
         self.show_all()
 
-    # pylint: disable=arguments-differ
     def do_closed(self):
         buffer = self.text_view.get_buffer()
         if buffer.props.text != self.marker.comment:
