@@ -865,18 +865,21 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
 
     def _update_thumbnails(self):
         """Updates the thumbnail widgets for the clip at the current zoom."""
-        if not self.thumb_width:
+        if not self.thumb_width or not self.ges_elem.get_track() or not self.ges_elem.props.active:
             # The thumb_width will be available when pipeline has been started
             return
 
         thumbs = {}
         queue = []
         interval = self.thumb_interval(self.thumb_width)
-        element_left = quantize(self.ges_elem.props.in_point, interval)
-        element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
+
         y = (self.props.height_request - self.thumb_height) / 2
-        for position in range(element_left, element_right, interval):
-            x = Zoomable.ns_to_pixel(position) - self.ns_to_pixel(self.ges_elem.props.in_point)
+        clip = self.ges_elem.get_parent()
+        for position in range(clip.props.start, clip.props.start + clip.props.duration, interval):
+            x = Zoomable.ns_to_pixel(position)
+
+            # Convert position in the timeline to the internal position in the source element
+            position = clip.get_internal_time_from_timeline_time(self.ges_elem, position)
             try:
                 thumb = self.thumbs.pop(position)
                 self.move(thumb, x, y)
@@ -1164,6 +1167,8 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         # The samples range used when self.surface has been created.
         self._surface_start_ns = 0
         self._surface_end_ns = 0
+        # The playback rate from last time the surface was updated.
+        self._rate = 1.0
 
         # Guard against malformed URIs
         self.wavefile = None
@@ -1269,17 +1274,22 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         return False
 
     def do_draw(self, context):
-        if not self.samples:
+        if not self.samples or not self.ges_elem.get_track() or not self.ges_elem.props.active:
             # Nothing to draw.
             return
 
         # The area we have to refresh is determined by the start and end
         # calculated in the context of the asset duration.
         rect = Gdk.cairo_get_clip_rectangle(context)[1]
+        clip = self.ges_elem.get_parent()
         inpoint = self.ges_elem.props.in_point
+        duration = self.ges_elem.props.duration
         max_duration = self.ges_elem.get_asset().get_filesource_asset().get_duration()
         start_ns = min(max(0, self.pixel_to_ns(rect.x) + inpoint), max_duration)
         end_ns = min(max(0, self.pixel_to_ns(rect.x + rect.width) + inpoint), max_duration)
+        # Get the overall rate of the clip in the current area the clip is used
+        # FIXME: Smarted computation will be needed when we make the rate keyframeable
+        rate = (duration - inpoint) / clip.get_timeline_time_from_internal_time(self.ges_elem, duration)
 
         zoom = self.get_current_zoom_level()
         height = self.get_allocation().height - 2 * CLIP_BORDER_WIDTH
@@ -1288,6 +1298,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
                 height != self.surface.get_height() or \
                 zoom != self._surface_zoom_level or \
                 start_ns < self._surface_start_ns or \
+                rate != self._rate or \
                 end_ns > self._surface_end_ns:
             if self.surface:
                 self.surface.finish()
@@ -1298,9 +1309,11 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
             extra = self.pixel_to_ns(WAVEFORM_SURFACE_EXTRA_PX)
             self._surface_start_ns = max(0, start_ns - extra)
             self._surface_end_ns = min(end_ns + extra, max_duration)
+            self._rate = rate
 
-            range_start = min(max(0, int(self._surface_start_ns / SAMPLE_DURATION)), len(self.samples))
-            range_end = min(max(0, int(self._surface_end_ns / SAMPLE_DURATION)), len(self.samples))
+            sample_duration = SAMPLE_DURATION / rate
+            range_start = min(max(0, int(self._surface_start_ns / sample_duration)), len(self.samples))
+            range_end = min(max(0, int(self._surface_end_ns / sample_duration)), len(self.samples))
             samples = self.samples[range_start:range_end]
             surface_width = self.ns_to_pixel(self._surface_end_ns - self._surface_start_ns)
             self.surface = renderer.fill_surface(samples, surface_width, height)

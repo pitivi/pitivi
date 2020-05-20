@@ -18,11 +18,17 @@
 import bisect
 import os
 from gettext import gettext as _
+from typing import Callable
+from typing import Dict
+from typing import Optional
+from typing import Tuple
 
 import cairo
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import GES
+from gi.repository import GLib
+from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import GstController
 from gi.repository import Gtk
@@ -61,6 +67,10 @@ DEFAULT_FONT_DESCRIPTION = "Sans 36"
 DEFAULT_VALIGNMENT = "absolute"
 DEFAULT_HALIGNMENT = "absolute"
 
+# Max speed rate we allow to be applied to clips.
+# The minimum is 1 / MAX_RATE.
+MAX_RATE = 10
+
 
 class ClipProperties(Gtk.ScrolledWindow, Loggable):
     """Widget for configuring the selected clip.
@@ -94,6 +104,10 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.transformation_expander.set_vexpand(False)
         vbox.pack_start(self.transformation_expander, False, False, 0)
 
+        self.speed_expander = TimeProperties(app)
+        self.speed_expander.set_vexpand(False)
+        vbox.pack_start(self.speed_expander, False, False, 0)
+
         self.title_expander = TitleProperties(app)
         self.title_expander.set_vexpand(False)
         vbox.pack_start(self.title_expander, False, False, 0)
@@ -112,6 +126,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         disable_scroll(vbox)
 
         self.transformation_expander.set_source(None)
+        self.speed_expander.set_clip(None)
         self.title_expander.set_source(None)
         self.color_expander.set_source(None)
         self.effect_expander.set_clip(None)
@@ -208,11 +223,304 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
                     color_clip_source = child
 
         self.transformation_expander.set_source(video_source)
+        self.speed_expander.set_clip(ges_clip if (not title_source and not color_clip_source) else None)
         self.title_expander.set_source(title_source)
         self.color_expander.set_source(color_clip_source)
         self.effect_expander.set_clip(ges_clip)
 
         self.app.gui.editor.viewer.overlay_stack.select(video_source)
+
+
+def is_time_effect(effect):
+    return bool(effect.get_meta(TimeProperties.TIME_EFFECT_META))
+
+
+class TimeProperties(Gtk.Expander, Loggable):
+    """Widget for setting the time related properties of a clip.
+
+    Attributes:
+        app (Pitivi): The app.
+    """
+
+    TIME_EFFECT_META = "ptv::time-effect"
+    TIME_EFFECTS_DEF = {
+        GES.TrackType.VIDEO: ("videorate", "rate"),
+        GES.TrackType.AUDIO: ("pitch", "tempo"),
+    }
+
+    def __init__(self, app: Gtk.Application) -> None:
+        super().__init__()
+        Loggable.__init__(self)
+
+        self.set_expanded(True)
+        self.set_label(_("Time"))
+
+        self.app = app
+
+        self._clip: Optional[GES.Clip] = None
+        self._sources: Dict[GES.Track, GES.Source] = {}
+        # track -> (effect, rate_changing_property_name)
+        self._time_effects: Dict[GES.Track, Tuple[GES.BaseEffect, str]] = {}
+
+        grid = Gtk.Grid.new()
+        grid.props.row_spacing = SPACING
+        grid.props.column_spacing = SPACING
+        grid.props.border_width = SPACING
+        self.add(grid)
+
+        self._speed_adjustment = Gtk.Adjustment()
+        self._speed_adjustment.props.lower = 1 / MAX_RATE
+        self._speed_adjustment.props.upper = MAX_RATE
+        self._speed_adjustment.props.value = 1
+        self._speed_spin_button = Gtk.SpinButton.new(adjustment=self._speed_adjustment, climb_rate=2, digits=2)
+        self._speed_spin_button.set_increments(.1, 1)
+        self._speed_spin_button.set_numeric(True)
+
+        self._speed_scale_adjustment = Gtk.Adjustment()
+        self._speed_scale_adjustment.props.lower = self._rate_to_linear(1 / MAX_RATE)
+        self._speed_scale_adjustment.props.upper = self._rate_to_linear(MAX_RATE)
+        self._speed_scale_adjustment.props.value = 1
+        self._speed_scale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, self._speed_scale_adjustment)
+        self._speed_scale.set_size_request(width=200, height=-1)
+        self._speed_scale.props.draw_value = False
+        self._speed_scale.props.show_fill_level = False
+
+        linear = self._rate_to_linear(1 / 4)
+        self._speed_scale.add_mark(linear, Gtk.PositionType.BOTTOM, "¼")
+        linear = self._rate_to_linear(1 / 2)
+        self._speed_scale.add_mark(linear, Gtk.PositionType.BOTTOM, "½")
+        for rate in (1, 2, 4, 8):
+            linear = self._rate_to_linear(rate)
+            self._speed_scale.add_mark(linear, Gtk.PositionType.BOTTOM, "{}".format(rate))
+
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        hbox.pack_start(self._speed_spin_button, False, False, PADDING)
+        hbox.pack_start(self._speed_scale, False, False, PADDING)
+        self.__add_widget_to_grid(grid, _("Speed"), hbox, self._speed_reset_button_clicked_cb, 0)
+
+        self.__setting_rate = False
+        self.bind_property("rate",
+                           self._speed_adjustment, "value",
+                           GObject.BindingFlags.BIDIRECTIONAL)
+        self.bind_property("rate_linear",
+                           self._speed_scale_adjustment, "value",
+                           GObject.BindingFlags.BIDIRECTIONAL)
+
+    def _speed_reset_button_clicked_cb(self, button):
+        self._speed_adjustment.props.value = 1
+        self._speed_scale_adjustment.props.value = 1
+
+    def __add_widget_to_grid(self, grid: Gtk.Grid, nick: str, widget: Gtk.Widget, reset_func: Callable, y: int) -> None:
+        text = _("%(preference_label)s:") % {"preference_label": nick}
+
+        button = Gtk.Button.new_from_icon_name("edit-clear-all-symbolic", Gtk.IconSize.MENU)
+        button.set_tooltip_text(_("Reset to default value"))
+        button.set_relief(Gtk.ReliefStyle.NONE)
+        button.connect("clicked", reset_func)
+
+        label = Gtk.Label(label=text)
+        label.props.yalign = 0.5
+        grid.attach(label, 0, y, 1, 1)
+        grid.attach(widget, 1, y, 1, 1)
+        grid.attach(button, 2, y, 1, 1)
+
+    def __get_source_duration(self) -> Tuple[GES.Source, int]:
+        assert self._clip is not None
+
+        res = (None, Gst.CLOCK_TIME_NONE)
+        for source in self._sources.values():
+            internal_duration = self._clip.get_internal_time_from_timeline_time(source, source.props.duration)
+            if internal_duration < res[1]:
+                res = (source, internal_duration)
+
+        return res
+
+    def _current_rate(self) -> float:
+        for effect, propname in self._time_effects.values():
+            return effect.get_child_property(propname).value
+        return 1
+
+    @staticmethod
+    def _rate_to_linear(value: float) -> float:
+        if value < 1:
+            return value * MAX_RATE - (MAX_RATE - 1)
+        else:
+            return value
+
+    @staticmethod
+    def _linear_to_rate(value: float) -> float:
+        if value < 1:
+            return (value + MAX_RATE - 1) / MAX_RATE
+        else:
+            return value
+
+    @GObject.Property(type=float)
+    def rate(self):
+        value = self._current_rate()
+        return value
+
+    @rate.setter  # type: ignore
+    def rate(self, value: float) -> None:
+        self._set_rate(value)
+        self.notify("rate_linear")
+
+    @GObject.Property(type=float)
+    def rate_linear(self):
+        value = self._current_rate()
+        return self._rate_to_linear(value)
+
+    @rate_linear.setter  # type: ignore
+    def rate_linear(self, linear: float) -> None:
+        value = self._linear_to_rate(linear)
+        self._set_rate(value)
+        self.notify("rate")
+
+    def _set_rate(self, value: float):
+        if not self._clip:
+            return
+
+        if value != 1:
+            self.__ensure_effects()
+
+        prev_rate = self._current_rate()
+        if prev_rate == value:
+            return
+
+        self.info("Setting speed to %s", value)
+        project = self.app.project_manager.current_project
+        self.__setting_rate = True
+        prev_snapping_distance = project.ges_timeline.props.snapping_distance
+        is_auto_clamp = False
+        try:
+            self.app.action_log.begin("set clip speed",
+                                      finalizing_action=CommitTimelineFinalizingAction(project.pipeline),
+                                      toplevel=True)
+            is_auto_clamp = True
+            for track_element in self._clip.get_children(True):
+                track_element.set_auto_clamp_control_sources(False)
+
+            source, source_duration = self.__get_source_duration()
+            for effect, propname in self._time_effects.values():
+                res = effect.set_child_property(propname, value)
+                assert res
+
+            new_end = self._clip.get_timeline_time_from_internal_time(source, self._clip.props.start + source_duration)
+
+            # We do not want to snap when setting clip speed
+            project.ges_timeline.props.snapping_distance = 0
+            self._clip.edit_full(-1, GES.EditMode.TRIM, GES.Edge.END, new_end)
+            for track_element in self._clip.get_children(True):
+                track_element.set_auto_clamp_control_sources(True)
+            is_auto_clamp = False
+        except GLib.Error as e:
+            self.app.action_log.rollback()
+            if e.domain == "GES_ERROR":
+                self.error("Error when setting speed: %s", e)
+
+                # At this point the GBinding is frozen (to avoid looping)
+                # so even if we notify "rate" at this point, the value wouldn't
+                # be reflected, we need to do it manually
+                self._speed_adjustment.props.value = prev_rate
+                self._speed_scale_adjustment.props.value = self._rate_to_linear(prev_rate)
+            else:
+                raise e
+        except Exception as e:
+            self.app.action_log.rollback()
+            raise e
+        else:
+            self.app.action_log.commit("set clip speed")
+        finally:
+            self.__setting_rate = False
+            project.ges_timeline.props.snapping_distance = prev_snapping_distance
+            if is_auto_clamp:
+                for track_element in self._clip.get_children(True):
+                    track_element.set_auto_clamp_control_sources(True)
+
+        self.debug("New value is %s", self.props.rate)
+
+    def __child_property_changed_cb(self, element: GES.TimelineElement, obj: GObject.Object, prop: GObject.ParamSpec) -> None:
+        if self.__setting_rate or not isinstance(obj, Gst.Element):
+            return
+
+        time_effect_factory_names = [d[0] for d in self.TIME_EFFECTS_DEF.values()]
+        if not obj.get_factory().get_name() in time_effect_factory_names:
+            return
+
+        rate = None
+        for effect, propname in self._time_effects.values():
+            if rate and rate != effect.get_child_property(propname).value:
+                # Do no notify before all children have they new value set
+                return
+            rate = effect.get_child_property(propname).value
+
+        self.notify("rate")
+        self.notify("rate_linear")
+
+    def set_clip(self, clip):
+        if self._clip:
+            self._clip.disconnect_by_func(self.__child_property_changed_cb)
+
+        self._clip = clip
+
+        self._sources = {}
+        if self._clip:
+            for track in self._clip.get_timeline().get_tracks():
+                source = self._clip.find_track_element(track, GES.Source)
+                if source:
+                    self._sources[track] = source
+
+            if not self._sources:
+                self._clip = None
+
+        self._time_effects = self.__get_time_effects(self._clip)
+
+        if self._clip:
+            self._clip.connect("deep-notify", self.__child_property_changed_cb)
+            self.show_all()
+        else:
+            self.hide()
+
+    def __get_time_effects(self, clip):
+        if clip is None:
+            return {}
+
+        time_effects = {}
+        for effect in clip.get_top_effects():
+            if not is_time_effect(effect):
+                continue
+
+            track = effect.get_track()
+            if track in time_effects:
+                self.error("Something is wrong as we have several %s time effects", track)
+                continue
+
+            time_effects[track] = (effect, self.TIME_EFFECTS_DEF[track.props.track_type][1])
+
+        return time_effects
+
+    def __ensure_effects(self):
+        if self._time_effects:
+            return
+
+        rate = None
+        for track, unused_source in self._sources.items():
+            if track not in self._time_effects:
+                bindesc, propname = self.TIME_EFFECTS_DEF[track.props.track_type]
+                effect = GES.Effect.new(bindesc)
+                self._time_effects[track] = (effect, propname)
+                effect.set_meta(self.TIME_EFFECT_META, True)
+                self._clip.add_top_effect(effect, 0)
+
+            res, tmprate = effect.get_child_property(propname)
+            assert res
+
+            if rate:
+                if rate != tmprate:
+                    self.error("Rate mismatch, going to reset it to %s", rate)
+                    self.__setting_rate = True
+                    self.set_child_property(propname, rate)
+            else:
+                rate = tmprate
 
 
 class EffectProperties(Gtk.Expander, Loggable):
@@ -279,6 +587,9 @@ class EffectProperties(Gtk.Expander, Loggable):
             self.effect_popover.search_entry.set_text("")
 
     def _create_effect_row(self, effect):
+        if is_time_effect(effect):
+            return None
+
         effect_info = self.app.effects.get_info(effect.props.bin_description)
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -348,8 +659,10 @@ class EffectProperties(Gtk.Expander, Loggable):
         for effect in self.clip.get_top_effects():
             if effect.props.bin_description in HIDDEN_EFFECTS:
                 continue
+
             effect_row = self._create_effect_row(effect)
-            self.effects_listbox.add(effect_row)
+            if effect_row:
+                self.effects_listbox.add(effect_row)
 
         self.effects_listbox.show_all()
 
@@ -364,6 +677,9 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _add_effect_row(self, effect):
         row = self._create_effect_row(effect)
+        if not row:
+            return
+
         self.effects_listbox.add(row)
         self.effects_listbox.show_all()
 
@@ -399,9 +715,10 @@ class EffectProperties(Gtk.Expander, Loggable):
         if self.clip:
             self.clip.disconnect_by_func(self._track_element_added_cb)
             self.clip.disconnect_by_func(self._track_element_removed_cb)
-            for track_element in self.clip.get_children(recursive=True):
-                if isinstance(track_element, GES.BaseEffect):
-                    self._disconnect_from_track_element(track_element)
+            for effect in self.clip.get_top_effects():
+                if is_time_effect(effect):
+                    continue
+                self._disconnect_from_track_element(effect)
 
         self.clip = clip
         if self.clip:
@@ -409,6 +726,8 @@ class EffectProperties(Gtk.Expander, Loggable):
             self.clip.connect("child-removed", self._track_element_removed_cb)
             for track_element in self.clip.get_children(recursive=True):
                 if isinstance(track_element, GES.BaseEffect):
+                    if is_time_effect(track_element):
+                        continue
                     self._connect_to_track_element(track_element)
 
             self._update_listbox()
@@ -488,7 +807,10 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.effects_listbox.drag_unhighlight_row()
         self.effects_listbox.drag_unhighlight()
 
-    def _drag_data_received_cb(self, widget, drag_context, unused_x, y, selection_data, unused_info, timestamp):
+    def __get_time_effects(self):
+        return [effect for effect in self.clip.get_top_effects() if is_time_effect(effect)]
+
+    def _drag_data_received_cb(self, widget, drag_context, x, y, selection_data, unused_info, timestamp):
         if not self.clip:
             # Indicate that a drop will not be accepted.
             Gdk.drag_status(drag_context, 0, timestamp)
@@ -504,7 +826,9 @@ class EffectProperties(Gtk.Expander, Loggable):
             # An effect dragged probably from the effects list.
             factory_name = str(selection_data.get_data(), "UTF-8")
 
-            self.debug("Effect dragged at position %s", drop_index)
+            top_effect_index = drop_index + len(self.__get_time_effects())
+            self.debug("Effect dragged at position %s - computed top effect index %s",
+                       drop_index, top_effect_index)
             effect_info = self.app.effects.get_info(factory_name)
             pipeline = self.app.project_manager.current_project.pipeline
             with self.app.action_log.started("add effect",
@@ -513,7 +837,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                                              toplevel=True):
                 effect = self.clip.ui.add_effect(effect_info)
                 if effect:
-                    self.clip.set_top_effect_index(effect, drop_index)
+                    self.clip.set_top_effect_index(effect, top_effect_index)
 
         elif drag_context.get_suggested_action() == Gdk.DragAction.MOVE:
             # An effect dragged from the same listbox to change its position.
@@ -535,15 +859,18 @@ class EffectProperties(Gtk.Expander, Loggable):
             # Noop.
             return
 
+        time_effects = self.__get_time_effects()
+        effect_index = source_index + len(time_effects)
+        wanted_index = drop_index + len(time_effects)
         effects = clip.get_top_effects()
-        effect = effects[source_index]
+        effect = effects[effect_index]
         pipeline = self.app.project_manager.current_project.pipeline
 
         with self.app.action_log.started("move effect",
                                          finalizing_action=CommitTimelineFinalizingAction(
                                              pipeline),
                                          toplevel=True):
-            clip.set_top_effect_index(effect, drop_index)
+            clip.set_top_effect_index(effect, wanted_index)
 
 
 class TransformationProperties(Gtk.Expander, Loggable):

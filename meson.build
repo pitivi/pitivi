@@ -4,11 +4,12 @@ host_system = host_machine.system()
 pymod = import('python')
 python = pymod.find_installation(get_option('python'))
 pythonver = python.language_version()
+
 # Workaround for https://github.com/mesonbuild/meson/issues/5629
 # https://gitlab.freedesktop.org/gstreamer/gst-python/issues/28
-python_dep = dependency('python-@0@-embed'.format(pythonver), version: '>= 3.3', required: false)
+python_dep = dependency('python-@0@-embed'.format(pythonver), version: '>= 3.5', required: false)
 if not python_dep.found()
-  python_dep = python.dependency(version: '>= 3.3')
+  python_dep = python.dependency(version: '>= 3.5')
 endif
 
 if get_option('build-gst')

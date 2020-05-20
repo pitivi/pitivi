@@ -16,9 +16,11 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Tests for the pitivi.clipproperties module."""
 # pylint: disable=protected-access,no-self-use,import-outside-toplevel,no-member
+import tempfile
 from unittest import mock
 
 from gi.repository import GES
+from gi.repository import Gst
 
 from tests import common
 
@@ -30,17 +32,15 @@ class TransformationPropertiesTest(common.TestCase):
     @common.setup_clipproperties
     def test_spin_buttons_read(self):
         """Checks the spin buttons update when the source properties change."""
-        # Create transformation box
-        transformation_box = self.transformation_box
-        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
-        spin_buttons = transformation_box.spin_buttons
+        timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline
+        spin_buttons = self.transformation_box.spin_buttons
 
         # Add a clip and select it
         clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
 
         # Check that spin buttons display the correct values by default
-        source = transformation_box.source
+        source = self.transformation_box.source
         self.assertIsNotNone(source)
         for prop in ["posx", "posy", "width", "height"]:
             self.assertIn(prop, spin_buttons)
@@ -61,7 +61,6 @@ class TransformationPropertiesTest(common.TestCase):
     @common.setup_clipproperties
     def test_spin_buttons_write(self):
         """Checks the spin buttons changing updates the source properties."""
-        # Create transformation box
         timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline
         spin_buttons = self.transformation_box.spin_buttons
 
@@ -96,7 +95,6 @@ class TransformationPropertiesTest(common.TestCase):
     @common.setup_clipproperties
     def test_spin_buttons_source_change(self):
         """Checks the spin buttons update when the selected clip changes."""
-        # Create transformation box
         timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline
         spin_buttons = self.transformation_box.spin_buttons
 
@@ -130,7 +128,6 @@ class TransformationPropertiesTest(common.TestCase):
     @common.setup_clipproperties
     def test_keyframes_activate(self):
         """Checks transformation properties keyframes activation."""
-        # Create transformation box
         timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline
 
         # Add a clip and select it
@@ -166,7 +163,6 @@ class TransformationPropertiesTest(common.TestCase):
     @common.setup_clipproperties
     def test_keyframes_add(self):
         """Checks keyframe creation."""
-        # Create transformation box
         timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline
         pipeline = timeline._project.pipeline
         spin_buttons = self.transformation_box.spin_buttons
@@ -200,7 +196,6 @@ class TransformationPropertiesTest(common.TestCase):
     @common.setup_clipproperties
     def test_keyframes_navigation(self):
         """Checks keyframe navigation."""
-        # Create transformation box
         timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline
         pipeline = timeline._project.pipeline
 
@@ -250,7 +245,6 @@ class TransformationPropertiesTest(common.TestCase):
     @common.setup_clipproperties
     def test_reset_to_default(self):
         """Checks "reset to default" button."""
-        # Create transformation box
         timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline
 
         # Add a clip and select it
@@ -395,3 +389,165 @@ class ClipPropertiesTest(common.TestCase):
 
         self.timeline_container.timeline.selection.select(clips)
         self.assertEqual(len(self.action_log.undo_stacks), 1)
+
+
+class SpeedPropertiesTest(common.TestCase):
+    """Tests for the TransformationProperties widget."""
+
+    def assert_applied_rate(self, sources_count, rate, duration):
+        self.assertEqual(len(self.speed_box._time_effects), sources_count)
+        self.assertEqual(self.speed_box.props.rate, rate)
+        self.assertEqual(self.speed_box._clip.props.duration, duration)
+        for effect, propname in self.speed_box._time_effects.values():
+            self.assertTrue(propname in ["rate", "tempo"], propname)
+            self.assertEqual(effect.get_child_property(propname).value, rate)
+
+        self.assertEqual(self.speed_box._speed_adjustment.props.value, rate)
+
+    def assert_clip_speed_child_props(self, clip, audio, video, value):
+        if audio:
+            self.assertEqual(clip.get_child_property("tempo").value, value)
+        if video:
+            self.assertEqual(clip.get_child_property("GstVideoRate::rate").value, value)
+
+    def _check_clip_speed(self, audio=False, video=False):
+        sources_count = len([source for source in [audio, video] if source])
+
+        clip, = self.layer.get_clips()
+
+        self.project.ges_timeline.props.snapping_distance = Gst.SECOND
+        self.assertEqual(self.speed_box._sources, {})
+        self.assertEqual(self.speed_box._time_effects, {})
+
+        self.timeline_container.timeline.selection.select([clip])
+
+        self.assertEqual(len(self.speed_box._sources), sources_count, self.speed_box._sources)
+        self.assertEqual(self.speed_box._time_effects, {})
+
+        clip.props.duration = Gst.SECOND
+        self.assertEqual(self.speed_box._clip.props.duration, Gst.SECOND)
+
+        self.speed_box._speed_adjustment.props.value = 2.0
+        self.assert_applied_rate(sources_count, 2.0, Gst.SECOND / 2)
+
+        self.speed_box._speed_adjustment.props.value = 0.5
+        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND * 2)
+
+        self.action_log.undo()
+        self.assert_applied_rate(sources_count, 2.0, Gst.SECOND / 2)
+
+        self.action_log.undo()
+        self.assert_applied_rate(sources_count, 1.0, Gst.SECOND)
+
+        self.action_log.redo()
+        self.assert_applied_rate(sources_count, 2.0, Gst.SECOND / 2)
+
+        self.action_log.redo()
+        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND * 2)
+
+        self.timeline_container.timeline.selection.select([])
+        self.assertEqual(self.speed_box._sources, {})
+        self.assertEqual(self.speed_box._time_effects, {})
+
+        self.timeline_container.timeline.selection.select([clip])
+        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND * 2)
+
+        self.action_log.undo()
+        self.assert_applied_rate(sources_count, 2.0, Gst.SECOND / 2)
+
+        self.timeline_container.timeline.selection.select([])
+        self.assertEqual(self.speed_box._sources, {})
+        self.assertEqual(self.speed_box._time_effects, {})
+
+        self.action_log.undo()
+        self.assert_clip_speed_child_props(clip, audio, video, 1.0)
+
+        self.action_log.redo()
+        self.assert_clip_speed_child_props(clip, audio, video, 2.0)
+
+        self.action_log.redo()
+        self.assert_clip_speed_child_props(clip, audio, video, 0.5)
+
+        self.timeline_container.timeline.selection.select([clip])
+        self.project.pipeline.get_position = mock.Mock(return_value=Gst.SECOND)
+        self.timeline_container.split_action.emit("activate", None)
+
+        clip1, clip2 = self.layer.get_clips()
+        self.assertEqual(clip1.props.start, 0)
+        self.assertEqual(clip1.props.duration, Gst.SECOND)
+        self.assertEqual(clip2.props.start, Gst.SECOND)
+        self.assertEqual(clip2.props.duration, Gst.SECOND)
+        self.assertEqual(self.project.ges_timeline.props.snapping_distance, Gst.SECOND)
+
+        # 0.1 would lead to clip1 totally overlapping clip2, ensure it is a noop
+        self.speed_box._speed_adjustment.props.value = 0.1
+        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND)
+        self.assertEqual(self.project.ges_timeline.props.snapping_distance, Gst.SECOND)
+
+        self.action_log.undo()
+        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND * 2)
+
+        # Undoing should undo the split
+        clip1, = self.layer.get_clips()
+
+        # redo the split
+        self.action_log.redo()
+        clip1, clip2 = self.layer.get_clips()
+        self.assertEqual(self.speed_box._clip, clip1)
+        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND)
+        self.assertEqual(self.project.ges_timeline.props.snapping_distance, Gst.SECOND)
+
+        self.speed_box._speed_adjustment.props.value = 1.0
+        self.assert_applied_rate(sources_count, 1.0, Gst.SECOND / 2)
+
+        self.speed_box._speed_adjustment.props.value = 0.5
+        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND)
+
+        self.speed_box.set_clip(None)
+        self.assertEqual(self.speed_box._sources, {})
+        self.assertEqual(self.speed_box._time_effects, {})
+
+    @common.setup_project_with_clips(assets_names=["1sec_simpsons_trailer.mp4"])
+    @common.setup_clipproperties
+    def test_clip_speed_av(self):
+        self._check_clip_speed(audio=True, video=True)
+
+    @common.setup_project_with_clips(assets_names=["mp3_sample.mp3"])
+    @common.setup_clipproperties
+    def test_clip_speed_a(self):
+        self._check_clip_speed(audio=True)
+
+    @common.setup_project_with_clips(assets_names=["30fps_numeroted_frames_blue.webm"])
+    @common.setup_clipproperties
+    def test_clip_speed_v(self):
+        self._check_clip_speed(video=True)
+
+    @common.setup_project_with_clips
+    @common.setup_clipproperties
+    def test_load_project_clip_speed(self):
+        sources_count = 2
+        clip, = self.layer.get_clips()
+        clip.props.duration = Gst.SECOND
+
+        self.timeline_container.timeline.selection.select([clip])
+        self.speed_box._speed_adjustment.props.value = 0.5
+        self.assert_applied_rate(sources_count, 0.5, 2 * Gst.SECOND)
+
+        with tempfile.NamedTemporaryFile() as temp_file:
+            uri = Gst.filename_to_uri(temp_file.name)
+            project_manager = self.app.project_manager
+            self.assertTrue(project_manager.save_project(uri=uri, backup=False))
+
+            mainloop = common.create_main_loop()
+
+            project_manager.connect("new-project-loaded", lambda *args: mainloop.quit())
+            project_manager.connect("closing-project", lambda *args: True)
+            self.assertTrue(project_manager.close_running_project())
+            project_manager.load_project(uri)
+            mainloop.run()
+
+        new_clip, = self.layer.get_clips()
+        self.assertNotEqual(new_clip, clip)
+
+        self.timeline_container.timeline.selection.select([new_clip])
+        self.assert_applied_rate(sources_count, 0.5, 2 * Gst.SECOND)

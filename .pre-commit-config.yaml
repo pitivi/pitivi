@@ -1,9 +1,5 @@
 ---
 repos:
-  - repo: https://github.com/pre-commit/pre-commit.git
-    rev: v2.9.3
-    hooks:
-      - id: validate_manifest
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
     rev: v3.4.0
     hooks:
@@ -17,7 +13,7 @@ repos:
       - id: check-docstring-first
       - id: debug-statements
   - repo: https://github.com/asottile/reorder_python_imports.git
-    rev: v2.3.6
+    rev: v2.4.0
     hooks:
       - id: reorder-python-imports
         args:
@@ -44,6 +40,11 @@ repos:
             pitivi/utils/extract.py|
             pitivi/autoaligner.py|
           )$
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'v0.800'
+    hooks:
+      - id: mypy
+        files: '.*pitivi/clipproperties.py$'
   - repo: local
     hooks:
       - id: pylint
@@ -59,7 +60,7 @@ repos:
             bin/pitivi.in
           )$
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.25.0
+    rev: v1.26.0
     hooks:
       - id: yamllint
         args:

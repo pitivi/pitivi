@@ -188,58 +188,73 @@ class CheckedOperationDuration:
         signal.alarm(0)
 
 
-def setup_project_with_clips(func, assets_names=None):
+def setup_project_with_clips(assets_names=None):  # pylint: disable=unused-argument
     """Sets up a Pitivi instance with the specified assets on the timeline."""
-    if assets_names is None:
-        assets_names = {"1sec_simpsons_trailer.mp4"}
 
-    def wrapper(self):
-        with cloned_sample(*list(assets_names)):
-            self.app = create_pitivi()
-            self.project = self.app.project_manager.new_blank_project()
-            self.timeline = self.project.ges_timeline
-            self.layer = self.timeline.append_layer()
-            self.action_log = self.app.action_log
-            project = self.app.project_manager.current_project
-            self.timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
-            self.timeline_container.set_project(project)
+    def decorator(func):
+        nonlocal assets_names
+        if assets_names is None:
+            assets_names = ["1sec_simpsons_trailer.mp4"]
 
-            timeline = self.timeline_container.timeline
-            timeline.app.project_manager.current_project = project
-            timeline.get_parent = mock.MagicMock(return_value=self.timeline_container)
-            uris = collections.deque([get_sample_uri(fname) for fname in assets_names])
-            mainloop = create_main_loop()
+        def wrapper(self):
+            with cloned_sample(*assets_names):
+                self.app = create_pitivi()
 
-            def loaded_cb(project, timeline):
-                project.add_uris([uris.popleft()])
+                self.timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
 
-            def progress_cb(project, progress, estimated_time):
-                if progress == 100:
-                    if uris:
-                        project.add_uris([uris.popleft()])
+                def loaded_cb(unused_pm, project):
+                    self.timeline_container.set_project(project)
+                    self.project = project
+                    self.timeline = project.ges_timeline
+                    layers = self.timeline.get_layers()
+                    if layers:
+                        self.layer = layers[0]
                     else:
-                        mainloop.quit()
+                        self.layer = self.timeline.append_layer()
 
-            project.connect_after("loaded", loaded_cb)
-            project.connect_after("asset-loading-progress", progress_cb)
-            mainloop.run()
+                self.app.project_manager.connect("new-project-loaded", loaded_cb)
+                self.app.project_manager.new_blank_project()
+                self.action_log = self.app.action_log
+                project = self.app.project_manager.current_project
 
-            project.disconnect_by_func(loaded_cb)
-            project.disconnect_by_func(progress_cb)
+                timeline = self.timeline_container.timeline
+                timeline.app.project_manager.current_project = project
+                timeline.get_parent = mock.MagicMock(return_value=self.timeline_container)
+                uris = collections.deque([get_sample_uri(fname) for fname in assets_names])
+                mainloop = create_main_loop()
 
-            assets = project.list_assets(GES.UriClip)
-            self.timeline_container.insert_assets(assets, self.timeline.props.duration)
+                def project_loaded_cb(project, timeline):
+                    project.add_uris([uris.popleft()])
 
-            func(self)
+                def progress_cb(project, progress, estimated_time):
+                    if progress == 100:
+                        if uris:
+                            project.add_uris([uris.popleft()])
+                        else:
+                            mainloop.quit()
 
-        del self.app
-        del self.project
-        del self.timeline
-        del self.layer
-        del self.action_log
-        del self.timeline_container
+                project.connect_after("loaded", project_loaded_cb)
+                project.connect_after("asset-loading-progress", progress_cb)
+                mainloop.run()
 
-    return wrapper
+                project.disconnect_by_func(project_loaded_cb)
+                project.disconnect_by_func(progress_cb)
+
+                assets = project.list_assets(GES.UriClip)
+                self.timeline_container.insert_assets(assets, self.timeline.props.duration)
+
+                func(self)
+
+            del self.app
+            del self.project
+            del self.timeline
+            del self.layer
+            del self.action_log
+            del self.timeline_container
+
+        return wrapper
+
+    return decorator
 
 
 def setup_timeline(func):
@@ -280,6 +295,8 @@ def setup_clipproperties(func):
 
         self.transformation_box = self.clipproperties.transformation_expander
         self.transformation_box._new_project_loaded_cb(None, self.project)
+
+        self.speed_box = self.clipproperties.speed_expander
 
         func(self)
 
