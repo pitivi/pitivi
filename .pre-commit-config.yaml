@@ -27,6 +27,7 @@ repos:
         args:
           # http://www.pydocstyle.org/en/latest/error_codes.html
           - --ignore=D1,D203,D213,D401,D406,D407,D413
+        exclude: '.*pitivi/utils/extract.py$|.*pitivi/autoaligner.py$'
   - repo: https://gitlab.com/PyCQA/flake8
     rev: 3.7.9
     hooks:
@@ -35,6 +36,11 @@ repos:
           # http://flake8.pycqa.org/en/latest/user/error-codes.html
           # https://pycodestyle.readthedocs.io/en/latest/intro.html#error-codes
           - --ignore=E402,E501,E722,F401,F841,W504
+        exclude: >
+          (?x)^(
+            pitivi/utils/extract.py|
+            pitivi/autoaligner.py|
+          )$
   - repo: local
     hooks:
       - id: pylint
@@ -42,6 +48,13 @@ repos:
         entry: python3 -m pylint.__main__ --rcfile=pylint.rc
         language: system
         types: [python]
+        exclude: >
+          (?x)^(
+            pitivi/utils/extract.py|
+            pitivi/autoaligner.py|
+            tests/validate-tests/manager.py|
+            bin/pitivi.in
+          )$
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.20.0
     hooks:

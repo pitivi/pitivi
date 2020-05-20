@@ -393,7 +393,7 @@ class PreferencesDialog(Loggable):
         index = 0
         for group in shortcuts_manager.groups:
             actions = shortcuts_manager.group_actions[group]
-            for action, title, _ in actions:
+            for action, title, _unused in actions:
                 item = ModelItem(self.app, action, title, group)
                 self.list_store.append(item)
                 self.action_ids[action] = index

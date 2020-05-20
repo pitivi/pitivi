@@ -5,9 +5,8 @@ stages:
   - deploy
 
 variables:
-  MANIFEST: build/flatpak/org.pitivi.Pitivi.json
+  MANIFEST: /build/pitivi/build/flatpak/org.pitivi.Pitivi.json
   DBUS_ID: org.pitivi.Pitivi
-  XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
   GST_DEBUG_NO_COLOR: "true"
 
 
@@ -26,16 +25,23 @@ pitivi:master:
     - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
     - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:master-sdk_3.38"
     - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.38"
-    - export TMPIMAGENAME="tmp-pitivi-master-sdk_3.38"
-    - export BUILDDIR="\${HOME}/pitivi"
-    - export CLONE_PITIVI="git clone ${CI_PROJECT_URL}.git --single-branch \${HOME}/pitivi -b ${CI_COMMIT_REF_NAME}"
-    - export BUILD_PITIVI="flatpak-builder --user --disable-rofiles-fuse ${BUILDDIR}/app ${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json --state-dir=\${HOME}/flatpak-cache --ccache"
+
+    # Commands to be run in the Docker image.
+    # Clone the Pitivi repo.
+    - export CLONE_PITIVI="git clone ${CI_PROJECT_URL}.git --single-branch /build/pitivi -b ${CI_COMMIT_REF_NAME}"
+    # All the downloads, build dirs, build cache, etc. are stored in /build/flatpak-cache.
+    - export BUILD_PITIVI="flatpak-builder --user --disable-rofiles-fuse /build/flatpak-build-dir ${MANIFEST} --state-dir=/build/flatpak-cache --ccache"
+    # Run pre-commit to download and cache the hooks.
+    - export PRE_COMMIT="cd /build/pitivi && flatpak-builder --disable-rofiles-fuse --filesystem=/build/pitivi --env=PRE_COMMIT_HOME=/build/pre-commit-home --share=network --run /build/flatpak-build-dir ${MANIFEST} pre-commit install-hooks"
+    # The /build/flatpak-build-dir since it's very large and can be recreated
+    # easily out of /build/flatpak-cache.
+    - export CLEANUP="rm -rf /build/pitivi && rm -rf /build/flatpak-build-dir"
 
     - env
 
-    - docker run --privileged --name ${TMPIMAGENAME} ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${BUILDDIR}"
-    - docker commit ${TMPIMAGENAME} ${IMAGE}
-    - docker rm ${TMPIMAGENAME}
+    - docker run --privileged --name local-pitivi-image ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && ${PRE_COMMIT} && ${CLEANUP}"
+    - docker commit local-pitivi-image ${IMAGE}
+    - docker rm local-pitivi-image
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker push ${IMAGE}
   only:
@@ -50,31 +56,38 @@ build:
     - flatpak
   image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_3.38
   variables:
-    BLACKLIST: >
-      -b tests.test_effects.EffectsPropertiesManagerTest.test_dependent_properties
+    XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
   script:
-    - export BUILDDIR=${HOME}/pitivi
-    - export MANIFEST=${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json
-    - export RUN_IN_SANDBOX="flatpak-builder --disable-rofiles-fuse --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --env=GST_DEBUG_NO_COLOR=true --run app ${MANIFEST}"
-    - export FLATPAK_BUILDER_CACHE="--state-dir=${HOME}/flatpak-cache"
-    - export FLATPAK_REPO="${CI_PROJECT_DIR}/flatpak_repo"
+    - export RUN_IN_SANDBOX="flatpak-builder --disable-rofiles-fuse --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --env=GST_DEBUG_NO_COLOR=true --env=PRE_COMMIT_HOME=/build/pre-commit-home --env=SKIP=gitlab-ci-linter --run /build/flatpak-build-dir ${MANIFEST}"
 
     - env
 
-    # Working around the fact that flatpak-builder *requires* the cache dir
-    # to be on the same filesystem as the build dir
-    - mv ${CI_PROJECT_DIR} ${BUILDDIR}
-    - mkdir -p ${CI_PROJECT_DIR}
+    # Move the Pitivi git repo so it has the same location as when the
+    # /build/flatpak-cache has been created.
+    - mv ${CI_PROJECT_DIR} /build/pitivi
 
-    - cd ${BUILDDIR}
-    - flatpak-builder --user --disable-rofiles-fuse ${FLATPAK_BUILDER_CACHE} --disable-download --ccache --repo=${FLATPAK_REPO} --force-clean app build/flatpak/org.pitivi.Pitivi.json --subject="Rolling update for pitivi master" --body="See ${CI_JOB_URL}"
+    # Create the folder as we need to store here the artifacts.
+    - mkdir ${CI_PROJECT_DIR}
+
+    # Recreate the flatpak build dir using the cache.
+    - flatpak-builder --user --disable-rofiles-fuse --state-dir=/build/flatpak-cache --disable-download --ccache --force-clean /build/flatpak-build-dir ${MANIFEST}
+
+    # Build Pitivi.
+    - cd /build/pitivi
     - ${RUN_IN_SANDBOX} meson mesonbuild/
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
-    - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH} --logs-dir=${CI_PROJECT_DIR}/tests-logs ${BLACKLIST}
 
-    # For some reason GitLab fails to upload directories
+    # Run the pre-commit hooks.
+    - ${RUN_IN_SANDBOX} pre-commit run --all-files
+
+    # Run the unit tests.
+    - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher /build/pitivi/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH} --logs-dir ${CI_PROJECT_DIR}/tests-logs
+
+    # Create a flatpak repo.
+    - flatpak build-export ${CI_PROJECT_DIR}/flatpak_repo /build/flatpak-build-dir --subject="Rolling update for Pitivi master" --body="See ${CI_JOB_URL}"
+    # GitLab fails to upload directories with many files.
+    # Workaround https://gitlab.com/gitlab-org/gitlab-runner/-/issues/26869
     - cd ${CI_PROJECT_DIR}/
-    - tar czf tests-logs.tar.gz tests-logs/
     - tar cf flatpak_repo.tar flatpak_repo/
   cache:
     paths:
@@ -84,7 +97,7 @@ build:
     paths:
       - xunit.xml
       - flatpak_repo.tar
-      - tests-logs.tar.gz
+      - tests-logs/
     reports:
       junit:
         - ${XUNIT_PATH}
