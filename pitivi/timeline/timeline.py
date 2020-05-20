@@ -473,7 +473,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.ges_timeline.ui = None
             self.ges_timeline = None
 
-        if self._project:
+        if self._project and self._project.pipeline:
             self._project.pipeline.disconnect_by_func(self._position_cb)
 
         self._project = project
