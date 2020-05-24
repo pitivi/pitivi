@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-05-14 15:07+0000\n"
-"PO-Revision-Date: 2020-05-17 11:35+0200\n"
+"POT-Creation-Date: 2020-05-20 22:27+0000\n"
+"PO-Revision-Date: 2020-05-24 12:59+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -322,7 +322,7 @@ msgstr "Wyszukiwanie…"
 msgid "Reset all"
 msgstr "Przywróć wszystko"
 
-#: data/ui/elementsettingsdialog.ui:39 data/ui/projectsettings.ui:74
+#: data/ui/elementsettingsdialog.ui:39 data/ui/projectsettings.ui:94
 msgid "OK"
 msgstr "OK"
 
@@ -384,7 +384,7 @@ msgstr "Wyeksportuj bieżącą klatkę…"
 msgid "Edit the project settings"
 msgstr "Modyfikuje ustawienia projektu"
 
-#: data/ui/mainmenubutton.ui:119 data/ui/projectsettings.ui:41
+#: data/ui/mainmenubutton.ui:119 data/ui/projectsettings.ui:61
 #: pitivi/medialibrary.py:160 pitivi/medialibrary.py:518
 #: pitivi/dialogs/prefs.py:339
 msgid "Project Settings"
@@ -494,7 +494,7 @@ msgid "Some changes will not take effect until you restart Pitivi"
 msgstr ""
 "Niektóre zmiany zostaną uwzględnione po ponownym uruchomieniu programu Pitivi"
 
-#: data/ui/projectsettings.ui:61 data/ui/renderingprogress.ui:41
+#: data/ui/projectsettings.ui:81 data/ui/renderingprogress.ui:41
 #: pitivi/editorperspective.py:538 pitivi/editorperspective.py:670
 #: pitivi/editorperspective.py:718 pitivi/editorperspective.py:771
 #: pitivi/greeterperspective.py:241 pitivi/medialibrary.py:859
@@ -502,80 +502,92 @@ msgstr ""
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: data/ui/projectsettings.ui:127 data/ui/projectsettings.ui:401
+#: data/ui/projectsettings.ui:148 data/ui/projectsettings.ui:422
 #: data/ui/renderingdialog.ui:234
 msgid "Preset:"
 msgstr "Ustawienie:"
 
-#: data/ui/projectsettings.ui:199
+#: data/ui/projectsettings.ui:220
 msgid "Size:"
 msgstr "Rozmiar:"
 
-#: data/ui/projectsettings.ui:259 data/ui/projectsettings.ui:742
+#: data/ui/projectsettings.ui:280 data/ui/projectsettings.ui:763
 msgid "pixels"
 msgstr "piksele"
 
 #. When checked, changing the width or height affects also the other so that the aspect ratio value (width / height) does not change.
-#: data/ui/projectsettings.ui:276 data/ui/projectsettings.ui:759
+#: data/ui/projectsettings.ui:297 data/ui/projectsettings.ui:780
 msgid "Constrain proportions"
 msgstr "Ograniczanie proporcji"
 
-#: data/ui/projectsettings.ui:280
+#: data/ui/projectsettings.ui:301
 msgid "Maintain aspect ratio"
 msgstr "Utrzymuje proporcje obrazu"
 
-#: data/ui/projectsettings.ui:311 data/ui/renderingdialog.ui:451
+#: data/ui/projectsettings.ui:332 data/ui/renderingdialog.ui:451
 msgid "Frame rate:"
 msgstr "Liczba klatek na sekundę:"
 
 #. The title of the section with the video settings
-#: data/ui/projectsettings.ui:364 data/ui/renderingdialog.ui:469
+#: data/ui/projectsettings.ui:385 data/ui/renderingdialog.ui:469
 #: pitivi/effects.py:239
 msgid "Video"
 msgstr "Wideo"
 
-#: data/ui/projectsettings.ui:467 data/ui/renderingdialog.ui:508
+#: data/ui/projectsettings.ui:488 data/ui/renderingdialog.ui:508
 msgid "Channels:"
 msgstr "Kanały:"
 
-#: data/ui/projectsettings.ui:501 data/ui/renderingdialog.ui:617
+#: data/ui/projectsettings.ui:522 data/ui/renderingdialog.ui:617
 msgid "Sample rate:"
 msgstr "Częstotliwość próbki:"
 
 #. The title of the section with the audio settings
-#: data/ui/projectsettings.ui:545 data/ui/renderingdialog.ui:635
+#: data/ui/projectsettings.ui:566 data/ui/renderingdialog.ui:635
 #: pitivi/effects.py:239
 msgid "Audio"
 msgstr "Dźwięk"
 
-#: data/ui/projectsettings.ui:590
+#: data/ui/projectsettings.ui:611
 msgid "Author:"
 msgstr "Autor:"
 
-#: data/ui/projectsettings.ui:602
+#: data/ui/projectsettings.ui:623
 msgid "Year:"
 msgstr "Rok:"
 
 #. The title of the section with the name, author, year fields
-#: data/ui/projectsettings.ui:634
+#: data/ui/projectsettings.ui:655
 msgid "Info"
 msgstr "Informacje"
 
-#: data/ui/projectsettings.ui:678
+#: data/ui/projectsettings.ui:699
 msgid "Scaled proxies resolution:"
 msgstr "Rozdzielczość przeskalowanych plików pośrednich:"
 
-#: data/ui/projectsettings.ui:699 data/ui/projectsettings.ui:727
+#: data/ui/projectsettings.ui:720 data/ui/projectsettings.ui:748
 msgid "1"
 msgstr "1"
 
-#: data/ui/projectsettings.ui:777
+#: data/ui/projectsettings.ui:798
 msgid "<a href='#'>Proxy Preferences</a>"
 msgstr "<a href='#'>Preferencje plików pośrednich</a>"
 
-#: data/ui/projectsettings.ui:811
+#: data/ui/projectsettings.ui:832
 msgid "Proxy"
 msgstr "Pliki pośrednie"
+
+#: data/ui/projectsettings.ui:865
+msgid "Title:"
+msgstr "Tytuł:"
+
+#: data/ui/projectsettings.ui:882
+msgid "Action:"
+msgstr "Działanie:"
+
+#: data/ui/projectsettings.ui:1007
+msgid "Safe Areas"
+msgstr "Bezpieczne obszary"
 
 #: data/ui/renderingdialog.ui:20 data/ui/renderingdialog.ui:55
 #: pitivi/editorperspective.py:323
@@ -672,11 +684,11 @@ msgstr ""
 msgid "Rendering"
 msgstr "Renderowanie"
 
-#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:766
+#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:778
 msgid "Pause"
 msgstr "Wstrzymaj"
 
-#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:758
+#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:770
 #: pitivi/timeline/timeline.py:1785
 msgid "Play"
 msgstr "Odtwórz"
@@ -1031,7 +1043,7 @@ msgstr "Cofnij"
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/editorperspective.py:317 pitivi/editorperspective.py:530
 #: pitivi/editorperspective.py:671 pitivi/editorperspective.py:719
-#: pitivi/editorperspective.py:772 pitivi/preset.py:114 pitivi/project.py:194
+#: pitivi/editorperspective.py:772 pitivi/preset.py:114 pitivi/project.py:200
 msgid "Save"
 msgstr "Zapisz"
 
@@ -1056,7 +1068,7 @@ msgstr "Szybkie wprowadzenia do programu Pitivi"
 msgid "Unable to save project \"%s\""
 msgstr "Nie można zapisać projektu „%s”"
 
-#: pitivi/editorperspective.py:532 pitivi/project.py:193
+#: pitivi/editorperspective.py:532 pitivi/project.py:199
 msgid "Save as..."
 msgstr "Zapisz jako…"
 
@@ -1498,11 +1510,11 @@ msgstr "nowy-profil-%d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:177 pitivi/render.py:880
+#: pitivi/project.py:183 pitivi/render.py:880
 msgid "Sorry, something didn’t work right."
 msgstr "Coś nie zadziałało poprawnie."
 
-#: pitivi/project.py:180
+#: pitivi/project.py:186
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1528,11 +1540,11 @@ msgstr ""
 "Przed zamknięciem programu Pitivi można zapisać zmiany w istniejącym pliku "
 "projektu lub jako oddzielny plik projektu."
 
-#: pitivi/project.py:195
+#: pitivi/project.py:201
 msgid "Close Pitivi"
 msgstr "Zamknij program Pitivi"
 
-#: pitivi/project.py:265
+#: pitivi/project.py:271
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1542,15 +1554,15 @@ msgstr ""
 "próbowano dodać plik multimedialny do projektu, to należy zamiast tego użyć "
 "przycisku „Zaimportuj”."
 
-#: pitivi/project.py:287
+#: pitivi/project.py:293
 msgid "Ignore backup"
 msgstr "Zignoruj kopię zapasową"
 
-#: pitivi/project.py:289
+#: pitivi/project.py:295
 msgid "Restore from backup"
 msgstr "Przywróć z kopii zapasowej"
 
-#: pitivi/project.py:300
+#: pitivi/project.py:306
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1563,16 +1575,16 @@ msgstr ""
 "\n"
 "Wczytać kopię zapasową?"
 
-#: pitivi/project.py:373
+#: pitivi/project.py:379
 msgid "You do not have permissions to write to this folder."
 msgstr "Brak uprawnień do zapisu w tym katalogu."
 
 #. Save the project to a temporary file.
-#: pitivi/project.py:406
+#: pitivi/project.py:412
 msgid "project"
 msgstr "projekt"
 
-#: pitivi/project.py:703
+#: pitivi/project.py:714
 msgid "Pitivi encoding profile"
 msgstr "Profil kodowania Pitivi"
 
@@ -1767,11 +1779,15 @@ msgstr "Przeglądarka"
 msgid "Toggle the currently selected composition guidelines"
 msgstr "Przełączenie obecnie wybranych wskazówek kompozycji"
 
-#: pitivi/viewer/viewer.py:470 pitivi/viewer/viewer.py:528
+#: pitivi/viewer/viewer.py:356
+msgid "Toggle safe areas on viewer"
+msgstr "Przełączenie bezpiecznych obszarów w przeglądarce"
+
+#: pitivi/viewer/viewer.py:482 pitivi/viewer/viewer.py:540
 msgid "Show this window in fullscreen"
 msgstr "Wyświetlanie tego okno na pełnym ekranie"
 
-#: pitivi/viewer/viewer.py:525
+#: pitivi/viewer/viewer.py:537
 msgid "Exit fullscreen mode"
 msgstr "Zakończ tryb pełnoekranowy"
 
