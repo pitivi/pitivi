@@ -2174,12 +2174,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.timeline.scroll_to_playhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def _seek_backward_one_frame_cb(self, unused_action, unused_parameter):
-        self._project.pipeline.step_frame(self._project.videorate, -1)
+        self._project.pipeline.step_frame(-1)
         self.timeline.scroll_to_playhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def _seek_forward_one_frame_cb(self, unused_action, unused_parameter):
 
-        self._project.pipeline.step_frame(self._project.videorate, 1)
+        self._project.pipeline.step_frame(1)
         self.timeline.scroll_to_playhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def do_focus_in_event(self, unused_event):
