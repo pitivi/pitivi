@@ -577,13 +577,12 @@ class Pipeline(GES.Pipeline, SimplePipeline):
 
         return GES.Pipeline.do_change_state(self, state)
 
-    def step_frame(self, framerate, frames_offset):
+    def step_frame(self, frames_offset):
         """Seeks backwards or forwards the specified amount of frames.
 
         This clamps the playhead to the project frames.
 
         Args:
-            framerate (Gst.Fraction): The framerate of the project.
             frames_offset (int): The number of frames to step. Negative number
                 for stepping backwards.
         """
@@ -594,16 +593,11 @@ class Pipeline(GES.Pipeline, SimplePipeline):
                 "Couldn't get position (you're framestepping too quickly), ignoring this request")
             return
 
-        cur_frame = int(
-            round(position * framerate.num / float(Gst.SECOND * framerate.denom), 2))
-        new_frame = cur_frame + frames_offset
-        new_pos = int(new_frame * Gst.SECOND * framerate.denom / framerate.num) + \
-            int((Gst.SECOND * framerate.denom / framerate.num) / 2)
-        Loggable.info(self, "From frame %d to %d at %f fps, seek to %s s",
-                      cur_frame,
-                      new_frame,
-                      framerate.num / framerate.denom,
-                      new_pos / float(Gst.SECOND))
+        cur_frame = self.props.timeline.get_frame_at(position)
+        new_frame = max(0, cur_frame + frames_offset)
+        new_pos = self.props.timeline.get_frame_time(new_frame)
+        self.info("From frame %d to %d - seek to %s",
+                  cur_frame, new_frame, new_pos)
         self.simple_seek(new_pos)
 
     def simple_seek(self, position):
