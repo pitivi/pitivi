@@ -390,7 +390,6 @@
             "builddir": true,
             "config-opts": [
                 "-Ddoc=disabled",
-                "-Ddebug_viewer=false",
                 "--libdir=lib"
             ],
             "sources": [
