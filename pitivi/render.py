@@ -756,24 +756,17 @@ class RenderDialog(Loggable):
         set_icon_and_title(self.preset_icon, self.preset_label, preset_item)
 
         if preset_item:
-            self._set_encoding_profile(preset_item.profile)
+            old_profile = self.project.container_profile
+            if not self._set_encoding_profile(preset_item.profile):
+                self._set_encoding_profile(old_profile)
 
-    def _set_encoding_profile(self, encoding_profile, recursing=False):
-        old_profile = self.project.container_profile
-
-        def rollback():
-            if recursing:
-                return
-
-            self._set_encoding_profile(old_profile, True)
-
+    def _set_encoding_profile(self, encoding_profile):
         self.project.set_container_profile(encoding_profile)
         self._setting_encoding_profile = True
 
         muxer = Encoders().factories_by_name.get(self.project.muxer)
         if not set_combo_value(self.muxer_combo, muxer):
-            rollback()
-            return
+            return False
 
         self.update_available_encoders()
         self._update_valid_audio_restrictions(Gst.ElementFactory.find(self.project.aencoder))
@@ -789,19 +782,18 @@ class RenderDialog(Loggable):
             if value is None:
                 self.error("%d - Got no value for %s (%s)... rolling back",
                            i, name, combo)
-                rollback()
-                return
+                return False
 
             if not set_combo_value(combo, value):
                 self.error("%d - Could not set value %s for combo %s... rolling back",
                            i, value, combo)
-                rollback()
-                return
+                return False
 
         self.update_resolution()
         self.project.add_encoding_profile(self.project.container_profile)
         self._update_file_extension()
         self._setting_encoding_profile = False
+        return True
 
     def _create_ui(self):
         builder = Gtk.Builder()
