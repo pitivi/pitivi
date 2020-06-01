@@ -1489,11 +1489,11 @@ class Project(Loggable, GES.Project):
     def set_container_profile(self, container_profile):
         """Sets @container_profile as new profile if usable.
 
-        Attributes:
-            profile (Gst.EncodingProfile): The Gst.EncodingContainerProfile to use
+        Args:
+            container_profile (GstPbutils.EncodingContainerProfile): The profile to use.
         """
-        if container_profile == self.container_profile:
-            return False
+        if self.container_profile.is_equal(container_profile):
+            return True
 
         muxer = self._get_element_factory_name(
             Encoders().muxers, container_profile)
@@ -1501,7 +1501,10 @@ class Project(Loggable, GES.Project):
             muxer = Encoders().default_muxer
         container_profile.set_preset_name(muxer)
 
-        video_profile = audio_profile = vencoder = aencoder = None
+        video_profile = None
+        audio_profile = None
+        vencoder = None
+        aencoder = None
         for profile in container_profile.get_profiles():
             if isinstance(profile, GstPbutils.EncodingVideoProfile):
                 video_profile = profile
