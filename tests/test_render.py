@@ -429,6 +429,23 @@ class TestRender(BaseTestMediaLibrary):
         """Tests rendering a simple timeline with the youtube profile."""
         self.check_simple_rendering_profile("youtube")
 
+    @skipUnless(*encoding_target_exists("youtube"))
+    def test_preset_reset_when_changing_muxer(self):
+        """Tests setting the container profile manually."""
+        _, dialog = self.setup_project_with_profile("youtube")
+
+        # The container and video encoder profiles in the "youtube"
+        # EncodingTarget are "qtmux" and "x264enc". They have a common
+        # "preset" called "Profile YouTube".
+        # When changing the container manually from qt4mux to mp4mux
+        # the container profile's "preset" needs to be reset, otherwise
+        # rendering will hang because mp4mux is missing the
+        # "Profile YouTube" preset.
+        self.assertTrue(set_combo_value(dialog.muxer_combo,
+                                        Gst.ElementFactory.find("mp4mux")))
+
+        self.render(dialog)
+
     def test_preset_changes_file_extension(self):
         """Test file extension changes according to the chosen preset."""
         _, dialog = self.setup_project_with_profile("youtube")

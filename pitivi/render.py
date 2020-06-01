@@ -1575,6 +1575,7 @@ class RenderDialog(Loggable):
         """Handles the changing of the container format combobox."""
         if self._setting_encoding_profile:
             return
+
         factory = get_combo_value(combo)
         self.project.muxer = factory.get_name()
 

@@ -1088,9 +1088,14 @@ class Project(Loggable, GES.Project):
             caps = self._get_caps_from_feature(value)
             if caps:
                 self.audio_profile.set_format(caps)
+
+            # Set the name of the factory for producing the audio encoder.
             self.audio_profile.set_preset_name(value)
-            # Gst.Preset can be set exclusively through EncodingTagets for now.
+
+            # Make sure the encoder does not use any encoding preset.
+            # Gst.Preset can be set exclusively through EncodingTargets for now.
             self.audio_profile.set_preset(None)
+
             self._emit_change("aencoder")
 
     @property
@@ -1103,9 +1108,14 @@ class Project(Loggable, GES.Project):
             caps = self._get_caps_from_feature(value)
             if caps:
                 self.video_profile.set_format(caps)
+
+            # Set the name of the factory for producing the video encoder.
             self.video_profile.set_preset_name(value)
-            # Gst.Preset can be set exclusively through EncodingTagets for now.
+
+            # Make sure the encoder does not use any encoding preset.
+            # Gst.Preset can be set exclusively through EncodingTargets for now.
             self.video_profile.set_preset(None)
+
             self._emit_change("vencoder")
 
     @property
@@ -1118,7 +1128,14 @@ class Project(Loggable, GES.Project):
             caps = self._get_caps_from_feature(value)
             if caps:
                 self.container_profile.set_format(caps)
+
+            # Set the name of the factory for producing the container.
             self.container_profile.set_preset_name(value)
+
+            # Make sure the encoder does not use any encoding preset.
+            # Gst.Preset can be set exclusively through EncodingTargets for now.
+            self.container_profile.set_preset(None)
+
             self._emit_change("muxer")
 
     def _get_caps_from_feature(self, name):
@@ -1495,8 +1512,7 @@ class Project(Loggable, GES.Project):
         if self.container_profile.is_equal(container_profile):
             return True
 
-        muxer = self._get_element_factory_name(
-            Encoders().muxers, container_profile)
+        muxer = self._get_element_factory_name(container_profile)
         if muxer is None:
             muxer = Encoders().default_muxer
         container_profile.set_preset_name(muxer)
@@ -1512,7 +1528,7 @@ class Project(Loggable, GES.Project):
                     profile.set_restriction(Gst.Caps("video/x-raw"))
 
                 self._ensure_video_restrictions(profile)
-                vencoder = self._get_element_factory_name(Encoders().vencoders, profile)
+                vencoder = self._get_element_factory_name(profile)
                 if vencoder:
                     profile.set_preset_name(vencoder)
             elif isinstance(profile, GstPbutils.EncodingAudioProfile):
@@ -1521,7 +1537,7 @@ class Project(Loggable, GES.Project):
                     profile.set_restriction(Gst.Caps("audio/x-raw"))
 
                 self._ensure_audio_restrictions(profile)
-                aencoder = self._get_element_factory_name(Encoders().aencoders, profile)
+                aencoder = self._get_element_factory_name(profile)
                 if aencoder:
                     profile.set_preset_name(aencoder)
             else:
@@ -2056,32 +2072,70 @@ class Project(Loggable, GES.Project):
         self.emit("rendering-settings-changed", key)
         self.set_modification_state(True)
 
-    def _get_element_factory_name(self, elements, profile):
+    def _get_element_factory_name(self, profile):
+        """Finds a factory for an element compatible with the specified profile.
+
+        Args:
+            profile (GstPbutils.EncodingProfile): A muxer, video or audio
+                profile.
+
+        Returns:
+            str: The name of the factory which can produce the required
+            element, or None.
+        """
         if profile.get_preset_name():
             return profile.get_preset_name()
 
-        factories = Gst.ElementFactory.list_filter(elements,
-                                                   Gst.Caps(
-                                                       profile.get_format()),
+        factories = self.__factories_compatible_with_profile(profile)
+        if not factories:
+            return None
+
+        preset = profile.get_preset()
+        if not preset:
+            # The element does not need to support a specific preset.
+            # Return the compatible factory with the highest rank.
+            return factories[0].get_name()
+
+        # Make sure that if a #Gst.Preset is set we find an
+        # element that can handle that preset.
+        for factory in factories:
+            elem = factory.create()
+            if isinstance(elem, Gst.Preset):
+                if elem.load_preset(preset):
+                    return factory.get_name()
+
+        self.error("Could not find any element with preset %s", preset)
+        return None
+
+    def __factories_compatible_with_profile(self, profile):
+        """Finds factories of the same type as the specified profile.
+
+        Args:
+            profile (GstPbutils.EncodingProfile): A muxer, video or audio
+                profile.
+
+        Returns:
+            list[Gst.ElementFactory]: The element factories producing elements
+                of the same type as the specified profile.
+        """
+        element_factories = []
+        if isinstance(profile, GstPbutils.EncodingContainerProfile):
+            element_factories = Encoders().muxers
+        elif isinstance(profile, GstPbutils.EncodingVideoProfile):
+            element_factories = Encoders().vencoders
+        elif isinstance(profile, GstPbutils.EncodingAudioProfile):
+            element_factories = Encoders().aencoders
+        else:
+            raise ValueError("Profile type not handled: %s" % profile)
+
+        factories = Gst.ElementFactory.list_filter(element_factories,
+                                                   Gst.Caps(profile.get_format()),
                                                    Gst.PadDirection.SRC,
                                                    False)
-        if factories:
-            factories.sort(key=lambda x: - x.get_rank())
-            preset = profile.get_preset()
-            # Make sure that if a #Gst.Preset is set we find an
-            # element that can handle that preset.
-            if preset:
-                for factory in factories:
-                    elem = factory.create()
-                    if isinstance(elem, Gst.Preset):
-                        if elem.load_preset(preset):
-                            return factory.get_name()
-                self.error("Could not find any element with preset %s",
-                           preset)
-                return None
 
-            return factories[0].get_name()
-        return None
+        factories.sort(key=lambda x: - x.get_rank())
+
+        return factories
 
 
 # ---------------------- UI classes ----------------------------------------- #
