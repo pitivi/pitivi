@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "POT-Creation-Date: 2020-05-30 03:34+0000\n"
-"PO-Revision-Date: 2020-06-06 19:39+0300\n"
+"PO-Revision-Date: 2020-06-07 20:39+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -447,6 +447,14 @@ msgid ""
 "containing GStreamer or frei0r effect plugins that are available in the "
 "repositories of your distribution."
 msgstr ""
+"У <app>Pitivi</app> ви зможете скористатися широким діапазоном відео- та"
+" аудіоефектів для надання своєрідності вашим відео. Перелік доступних ефектів"
+" залежить від програмного забезпечення, яке встановлено на вашому комп'ютері."
+" Якщо на панелі бібліотеки ефектів ви не бачите жодного пункту ефекту (або"
+" бачите лише декілька пунктів), переконайтеся, що у вашій системі встановлено"
+" пакунок <app>gnome-video-effects</app>. Крім того, ви можете пошукати у"
+" сховищах пакунків вашого дистрибутива пакунки із додатками ефектів GStreamer"
+" або frei0r і встановити їх."
 
 #. (itstool) path: note/p
 #: C/effects.page:23
@@ -792,6 +800,12 @@ msgid ""
 "changed them yourself already. An infobar appears when this happens. Click "
 "the <gui>Project Settings</gui> button in the infobar for details."
 msgstr ""
+"При створенні проєкту та імпортуванні першого файла відео властивості відео"
+" переносяться до <link xref=\"workwithprojects#projectsettings\">параметрів"
+" проєкту</link>, якщо ви ще не змінювали ці параметри вручну. Під час"
+" виконання цієї дії програма показує інформаційну панель. Натисніть кнопку <"
+"gui>Параметри проєкту</gui> на інформаційній панелі, щоб отримати доступ до"
+" параметрів."
 
 #. (itstool) path: note/p
 #: C/importing.page:31
@@ -811,6 +825,15 @@ msgid ""
 "connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture "
 "footage."
 msgstr ""
+"Через обмежені ресурси розробників та швидкий розвиток кінематографічного"
+" апаратного забезпечення у останні декілька років та для забезпечення"
+" стабільності та простоти у користуванні <app>Pitivi</app> ми не намагаємося"
+" забезпечити підтримку усього можливого обладнання. Результатом цього є те,"
+" що поточна версія <app>Pitivi</app> не може бути використана для захоплення"
+" зображення безпосередньо з камери. Для виконання цього завдання краще пасує"
+" спеціалізоване програмне забезпечення. Наприклад, для камер DV/HDV, які"
+" використовують з'єднання, ви можете скористатися <app>Kino</app> або <app"
+">dvgrab</app> для захоплення відео."
 
 #. (itstool) path: section/title
 #: C/importing.page:34
@@ -886,6 +909,16 @@ msgid ""
 "<gui>file chooser dialog</gui>. The <em>optimized media</em> can be managed "
 "at any time with the <link xref=\"medialibrary\">media library</link>."
 msgstr ""
+"Робота з іншими контейнерами та форматами може уповільнити програму або"
+" призвести до втрати точності. На щастя, здебільшого, непідтримувані"
+" мультимедійні дані, попри проблеми із ними, можна відтворювати. Користуючись"
+" цим, <app>Pitivi</app> уможливлює перекодування непідтримуваних"
+" мультимедійних даних у підтримуваний формат. Результатом перекодування є"
+" окремий файл, який зберігатиметься у тій самій теці, що і початковий."
+" Автоматичне створення <em>оптимізованих мультимедійних даних</em> керується"
+" пунктом <gui>Оптимізувати</gui> у нижній частині <gui>діалогового вікна"
+" вибору файлів</gui>. З <em>оптимізованими мультимедійними даними</em> можна"
+" працювати за допомогою <link xref=\"medialibrary\">бібліотеки творів</link>."
 
 #. (itstool) path: note/p
 #: C/importing.page:48
@@ -895,6 +928,11 @@ msgid ""
 "optimal for video editing. This media is not supported as such and must be "
 "<em>optimized</em> for a smooth editing experience."
 msgstr ""
+"Більшість сучасних камер створює файли <code>.mts</code> і <code>.m2ts</code"
+">, у яких використовується контейнер MPEG Transport Stream. Цей контейнер не"
+" є оптимальним для редагування відео. Відповідно, підтримки мультимедійних"
+" даних у ньому не передбачено — дані має бути <em>оптимізовано</em> для"
+" безпроблемного редагування."
 
 #. (itstool) path: section/title
 #: C/importing.page:52
@@ -1064,6 +1102,10 @@ msgid ""
 "be used to change opacity or volume just as well as effect properties at any "
 "point in the clip's duration."
 msgstr ""
+"За допомогою кривих ключових кадрів ви можете наказати програмі змінювати"
+" певне значення з часом, не лишаючи його сталим протягом тривалості"
+" відтворення кліпу. Цим можна скористатися для зміни непрозорості або"
+" гучності, а також властивостей ефекту у будь-якій позиції кліпу."
 
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
@@ -1093,6 +1135,8 @@ msgid ""
 "<em>Keyframes</em> are the points that are used to determine the property "
 "value at a specific point in time."
 msgstr ""
+"<em>Ключові кадри</em> — точки, які використовуються для визначення значення"
+" властивості у певний момент часу."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:43
@@ -1100,6 +1144,8 @@ msgid ""
 "<em>Keyframe curves</em> are the lines connecting the points providing "
 "smooth transitions between them."
 msgstr ""
+"<em>Криві ключових кадрів</em> — лінії, які з'єднують точки, забезпечуючи"
+" неперервність зміни значення між ними."
 
 #. (itstool) path: page/p
 #: C/keyframecurves.page:46
@@ -1111,6 +1157,12 @@ msgid ""
 "default alpha or volume keyframe curves are an intrinsic property of clips "
 "and cannot be removed."
 msgstr ""
+"Типово, криві ключових кадрів на засобі керування звуком кліпу відповідають"
+" гучності (у шкалі від 0 до 200%), а криві ключових кадрів на засобі"
+" керування відеокліпу керують альфою (прозорістю) відео (у шкалі від 0 до 100"
+"%). Див. <link xref=\"layers\">сторінку щодо шарів</link>, щоб дізнатися"
+" більше про прозорість. Типові криві ключових кадрів для прозорості та"
+" гучності є вбудованими властивостями кліпів — їх не можна вилучати."
 
 #. (itstool) path: note/p
 #: C/keyframecurves.page:48
@@ -1119,6 +1171,9 @@ msgid ""
 "volume. See an example in the <link xref=\"transitions#fades\">Transitions</"
 "link> page."
 msgstr ""
+"Ви можете створювати переходи із розчиненням та появою зображення керуючи"
+" непрозорістю та гучністю. Див. приклад на сторінці <link"
+" xref=\"transitions#fades\">переходи</link>."
 
 #. (itstool) path: page/p
 #: C/keyframecurves.page:50
@@ -1127,6 +1182,10 @@ msgid ""
 "properties. See the <link xref=\"usingeffects#keyframes\">Using effects</"
 "link> page for details."
 msgstr ""
+"Окрім гучності і прозорості, ви можете скористатися ключовими кадрами для"
+" керування властивостями ефектів. Див. сторінку щодо <link"
+" xref=\"usingeffects#keyframes\">користування ефектами</link>, щоб дізнатися"
+" більше."
 
 #. (itstool) path: section/title
 #: C/keyframecurves.page:52
@@ -1144,6 +1203,13 @@ msgid ""
 "can add one or more keyframes to the clip and drag them to appropriate "
 "vertical positions representing their values."
 msgstr ""
+"Початковий і кінцевий ключові кадри пов'язано із початковою і кінцевою точкою"
+" кліпу — їх не можна вилучати. Крива між двома ключовими кадрами початково є"
+" горизонтальною прямою лінією, що означає, що значення керованої властивості"
+" є однаковим для усіх часових позицій протягом тривалості відтворення кліпу."
+" Щоб змінити значення (та швидкість її зміни) у будь-якій точці, ви можете"
+" додати один або декілька ключових кадрів до кліпу і перетягти їх до"
+" відповідних вертикальних позицій, які відповідають цим значенням."
 
 #. (itstool) path: section/p
 #: C/keyframecurves.page:54
@@ -1340,6 +1406,10 @@ msgid ""
 "position higher in the layer order, click <guiseq><gui>Layer icon</"
 "gui><gui>Move layer up</gui></guiseq>."
 msgstr ""
+"Щоб пересунути шар на верхівку списку шарів, виберіть пункт меню <guiseq><gui"
+">Піктограма шару</gui><gui>Пересунути шар на початок списку</gui></guiseq>."
+" Щоб пересунути шар на одну позицію вище у списку шарів, виберіть пункт меню"
+" <guiseq><gui>Піктограма шару</gui><gui>Пересунути шар вище</gui></guiseq>."
 
 #. (itstool) path: section/p
 #: C/layers.page:50
@@ -1349,6 +1419,10 @@ msgid ""
 "layer to the bottom of the layer order, click <guiseq><gui>Layer icon</"
 "gui><gui>Move layer to bottom</gui></guiseq>."
 msgstr ""
+"Щоб пересунути шар на одну позицію вище у списку, виберіть пункт меню <guiseq"
+"><gui>Піктограма шару</gui><gui>Пересунути шар нижче</gui></guiseq>. Щоб"
+" пересунути шар у кінець списку шарів, виберіть пункт меню <guiseq><gui"
+">Піктограма шару</gui><gui>Пересунути шар у кінець списку</gui></guiseq>."
 
 #. (itstool) path: section/title
 #: C/layers.page:53
@@ -1362,6 +1436,9 @@ msgid ""
 "layers or just above the top layer or just below the bottom layer. Once the "
 "thin space between the layers is highlighted, release the clip."
 msgstr ""
+"Щоб створити шар, перетягніть кліп у проміжок між двома наявними шарами або у"
+" простір безпосередньо над верхнім шаром чи під нижнім шаром. Щойно тонкий"
+" проміжок між шарами буде підсвічено, відпустіть кліп."
 
 #. (itstool) path: section/p
 #: C/layers.page:55
@@ -1370,6 +1447,9 @@ msgid ""
 "gui></guiseq>. The <gui>Layer icon</gui> can be found at the right of the "
 "layer name field."
 msgstr ""
+"Щоб вилучити шар, виберіть пункт меню <guiseq><gui>Піктограма шару</gui><gui"
+">Вилучити шар</gui></guiseq>. <gui>Піктограму шару</gui> розташовано праворуч"
+" від поля назви шару."
 
 #. (itstool) path: section/title
 #: C/layers.page:58
@@ -1384,6 +1464,10 @@ msgid ""
 "show the layer has been muted. To unmute a layer, click <gui>Volume icon</"
 "gui> again."
 msgstr ""
+"Щоб вимкнути звук у шарі, натисніть <gui>піктограму гучності</gui>."
+" Піктограму можна перемкнути так, щоб програма показала, що звук у шарі"
+" вимкнено. Щоб увімкнути звук у шарі, натисніть <gui>піктограму гучності</gui"
+"> ще раз."
 
 #. (itstool) path: section/title
 #: C/layers.page:62
@@ -1597,6 +1681,8 @@ msgid ""
 "The spaces between components can be clicked and dragged to proportionally "
 "resize the respective adjacent components."
 msgstr ""
+"Проміжки між компонентами можна натискати і перетягувати для пропорційної"
+" зміни розмірів відповідних сусідніх компонентів."
 
 #. (itstool) path: note/title
 #: C/mainwindow.page:55
@@ -1612,6 +1698,9 @@ msgid ""
 "Hovering the mouse cursor over an element in the main window usually reveals "
 "an information tooltip regarding its function."
 msgstr ""
+"Після наведення вказівника миші на елемент у головному вікні, зазвичай,"
+" програма показує панель підказки із відомостями щодо відповідної"
+" функціональної можливості."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:59
@@ -1628,6 +1717,12 @@ msgid ""
 "find further functions such as <gui>New project</gui>, <gui>Open project</"
 "gui>, <gui>Project settings</gui> or <gui>Preferences</gui>."
 msgstr ""
+"Панель заголовка — місце, за допомогою якого можна отримати доступ до базових"
+" кнопок можливостей програми, зокрема <gui>Скасувати</gui>, <gui>Повернути<"
+"/gui>, <gui>Зберегти</gui> або <gui>Обробити</gui>. Там також міститься <gui"
+">кнопка головного меню</gui>, яка надає доступ до інших пунктів, зокрема <gui"
+">Створити проєкт</gui>, <gui>Відкрити проєкт</gui>, <gui>Параметри проєкту<"
+"/gui> та <gui>Налаштування</gui>."
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:62
@@ -1711,6 +1806,13 @@ msgid ""
 "applied to the timeline. However, these apply only to the horizontal "
 "(chronological) dimension of the timeline."
 msgstr ""
+"Монтажний стіл є ядром компонента інтерфейсу користувача. Монтажний стіл"
+" використовується для редагування. Вертикально його поділено на шари, які"
+" заповнюються звуковими кліпами і відеокліпами. Горизонтально, монтажний стіл"
+" є пропорційним за часом представленням хронології вашого проєкту. До"
+" монтажного столу можна застосувати різні рівні масштабування. Втім,"
+" масштабування стосується лише горизонтального (хронологічного) виміру"
+" монтажного столу."
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:79
@@ -1719,6 +1821,9 @@ msgid ""
 "\"movearoundtimeline\">Moving around the timeline</link> pages for more "
 "information on how to work with the timeline."
 msgstr ""
+"Див. <link xref=\"layers\">сторінку щодо шарів</link> та <link"
+" xref=\"movearoundtimeline\">сторінку щодо пересування монтажним столом</link"
+">, щоб дізнатися більше про те, як працює монтажний стіл."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:82
@@ -1732,6 +1837,9 @@ msgid ""
 "The timeline toolbar is located at the right edge of the timeline. It "
 "contains basic actions for editing in timeline:"
 msgstr ""
+"Панель інструментів монтажного столу розташовано уздовж правого краю"
+" монтажного столу. На панелі розташовано базові кнопки дій для редагування на"
+" монтажному столі:"
 
 #. (itstool) path: item/p
 #: C/mainwindow.page:86
@@ -1777,6 +1885,10 @@ msgid ""
 "details). When there is no subject for the action to be performed on, it "
 "remains shaded (indicating its unavailability)."
 msgstr ""
+"Зауважте, що більшість кнопок дій стануть доступними, лише якщо позначено"
+" якийсь кліп (див. <link xref=\"selectiongrouping\">позначення і групування<"
+"/link>, щоб дізнатися більше). Якщо об'єкта для певної дії немає, відповідна"
+" кнопка лишатиметься неактивною (що позначає її недоступність)."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:113
@@ -1829,6 +1941,9 @@ msgid ""
 "playhead</em> and <em>Scrubbing</em> sections on the <link xref="
 "\"movearoundtimeline\">Moving around the timeline</link> page."
 msgstr ""
+"Щоб дізнатися більше про те, як пересуватися монтажним столом, див. розділи <"
+"em>Пересування позиції відтворення</em> та <em>Протягування</em> на сторінці"
+" <link xref=\"movearoundtimeline\">Переміщення вздовж монтажного столу</link>."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:135
@@ -1871,6 +1986,13 @@ msgid ""
 "allow other parts of the main window to take up the space the previewer "
 "occupied. You can attach the previewer back by closing the separate window."
 msgstr ""
+"Ви можете від'єднати панель попереднього перегляду в окреме вікно за"
+" допомогою натискання кнопки <gui>Від’єднати вікно перегляду</gui> на <gui"
+">панелі інструментів відтворення</gui>. З окремого вікна ви можете"
+" відтворювати дані попереднього перегляду у повноекранному режимі. Також"
+" від'єднання звільняє місце, яке було зайнято панеллю попереднього перегляду,"
+" для інших частин головного вікна. Повернути панель попереднього перегляду"
+" назад у вікно програми можна закриттям окремого вікна попереднього перегляду."
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:153
@@ -1894,6 +2016,13 @@ msgid ""
 "<gui>Effect library</gui> contains number of audio and video effects "
 "applicable to clips."
 msgstr ""
+"На лівій панелі вікна програми містяться панелі бібліотек мультимедійних"
+" даних та ефектів. Ви можете перемикатися між ними за допомогою вибору"
+" відповідної вкладки. На панелі <gui>Бібліотека творів</gui> буде показано"
+" імпортовані файли мультимедійних даних у вашому проєкті. За її допомогою"
+" можна керувати цими імпортованими даними. На панелі <gui>Бібліотека творів<"
+"/gui> міститься список звукових ефектів та відеоефектів, які можна"
+" застосувати до кліпів."
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:160
@@ -1920,6 +2049,15 @@ msgid ""
 "when two clips overlap in the timeline. With <gui>Title editor</gui> you can "
 "create new clips with titles or add titles to existing ones."
 msgstr ""
+"На середній панелі містяться панелі <gui>Налаштування кліпу</gui>, <gui"
+">Переходи</gui> і <gui>Редактор субтитрів</gui>. Перемикатися між ними можна"
+" вибором відповідної вкладки. За допомогою панелі <gui>Налаштування кліпу<"
+"/gui> можна увімкнути чи вимкнути ефекти або налаштувати параметри ефектів,"
+" які застосовано до позначеного кліпу. За допомогою панелі <gui>Переходи</gui"
+"> можна вибрати і налаштувати тип переходу між двома кліпами, які"
+" перекриваються на монтажному столі. За допомогою панелі <gui>Редактор"
+" субтитрів</gui> ви можете створювати кліпи із титрами або додавати титри до"
+" наявних кліпів."
 
 #. (itstool) path: credit/name
 #: C/medialibrary.page:11 C/movearoundtimeline.page:15
@@ -1953,6 +2091,15 @@ msgid ""
 "from a file browser to the <gui>Media Library</gui>. <em>Files</em> imported "
 "into the <gui>Media Library</gui> are called <em>clips</em>."
 msgstr ""
+"Існує два способи імпортувати файли до <gui>Бібліотеки творів</gui>. Перший"
+" спосіб полягає у натисканні кнопки <gui>Імпортувати</gui> у верхньому лівому"
+" куті панелі. У результаті буде відкрито вікно вибору файлів, у якому ви"
+" зможете попередньо переглянути вибрані файли або вибрати декілька файлів"
+" (утримуванням натиснутими клавіш <key>Shift</key> або <key>Ctrl</key> під"
+" час вибору). Другий спосіб полягає у перетягуванні файлів з вікна програми"
+" для керування файлами на панель <gui>Бібліотека творів</gui>. <em>Файли</em"
+">, які імпортовано до <gui>Бібліотека творів</gui>, називаються <em>кліпами<"
+"/em>."
 
 #. (itstool) path: note/p
 #: C/medialibrary.page:30
@@ -2015,6 +2162,13 @@ msgid ""
 "each clip. To activate/deactivate it, click on the <gui>Show clips as a "
 "detailed list</gui> button to the left of search bar."
 msgstr ""
+"<gui>Бібліотека творів</gui> може показувати ваші кліпи у форматі списку або"
+" у форматі перегляду мініатюр. Типовим режимом є режим перегляду мініатюр,"
+" оскільки у ньому можна побачити більше кліпів без потреби у гортанні. Втім,"
+" у режимі перегляду списку буде показано більше подробиць щодо кожного з"
+" кліпів. Щоб увімкнути або вимкнути цей режим, натисніть кнопку <gui"
+">Показувати кліпи як докладний список</gui>, розташовану ліворуч від панелі"
+" пошуку."
 
 #. (itstool) path: section/title
 #: C/medialibrary.page:46
@@ -2067,6 +2221,10 @@ msgid ""
 "left side of the search bar. Unused clips will then be selected in the media "
 "library."
 msgstr ""
+"Щоб виявити кліпи, яких немає у вашому проєкті, скористайтеся кнопкою <gui"
+">Позначити кліпи, які не було використано у проєкті</gui> ліворуч від панелі"
+" пошуку. У відповідь програма позначить пункти невикористаних кліпів на"
+" панелі бібліотеки мультимедійних даних."
 
 #. (itstool) path: note/p
 #: C/medialibrary.page:64
@@ -2090,6 +2248,8 @@ msgid ""
 "represented by a button in the upper right part of the <gui>Media Library</"
 "gui>:"
 msgstr ""
+"Далі, ви можете виконати три дії із кліпами. Кожній дії відповідає одна"
+" кнопка у верхній правій частині панелі <gui>Бібліотека творів</gui>:"
 
 #. (itstool) path: item/p
 #: C/medialibrary.page:72
@@ -2097,6 +2257,9 @@ msgid ""
 "<gui>Remove selected clips from the project</gui> (this can also be "
 "performed by pressing <keyseq><key>Control</key><key>Delete</key></keyseq>)."
 msgstr ""
+"<gui>Вилучити позначені кліпи з проєкту</gui> (цю дію також можна виконати за"
+" допомогою натискання комбінації клавіш <keyseq><key>Ctrl</key><key>Delete<"
+"/key></keyseq>)."
 
 #. (itstool) path: item/p
 #: C/medialibrary.page:75
@@ -2107,6 +2270,12 @@ msgid ""
 "clip properties. You can select which properties to apply by leaving them "
 "ticked/unticked."
 msgstr ""
+"Кнопка <gui>Властивості кліпу...</gui> відкриває нове вікно із відомостями"
+" щодо <em>розміру відео</em>, <em>частоти кадрів</em> та <em>співвідношення"
+" розмірів кадру</em>. Натискання кнопки <gui>Застосувати до проєкту</gui>"
+" призведе до застосування параметрів проєкту до властивостей кліпу. Ви можете"
+" вибрати, які із властивостей слід застосувати, позначенням або зняттям"
+" позначення з пунктів у списку."
 
 #. (itstool) path: item/p
 #: C/medialibrary.page:78
@@ -2115,6 +2284,9 @@ msgid ""
 "selected clips one after another into the longest layer of the timeline "
 "where the last clip on that layer ends."
 msgstr ""
+"Кнопка <gui>Вставити позначені ділянки наприкінці монтажного столу</gui>"
+" вставляє позначені кліпи один після іншого до найдовшого шару на монтажному"
+" столі туди, де завершується останній кліп шару."
 
 #. (itstool) path: note/p
 #: C/medialibrary.page:82
@@ -2122,6 +2294,7 @@ msgid ""
 "In order for these actions to become available, one or more clips must be "
 "selected."
 msgstr ""
+"Щоб отримати доступ до цих дій, слід позначити один або декілька кліпів."
 
 #. (itstool) path: info/desc
 #: C/movearoundtimeline.page:22
@@ -2148,6 +2321,11 @@ msgid ""
 "in the timeline. When selected, the clip will become darker and the timeline "
 "toolbar items will now be clickable."
 msgstr ""
+"На панелі інструментів монтажного столу міститься багато кнопок, які стають"
+" активними після позначення кліпу на монтажному столі. Щоб позначити кліп,"
+" просто клацніть на бажаному кліпі на монтажному столі. Після позначення кліп"
+" стає темнішим. Після цього кнопки на панелі інструментів стають доступними"
+" для натискання."
 
 #. (itstool) path: section/title
 #: C/movearoundtimeline.page:35
@@ -2287,6 +2465,10 @@ msgid ""
 "button on the left of the zoom slider. Another way to do this is by pressing "
 "<keyseq><key>Ctrl</key><key>0</key></keyseq>."
 msgstr ""
+"Щоб отримати отримати загальний огляд вашого монтажного столу, ви можете"
+" натиснути кнопку <gui>Масштаб</gui> ліворуч від повзунка масштабування."
+" Іншим способом є натискання комбінації клавіш <keyseq><key>Ctrl</key><key>0<"
+"/key></keyseq>."
 
 #. (itstool) path: note/title
 #: C/movearoundtimeline.page:77
@@ -2340,6 +2522,15 @@ msgid ""
 "milisec</em> where hours are optional. To insert a frame number, overwrite "
 "the timecode with a plain number of the desired frame."
 msgstr ""
+"Ви можете перейти до точної позиції на монтажному столі редагуванням значення"
+" часу, яке показано на панелі інструментів відтворення (див. опис <link"
+" xref=\"mainwindow\">головного вікна</link>). Щоб виконати редагування,"
+" просто клацніть на віджеті, перезапишіть значення і натисніть клавішу <key"
+">Enter</key>. Значення може бути представлено часовою позначкою або номером"
+" кадру. Часовий код слід вказувати у такій формі: <em>гг:хх:с."
+"мілісекунди</em>, де години можна не вказувати. Щоб вставити номер кадру,"
+" перезапишіть часовий код звичайним цілим числом, яке відповідає номеру"
+" бажаного кадру."
 
 #. (itstool) path: section/title
 #: C/movearoundtimeline.page:90
@@ -2587,6 +2778,13 @@ msgid ""
 "partially rendered file, depending on the specified container format. A new "
 "render operation cannot resume from a partially rendered file."
 msgstr ""
+"Під час обробки ви можете призупинити процес натисканням кнопки <gui>Пауза<"
+"/gui> і поновити його повторним натисканням цієї кнопки. Ви також можете"
+" зупинити обробку натисканням кнопки <gui>Скасувати</gui> або клавіші <key"
+">Esc</key>. Якщо ви зупините процес обробки, вже оброблену частину проєкту"
+" буде збережено у вказаному вами файлі. Можливість користування частково"
+" обробленим файлом залежить від вибраного формату контейнера. Поновлювати"
+" процедуру обробки на основі частково обробленого файла не можна."
 
 #. (itstool) path: note/p
 #: C/rendering.page:49
@@ -2620,6 +2818,14 @@ msgid ""
 "closely related, the <gui>Rendering dialog</gui> has a button which opens "
 "the <gui>Project Settings</gui>."
 msgstr ""
+"<gui>Параметри проєкту</gui> є основою, на якій параметри <gui>діалогового"
+" вікна обробки</gui> застосовуються для отримання результатів. <gui>Параметри"
+" проєкту</gui> відокремлено від решти параметрів, оскільки вони також"
+" визначають попередній перегляд результатів під час редагування проєкту."
+" Значення, які вказано у <gui>діалоговому вікні обробки</gui> є тимчасовими і"
+" застосовуються лише під час окремої процедури отримання результатів."
+" Оскільки параметри проєкту і обробки є пов'язаними, у <gui>діалоговому вікні"
+" обробки</gui> є кнопка для відкриття вікна <gui>Параметри проєкту</gui>."
 
 #. (itstool) path: page/title
 #: C/savescreenshot.page:14
@@ -2632,6 +2838,9 @@ msgid ""
 "You can use <guiseq><gui>Menu button</gui><gui>Export current frame...</"
 "gui></guiseq> to save a copy of the current frame as an image file."
 msgstr ""
+"Ви можете скористатися пунктом <guiseq><gui>Кнопка меню</gui><gui"
+">Експортувати поточний кадр...</"
+"gui></guiseq> для збереження копії поточного кадру у файлі зображення."
 
 #. (itstool) path: page/p
 #: C/savescreenshot.page:16
@@ -2640,6 +2849,10 @@ msgid ""
 "will match the project settings and any effect or transformation will also "
 "be applied to the resulting image."
 msgstr ""
+"У поточній версії програми передбачено можливість зберігання зображень у"
+" форматах PNG і JPEG. Роздільна здатність зображення відповідатиме"
+" параметрами проєкту. До зображення-результату буде застосовано усі ефекти та"
+" перетворення."
 
 #. (itstool) path: info/desc
 #: C/selectiongrouping.page:18
@@ -2666,6 +2879,10 @@ msgid ""
 "deleting, grouping, etc.) to all of them at once. To select an individual "
 "clip, simply click it."
 msgstr ""
+"Позначенням кліпу ви вказуєте, до якого запису має бути застосовано наступні"
+" дії. За допомогою позначення декількох кліпів ви можете застосувати дії"
+" (перетягування, вилучення, групування тощо) до усіх кліпів одночасно. Щоб"
+" позначити окремий кліп, просто клацніть на ньому."
 
 #. (itstool) path: section/p
 #: C/selectiongrouping.page:29
@@ -2673,6 +2890,9 @@ msgid ""
 "To select multiple adjacent clips you can click the timeline anywhere in an "
 "empty region and drag. Alternatively, you can:"
 msgstr ""
+"Щоб позначити декілька сусідніх кліпів, ви можете клацнути у довільному"
+" порожньому місці на монтажному столі і перетягнути вказівник миші. Крім"
+" того, ви можете виконати такі дії:"
 
 #. (itstool) path: item/p
 #: C/selectiongrouping.page:32
@@ -2745,6 +2965,9 @@ msgid ""
 "separate audio tracks from video clips, or when you want to create a block "
 "of clips that you can select, edit and move all at once."
 msgstr ""
+"Групування і розгрупування може бути корисним, якщо ви хочете додати або"
+" розділити звукові доріжки до відеокліпів, або якщо ви хочете створити блок"
+" кліпів, який можна позначати, редагувати і пересувати одночасно."
 
 #. (itstool) path: section/p
 #: C/selectiongrouping.page:58
@@ -3029,6 +3252,9 @@ msgid ""
 "compatibility</link> and <link xref=\"effects\">Introduction to effects</"
 "link>."
 msgstr ""
+"Вимоги щодо програмного забезпечення описано у розділах <link"
+" xref=\"gstreamer\">Gstreamer і сумісність</link> та <link xref=\"effects\""
+">Вступ до ефектів</link>."
 
 #. (itstool) path: info/desc
 #: C/transitions.page:18
@@ -3097,6 +3323,8 @@ msgid ""
 "Assuming that you have two overlapping clips in your timeline, you can "
 "achieve other types of transitions by following these steps:"
 msgstr ""
+"Припустімо, що на вашому монтажному столі є два кліпи, які перекриваються. Ви"
+" можете скористатися іншими типами переходів, виконавши такі дії:"
 
 #. (itstool) path: item/p
 #: C/transitions.page:38
@@ -3119,6 +3347,8 @@ msgid ""
 "The transitions can be further adjusted with the following options from the "
 "bottom of the <gui>Transition</gui> tab:"
 msgstr ""
+"Подальше налаштовування переходів можна виконати за допомогою таких пунктів у"
+" нижній частині вкладки <gui>Перехід</gui>:"
 
 #. (itstool) path: item/p
 #: C/transitions.page:50
@@ -3142,6 +3372,8 @@ msgid ""
 "In both modes, you can apply the transition in <em>reverse direction</em> by "
 "ticking the corresponding checkbox."
 msgstr ""
+"У обох режимах ви можете застосувати перехід у <em>зворотному напрямку</em>"
+" позначенням відповідного пункту."
 
 #. (itstool) path: note/p
 #: C/transitions.page:60
@@ -3910,6 +4142,8 @@ msgid ""
 "If there is no <gui>Show keyframes for this value</gui> button next to the "
 "effect variable, it cannot be controlled with keyframes."
 msgstr ""
+"Якщо поряд зі змінною ефекту немає кнопки <gui>Показати ключові кадри для"
+" цього значення</gui>, ефектом не можна керувати за допомогою ключових кадрів."
 
 #. (itstool) path: info/desc
 #: C/workwithprojects.page:18
