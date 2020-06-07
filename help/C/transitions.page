@@ -47,7 +47,7 @@
     <p>The transitions can be further adjusted with the following options from the bottom of the <gui>Transition</gui> tab:</p>
     <list>
       <item>
-        <p><em>Normal mode</em> will apply the transition in a linear fashion over the whole overlapping region. When in normal mode, you can adjust the degree of sharpness/smoothenss of the transition.</p>
+        <p><em>Normal mode</em> will apply the transition in a linear fashion over the whole overlapping region. When in normal mode, you can adjust the degree of sharpness/smoothness of the transition.</p>
       </item>
       <item>
         <p><em>Loop</em> mode will apply the transition in a circular manner. When in loop mode, you can adjust the speed with which the transition will repeat itself.</p>
