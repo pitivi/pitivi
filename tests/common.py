@@ -36,6 +36,7 @@ from gi.repository import Gst
 from gi.repository import Gtk
 
 from pitivi.application import Pitivi
+from pitivi.editorstate import EditorState
 from pitivi.project import ProjectManager
 from pitivi.settings import GlobalSettings
 from pitivi.timeline.previewers import Previewer
@@ -90,6 +91,7 @@ def create_pitivi_mock(**settings):
     app = mock.MagicMock()
     app.write_action = mock.MagicMock(spec=Pitivi.write_action)
     app.settings = __create_settings(**settings)
+    app.gui.editor.editor_state = EditorState(app.project_manager)
     app.proxy_manager = ProxyManager(app)
 
     app.gui.editor.viewer.action_group = Gio.SimpleActionGroup()
@@ -114,6 +116,7 @@ def create_pitivi(**settings):
     app.gui.editor.viewer.action_group = Gio.SimpleActionGroup()
 
     app.settings = __create_settings(**settings)
+    app.gui.editor.editor_state = EditorState(app.project_manager)
 
     return app
 
@@ -123,7 +126,7 @@ def create_timeline_container(**settings):
     app.project_manager = ProjectManager(app)
     project = app.project_manager.new_blank_project()
 
-    timeline_container = TimelineContainer(app)
+    timeline_container = TimelineContainer(app, app.gui.editor.editor_state)
     timeline_container.set_project(project)
 
     timeline = timeline_container.timeline

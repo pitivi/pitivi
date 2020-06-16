@@ -307,7 +307,7 @@ class TestRender(BaseTestMediaLibrary):
             self.check_import([sample_name])
 
             project = self.app.project_manager.current_project
-            timeline_container = TimelineContainer(self.app)
+            timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
             timeline_container.set_project(project)
 
             assets = project.list_assets(GES.UriClip)
@@ -342,7 +342,7 @@ class TestRender(BaseTestMediaLibrary):
 
             project = self.app.project_manager.current_project
             proxy_manager = self.app.proxy_manager
-            timeline_container = TimelineContainer(self.app)
+            timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
             timeline_container.set_project(project)
             rendering_asset = None
 
@@ -383,7 +383,7 @@ class TestRender(BaseTestMediaLibrary):
 
             project = self.app.project_manager.current_project
             proxy_manager = self.app.proxy_manager
-            timeline_container = TimelineContainer(self.app)
+            timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
             timeline_container.set_project(project)
             rendering_asset = None
 

@@ -301,7 +301,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     __gtype_name__ = "PitiviTimeline"
 
-    def __init__(self, app, size_group):
+    def __init__(self, app, size_group, editor_state):
         Gtk.EventBox.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
@@ -309,6 +309,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.app = app
         self._project = None
         self.ges_timeline = None
+        self.editor_state = editor_state
 
         self.props.can_focus = False
 
@@ -428,6 +429,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                   self.__snap_distance_changed_cb)
 
         self.layout.layers_vbox.connect_after("size-allocate", self.__size_allocate_cb)
+
+        self.hadj.connect("value-changed", self.__hadj_value_changed_cb)
 
     def __size_allocate_cb(self, unused_widget, unused_allocation):
         """Handles the layers vbox size allocations."""
@@ -550,6 +553,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.scroll_to_playhead(Gtk.Align.START)
         if not pipeline.playing():
             self.update_visible_overlays()
+            self.editor_state.set_value("playhead-position", position)
 
     def __snapping_started_cb(self, unused_timeline, unused_obj1, unused_obj2, position):
         """Handles a clip snap update operation."""
@@ -912,6 +916,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         y_diff = self._scroll_start_y - event.y
         self.vadj.set_value(self.vadj.get_value() + y_diff)
 
+    def __hadj_value_changed_cb(self, hadj):
+        self.editor_state.set_value("scroll", hadj.get_value())
+
     def update_position(self):
         for ges_layer in self.ges_timeline.get_layers():
             ges_layer.ui.update_position()
@@ -1211,6 +1218,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.zoomed_fitted = False
 
         self.update_position()
+        self.editor_state.set_value("zoom-level", Zoomable.get_current_zoom_level())
 
     def set_best_zoom_ratio(self, allow_zoom_in=False):
         """Sets the zoom level so that the entire timeline is in view."""
@@ -1432,12 +1440,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     """Widget for zoom box, ruler, timeline, scrollbars and toolbar."""
 
-    def __init__(self, app):
+    def __init__(self, app, editor_state):
         Zoomable.__init__(self)
         Gtk.Grid.__init__(self)
         Loggable.__init__(self)
 
         self.app = app
+        self.editor_state = editor_state
         self._settings = self.app.settings
         self.shift_mask = False
         self.control_mask = False
@@ -1561,9 +1570,29 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.ruler.set_pipeline(project.pipeline)
             self.ruler.zoom_changed()
 
-            self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
+            position = self.editor_state.get_value("playhead-position")
+            if position:
+                self._project.pipeline.simple_seek(position)
+
+            clip_names = self.editor_state.get_value("selection")
+            if clip_names:
+                clips = [self.ges_timeline.get_element(clip_name)
+                         for clip_name in clip_names]
+                self.timeline.selection.set_selection(clips, SELECT)
+
+            zoom_level = self.editor_state.get_value("zoom-level")
+            if zoom_level:
+                Zoomable.set_zoom_level(zoom_level)
+            else:
+                self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
+
             self.timeline.update_snapping_distance()
             self.markers.markers_container = project.ges_timeline.get_marker_list("markers")
+
+            scroll = self.editor_state.get_value("scroll")
+            if scroll:
+                # TODO: Figure out why self.scroll_to_pixel(scroll) which calls _scroll_to_pixel directly does not work.
+                GLib.idle_add(self._scroll_to_pixel, scroll)
 
     def update_actions(self):
         selection = self.timeline.selection
@@ -1589,7 +1618,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.zoom_box = ZoomBox(self)
         left_size_group.add_widget(self.zoom_box)
 
-        self.timeline = Timeline(self.app, left_size_group)
+        self.timeline = Timeline(self.app, left_size_group, self.editor_state)
 
         # Vertical Scrollbar. It will be displayed only when needed.
         self.vscrollbar = Gtk.Scrollbar(orientation=Gtk.Orientation.VERTICAL,
@@ -2144,9 +2173,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
 
-    def __selection_changed_cb(self, unused_selection):
+    def __selection_changed_cb(self, selection):
         """Handles selection changing."""
         self.update_actions()
+        clip_names = [clip.props.name for clip in selection]
+        self.editor_state.set_value("selection", clip_names)
 
     def _gaplessmode_toggled_cb(self, unused_action, unused_parameter):
         self._settings.timelineAutoRipple = self.gapless_button.get_active()

@@ -34,7 +34,7 @@ class ColorPropertiesTest(BaseTestUndoTimeline):
         common.create_main_loop().run(until_empty=True)
 
         from pitivi.timeline.timeline import TimelineContainer
-        timeline_container = TimelineContainer(self.app)
+        timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
         timeline_container.set_project(self.project)
         self.app.gui.editor.timeline_ui = timeline_container
 
@@ -59,7 +59,7 @@ class ColorPropertiesTest(BaseTestUndoTimeline):
         common.create_main_loop().run(until_empty=True)
 
         from pitivi.timeline.timeline import TimelineContainer
-        timeline_container = TimelineContainer(self.app)
+        timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
         timeline_container.set_project(self.project)
         self.app.gui.editor.timeline_ui = timeline_container
 

@@ -1775,6 +1775,14 @@ class Project(Loggable, GES.Project):
     def list_sources(self):
         return self.list_assets(GES.UriClip)
 
+    def get_project_id(self):
+        project_id = self.get_string("pitivi::project-id")
+        if not project_id:
+            project_id = uuid.uuid4().hex
+            self.set_string("pitivi::project-id", project_id)
+            self.log("Assigned new project id %s", project_id)
+        return project_id
+
     def release(self):
         res = 0
 

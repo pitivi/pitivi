@@ -28,6 +28,7 @@ from pitivi.clipproperties import ClipProperties
 from pitivi.configure import APPNAME
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.missingasset import MissingAssetDialog
+from pitivi.editorstate import EditorState
 from pitivi.effects import EffectListWidget
 from pitivi.interactiveintro import InteractiveIntro
 from pitivi.mediafilespreviewer import PreviewWidget
@@ -82,6 +83,7 @@ class EditorPerspective(Perspective, Loggable):
         self.settings = app.settings
 
         self.builder = Gtk.Builder()
+        self.editor_state = EditorState(app.project_manager)
 
         pm = self.app.project_manager
         pm.connect("new-project-loaded",
@@ -226,7 +228,7 @@ class EditorPerspective(Perspective, Loggable):
         self.mainhpaned.pack2(self.viewer, resize=True, shrink=False)
 
         # Now, the lower part: the timeline
-        self.timeline_ui = TimelineContainer(self.app)
+        self.timeline_ui = TimelineContainer(self.app, self.editor_state)
         self.toplevel_widget.pack2(self.timeline_ui, resize=True, shrink=False)
 
         self.intro = InteractiveIntro(self.app)

@@ -51,7 +51,7 @@ class BaseTestUndoTimeline(common.TestCase):
 
     def setup_timeline_container(self):
         project = self.app.project_manager.current_project
-        self.timeline_container = TimelineContainer(self.app)
+        self.timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
         self.timeline_container.set_project(project)
 
         timeline = self.timeline_container.timeline
@@ -355,7 +355,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
         layer3 = self.timeline.append_layer()
         self.assertEqual(self.timeline.get_layers(), [layer1, layer2, layer3])
 
-        timeline_ui = Timeline(app=self.app, size_group=mock.Mock())
+        timeline_ui = Timeline(app=self.app, size_group=mock.Mock(), editor_state=self.app.gui.editor.editor_state)
         timeline_ui.set_project(self.app.project_manager.current_project)
 
         # Click and drag a layer control box to move the layer.

@@ -334,11 +334,11 @@ class EditingContext(GObject.Object, Loggable):
         res = self.focus.edit([], priority, self.mode, self.edge, int(position))
         if res:
             self.app.write_action("edit-container",
-                                container_name=self.focus.get_name(),
-                                position=float(position / Gst.SECOND),
-                                edit_mode=self.mode.value_nick,
-                                edge=self.edge.value_nick,
-                                new_layer_priority=int(priority))
+                                  container_name=self.focus.get_name(),
+                                  position=float(position / Gst.SECOND),
+                                  edit_mode=self.mode.value_nick,
+                                  edge=self.edge.value_nick,
+                                  new_layer_priority=int(priority))
 
             if self.with_video:
                 if self.edge == GES.Edge.EDGE_START:
