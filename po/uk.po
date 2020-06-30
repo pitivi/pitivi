@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-05-20 22:27+0000\n"
-"PO-Revision-Date: 2020-05-21 11:10+0300\n"
+"POT-Creation-Date: 2020-06-30 05:13+0000\n"
+"PO-Revision-Date: 2020-06-30 09:22+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -576,12 +576,10 @@ msgid "Proxy"
 msgstr "Проміжний"
 
 #: data/ui/projectsettings.ui:865
-#| msgid "Title"
 msgid "Title:"
 msgstr "Назва:"
 
 #: data/ui/projectsettings.ui:882
-#| msgid "Active"
 msgid "Action:"
 msgstr "Дія:"
 
@@ -1853,6 +1851,15 @@ msgstr "Вилучити шар"
 #, python-format
 msgid "Layer %d"
 msgstr "Шар %d"
+
+#: pitivi/timeline/markers.py:135
+msgid "Markers"
+msgstr "Позначки"
+
+#: pitivi/timeline/markers.py:141
+#| msgid "Add layer"
+msgid "Add a marker"
+msgstr "Додати позначку"
 
 #: pitivi/timeline/ruler.py:233
 #, python-format
