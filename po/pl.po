@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-05-20 22:27+0000\n"
-"PO-Revision-Date: 2020-05-24 12:59+0200\n"
+"POT-Creation-Date: 2020-06-30 05:13+0000\n"
+"PO-Revision-Date: 2020-07-05 11:55+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -1838,6 +1838,14 @@ msgstr "Usuń warstwę"
 #, python-format
 msgid "Layer %d"
 msgstr "%d. warstwa"
+
+#: pitivi/timeline/markers.py:135
+msgid "Markers"
+msgstr "Znaczniki"
+
+#: pitivi/timeline/markers.py:141
+msgid "Add a marker"
+msgstr "Dodaj znacznik"
 
 #: pitivi/timeline/ruler.py:233
 #, python-format
