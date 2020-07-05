@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-# Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>
-# Copyright (c) 2014, Alex Băluț <alexandru.balut@gmail.com>
+# Copyright (c) 2019, Millan Castro <m.castrovilarino@gmail.com>
+# Copyright (c) 2021, Alex Băluț <alexandru.balut@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -33,7 +33,6 @@ class TestMarkers(common.TestCase):
         """Checks the add marker UI."""
         markers = self.timeline.get_marker_list("markers")
         marker_box = self.timeline_container.markers
-        marker_box.markers_container = markers
 
         x = 100
         event = mock.Mock(spec=Gdk.EventButton)
@@ -56,7 +55,6 @@ class TestMarkers(common.TestCase):
         """Checks the remove marker UI."""
         markers = self.timeline.get_marker_list("markers")
         marker_box = self.timeline_container.markers
-        marker_box.markers_container = markers
 
         x = 200
         position = Zoomable.pixel_to_ns(x)
@@ -82,7 +80,6 @@ class TestMarkers(common.TestCase):
         """Checks the move marker UI."""
         markers = self.timeline.get_marker_list("markers")
         marker_box = self.timeline_container.markers
-        marker_box.markers_container = markers
 
         x1 = 300
         position1 = Zoomable.pixel_to_ns(x1)
@@ -110,13 +107,11 @@ class TestMarkers(common.TestCase):
 
         self.assert_markers(markers, [(position2, None)])
 
-    # pylint: disable=unbalanced-tuple-unpacking
     @common.setup_timeline
     def test_marker_comment_ui(self):
         """Checks the comments marker UI."""
         markers = self.timeline.get_marker_list("markers")
         marker_box = self.timeline_container.markers
-        marker_box.markers_container = markers
 
         x = 500
         position = Zoomable.pixel_to_ns(x)
@@ -152,3 +147,40 @@ class TestMarkers(common.TestCase):
         self.assertEqual(len(stack.done_actions), 1, stack.done_actions)
 
         self.assert_markers(markers, [(position, "comment")])
+
+    def check_seek(self, action, current_position, expected_position):
+        pipeline = self.project.pipeline
+        with mock.patch.object(pipeline, "get_position") as get_position:
+            get_position.return_value = current_position
+            with mock.patch.object(pipeline, "simple_seek") as simple_seek:
+                action.activate()
+                if expected_position is None:
+                    simple_seek.assert_not_called()
+                else:
+                    simple_seek.assert_called_once_with(expected_position)
+
+    @common.setup_timeline
+    def test_seeking_actions(self):
+        """Checks the seeking actions."""
+        # The seek logic ignores the markers past the timeline duration
+        # since it's not possible to seek there.
+        self.add_clip(self.timeline.layers[0], start=0, duration=20)
+
+        markers = self.timeline.get_marker_list("markers")
+        marker_box = self.timeline_container.markers
+
+        marker_box.markers_container.add(10)
+        marker_box.markers_container.add(12)
+        self.assert_markers(markers, [(10, None), (12, None)])
+
+        self.check_seek(marker_box.seek_forward_marker_action, 9, 10)
+        self.check_seek(marker_box.seek_forward_marker_action, 10, 12)
+        self.check_seek(marker_box.seek_forward_marker_action, 11, 12)
+        self.check_seek(marker_box.seek_forward_marker_action, 12, None)
+        self.check_seek(marker_box.seek_forward_marker_action, 13, None)
+
+        self.check_seek(marker_box.seek_backward_marker_action, 9, None)
+        self.check_seek(marker_box.seek_backward_marker_action, 10, None)
+        self.check_seek(marker_box.seek_backward_marker_action, 11, 10)
+        self.check_seek(marker_box.seek_backward_marker_action, 12, 10)
+        self.check_seek(marker_box.seek_backward_marker_action, 13, 12)

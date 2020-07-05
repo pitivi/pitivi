@@ -1768,14 +1768,14 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         group.add_action(self.seek_forward_clip_action)
         self.app.shortcuts.add("timeline.seek-forward-clip", ["<Primary>Right"],
                                self.seek_forward_clip_action,
-                               _("Seeks to the first clip edge after the playhead."))
+                               _("Seek to the first clip edge after the playhead"))
 
         self.seek_backward_clip_action = Gio.SimpleAction.new("seek-backward-clip", None)
         self.seek_backward_clip_action.connect("activate", self._seek_backward_clip_cb)
         group.add_action(self.seek_backward_clip_action)
         self.app.shortcuts.add("timeline.seek-backward-clip", ["<Primary>Left"],
                                self.seek_backward_clip_action,
-                               _("Seeks to the first clip edge before the playhead."))
+                               _("Seek to the first clip edge before the playhead"))
 
         self.add_effect_action = Gio.SimpleAction.new("add-effect", None)
         self.add_effect_action.connect("activate", self.__add_effect_cb)

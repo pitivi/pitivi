@@ -16,6 +16,7 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Markers display and management."""
 from gettext import gettext as _
+from typing import Optional
 
 from gi.repository import Gdk
 from gi.repository import Gio
@@ -138,7 +139,64 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         self.add_marker_action.connect("activate", self._add_marker_cb)
         self.action_group.add_action(self.add_marker_action)
         self.app.shortcuts.add("markers.marker-add(@mx nothing)", ["<Primary><Shift>m"],
-                               self.add_marker_action, _("Add a marker"))
+                               self.add_marker_action,
+                               _("Add a marker"))
+
+        self.seek_backward_marker_action = Gio.SimpleAction.new("seek-backward-marker", None)
+        self.seek_backward_marker_action.connect("activate", self._seek_backward_marker_cb)
+        self.action_group.add_action(self.seek_backward_marker_action)
+        self.app.shortcuts.add("markers.seek-backward-marker", ["<Alt>Left"],
+                               self.seek_backward_marker_action,
+                               _("Seek to the first marker before the playhead"))
+
+        self.seek_forward_marker_action = Gio.SimpleAction.new("seek-forward-marker", None)
+        self.seek_forward_marker_action.connect("activate", self._seek_forward_marker_cb)
+        self.action_group.add_action(self.seek_forward_marker_action)
+        self.app.shortcuts.add("markers.seek-forward-marker", ["<Alt>Right"],
+                               self.seek_forward_marker_action,
+                               _("Seek to the first marker after the playhead"))
+
+    def _seek_backward_marker_cb(self, action, param):
+        current_position = self.app.project_manager.current_project.pipeline.get_position(fails=False)
+        position = self.first_marker(before=current_position)
+        if position is None:
+            return
+
+        self.app.project_manager.current_project.pipeline.simple_seek(position)
+        self.app.gui.editor.timeline_ui.timeline.scroll_to_playhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+
+    def _seek_forward_marker_cb(self, action, param):
+        current_position = self.app.project_manager.current_project.pipeline.get_position(fails=False)
+        position = self.first_marker(after=current_position)
+        if position is None:
+            return
+
+        self.app.project_manager.current_project.pipeline.simple_seek(position)
+        self.app.gui.editor.timeline_ui.timeline.scroll_to_playhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+
+    def first_marker(self, before: Optional[int] = None, after: Optional[int] = None) -> Optional[int]:
+        assert (after is not None) != (before is not None)
+
+        if after is not None:
+            start = after + 1
+            end = self.app.project_manager.current_project.ges_timeline.props.duration
+        else:
+            start = 0
+            end = before
+
+        if start >= end:
+            return None
+
+        markers_positions = list([ges_marker.props.position
+                                  for ges_marker in self.__markers_container.get_markers()
+                                  if start <= ges_marker.props.position < end])
+        if not markers_positions:
+            return None
+
+        if after is not None:
+            return min(markers_positions)
+        else:
+            return max(markers_positions)
 
     def _add_marker_cb(self, action, param):
         maybe = param.get_maybe()
