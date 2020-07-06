@@ -815,8 +815,8 @@ msgstr "Transformering"
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[0] "<b>Lyd:</b> %d kanal ved %d <i>Hz</i> (%d </i>bits</i>)"
-msgstr[1] "<b>Lyd:</b> %d kanaler ved %d <i>Hz</i> med (%d </i>bits</i>)"
+msgstr[0] "<b>Lyd:</b> %d kanal ved %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[1] "<b>Lyd:</b> %d kanaler ved %d <i>Hz</i> med (%d <i>bits</i>)"
 
 #: ../pitivi/ui/common.py:121
 #, python-format
@@ -826,7 +826,7 @@ msgstr "<b>Ukjent lydformat:</b> %s"
 #: ../pitivi/ui/common.py:126
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.2f<i>fps</i>"
-msgstr "<b>Video:</b> %dx%d <i>piksler</i> med %.2f</i>bps</i>"
+msgstr "<b>Video:</b> %dx%d <i>piksler</i> med %.2f<i>bps</i>"
 
 #: ../pitivi/ui/common.py:130
 #, python-format
