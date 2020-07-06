@@ -2048,7 +2048,7 @@ msgstr[2] "<b>Garsas:</b> %d kanalų %d <i>Hz</i> (%d <i>bitai</i>)"
 #: ../pitivi/utils/ui.py:345
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
-msgstr "<b>Vaizdas</b> %dx%d <i>pikseliai %.3f <i>kps</i>"
+msgstr "<b>Vaizdas</b> %dx%d <i>pikseliai</i> %.3f <i>kps</i>"
 
 #: ../pitivi/utils/ui.py:353
 #, python-format
