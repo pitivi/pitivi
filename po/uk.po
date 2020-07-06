@@ -2250,7 +2250,7 @@ msgstr "<b>Тривалість:</b> %s"
 #: pitivi/utils/ui.py:516
 #, python-format
 msgid "<b>Proxy creation progress:</b> %d%%"
-msgstr "<b>Поступ створення проміжного кліпу: %d%%"
+msgstr "<b>Поступ створення проміжного кліпу:</b> %d%%"
 
 #: pitivi/utils/ui.py:530
 #, python-format
