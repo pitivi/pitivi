@@ -665,6 +665,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.warning("State change reported for previous trim preview pipeline")
             trim_pipeline.disconnect_by_func(self._state_change_cb)
             return
+
         # First the pipeline goes from READY to PAUSED, and then it goes
         # from PAUSED to PAUSED, and this is a good moment.
         if prev_state == Gst.State.PAUSED and state == Gst.State.PAUSED:

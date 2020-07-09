@@ -33,6 +33,7 @@ from gi.repository import Gst
 from gi.repository import GstController
 from gi.repository import Gtk
 
+from pitivi.check import MISSING_SOFT_DEPS
 from pitivi.clip_properties.alignment import AlignmentEditor
 from pitivi.clip_properties.color import ColorProperties
 from pitivi.clip_properties.compositing import CompositingProperties
@@ -44,6 +45,7 @@ from pitivi.configure import in_devel
 from pitivi.effects import EffectsPopover
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
+from pitivi.trackerperspective import TrackerPerspective
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.custom_effect_widgets import setup_custom_effect_widgets
 from pitivi.utils.loggable import Loggable
@@ -593,11 +595,21 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.add_effect_button.set_popover(self.effect_popover)
         self.add_effect_button.props.halign = Gtk.Align.CENTER
 
+        self.object_tracker_box = Gtk.ButtonBox()
+        self.object_tracker_box.props.halign = Gtk.Align.CENTER
+
+        if "cvtracker" not in MISSING_SOFT_DEPS:
+            self.track_object_button = Gtk.Button(_("Track Object"))
+            self.track_object_button.connect("clicked", self.__track_object_button_clicked_cb)
+            self.track_object_button.props.halign = Gtk.Align.CENTER
+            self.object_tracker_box.pack_start(self.track_object_button, False, False, 0)
+
         self.drag_dest_set(Gtk.DestDefaults.DROP, [EFFECT_TARGET_ENTRY],
                            Gdk.DragAction.COPY)
 
         self.expander_box.pack_start(self.effects_listbox, False, False, 0)
         self.expander_box.pack_start(self.add_effect_button, False, False, PADDING)
+        self.expander_box.pack_start(self.object_tracker_box, False, False, PADDING)
 
         self.add(self.expander_box)
 
@@ -609,6 +621,12 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.add_effect_button.connect("toggled", self._add_effect_button_cb)
 
         self.show_all()
+
+    def __track_object_button_clicked_cb(self, button):
+        tracker = TrackerPerspective(self.app, self.clip.asset)
+        self.app.project_manager.current_project.pipeline.pause()
+        tracker.setup_ui()
+        self.app.gui.show_perspective(tracker)
 
     def _add_effect_button_cb(self, button):
         # MenuButton interacts directly with the popover, bypassing our subclassed method
@@ -758,6 +776,8 @@ class EffectProperties(Gtk.Expander, Loggable):
                     if is_time_effect(track_element):
                         continue
                     self._connect_to_track_element(track_element)
+                if isinstance(track_element, GES.VideoUriSource) and not clip.asset.is_image():
+                    self.track_object_button.show()
 
             self._update_listbox()
             self.show()

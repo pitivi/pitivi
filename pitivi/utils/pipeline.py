@@ -57,7 +57,7 @@ class SimplePipeline(GObject.Object, Loggable):
      - State changes
      - Position seeking
      - Position querying
-     - Along with an periodic callback (optional)
+     - Along with a periodic callback (optional)
 
     Signals:
         state-change: The state of the pipeline changed.

@@ -53,7 +53,10 @@ from pitivi.utils.timeline import SELECT_ADD
 from pitivi.utils.timeline import Selected
 from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.timeline import Zoomable
+from pitivi.utils.ui import CURSORS
+from pitivi.utils.ui import DRAG_CURSOR
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
+from pitivi.utils.ui import NORMAL_CURSOR
 from pitivi.utils.ui import set_state_flags_recurse
 
 KEYFRAME_LINE_HEIGHT = 2
@@ -62,14 +65,6 @@ KEYFRAME_LINE_COLOR = "#EDD400"  # "Tango" medium yellow
 KEYFRAME_NODE_COLOR = "#F57900"  # "Tango" medium orange
 SELECTED_KEYFRAME_NODE_COLOR = "#204A87"  # "Tango" dark sky blue
 HOVERED_KEYFRAME_NODE_COLOR = "#3465A4"  # "Tango" medium sky blue
-
-CURSORS = {
-    GES.Edge.EDGE_START: Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE),
-    GES.Edge.EDGE_END: Gdk.Cursor.new(Gdk.CursorType.RIGHT_SIDE)
-}
-
-NORMAL_CURSOR = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
-DRAG_CURSOR = Gdk.Cursor.new(Gdk.CursorType.HAND1)
 
 
 def get_pspec(element_factory_name, propname):

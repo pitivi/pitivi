@@ -75,6 +75,14 @@ TOUCH_INPUT_SOURCES = (Gdk.InputSource.TOUCHPAD,
                        Gdk.InputSource.TRACKPOINT,
                        Gdk.InputSource.TABLET_PAD)
 
+CURSORS = {
+    GES.Edge.EDGE_START: Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE),
+    GES.Edge.EDGE_END: Gdk.Cursor.new(Gdk.CursorType.RIGHT_SIDE)
+}
+
+NORMAL_CURSOR = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
+DRAG_CURSOR = Gdk.Cursor.new(Gdk.CursorType.HAND1)
+
 
 def get_month_format_string():
     """Returns the appropriate format string for month name in time.strftime() function."""

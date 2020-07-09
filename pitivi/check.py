@@ -24,6 +24,7 @@ Package maintainers should look at the bottom section of this file.
 import os
 import sys
 from gettext import gettext as _
+from typing import List
 
 MISSING_SOFT_DEPS = {}
 VIDEOSINK_FACTORY = None
@@ -72,7 +73,7 @@ class Dependency:
             if self.version_required is None:
                 self.satisfied = True
             else:
-                formatted_version = self._format_version(self.component)
+                formatted_version = self._get_version(self.component)
                 self.version_installed = _version_to_string(formatted_version)
 
                 if formatted_version >= _string_to_list(self.version_required):
@@ -88,18 +89,19 @@ class Dependency:
         """
         raise NotImplementedError
 
-    def _format_version(self, module):
-        """Formats the version of the component.
+    def _get_version(self, module) -> List[int]:  # pylint: disable=unused-argument
+        """Gets the version of the component.
 
         Args:
             module: The component returned by _try_importing_component.
 
         Returns:
-            List[int]: The version number of the component.
+            List[int]: The version number of the component or an empty list
+            if it does not have any.
 
-            For example "1.2.10" should return [1, 2, 10].
+            For example "1.2.10" returns [1, 2, 10].
         """
-        raise NotImplementedError
+        return []
 
     def __bool__(self):
         return self.satisfied
@@ -109,10 +111,10 @@ class Dependency:
             return ""
 
         if not self.component:
-            # Translators: %s is a Python module name or another os component
+            # Translators: %s is a Python module name or another OS component
             message = _("- %s not found on the system") % self.modulename
         else:
-            # Translators: %s is a Python module name or another os component
+            # Translators: %s is a Python module name or another OS component
             message = _("- %s version %s is installed but Pitivi requires at least version %s") % (
                 self.modulename, self.version_installed, self.version_required)
 
@@ -187,10 +189,10 @@ class GstPluginDependency(Dependency):
             return ""
 
         if not self.component:
-            # Translators: %s is a Python module name or another os component
+            # Translators: %s is a Python module name or another OS component
             message = _("- %s GStreamer plug-in not found on the system") % self.modulename
         else:
-            # Translators: %s is a Python module name or another os component
+            # Translators: %s is a Python module name or another OS component
             message = _("- %s Gstreamer plug-in version %s is installed but Pitivi requires at least version %s") % (
                 self.modulename, self.version_installed, self.version_required)
 
@@ -200,15 +202,42 @@ class GstPluginDependency(Dependency):
         return message
 
 
+class GstElementDependency(Dependency):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def _try_importing_component(self):
+        try:
+            from gi.repository import Gst
+        except ImportError:
+            return None
+        Gst.init(None)
+
+        return Gst.ElementFactory.find(self.modulename)
+
+    def __repr__(self):
+        if self.satisfied:
+            return ""
+
+        # Translators: %s is a Python module name or another OS component
+        message = _("- %s GStreamer element not found on the system") % self.modulename
+
+        if self.additional_message is not None:
+            message += "\n    -> " + self.additional_message
+
+        return message
+
+
 class GstDependency(GIDependency):
 
-    def _format_version(self, module):
+    def _get_version(self, module):
         return list(module.version())
 
 
 class GtkDependency(GIDependency):
 
-    def _format_version(self, module):
+    def _get_version(self, module):
         return [module.MAJOR_VERSION, module.MINOR_VERSION, module.MICRO_VERSION]
 
 
@@ -217,7 +246,7 @@ class CairoDependency(ClassicDependency):
     def __init__(self, version_required):
         ClassicDependency.__init__(self, "cairo", version_required)
 
-    def _format_version(self, module):
+    def _get_version(self, module):
         return _string_to_list(module.cairo_version_string())
 
 
@@ -286,7 +315,7 @@ class GICheck(ClassicDependency):
     def __init__(self, version_required):
         ClassicDependency.__init__(self, "gi", version_required)
 
-    def _format_version(self, module):
+    def _get_version(self, module):
         return list(module.version_info)
 
 
@@ -462,4 +491,6 @@ SOFT_DEPENDENCIES = (
                         additional_message=_("enables a watchdog in the GStreamer pipeline."
                                              " Use to detect errors happening in GStreamer"
                                              " and recover from them")),
+    GstElementDependency("cvtracker", version_required=None,
+                         additional_message=_("enables object tracking")),
     ClassicDependency("librosa", additional_message=_("enables beat detection functionality")))
