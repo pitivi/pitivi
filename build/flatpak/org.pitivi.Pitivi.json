@@ -2,7 +2,7 @@
     "app-id": "org.pitivi.Pitivi",
     "branch": "master",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.34",
+    "runtime-version": "3.36",
     "command": "pitivi",
     "finish-args": [
         "--socket=x11",
