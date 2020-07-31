@@ -619,7 +619,7 @@ msgstr ""
 
 #: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer/viewer.py:549
 msgid "Pause"
-msgstr "Atura"
+msgstr "Fes una pausa"
 
 #: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer/viewer.py:541
 #: ../pitivi/timeline/timeline.py:1580
@@ -1941,7 +1941,7 @@ msgid ""
 "documentation viewer or a web browser installed"
 msgstr ""
 "Errada en obrir el manual de l'usuari. Mireu que teniu el visualitzador de "
-"documentació «yelp» del GNOME o un navegador instal·lat."
+"documentació «yelp» del GNOME o un navegador instal·lat"
 
 #: ../pitivi/utils/misc.py:298
 msgid ""
