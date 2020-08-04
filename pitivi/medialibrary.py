@@ -518,9 +518,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         toolbar = builder.get_object("medialibrary_toolbar")
         toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
         self._import_button = builder.get_object("media_import_button")
-        self._clipprops_button = builder.get_object("media_props_button")
         self._listview_button = builder.get_object("media_listview_button")
         self.search_entry = builder.get_object("media_search_entry")
+        bottom_toolbar_container = builder.get_object("medialibrary_bottom_toolbar_container")
+        bottom_toolbar = builder.get_object("medialibrary_bottom_toolbar")
+        bg_color = bottom_toolbar_container.get_style_context().get_background_color(Gtk.StateFlags.NORMAL)
+        bottom_toolbar.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
+        self._clipprops_button = builder.get_object("media_props_button")
 
         self.scrollwin = Gtk.ScrolledWindow()
         self.scrollwin.set_policy(
@@ -590,7 +594,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         # Set the state of the view mode toggle button.
         self._listview_button.set_active(self.clip_view == ViewType.LIST)
-        # Make sure the proper view is displayed.
         self.scrollwin.show_all()
 
         # Add all the child widgets.
@@ -600,6 +603,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.pack_start(self._import_warning_infobar, False, False, 0)
         self.pack_start(self.scrollwin, True, True, 0)
         self.pack_start(self._progressbar, False, False, 0)
+        self.pack_start(bottom_toolbar_container, False, False, 0)
 
     def create_iconview_widget_func(self, item):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
