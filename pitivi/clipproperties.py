@@ -45,9 +45,10 @@ from pitivi.configure import in_devel
 from pitivi.effects import EffectsPopover
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
-from pitivi.trackerperspective import TrackerPerspective
+from pitivi.trackerperspective import CoverObjectPopover
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
-from pitivi.utils.custom_effect_widgets import setup_custom_effect_widgets
+from pitivi.utils.custom_effect_widgets import create_custom_prop_widget_cb
+from pitivi.utils.custom_effect_widgets import create_custom_widget_cb
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.pipeline import PipelineError
@@ -573,7 +574,9 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.clip = None
 
         self.effects_properties_manager = EffectsPropertiesManager(app)
-        setup_custom_effect_widgets(self.effects_properties_manager)
+        # Set up the effects manager to be able to create custom UI.
+        self.effects_properties_manager.connect("create_widget", create_custom_widget_cb)
+        self.effects_properties_manager.connect("create_property_widget", create_custom_prop_widget_cb)
 
         self.drag_lines_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(
             os.path.join(get_pixmap_dir(), "grip-lines-solid.svg"),
@@ -598,11 +601,11 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.object_tracker_box = Gtk.ButtonBox()
         self.object_tracker_box.props.halign = Gtk.Align.CENTER
 
+        self.cover_popover: Optional[Gtk.Popover] = None
+        self.cover_object_button: Optional[Gtk.MenuButton] = None
         if "cvtracker" not in MISSING_SOFT_DEPS:
-            self.track_object_button = Gtk.Button(_("Track Object"))
-            self.track_object_button.connect("clicked", self.__track_object_button_clicked_cb)
-            self.track_object_button.props.halign = Gtk.Align.CENTER
-            self.object_tracker_box.pack_start(self.track_object_button, False, False, 0)
+            self.cover_object_button = Gtk.MenuButton(_("Cover Object"))
+            self.object_tracker_box.pack_start(self.cover_object_button, False, False, 0)
 
         self.drag_dest_set(Gtk.DestDefaults.DROP, [EFFECT_TARGET_ENTRY],
                            Gdk.DragAction.COPY)
@@ -618,40 +621,36 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.connect("drag-leave", self._drag_leave_cb)
         self.connect("drag-data-received", self._drag_data_received_cb)
 
-        self.add_effect_button.connect("toggled", self._add_effect_button_cb)
+        self.add_effect_button.connect("toggled", self._add_effect_button_toggled_cb)
+        if self.cover_object_button:
+            self.cover_object_button.connect("toggled", self._cover_object_button_toggled_cb)
 
         self.show_all()
 
-    def __track_object_button_clicked_cb(self, button):
-        tracker = TrackerPerspective(self.app, self.clip.asset)
-        self.app.project_manager.current_project.pipeline.pause()
-        tracker.setup_ui()
-        self.app.gui.show_perspective(tracker)
-
-    def _add_effect_button_cb(self, button):
+    def _add_effect_button_toggled_cb(self, button):
         # MenuButton interacts directly with the popover, bypassing our subclassed method
         if button.props.active:
             self.effect_popover.search_entry.set_text("")
+
+    def _cover_object_button_toggled_cb(self, button):
+        if button.props.active:
+            self.cover_popover.update_object_list()
 
     def _create_effect_row(self, effect):
         if is_time_effect(effect):
             return None
 
-        effect_info = self.app.effects.get_info(effect.props.bin_description)
-
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-
-        row_drag_icon = Gtk.Image.new_from_pixbuf(self.drag_lines_pixbuf)
 
         toggle = Gtk.CheckButton()
         toggle.props.active = effect.props.active
 
+        effect_info = self.app.effects.get_info(effect)
         effect_label = Gtk.Label(effect_info.human_name)
         effect_label.set_tooltip_text(effect_info.description)
 
         # Set up revealer + expander
-        effect_config_ui = self.effects_properties_manager.get_effect_configuration_ui(
-            effect)
+        effect_config_ui = self.effects_properties_manager.get_effect_configuration_ui(effect)
         config_ui_revealer = Gtk.Revealer()
         config_ui_revealer.add(effect_config_ui)
 
@@ -668,6 +667,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         remove_effect_button.props.margin_right = PADDING
 
         row_widgets_box = Gtk.Box()
+        row_drag_icon = Gtk.Image.new_from_pixbuf(self.drag_lines_pixbuf)
         row_widgets_box.pack_start(row_drag_icon, False, False, PADDING)
         row_widgets_box.pack_start(toggle, False, False, PADDING)
         row_widgets_box.pack_start(expander, True, True, PADDING)
@@ -769,6 +769,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         self.clip = clip
         if self.clip:
+            cover_object_button_show = False
             self.clip.connect("child-added", self._track_element_added_cb)
             self.clip.connect("child-removed", self._track_element_removed_cb)
             for track_element in self.clip.get_children(recursive=True):
@@ -777,12 +778,15 @@ class EffectProperties(Gtk.Expander, Loggable):
                         continue
                     self._connect_to_track_element(track_element)
                 if isinstance(track_element, GES.VideoUriSource) and not clip.asset.is_image():
-                    self.track_object_button.show()
-
+                    cover_object_button_show = True
+            if self.cover_object_button:
+                self.cover_object_button.set_visible(cover_object_button_show)
+                if cover_object_button_show:
+                    self.cover_popover = CoverObjectPopover(self.app, self.clip)
+                    self.cover_object_button.set_popover(self.cover_popover)
             self._update_listbox()
-            self.show()
-        else:
-            self.hide()
+
+        self.props.visible = bool(self.clip)
 
     def _track_element_added_cb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
@@ -831,7 +835,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _drag_data_get_cb(self, eventbox, drag_context, selection_data, unused_info, unused_timestamp):
         row = eventbox.get_parent()
-        effect_info = self.app.effects.get_info(row.effect.props.bin_description)
+        effect_info = self.app.effects.get_info(row.effect)
         effect_name = effect_info.human_name
 
         data = bytes(effect_name, "UTF-8")
@@ -1116,9 +1120,10 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 control_source = GstController.InterpolationControlSource()
                 control_source.props.mode = GstController.InterpolationMode.LINEAR
                 self.__own_bindings_change = True
-                self.source.set_control_source(
-                    control_source, prop, "direct-absolute")
-                self.__own_bindings_change = False
+                try:
+                    self.source.set_control_source(control_source, prop, "direct-absolute")
+                finally:
+                    self.__own_bindings_change = False
                 self.__set_default_keyframes_values(control_source, prop)
 
                 binding = self.source.get_control_binding(prop)

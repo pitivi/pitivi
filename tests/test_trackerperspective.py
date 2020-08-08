@@ -16,10 +16,55 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Tests for the pitivi.trackerperspective module."""
 # pylint: disable=protected-access
+from unittest import skipUnless
+
 from gi.repository import GES
 
+from pitivi.check import MISSING_SOFT_DEPS
 from pitivi.trackerperspective import ObjectManager
 from tests import common
+
+
+class TestCoverObjectPopover(common.TestCase):
+    """Tests for the CoverObjectPopover class."""
+
+    @skipUnless("cvtracker" not in MISSING_SOFT_DEPS, "cvtracker element missing")
+    @common.setup_project_with_clips(assets_names=["tears_of_steel.webm"])
+    @common.setup_clipproperties
+    def test_cover(self):
+        clip, = self.layer.get_clips()
+        self.click_clip(clip, expect_selected=True)
+
+        expander = self.clipproperties.effect_expander
+        expander.cover_object_button.clicked()
+        self.assertTrue(expander.cover_popover.props.visible)
+        # Only one row containing the Track Objects button should exist.
+        self.assertEqual(len(expander.cover_popover.listbox.get_children()), 1)
+
+        expander.cover_object_button.clicked()
+        self.assertFalse(expander.cover_popover.props.visible)
+
+        object_manager = ObjectManager(clip.asset)
+        object_manager.add_object(1, "object1", "Object 1")
+        object_manager.update_object_position("object1", 0, (10, 20, 30, 40))
+        object_manager.add_object(2, "object2", "Object 2")
+        object_manager.update_object_position("object2", 1, (20, 30, 40, 50))
+        object_manager.save()
+
+        expander.cover_object_button.clicked()
+        self.assertTrue(expander.cover_popover.props.visible)
+        # Two rows for two object and one for Track Objects.
+        self.assertEqual(len(expander.cover_popover.listbox.get_children()), 3)
+
+        self.assertEqual(len(clip.get_top_effects()), 0)
+        expander.cover_popover.listbox.get_row_at_index(0).emit("activate")
+        self.assertFalse(expander.cover_popover.props.visible)
+        self.assertEqual(len(clip.get_top_effects()), 1)
+
+        expander.cover_object_button.clicked()
+        self.assertTrue(expander.cover_popover.props.visible)
+        # One row for the uncovered object and one for the Track Objects button.
+        self.assertEqual(len(expander.cover_popover.listbox.get_children()), 2)
 
 
 class TestObjectManager(common.TestCase):

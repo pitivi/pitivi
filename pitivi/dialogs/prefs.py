@@ -402,7 +402,7 @@ class PreferencesDialog(Loggable):
 
         self.content_box.bind_model(self.list_store, self._create_widget_func, None)
         self.content_box.set_header_func(self._add_header_func, None)
-        self.content_box.connect("row_activated", self.__row_activated_cb)
+        self.content_box.connect("row-activated", self.__row_activated_cb)
         self.content_box.set_selection_mode(Gtk.SelectionMode.NONE)
         self.content_box.props.margin = PADDING * 3
         self.content_box.props.halign = Gtk.Align.CENTER

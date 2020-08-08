@@ -145,7 +145,7 @@ class GreeterPerspective(Perspective):
         self.__recent_projects_listbox = builder.get_object("recent_projects_listbox")
         self.__recent_projects_listbox.set_selection_mode(Gtk.SelectionMode.NONE)
         self.__recent_projects_listbox.connect(
-            "row_activated", self.__projects_row_activated_cb)
+            "row-activated", self.__projects_row_activated_cb)
         self.__recent_projects_listbox.connect(
             "button-press-event", self.__projects_button_press_cb)
 

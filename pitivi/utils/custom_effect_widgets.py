@@ -23,18 +23,13 @@ from gi.repository import Gdk
 from gi.repository import Gtk
 
 from pitivi import configure
+from pitivi.trackerperspective import EFFECT_TRACKED_OBJECT_ID_META
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import create_model
 from pitivi.utils.widgets import ColorPickerButton
 
 
 CUSTOM_WIDGETS_DIR = os.path.join(configure.get_ui_dir(), "customwidgets")
-
-
-def setup_custom_effect_widgets(effect_prop_manager):
-    """Sets up the specified effects manager to be able to create custom UI."""
-    effect_prop_manager.connect("create_widget", create_custom_widget_cb)
-    effect_prop_manager.connect("create_property_widget", create_custom_prop_widget_cb)
 
 
 def setup_from_ui_file(element_setting_widget, path):
@@ -59,6 +54,11 @@ def create_custom_prop_widget_cb(unused_effect_prop_manager, effect_widget, effe
 
 def create_custom_widget_cb(effect_prop_manager, effect_widget, effect):
     """Creates custom effect UI."""
+    tracked_object_id = effect.get_string(EFFECT_TRACKED_OBJECT_ID_META)
+    if tracked_object_id:
+        widget = object_cover_effect_widget(effect_prop_manager, effect_widget, effect)
+        return widget
+
     effect_name = effect.get_property("bin-description")
     path = os.path.join(CUSTOM_WIDGETS_DIR, effect_name + ".ui")
 
@@ -81,6 +81,67 @@ def create_custom_widget_cb(effect_prop_manager, effect_widget, effect):
     builder = setup_from_ui_file(effect_widget, path)
     widget = builder.get_object("base_table")
     return widget
+
+
+def object_cover_effect_widget(effect_prop_manager, element_setting_widget, element):
+    """Creates the UI for the `Object cover` effect."""
+    builder = setup_from_ui_file(element_setting_widget, os.path.join(CUSTOM_WIDGETS_DIR, "pitivi:object_effect.ui"))
+    base_table = builder.get_object("base_table")
+
+    def set_foreground_color(color):
+        from pitivi.undo.timeline import CommitTimelineFinalizingAction
+        pipeline = effect_prop_manager.app.project_manager.current_project.pipeline
+        action_log = effect_prop_manager.app.action_log
+        with action_log.started("Effect property change",
+                                finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                toplevel=True):
+            element.set_child_property("foreground-color", color)
+
+    def color_picker_value_changed_cb(widget: ColorPickerButton):
+        """Handles the selection of a color with the color picker."""
+        argb = widget.calculate_argb()
+        set_foreground_color(argb)
+
+    color_picker_button = ColorPickerButton()
+    base_table.add(color_picker_button)
+    handler_value_changed = color_picker_button.connect("value-changed", color_picker_value_changed_cb)
+
+    def color_button_color_set_cb(button: Gtk.ColorButton):
+        """Handles the selection of a color with the color button."""
+        color = button.get_rgba()
+        red = int(color.red * 255)
+        green = int(color.green * 255)
+        blue = int(color.blue * 255)
+        argb = (0xFF << 24) + (red << 16) + (green << 8) + blue
+        set_foreground_color(argb)
+
+    color_button = builder.get_object("color_button")
+    handler_color_set = color_button.connect("color-set", color_button_color_set_cb)
+
+    def update_ui():
+        res, argb = element.get_child_property("foreground-color")
+        assert res
+        color = Gdk.RGBA()
+        color.red = ((argb >> 16) & 0xFF) / 255
+        color.green = ((argb >> 8) & 0xFF) / 255
+        color.blue = ((argb >> 0) & 0xFF) / 255
+        color.alpha = ((argb >> 24) & 0xFF) / 255
+        color_button.set_rgba(color)
+
+    update_ui()
+
+    def notify_foreground_color_cb(self, element, param_spec):
+        color_picker_button.handler_block(handler_value_changed)
+        color_button.handler_block(handler_color_set)
+        try:
+            update_ui()
+        finally:
+            color_picker_button.handler_unblock(handler_value_changed)
+            color_button.handler_block(handler_color_set)
+
+    element.connect("notify::foreground-color", notify_foreground_color_cb)
+
+    return base_table
 
 
 def create_alpha_widget(effect_prop_manager, element_setting_widget, element):

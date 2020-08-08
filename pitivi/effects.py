@@ -32,6 +32,8 @@ import subprocess
 import sys
 import threading
 from gettext import gettext as _
+from typing import Optional
+from typing import Union
 
 import cairo
 from gi.repository import Gdk
@@ -45,6 +47,8 @@ from gi.repository import Gtk
 from pitivi.configure import get_pixmap_dir
 from pitivi.configure import get_ui_dir
 from pitivi.settings import GlobalSettings
+from pitivi.trackerperspective import EFFECT_TRACKED_OBJECT_ID_META
+from pitivi.trackerperspective import EFFECT_TRACKED_OBJECT_NAME_META
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import disable_scroll
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
@@ -172,7 +176,6 @@ class EffectInfo:
 
     def __init__(self, effect_name, media_type, categories,
                  human_name, description):
-        object.__init__(self)
         self.effect_name = effect_name
         self.media_type = media_type
         self.categories = categories
@@ -308,15 +311,29 @@ class EffectsManager(Loggable):
             self.error("Can not use GL effects: %s", e)
             HIDDEN_EFFECTS.extend(self.gl_effects)
 
-    def get_info(self, bin_description):
+    def get_info(self, effect: Union[str, GES.Effect]) -> Optional[EffectInfo]:
         """Gets the info for an effect which can be applied.
 
         Args:
-            bin_description (str): The bin_description defining the effect.
+            effect: The effect itself or the bin_description defining it.
 
         Returns:
             EffectInfo: The info corresponding to the name, or None.
         """
+        if isinstance(effect, GES.Effect):
+            tracked_object_id = effect.get_string(EFFECT_TRACKED_OBJECT_ID_META)
+            if tracked_object_id:
+                tracked_object_name = effect.get_string(EFFECT_TRACKED_OBJECT_NAME_META)
+                # Translators: How the video effect which covers/hides a
+                # tracked object is listed. The {} is entered by the user
+                # and denotes the tracked object.
+                human_name = _("{} cover").format(tracked_object_name)
+                description = _("Object cover effect")
+                return EffectInfo(None, None, None, human_name, description)
+            bin_description = effect.props.bin_description
+        else:
+            bin_description = effect
+
         name = EffectInfo.name_from_bin_description(bin_description)
         return self._effects.get(name)
 

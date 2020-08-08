@@ -32,6 +32,7 @@ from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import GObject
 from gi.repository import Gst
+from gi.repository import GstController
 from gi.repository import GstVideo
 from gi.repository import Gtk
 
@@ -47,6 +48,11 @@ from pitivi.utils.ui import SPACING
 
 # The meta of an Asset holding all the tracked objects data version 1.
 ASSET_TRACKED_OBJECTS_META = "pitivi::tracker_data::1"
+
+# The meta of an Effect holding the object_id of the tracked object.
+EFFECT_TRACKED_OBJECT_ID_META = "pitivi:tracked_object_id"
+# The meta of an Effect holding the name of the tracked object.
+EFFECT_TRACKED_OBJECT_NAME_META = "pitivi:tracked_object_name"
 
 
 # TODO: Replace with bisect.bisect_left when we use Python 3.10.
@@ -475,7 +481,7 @@ class ToplevelWidget(Gtk.Box, Loggable):
     def _remove_object_button_clicked_cb(self, button):
         row = self.object_listbox.get_selected_row()
         index = row.get_index()
-        tracked_object = self.tracked_objects_store.get_item(index)
+        tracked_object: TrackedObjectItem = self.tracked_objects_store.get_item(index)
         self.tracked_objects_store.remove(index)
 
         self.remove_object_button.props.sensitive = False
@@ -677,3 +683,118 @@ class TrackerPerspective(Perspective):
     def refresh(self):
         """Refreshes the perspective."""
         self.toplevel_widget.play_pause_button.grab_focus()
+
+
+class CoverObjectPopover(Gtk.Popover, Loggable):
+    """Popover for selecting an object to cover."""
+
+    # The representation of the effect providing the cover.
+    _EFFECT_PIPELINE = "video videotestsrc pattern=solid-color foreground-color=0xff000000 ! framepositioner name=positioner ! gescompositor"
+
+    def __init__(self, app, clip: GES.Clip):
+        Gtk.Popover.__init__(self)
+        Loggable.__init__(self)
+
+        self.app = app
+
+        self.clip: GES.Clip = clip
+        self.object_manager: Optional[ObjectManager] = None
+
+        self.listbox = Gtk.ListBox()
+        self.listbox.connect("row-activated", self.__row_activated_cb)
+
+        self.scroll_window = Gtk.ScrolledWindow()
+        self.scroll_window.add(self.listbox)
+        self.scroll_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        self.scroll_window.props.max_content_height = 350
+        self.scroll_window.props.propagate_natural_height = True
+
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, margin=PADDING)
+        vbox.pack_start(self.scroll_window, True, True, 0)
+        vbox.show_all()
+
+        self.add(vbox)
+
+    def update_object_list(self):
+        """Updates the list of not yet covered objects."""
+        self.object_manager = ObjectManager(self.clip.asset)
+
+        for row in self.listbox.get_children():
+            self.listbox.remove(row)
+
+        # Check which tracked objects have already been covered.
+        covered_objects = []
+        for effect in self.clip.get_top_effects():
+            tracked_object_id = effect.get_string(EFFECT_TRACKED_OBJECT_ID_META)
+            if tracked_object_id:
+                covered_objects.append(tracked_object_id)
+
+        # Allow selecting the not-yet-covered objects.
+        for _index, object_id, name in self.object_manager.objects:
+            if object_id not in covered_objects:
+                self.listbox.add(TrackedObjectRow(object_id, name))
+
+        # Allow tracking new objects.
+        button_row = Gtk.ListBoxRow(selectable=False)
+        track_objects_button = Gtk.Button(_("Track objects"))
+        track_objects_button.connect("clicked", self.__track_objects_button_clicked_cb)
+        button_row.add(track_objects_button)
+        self.listbox.add(button_row)
+
+        self.listbox.show_all()
+
+    def __row_activated_cb(self, listbox: Gtk.ListBox, row: TrackedObjectRow):
+        self._create_effect(row.object_id, row.name)
+
+        self.popdown()
+
+    def __effect_control_binding_added_cb(self, track_element, binding, object_id):
+        control_source = binding.props.control_source
+        timed_data = self.object_manager.values[object_id]
+        for timestamp, (x, y, w, h) in timed_data:
+            if binding.name == "posx":
+                value = x
+            elif binding.name == "posy":
+                value = y
+            elif binding.name == "width":
+                value = w
+            elif binding.name == "height":
+                value = h
+            else:
+                break
+
+            control_source.set(timestamp, value)
+
+    def __clip_child_added_cb(self, clip, track_element, object_id):
+        if not isinstance(track_element, GES.Effect):
+            return
+
+        clip.disconnect_by_func(self.__clip_child_added_cb)
+
+        track_element.connect("control-binding-added",
+                              self.__effect_control_binding_added_cb,
+                              object_id)
+        try:
+            for prop in ("posx", "posy", "width", "height"):
+                control_source = GstController.InterpolationControlSource()
+                control_source.props.mode = GstController.InterpolationMode.NONE
+                track_element.set_control_source(control_source, prop, "direct-absolute")
+        finally:
+            track_element.disconnect_by_func(self.__effect_control_binding_added_cb)
+
+    def _create_effect(self, object_id: str, name: str):
+        effect = GES.Effect.new(self._EFFECT_PIPELINE)
+        effect.register_meta_string(GES.MetaFlag.READABLE, EFFECT_TRACKED_OBJECT_ID_META, object_id)
+        effect.register_meta_string(GES.MetaFlag.READABLE, EFFECT_TRACKED_OBJECT_NAME_META, name)
+
+        self.log("Waiting for effect to be added to the clip")
+        self.clip.connect("child-added", self.__clip_child_added_cb, object_id)
+        self.clip.add_top_effect(effect, 0)
+
+        self.app.project_manager.current_project.pipeline.commit_timeline()
+
+    def __track_objects_button_clicked_cb(self, button):
+        tracker = TrackerPerspective(self.app, self.clip.asset)
+        self.app.project_manager.current_project.pipeline.pause()
+        tracker.setup_ui()
+        self.app.gui.show_perspective(tracker)

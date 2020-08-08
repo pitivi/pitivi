@@ -437,20 +437,18 @@ def gtk_style_context_get_color(context, state):
     return color
 
 
-def argb_to_gdk_rgba(color_int):
-    return Gdk.RGBA(color_int / 256 ** 2 % 256 / 255.,
-                    color_int / 256 ** 1 % 256 / 255.,
-                    color_int / 256 ** 0 % 256 / 255.,
-                    color_int / 256 ** 3 % 256 / 255.)
+def argb_to_gdk_rgba(argb: int) -> Gdk.RGBA:
+    return Gdk.RGBA(((argb >> 16) & 0xFF) / 255,
+                    ((argb >> 8) & 0xFF) / 255,
+                    ((argb >> 0) & 0xFF) / 255,
+                    ((argb >> 24) & 0xFF) / 255)
 
 
-def gdk_rgba_to_argb(color):
-    color_int = 0
-    color_int += int(color.alpha * 255) * 256 ** 3
-    color_int += int(color.red * 255) * 256 ** 2
-    color_int += int(color.green * 255) * 256 ** 1
-    color_int += int(color.blue * 255) * 256 ** 0
-    return color_int
+def gdk_rgba_to_argb(color: Gdk.RGBA) -> int:
+    return ((int(color.alpha * 255) << 24) +
+            (int(color.red * 255) << 16) +
+            (int(color.green * 255) << 8) +
+            int(color.blue * 255))
 
 
 def pack_color_32(red, green, blue, alpha=0xFFFF):
@@ -495,10 +493,6 @@ def unpack_color_64(value):
     blue = (value >> 16) & 0xFFFF
     alpha = value & 0xFFFF
     return red, green, blue, alpha
-
-
-def hex_to_rgb(value):
-    return tuple(float(int(value[i:i + 2], 16)) / 255.0 for i in range(0, 6, 2))
 
 
 def set_cairo_color(context, color):
