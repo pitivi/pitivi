@@ -26,6 +26,7 @@ from gi.repository import Gst
 
 from pitivi.medialibrary import AssetThumbnail
 from pitivi.medialibrary import MediaLibraryWidget
+from pitivi.medialibrary import TagState
 from pitivi.medialibrary import ViewType
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import ASSET_DURATION_META
@@ -514,3 +515,155 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         # Release click
         event = create_event(Gdk.EventType.BUTTON_RELEASE, button=3)
         mlib._flowbox_button_release_event_cb(mlib.flowbox, event)
+
+
+class TestTaggingAssets(BaseTestMediaLibrary):
+
+    def import_assets_in_medialibrary(self):
+        samples = ["30fps_numeroted_frames_red.mkv",
+                   "30fps_numeroted_frames_blue.webm", "1sec_simpsons_trailer.mp4"]
+        with common.cloned_sample(*samples):
+            self.check_import(samples, proxying_strategy=ProxyingStrategy.NOTHING)
+
+        self.assertTrue(self.medialibrary.tags_button.is_sensitive())
+
+    def add_new_tag(self, tag_name):
+        # Open the popover
+        self.medialibrary.tags_button.props.active = True
+        self.medialibrary.new_tag_entry.set_text(tag_name)
+        self.medialibrary.new_tag_entry.emit("activate")
+        self.medialibrary.tags_popover.hide()
+
+    def get_tags_list(self):
+        box = self.medialibrary.tags_popover.get_child()
+        popover_widgets = box.get_children()
+        return popover_widgets[1]
+
+    def assert_tags_popover(self, tags_state):
+        box = self.medialibrary.tags_popover.get_child()
+        popover_widgets = box.get_children()
+        tags_list = popover_widgets[1]
+
+        for row_widget in tags_list:
+            checkbox = row_widget.get_child()
+            tag_name = checkbox.get_label()
+            if tags_state[tag_name] == TagState.PRESENT:
+                self.assertTrue(checkbox.props.active)
+            elif tags_state[tag_name] == TagState.INCONSISTENT:
+                self.assertTrue(checkbox.props.inconsistent)
+            elif tags_state[tag_name] == TagState.ABSENT:
+                self.assertFalse(checkbox.props.active)
+            else:
+                raise Exception(tag_name)
+
+    def test_adding_tags(self):
+        self.mainloop = common.create_main_loop()
+        self.import_assets_in_medialibrary()
+        self.medialibrary.flowbox.unselect_all()
+
+        # Add a new tag "TAG" to asset1 via new tag entry field
+        asset1 = self.medialibrary.flowbox.get_child_at_index(0)
+        self.medialibrary.flowbox.select_child(asset1)
+        tag = "TAG"
+        self.add_new_tag(tag)
+        self.medialibrary.tags_button.props.active = True
+        self.assert_tags_popover({tag: TagState.PRESENT})
+        self.medialibrary.tags_popover.hide()
+        self.assertEqual(self.medialibrary.store[0].tags, {tag})
+        self.assertEqual(self.medialibrary.witnessed_tags, {tag})
+        self.medialibrary.flowbox.unselect_all()
+
+        # Add an existing tag "TAG" to asset2 via toggling the unchecked mark
+        asset2 = self.medialibrary.flowbox.get_child_at_index(1)
+        self.medialibrary.flowbox.select_child(asset2)
+        # Check if the tag is unchecked for now
+        self.medialibrary.tags_button.props.active = True
+        self.assert_tags_popover({tag: TagState.ABSENT})
+        tags_list = self.get_tags_list()
+        row_widget = tags_list.get_row_at_index(0)
+        checkbox = row_widget.get_child()
+        self.assertFalse(checkbox.props.active)
+        checkbox.props.active = True
+        self.medialibrary.tags_popover.hide()
+
+        # Check if "TAG" is applied to asset2
+        self.assertEqual(self.medialibrary.store[1].tags, {tag})
+        # Reopen popover to check if "TAG" is present and correctly checked in asset2
+        self.medialibrary.tags_button.props.active = True
+        self.assert_tags_popover({tag: TagState.PRESENT})
+        self.medialibrary.tags_popover.hide()
+
+        # We have "TAG" for both asset1 and asset2, but asset3 has no tags
+        # Add the existing inconsistent tag to every selected asset
+        self.medialibrary.flowbox.select_all()
+        self.medialibrary.tags_button.props.active = True
+        self.assert_tags_popover({tag: TagState.INCONSISTENT})
+        tags_list = self.get_tags_list()
+        row_widget = tags_list.get_row_at_index(0)
+        checkbox = row_widget.get_child()
+        # Make the tag present in all the tags
+        checkbox.props.active = True
+
+        # Reopen the tags popover to check if "TAG" is present in all assets
+        self.medialibrary.tags_popover.hide()
+        # Check if "TAG" is present in all the 3 assets
+        self.medialibrary.tags_button.props.active = True
+        self.assert_tags_popover({tag: TagState.PRESENT})
+        self.medialibrary.tags_popover.hide()
+
+    def test_removing_tags(self):
+        self.mainloop = common.create_main_loop()
+        self.import_assets_in_medialibrary()
+        tag = "TAG"
+        self.add_new_tag(tag)
+        self.assertEqual(self.medialibrary.witnessed_tags, {tag})
+
+        # Make sure "TAG" is present in all the assets
+        self.medialibrary.tags_button.props.active = True
+        self.assert_tags_popover({tag: TagState.PRESENT})
+        self.medialibrary.tags_popover.hide()
+        self.medialibrary.flowbox.unselect_all()
+
+        # Remove "TAG" from a single asset
+        child = self.medialibrary.flowbox.get_child_at_index(0)
+        self.medialibrary.flowbox.select_child(child)
+        self.medialibrary.tags_button.props.active = True
+        self.assertEqual(self.medialibrary.store[0].tags, {tag})
+        tags_list = self.get_tags_list()
+        row_widget = tags_list.get_row_at_index(0)
+        checkbox = row_widget.get_child()
+        self.assertTrue(checkbox.props.active)
+        checkbox.props.active = False
+        self.medialibrary.tags_popover.hide()
+
+        # Confirm "TAG" is removed from asset1
+        self.assertEqual(self.medialibrary.store[0].tags, set())
+        # Reopen the tags popover to check if "TAG" is removed from asset1
+        self.medialibrary.tags_button.props.active = True
+        self.assert_tags_popover({tag: TagState.ABSENT})
+        self.medialibrary.tags_popover.hide()
+
+        # Remove inconsistent "TAG" from the selected assets
+        self.medialibrary.flowbox.select_all()
+        self.medialibrary.tags_button.props.active = True
+
+        tags_list = self.get_tags_list()
+        row_widget = tags_list.get_row_at_index(0)
+        checkbox = row_widget.get_child()
+        self.assertTrue(checkbox.props.inconsistent)
+        # Toggle it to checked
+        checkbox.props.active = True
+        # Toggle it to unchecked
+        checkbox.props.active = False
+        self.medialibrary.tags_popover.hide()
+
+        # Check if popover is empty
+        self.medialibrary.tags_button.props.active = True
+        tags_list = self.get_tags_list()
+        row_widget = tags_list.get_row_at_index(0)
+        self.assertIsNone(row_widget)
+        self.medialibrary.tags_popover.hide()
+
+        self.assertEqual(self.medialibrary.witnessed_tags, set())
+        for item in self.medialibrary.store:
+            self.assertEqual(item.tags, set())

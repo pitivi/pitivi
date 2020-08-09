@@ -103,6 +103,31 @@ class AssetStoreItem(GObject.GObject):
         self.search_text = info_name(asset)
         self.thumb_decorator = thumb_decorator
 
+        # Fetch or Register tags
+        tags = asset.get_meta("pitivi::tags")
+        if not tags:
+            self.tags = set()
+            self.asset.register_meta(GES.MetaFlag.READWRITE, "pitivi::tags", "")
+        else:
+            self.tags = set(tags.split(","))
+
+
+class TagState(IntEnum):
+    """How the tag is associated with assets under selection."""
+
+    PRESENT = 1
+    INCONSISTENT = 2
+    ABSENT = 3
+
+
+class TagStoreItem(GObject.GObject):
+    """Data for displaying a Tag in the list."""
+
+    def __init__(self, name: str, initial_state: TagState):
+        GObject.GObject.__init__(self)
+        self.name = name
+        self.initial_state = initial_state
+
 
 class OptimizeOption(IntEnum):
     UNSUPPORTED_ASSETS = 0
@@ -485,6 +510,10 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._dragged_paths = []
         self.dragged = False
         self.rubberbanding = False
+        self.witnessed_tags = set()
+        self.tags_popover = None
+        self.new_tag_entry = None
+        self.__adding_tag = False
         self.clip_view = ViewType.__members__.get(self.app.settings.last_clip_view, ViewType.ICON)
         self.import_start_time = time.time()
         self._last_imported_uris = set()
@@ -525,6 +554,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         bg_color = bottom_toolbar_container.get_style_context().get_background_color(Gtk.StateFlags.NORMAL)
         bottom_toolbar.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
         self._clipprops_button = builder.get_object("media_props_button")
+        self.tags_button = builder.get_object("tags_button")
 
         self.scrollwin = Gtk.ScrolledWindow()
         self.scrollwin.set_policy(
@@ -582,6 +612,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.app.shortcuts.add("medialibrary.remove-assets", ["<Primary>Delete"],
                                self.remove_assets_action,
                                _("Remove the selected assets"))
+
+        # self.update_assets_tag.
 
         self.insert_at_end_action = Gio.SimpleAction.new("insert-assets-at-end", None)
         self.insert_at_end_action.connect("activate", self._insert_end_cb)
@@ -811,11 +843,28 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         for asset in self._pending_assets:
             thumb_decorator = AssetThumbnail(asset, self.app.proxy_manager)
             item = AssetStoreItem(asset, thumb_decorator)
+
+            asset.connect("notify-meta", self.asset_meta_changed_cb)
+            self.witnessed_tags.update(item.tags)
             self.store.append(item)
 
             thumb_decorator.connect("thumb-updated", self.__thumb_updated_cb, asset)
 
         del self._pending_assets[:]
+
+    def asset_meta_changed_cb(self, asset, meta_key, meta_value):
+        if meta_key != "pitivi::tags":
+            return
+
+        tags = set(meta_value.split(",")) if meta_value != "" else set()
+        for item in self.store:
+            if item.asset == asset:
+                item.tags = tags
+                # Rebuild witnessed_tags
+                self.witnessed_tags = set()
+                for item_ in self.store:
+                    self.witnessed_tags.update(item_.tags)
+                break
 
     def __thumb_updated_cb(self, asset_thumbnail, asset):
         """Handles the thumb-updated signal of the AssetThumbnails in the model."""
@@ -1113,6 +1162,157 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # In case the toggling is done when the items are filtered.
         self.filter_store()
 
+    def _tags_button_clicked_cb(self, unused_widget):
+        self.tags_popover = Gtk.Popover()
+        popover_heading = Gtk.Label(label=_("Tag as:"))
+        popover_heading.set_halign(Gtk.Align.START)
+
+        paths = self.get_selected_paths()
+
+        # Find the common tags in the selected assets
+        common_tags = list(self.store[paths[0]].tags)
+        for path in paths:
+            for tag in common_tags:
+                if tag not in self.store[path].tags:
+                    common_tags.remove(tag)
+            if not common_tags:
+                break
+
+        # Union of tags associated with assets under the current selection.
+        all_tags = []
+        for path in paths:
+            all_tags = list(set().union(all_tags, self.store[path].tags))
+        inconsistent_tags = list(set(all_tags) - set(common_tags))
+
+        tags = list(self.witnessed_tags)
+        tags.sort()
+        tagstore = Gio.ListStore()
+        for tag in tags:
+            if tag in common_tags:
+                state = TagState.PRESENT
+            elif tag in inconsistent_tags:
+                state = TagState.INCONSISTENT
+            else:
+                state = TagState.ABSENT
+            tagstore.append(TagStoreItem(tag, state))
+
+        tags_list = Gtk.ListBox()
+        tags_list.bind_model(tagstore, self.create_tagslist_widget_func)
+        tags_list.set_can_focus(False)
+
+        new_entry_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.new_tag_entry = Gtk.Entry()
+        self.new_tag_entry.props.placeholder_text = _("Enter tag")
+        self.new_tag_entry.set_width_chars(12)
+        self.new_tag_entry.connect("activate", self.new_tag_entry_activated_cb, tagstore)
+        add_tag_button = Gtk.Button.new_with_label(_("Add"))
+        add_tag_button.connect("clicked", self.add_tag_button_clicked_cb, tagstore)
+        new_entry_box.pack_start(self.new_tag_entry, False, False, 0)
+        new_entry_box.pack_start(add_tag_button, False, False, PADDING)
+
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        box.props.margin = PADDING
+        box.pack_start(popover_heading, False, False, SPACING)
+        box.pack_start(tags_list, True, True, PADDING)
+        box.pack_start(new_entry_box, False, False, 0)
+
+        self.tags_popover.connect("closed", self._tags_popover_closed_cb, tags_list, tagstore)
+        self.tags_popover.add(box)
+        self.tags_popover.set_position(Gtk.PositionType.BOTTOM)
+        self.tags_popover.set_relative_to(self.tags_button)
+        self.tags_popover.show_all()
+        self.tags_popover.popup()
+        tags_list.unselect_all()
+
+    def create_tagslist_widget_func(self, tag_item: TagStoreItem):
+        """Converts a tag item to a widget."""
+        box = Gtk.ListBoxRow()
+        box.props.margin = PADDING
+
+        checkbutton = Gtk.CheckButton.new_with_label(tag_item.name)
+
+        if tag_item.initial_state == TagState.INCONSISTENT:
+            checkbutton.props.inconsistent = True
+        active = self.__adding_tag or tag_item.initial_state == TagState.PRESENT
+        checkbutton.set_active(active)
+
+        checkbutton.connect("toggled", self._tag_toggled_cb, tag_item)
+
+        box.add(checkbutton)
+        box.show_all()
+
+        return box
+
+    def _tags_popover_closed_cb(self, popover, tags_list, tagstore):
+        self.apply_changed_tags(tags_list, tagstore)
+        popover.hide()
+        self.tags_button.set_active(False)
+        self.tags_popover = None
+
+    def _tag_toggled_cb(self, toggle_button, tag_item):
+        """Handles the toggling of a tag in the list."""
+        if toggle_button.props.inconsistent:
+            toggle_button.props.active = True
+            toggle_button.props.inconsistent = False
+        else:
+            if toggle_button.props.active:
+                if tag_item.initial_state == TagState.INCONSISTENT:
+                    toggle_button.props.inconsistent = True
+
+    def new_tag_entry_activated_cb(self, unused_widget, tagstore):
+        self._add_new_tag(tagstore)
+
+    def add_tag_button_clicked_cb(self, unused_widget, tagstore):
+        self._add_new_tag(tagstore)
+
+    def _add_new_tag(self, tagstore):
+        if not self.new_tag_entry.get_text():
+            return
+
+        tag_name = self.new_tag_entry.get_text()
+        # Don't accept duplicate entry
+        for tag_item in tagstore:
+            if tag_item.name == tag_name:
+                return
+
+        self.__adding_tag = True
+        try:
+            tagstore.append(TagStoreItem(tag_name, TagState.ABSENT))
+        finally:
+            self.__adding_tag = False
+
+        self.new_tag_entry.set_text("")
+
+    def apply_changed_tags(self, tags_list, tagstore):
+        paths = self.get_selected_paths()
+        with self.app.action_log.started("Alter tags", toplevel=True):
+            for i, row_widget in enumerate(tags_list):
+                checkbox = row_widget.get_child()
+                initial_state = tagstore[i].initial_state
+                tag_name = tagstore[i].name
+                if checkbox.props.inconsistent:
+                    # Nothing shall be changed.
+                    continue
+
+                if checkbox.props.active:
+                    if initial_state != TagState.PRESENT:
+                        for path in paths:
+                            asset_store_item = self.store[path]
+                            if tag_name not in asset_store_item.tags:
+                                old_meta = asset_store_item.asset.get_meta("pitivi::tags")
+                                new_meta = old_meta + "," + tag_name if old_meta else tag_name
+                                asset_store_item.asset.set_meta("pitivi::tags", new_meta)
+                else:
+                    if initial_state != TagState.ABSENT:
+                        for path in paths:
+                            asset_store_item = self.store[path]
+                            if tag_name in asset_store_item.tags:
+                                old_meta = asset_store_item.asset.get_meta("pitivi::tags")
+                                new_meta = old_meta.split(",")
+                                new_meta.remove(tag_name)
+                                new_meta = ",".join(new_meta)
+                                asset_store_item.asset.set_meta("pitivi::tags", new_meta)
+
     def __stop_using_proxy_cb(self, unused_action, unused_parameter):
         prefer_original = self.app.settings.proxying_strategy == ProxyingStrategy.NOTHING
         self._project.disable_proxies_for_assets(self.get_selected_assets(),
@@ -1288,6 +1488,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         selected_count = len(self.flowbox.get_selected_children())
         self.remove_assets_action.set_enabled(selected_count)
         self.insert_at_end_action.set_enabled(selected_count)
+        self.tags_button.set_sensitive(selected_count)
         # Some actions can only be done on a single item at a time:
         self._clipprops_button.set_sensitive(selected_count == 1)
 

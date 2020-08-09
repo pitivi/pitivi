@@ -133,12 +133,16 @@ class ProjectObserver(MetaContainerObserver):
         MetaContainerObserver.__init__(self, project, action_log)
         project.connect("asset-added", self._asset_added_cb)
         project.connect("asset-removed", self._asset_removed_cb)
+        assets = project.list_assets(GES.Extractable)
+        for asset in assets:
+            MetaContainerObserver.__init__(self, asset, action_log)
         self.timeline_observer = TimelineObserver(project.ges_timeline,
                                                   action_log)
 
     def _asset_added_cb(self, unused_project, asset):
         if not isinstance(asset, GES.UriClipAsset):
             return
+        MetaContainerObserver.__init__(self, asset, self.action_log)
         action = AssetAddedAction(asset)
         self.action_log.push(action)
 

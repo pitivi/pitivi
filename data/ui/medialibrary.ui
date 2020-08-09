@@ -53,6 +53,25 @@
           </packing>
         </child>
         <child>
+          <object class="GtkToggleToolButton" id="tags_button">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="tooltip_markup" translatable="yes">Show tags associated with selected clips</property>
+            <property name="use_underline">True</property>
+            <property name="icon_name">tag-symbolic</property>
+            <signal name="toggled" handler="_tags_button_clicked_cb" swapped="no"/>
+            <child internal-child="accessible">
+              <object class="AtkObject" id="tags_button-atkobject">
+                <property name="AtkObject::accessible-name">tags_button</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="homogeneous">True</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkToolButton" id="media_insert_button">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
