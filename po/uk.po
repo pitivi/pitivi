@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-07-28 00:37+0000\n"
-"PO-Revision-Date: 2020-07-28 08:56+0300\n"
+"POT-Creation-Date: 2020-08-10 12:11+0000\n"
+"PO-Revision-Date: 2020-08-10 21:00+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -117,7 +117,7 @@ msgstr "Розпочинаємо автовирівнювання"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Виконання автовирівнювання</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1180
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1473
 msgid "Estimating..."
 msgstr "Визначення оцінки…"
 
@@ -323,7 +323,7 @@ msgstr "Нещодавні проєкти"
 msgid "Updated"
 msgstr "Оновлено"
 
-#: data/ui/greeter.ui:190 pitivi/preset.py:108
+#: data/ui/greeter.ui:190 pitivi/preset.py:107 pitivi/render.py:208
 msgid "Remove"
 msgstr "Вилучити"
 
@@ -474,8 +474,7 @@ msgstr ""
 "Повернути попередні значення усіх параметрів (значення до відкриття "
 "діалогового вікна налаштовування)"
 
-#: data/ui/preferences.ui:61 data/ui/renderingdialog.ui:41
-#: data/ui/renderingprogress.ui:85
+#: data/ui/preferences.ui:61 data/ui/renderingprogress.ui:85
 msgid "Close"
 msgstr "Закрити"
 
@@ -493,7 +492,7 @@ msgid "Cancel"
 msgstr "Скасувати"
 
 #: data/ui/projectsettings.ui:148 data/ui/projectsettings.ui:422
-#: data/ui/renderingdialog.ui:234
+#: data/ui/renderingdialog.ui:97
 msgid "Preset:"
 msgstr "Шаблон:"
 
@@ -514,26 +513,26 @@ msgstr "Зберегти пропорції"
 msgid "Maintain aspect ratio"
 msgstr "Зберігати співвідношення сторін кадру"
 
-#: data/ui/projectsettings.ui:332 data/ui/renderingdialog.ui:451
+#: data/ui/projectsettings.ui:332 data/ui/renderingdialog.ui:407
 msgid "Frame rate:"
 msgstr "Частота кадрів:"
 
 #. The title of the section with the video settings
-#: data/ui/projectsettings.ui:385 data/ui/renderingdialog.ui:469
+#: data/ui/projectsettings.ui:385 data/ui/renderingdialog.ui:425
 #: pitivi/effects.py:247
 msgid "Video"
 msgstr "Відео"
 
-#: data/ui/projectsettings.ui:488 data/ui/renderingdialog.ui:508
+#: data/ui/projectsettings.ui:488 data/ui/renderingdialog.ui:464
 msgid "Channels:"
 msgstr "Канали:"
 
-#: data/ui/projectsettings.ui:522 data/ui/renderingdialog.ui:617
+#: data/ui/projectsettings.ui:522 data/ui/renderingdialog.ui:573
 msgid "Sample rate:"
 msgstr "Частота дискретизації:"
 
 #. The title of the section with the audio settings
-#: data/ui/projectsettings.ui:566 data/ui/renderingdialog.ui:635
+#: data/ui/projectsettings.ui:566 data/ui/renderingdialog.ui:591
 #: pitivi/effects.py:121 pitivi/effects.py:247
 msgid "Audio"
 msgstr "Звук"
@@ -579,56 +578,52 @@ msgstr "Дія:"
 msgid "Safe Areas"
 msgstr "Безпечні області"
 
-#: data/ui/renderingdialog.ui:20 data/ui/renderingdialog.ui:55
+#: data/ui/renderingdialog.ui:35 data/ui/renderingdialog.ui:55
 #: pitivi/editorperspective.py:325
 msgid "Render"
 msgstr "Обробити"
 
-#: data/ui/renderingdialog.ui:109
-msgid "Folder:"
-msgstr "Тека:"
+#: data/ui/renderingdialog.ui:142 pitivi/render.py:70
+msgid "Custom"
+msgstr "Нетиповий"
 
-#: data/ui/renderingdialog.ui:124
-msgid "File name:"
-msgstr "Назва файла:"
-
-#: data/ui/renderingdialog.ui:151
-msgid "Container format:"
-msgstr "Формат контейнера:"
-
-#: data/ui/renderingdialog.ui:283
+#: data/ui/renderingdialog.ui:239
 msgid "Scale:"
 msgstr "Масштаб:"
 
-#: data/ui/renderingdialog.ui:316
+#: data/ui/renderingdialog.ui:272
 msgid "Scale"
 msgstr "Масштаб"
 
-#: data/ui/renderingdialog.ui:336
+#: data/ui/renderingdialog.ui:292
 msgid "Height"
 msgstr "Висота"
 
-#: data/ui/renderingdialog.ui:355
+#: data/ui/renderingdialog.ui:311
 msgid "Project Settings..."
 msgstr "Параметри проєкту…"
 
-#: data/ui/renderingdialog.ui:370 data/ui/renderingdialog.ui:540
+#: data/ui/renderingdialog.ui:326 data/ui/renderingdialog.ui:496
 msgid "Advanced..."
 msgstr "Додатково…"
 
-#: data/ui/renderingdialog.ui:409 data/ui/renderingdialog.ui:580
+#: data/ui/renderingdialog.ui:365 data/ui/renderingdialog.ui:536
 msgid "Codec:"
 msgstr "Кодек:"
 
-#: data/ui/renderingdialog.ui:435
+#: data/ui/renderingdialog.ui:391
 msgid "Framerate"
 msgstr "Частота кадрів"
 
-#: data/ui/renderingdialog.ui:660
+#: data/ui/renderingdialog.ui:625
+msgid "Container format:"
+msgstr "Формат контейнера:"
+
+#: data/ui/renderingdialog.ui:692
 msgid "Automatically render from proxy files"
 msgstr "Автоматично обробляти з проміжних файлів"
 
-#: data/ui/renderingdialog.ui:664
+#: data/ui/renderingdialog.ui:696
 msgid ""
 "Use proxy files if they are available and the source asset media format is "
 "not officially supported.\n"
@@ -642,11 +637,11 @@ msgstr ""
 "Цей варіант є непоганим компромісом між якістю відеорезультатів та "
 "надійністю роботи програми."
 
-#: data/ui/renderingdialog.ui:678
+#: data/ui/renderingdialog.ui:711
 msgid "Always render from proxy files"
 msgstr "Завжди обробляти з проміжних файлів"
 
-#: data/ui/renderingdialog.ui:682
+#: data/ui/renderingdialog.ui:715
 msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
@@ -654,11 +649,11 @@ msgstr ""
 "Виконати обробку усіх кліпів зі створеними проміжними кліпами на основі "
 "даних проміжних кліпів. Така обробка може призвести до певної втрати якості."
 
-#: data/ui/renderingdialog.ui:694
+#: data/ui/renderingdialog.ui:728
 msgid "Never render from proxy files"
 msgstr "Ніколи не обробляти з проміжних файлів"
 
-#: data/ui/renderingdialog.ui:698
+#: data/ui/renderingdialog.ui:732
 msgid ""
 "Always use source assets for rendering. It is the best choice for the "
 "quality of the rendered video, but you might hit some bugs because of the "
@@ -669,6 +664,19 @@ msgstr ""
 "варіант з огляду на якість отриманого відео, але можливі певні проблеми, "
 "якщо для початкових даних не передбачено офіційної підтримки.\n"
 "<i>Автори програми не несуть відповідальності за можливу втрату даних!</i>"
+
+#: data/ui/renderingdialog.ui:756
+#| msgid "Advanced..."
+msgid "Advanced"
+msgstr "Додатково"
+
+#: data/ui/renderingdialog.ui:777
+msgid "Folder:"
+msgstr "Тека:"
+
+#: data/ui/renderingdialog.ui:813
+msgid "File name:"
+msgstr "Назва файла:"
 
 #: data/ui/renderingprogress.ui:8
 msgid "Rendering"
@@ -930,16 +938,14 @@ msgid "Effects"
 msgstr "Ефекти"
 
 #: pitivi/clipproperties.py:239
-#| msgid "To apply an effect to the clip, drag it from the Effect Library."
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
 msgstr ""
-"Щоб застосувати ефект до кліпу, перетягніть пункт ефект з бібліотеки ефектів"
-" або скористайтеся розташованою нижче кнопкою."
+"Щоб застосувати ефект до кліпу, перетягніть пункт ефект з бібліотеки ефектів "
+"або скористайтеся розташованою нижче кнопкою."
 
 #: pitivi/clipproperties.py:247
-#| msgid "Effects"
 msgid "Add Effect"
 msgstr "Додати ефект"
 
@@ -1030,7 +1036,8 @@ msgstr "Скасувати"
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/editorperspective.py:319 pitivi/editorperspective.py:532
 #: pitivi/editorperspective.py:673 pitivi/editorperspective.py:721
-#: pitivi/editorperspective.py:774 pitivi/preset.py:114 pitivi/project.py:200
+#: pitivi/editorperspective.py:774 pitivi/preset.py:113 pitivi/project.py:200
+#: pitivi/render.py:214
 msgid "Save"
 msgstr "Зберегти"
 
@@ -1115,7 +1122,7 @@ msgid "Detect automatically"
 msgstr "Визначити автоматично"
 
 #: pitivi/editorperspective.py:730 pitivi/editorperspective.py:777
-#: pitivi/project.py:72 pitivi/render.py:436
+#: pitivi/project.py:72 pitivi/render.py:708
 msgid "Untitled"
 msgstr "Без назви"
 
@@ -1169,7 +1176,6 @@ msgid "Uncategorized"
 msgstr "Без категорій"
 
 #: pitivi/effects.py:394 pitivi/effects.py:661
-#| msgid "All effects"
 msgid "No effects"
 msgstr "Немає ефектів"
 
@@ -1177,7 +1183,7 @@ msgstr "Немає ефектів"
 msgid "Add to Favourites"
 msgstr "Додати до улюблених"
 
-#: pitivi/greeterperspective.py:228 pitivi/preset.py:102
+#: pitivi/greeterperspective.py:228 pitivi/preset.py:101 pitivi/render.py:202
 msgid "New"
 msgstr "Новий"
 
@@ -1481,29 +1487,18 @@ msgstr "Додатки користувача"
 msgid "System plugins"
 msgstr "Загальносистемні додатки"
 
-#: pitivi/preset.py:229
+#: pitivi/preset.py:228
 msgid "New preset"
 msgstr "Новий шаблон"
 
-#: pitivi/preset.py:232
+#: pitivi/preset.py:231
 #, python-format
 msgid "New preset %d"
 msgstr "Новий шаблон %d"
 
-#. Translators: This must contain exclusively low case alphanum and '-'
-#: pitivi/preset.py:540
-msgid "new-profile"
-msgstr "новий-профіль"
-
-#. Translators: This must contain exclusively low case alphanum and '-'
-#: pitivi/preset.py:544
-#, python-format
-msgid "new-profile-%d"
-msgstr "новий-профіль-%d"
-
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:183 pitivi/render.py:880
+#: pitivi/project.py:183 pitivi/render.py:1173
 msgid "Sorry, something didn’t work right."
 msgstr "Вибачте, щось пішло не так."
 
@@ -1583,7 +1578,26 @@ msgstr "проєкт"
 msgid "Pitivi encoding profile"
 msgstr "Профіль кодування Pitivi"
 
-#: pitivi/render.py:338
+#: pitivi/render.py:103
+msgid "YouTube"
+msgstr "YouTube"
+
+#: pitivi/render.py:104
+msgid "DVD"
+msgstr "DVD"
+
+#. Translators: This must contain exclusively low case alphanum and '-'
+#: pitivi/render.py:296
+msgid "new-profile"
+msgstr "новий-профіль"
+
+#. Translators: This must contain exclusively low case alphanum and '-'
+#: pitivi/render.py:300
+#, python-format
+msgid "new-profile-%d"
+msgstr "новий-профіль-%d"
+
+#: pitivi/render.py:609
 #, python-format
 msgid "Rendering — %d%% complete"
 msgstr "Обробка — виконано на %d%%"
@@ -1594,27 +1608,27 @@ msgstr "Обробка — виконано на %d%%"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals).
-#: pitivi/render.py:347
+#: pitivi/render.py:618
 #, python-format
 msgid "About %s left"
 msgstr "Залишилося близько %s"
 
-#: pitivi/render.py:395
+#: pitivi/render.py:666
 msgid "Currently rendering"
 msgstr "Триває обробка"
 
 #. Translators: This item appears in a combobox's popup and
 #. contains as children the unsupported (but still available)
 #. muxers and encoders.
-#: pitivi/render.py:631
+#: pitivi/render.py:924
 msgid "Unsupported"
 msgstr "Не підтримується"
 
-#: pitivi/render.py:702
+#: pitivi/render.py:995
 msgid "A file name is required."
 msgstr "Слід вказати назву файла."
 
-#: pitivi/render.py:705
+#: pitivi/render.py:998
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1623,23 +1637,23 @@ msgstr ""
 "Якщо ви не бажаєте перезаписати цей файл, виберіть іншу назву файла або іншу "
 "теку."
 
-#: pitivi/render.py:709
+#: pitivi/render.py:1002
 #, python-format
 msgid "Remove invalid characters from the filename: %s"
 msgstr "Вилучіть некоректні символи із назви файла: %s"
 
-#: pitivi/render.py:740
+#: pitivi/render.py:1033
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f ГБ"
 
 #. -1 means round to 10
-#: pitivi/render.py:745
+#: pitivi/render.py:1038
 #, python-format
 msgid "%d MB"
 msgstr "%d МБ"
 
-#: pitivi/render.py:874
+#: pitivi/render.py:1167
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
@@ -1649,11 +1663,11 @@ msgstr ""
 "зробите, обробка x264enc може виявитися неможливою.</b>\n"
 "\n"
 
-#: pitivi/render.py:882
+#: pitivi/render.py:1175
 msgid "An error occurred while trying to render your project."
 msgstr "Під час спроби обробити ваш проєкт сталася помилка."
 
-#: pitivi/render.py:884
+#: pitivi/render.py:1177
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1661,11 +1675,11 @@ msgstr ""
 "Вам варто ознайомитися з нашими настановами щодо усування вад або повідомити "
 "розробникам про ваду у програмі. Повідомлення про помилку GStreamer:"
 
-#: pitivi/render.py:1128 pitivi/render.py:1129 pitivi/render.py:1135
+#: pitivi/render.py:1421 pitivi/render.py:1422 pitivi/render.py:1428
 msgid "Render complete"
 msgstr "Обробку завершено"
 
-#: pitivi/render.py:1133
+#: pitivi/render.py:1426
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "Обробку «%s» завершено."
@@ -1926,7 +1940,6 @@ msgid "Seeks to the first clip edge before the playhead."
 msgstr "Позиціювання на першому краю кліпу до позиції відтворення."
 
 #: pitivi/timeline/timeline.py:1768
-#| msgid "Add keyframe to the keyframe curve of selected clip"
 msgid "Add an effect to the selected clip"
 msgstr "Додати ефект до позначеного кліпу"
 
