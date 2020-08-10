@@ -77,6 +77,8 @@ def set_icon_and_title(icon, title, preset_item, icon_size=Gtk.IconSize.DND):
     title.set_xalign(0)
     title.set_yalign(0)
 
+    icon.props.valign = Gtk.Align.START
+
     if icon_name in icon_files:
         icon_filename = icon_files[icon_name]
         icon_path = os.path.join(configure.get_pixmap_dir(), "presets", icon_filename)
@@ -90,7 +92,6 @@ def set_icon_and_title(icon, title, preset_item, icon_size=Gtk.IconSize.DND):
 
     icon_name = icon_names.get(icon_name, "applications-multimedia-symbolic")
     icon.set_from_icon_name(icon_name, icon_size)
-    icon.props.valign = Gtk.Align.START
 
 
 class PresetItem(GObject.Object):
