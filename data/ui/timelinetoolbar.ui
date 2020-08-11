@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.19.0 -->
+<!-- Generated with glade 3.36.0 -->
 <interface>
   <requires lib="gtk+" version="3.16"/>
   <object class="GtkToolbar" id="timeline_toolbar">
@@ -8,6 +8,7 @@
     <property name="valign">start</property>
     <property name="orientation">vertical</property>
     <property name="toolbar_style">icons</property>
+    <property name="icon_size">2</property>
     <child>
       <object class="GtkToolButton" id="toolbutton1">
         <property name="visible">True</property>
@@ -16,7 +17,7 @@
         <property name="action_name">timeline.split-clips</property>
         <property name="label" translatable="yes">Split</property>
         <property name="use_underline">True</property>
-        <property name="icon_name">pitivi-split</property>
+        <property name="icon_name">scissors-symbolic</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -31,7 +32,7 @@
         <property name="action_name">timeline.delete-selected-clips</property>
         <property name="label" translatable="yes">Delete</property>
         <property name="use_underline">True</property>
-        <property name="stock_id">gtk-delete</property>
+        <property name="icon_name">edit-delete-symbolic</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -46,7 +47,7 @@
         <property name="action_name">timeline.group-selected-clips</property>
         <property name="label" translatable="yes">Group</property>
         <property name="use_underline">True</property>
-        <property name="icon_name">pitivi-group</property>
+        <property name="icon_name">attach-audio-symbolic</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -61,7 +62,7 @@
         <property name="action_name">timeline.ungroup-selected-clips</property>
         <property name="label" translatable="yes">Ungroup</property>
         <property name="use_underline">True</property>
-        <property name="icon_name">pitivi-ungroup</property>
+        <property name="icon_name">detach-audio-symbolic</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -74,8 +75,9 @@
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Copy clips</property>
         <property name="action_name">timeline.copy-selected-clips</property>
+        <property name="label" translatable="yes">Copy</property>
         <property name="use_underline">True</property>
-        <property name="stock_id">gtk-copy</property>
+        <property name="icon_name">edit-copy-symbolic</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -88,8 +90,9 @@
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Paste clips</property>
         <property name="action_name">timeline.paste-clips</property>
+        <property name="label" translatable="yes">Paste</property>
         <property name="use_underline">True</property>
-        <property name="stock_id">gtk-paste</property>
+        <property name="icon_name">edit-paste-symbolic</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -105,7 +108,7 @@
         <property name="visible_vertical">False</property>
         <property name="label" translatable="yes">Align</property>
         <property name="use_underline">True</property>
-        <property name="icon_name">pitivi-align</property>
+        <property name="icon_name">stopwatch-symbolic</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -121,7 +124,7 @@ When enabled, adjacent clips automatically move to fill gaps.</property>
         <property name="action_name">timeline.toggle-gapless-mode</property>
         <property name="label" translatable="yes">Gapless mode</property>
         <property name="use_underline">True</property>
-        <property name="icon_name">pitivi-gapless</property>
+        <property name="icon_name">align-tool-symbolic</property>
       </object>
       <packing>
         <property name="expand">False</property>
