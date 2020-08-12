@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-08-10 12:11+0000\n"
-"PO-Revision-Date: 2020-08-10 21:00+0300\n"
+"POT-Creation-Date: 2020-08-11 21:47+0000\n"
+"PO-Revision-Date: 2020-08-12 09:14+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -666,7 +666,6 @@ msgstr ""
 "<i>Автори програми не несуть відповідальності за можливу втрату даних!</i>"
 
 #: data/ui/renderingdialog.ui:756
-#| msgid "Advanced..."
 msgid "Advanced"
 msgstr "Додатково"
 
@@ -713,55 +712,64 @@ msgstr "Ініціалізація…"
 msgid "Estimated filesize:"
 msgstr "Оцінка розміру файла:"
 
-#: data/ui/timelinetoolbar.ui:15
+#: data/ui/timelinetoolbar.ui:16
 msgid "Split clips at playhead position"
 msgstr "Розділити кліп за позицією відтворення"
 
-#: data/ui/timelinetoolbar.ui:17
+#: data/ui/timelinetoolbar.ui:18
 msgid "Split"
 msgstr "Розділити"
 
-#: data/ui/timelinetoolbar.ui:30
+#: data/ui/timelinetoolbar.ui:31
 msgid "Delete clips"
 msgstr "Вилучити кліпи"
 
-#: data/ui/timelinetoolbar.ui:32
+#: data/ui/timelinetoolbar.ui:33
 msgid "Delete"
 msgstr "Вилучити"
 
-#: data/ui/timelinetoolbar.ui:45
+#: data/ui/timelinetoolbar.ui:46
 msgid "Group clips"
 msgstr "Згрупувати кліпи"
 
-#: data/ui/timelinetoolbar.ui:47
+#: data/ui/timelinetoolbar.ui:48
 msgid "Group"
 msgstr "Групувати"
 
-#: data/ui/timelinetoolbar.ui:60
+#: data/ui/timelinetoolbar.ui:61
 msgid "Ungroup clips"
 msgstr "Розгрупувати кліпи"
 
-#: data/ui/timelinetoolbar.ui:62
+#: data/ui/timelinetoolbar.ui:63
 msgid "Ungroup"
 msgstr "Розгрупувати"
 
-#: data/ui/timelinetoolbar.ui:75
+#: data/ui/timelinetoolbar.ui:76
 msgid "Copy clips"
 msgstr "Скопіювати кліпи"
 
-#: data/ui/timelinetoolbar.ui:89
+#: data/ui/timelinetoolbar.ui:78
+msgid "Copy"
+msgstr "Копіювати"
+
+#: data/ui/timelinetoolbar.ui:91
 msgid "Paste clips"
 msgstr "Вставити кліпи"
 
-#: data/ui/timelinetoolbar.ui:103
+#: data/ui/timelinetoolbar.ui:93
+#| msgid "Paste clips"
+msgid "Paste"
+msgstr "Вставити"
+
+#: data/ui/timelinetoolbar.ui:106
 msgid "Align clips based on their soundtracks"
 msgstr "Вирівняти кліпи на основі їхнього звукового супроводу"
 
-#: data/ui/timelinetoolbar.ui:106
+#: data/ui/timelinetoolbar.ui:109
 msgid "Align"
 msgstr "Вирівняти"
 
-#: data/ui/timelinetoolbar.ui:119
+#: data/ui/timelinetoolbar.ui:122
 msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
@@ -770,7 +778,7 @@ msgstr ""
 "Якщо увімкнено, програма пересуватиме сусідні кліпи так, щоб заповнити "
 "проміжки між ними."
 
-#: data/ui/timelinetoolbar.ui:122
+#: data/ui/timelinetoolbar.ui:125
 msgid "Gapless mode"
 msgstr "Неперервний режим"
 
@@ -2429,36 +2437,3 @@ msgid ""
 msgstr ""
 "Неможливо перевизначити {key}, оскільки команди клавіатурних скорочень "
 "призначено лише для читання."
-
-#~ msgid "Show video effects"
-#~ msgstr "Показати відеоефекти"
-
-#~ msgid "Show audio effects"
-#~ msgstr "Показати звукові ефекти"
-
-#~ msgid "Clear the current search"
-#~ msgstr "Спорожнити поле пошуку"
-
-#~ msgid "Remove effect"
-#~ msgstr "Вилучити ефект"
-
-#~ msgid "Active"
-#~ msgstr "Активний"
-
-#~ msgid "Type"
-#~ msgstr "Тип"
-
-#~ msgid "Effect name"
-#~ msgstr "Назва ефекту"
-
-#~ msgid "Icon"
-#~ msgstr "Піктограма"
-
-#~ msgid "Information"
-#~ msgstr "Інформація"
-
-#~ msgid "Create"
-#~ msgstr "Створити"
-
-#~ msgid "Select a title clip to edit or create a new one."
-#~ msgstr "Виберіть кліп титрів для редагування або створіть його."
