@@ -18,6 +18,7 @@
 import os
 import posixpath
 import time
+from enum import IntEnum
 from gettext import gettext as _
 
 from gi.repository import GdkPixbuf
@@ -101,7 +102,7 @@ class PresetItem(GObject.Object):
 
         name_dict = {
             "youtube": _("YouTube"),
-            "dvd": _("DVD")
+            "dvd": _("DVD"),
         }
 
         self.name = name
@@ -182,7 +183,7 @@ class PresetsManager(GObject.Object, Loggable):
         self.action_save = None
 
         self.cur_preset_item = None
-        self.model = Gio.ListStore.new(PresetItem)          # preset profiles model
+        self.model = Gio.ListStore.new(PresetItem)
 
         self.load_all()
 
@@ -246,10 +247,12 @@ class PresetsManager(GObject.Object, Loggable):
     def _save_preset_cb(self, unused_action, unused_param):
         name = self.cur_preset_item.target.get_name()
 
+        # Remove the currently selected preset item from the model.
         res, pos = self.model.find(self.cur_preset_item)
         assert res, self.cur_preset_item.name
         self.model.remove(pos)
 
+        # Recreate the preset with the current values.
         self.cur_preset_item = self.create_preset(name)
         self.emit("profile-selected", self.cur_preset_item)
 
@@ -302,7 +305,7 @@ class PresetsManager(GObject.Object, Loggable):
         return name
 
     def select_preset(self, preset_item):
-        """Selects preset from currently active row in preset listbox.
+        """Selects a preset.
 
         Args:
             preset_item (PresetItem): The row representing the preset to be applied.
@@ -558,7 +561,83 @@ def extension_for_muxer(muxer_name):
     return exts.get(muxer_name)
 
 
-# --------------------------------- Public classes -----------------------------#
+class Quality(IntEnum):
+    LOW = 0
+    MEDIUM = 1
+    HIGH = 2
+
+
+class QualityAdapter(Loggable):
+    """Adapter between a quality value and the properties of an Encoder."""
+
+    def __init__(self, props_values, prop_name=None):
+        super().__init__()
+
+        self.props_values = props_values
+
+        if not prop_name:
+            assert len(props_values) == 1
+            prop_name = list(props_values.keys())[0]
+        self.prop_name = prop_name
+
+    def update_adjustment(self, adjustment, vcodecsettings, callback_handler_id):
+        if self.prop_name in vcodecsettings:
+            encoder_property_value = vcodecsettings[self.prop_name]
+            values = self.props_values[self.prop_name]
+            for quality in (Quality.HIGH, Quality.MEDIUM, Quality.LOW):
+                if (values[0] < values[-1] and encoder_property_value >= values[quality]) or \
+                        (values[0] > values[-1] and encoder_property_value <= values[quality]):
+                    break
+
+            self.debug("Got existing value for prop %s=%s -> quality=%s", self.prop_name, encoder_property_value, quality)
+        else:
+            quality = Quality.LOW
+            self.debug("Cannot calculate quality from missing prop %s", self.prop_name)
+
+        adjustment.handler_block(callback_handler_id)
+        try:
+            adjustment.props.value = quality
+        finally:
+            adjustment.handler_unblock(callback_handler_id)
+
+    def update_project_vcodecsettings(self, project, quality):
+        for prop_name, values in self.props_values.items():
+            if callable(values):
+                value = values(project)
+            else:
+                value = values[quality]
+            project.vcodecsettings[prop_name] = value
+
+
+quality_adapters = {
+    Encoders.X264: QualityAdapter(
+        {
+            # quantizer accepts values between 0..50, default is 21.
+            # Values inspired by https://slhck.info/video/2017/03/01/rate-control.html
+            "quantizer": (25, 21, 18),
+            # Encoding pass/type: Constant Quality
+            # https://gstreamer.freedesktop.org/documentation/x264/index.html?gi-language=python#GstX264EncPass
+            "pass": lambda unused_project: 5,
+        },
+        prop_name="quantizer"),
+    Encoders.VP8: QualityAdapter(
+        {
+            # cq-level accepts values between 0..63, default is 10.
+            "cq-level": (31, 47, 63),
+            # Rate control mode: Constant Quality Mode (CQ) mode
+            # https://gstreamer.freedesktop.org/documentation/vpx/GstVPXEnc.html?gi-language=python#GstVPXEnc:end-usage
+            "end-usage": lambda unused_project: 2,
+        },
+        prop_name="cq-level"),
+    Encoders.THEORA: QualityAdapter({
+        # Setting the quality property will produce a variable bitrate (VBR) stream.
+        # quality accepts values between 0..63, default is 48.
+        "quality": (31, 48, 63)}),
+    Encoders.JPEG: QualityAdapter({
+        # quality accepts values between 0..100, default is 85.
+        "quality": (70, 85, 100)}),
+}
+
 
 class RenderingProgressDialog(GObject.Object):
 
@@ -743,6 +822,8 @@ class RenderDialog(Loggable):
         self.widgets_group.add_vertex(self.audio_encoder_combo, signal="changed")
         self.widgets_group.add_vertex(self.video_encoder_combo, signal="changed")
         self.widgets_group.add_vertex(self.preset_menubutton, signal="clicked")
+        self.widgets_group.add_vertex(self.preset_selection_menubutton, signal="clicked")
+        self.widgets_group.add_vertex(self.quality_adjustment, signal="value-changed", update_func=self._update_quality_adjustment_func)
 
         self.widgets_group.add_edge(self.frame_rate_combo, self.preset_menubutton)
         self.widgets_group.add_edge(self.audio_encoder_combo, self.preset_menubutton)
@@ -750,6 +831,9 @@ class RenderDialog(Loggable):
         self.widgets_group.add_edge(self.muxer_combo, self.preset_menubutton)
         self.widgets_group.add_edge(self.channels_combo, self.preset_menubutton)
         self.widgets_group.add_edge(self.sample_rate_combo, self.preset_menubutton)
+        self.widgets_group.add_edge(self.preset_selection_menubutton, self.audio_encoder_combo)
+        self.widgets_group.add_edge(self.preset_selection_menubutton, self.video_encoder_combo)
+        self.widgets_group.add_edge(self.video_encoder_combo, self.quality_adjustment)
 
     def _presets_manager_profile_selected_cb(self, unused_target, preset_item):
         """Handles the selection of a render preset."""
@@ -828,6 +912,20 @@ class RenderDialog(Loggable):
         self.preset_icon = builder.get_object("preset_icon")
         self.preset_menubutton = builder.get_object("preset_menubutton")
         self.preset_popover = builder.get_object("preset_popover")
+        self.quality_box = builder.get_object("quality_box")
+        self.quality_scale = builder.get_object("quality_scale")
+        self.quality_adjustment = self.quality_scale.props.adjustment
+
+        self.quality_adjustment_handler_id = self.quality_adjustment.connect("value-changed", self._quality_adjustment_value_changed_cb)
+
+        # round_digits is set to -1 in gtk_scale_set_draw_value.
+        # Set it to 0 since we don't care about intermediary values.
+        self.quality_scale.props.round_digits = 0
+
+        lower = self.quality_adjustment.props.lower
+        upper = self.quality_adjustment.props.upper
+        self.quality_scale.add_mark(lower + (upper - lower) / 2, Gtk.PositionType.BOTTOM, _("medium"))
+        self.quality_scale.add_mark(upper, Gtk.PositionType.BOTTOM, _("high"))
 
         self.__automatically_use_proxies = builder.get_object(
             "automatically_use_proxies")
@@ -1242,6 +1340,7 @@ class RenderDialog(Loggable):
         """Plays a sound to signal the render operation is done."""
         if "GSound" in MISSING_SOFT_DEPS:
             return
+
         from gi.repository import GSound
         sound_context = GSound.Context()
         try:
@@ -1316,7 +1415,6 @@ class RenderDialog(Loggable):
 
     # ------------------- Callbacks ------------------------------------------ #
 
-    # -- UI callbacks
     def _ok_button_clicked_cb(self, unused_button, media_type):
         assert media_type in ("audio", "video")
         setattr(self.project, media_type[0] + "codecsettings", self.dialog.get_settings())
@@ -1583,3 +1681,19 @@ class RenderDialog(Loggable):
 
         # Update muxer-dependent widgets.
         self.update_available_encoders()
+
+    def _update_quality_adjustment_func(self, unused_source, adjustment):
+        encoder = get_combo_value(self.video_encoder_combo)
+        adapter = quality_adapters.get(encoder.get_name())
+        self.quality_scale.set_sensitive(bool(adapter))
+
+        if adapter:
+            adapter.update_adjustment(self.quality_adjustment, self.project.vcodecsettings, self.quality_adjustment_handler_id)
+        else:
+            self.quality_adjustment.props.value = self.quality_adjustment.props.lower
+
+    def _quality_adjustment_value_changed_cb(self, adjustment):
+        encoder = get_combo_value(self.video_encoder_combo)
+        adapter = quality_adapters.get(encoder.get_name())
+        quality = round(self.quality_adjustment.props.value)
+        adapter.update_project_vcodecsettings(self.project, quality)

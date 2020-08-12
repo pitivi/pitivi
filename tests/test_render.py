@@ -31,6 +31,9 @@ from pitivi.render import Encoders
 from pitivi.render import extension_for_muxer
 from pitivi.render import PresetBoxRow
 from pitivi.render import PresetsManager
+from pitivi.render import Quality
+from pitivi.render import quality_adapters
+from pitivi.render import QualityAdapter
 from pitivi.timeline.timeline import TimelineContainer
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.ui import get_combo_value
@@ -84,6 +87,34 @@ def setup_render_presets(*profiles):
         return wrapped
 
     return setup_wrapper
+
+
+class TestQualityAdapter(common.TestCase):
+    """Tests for the QualityAdapter class."""
+
+    def check_adapter(self, adapter, expected_qualities):
+        qualities = []
+        for prop_value in range(len(expected_qualities)):
+            adjustment = mock.Mock()
+            vcodecsettings = {adapter.prop_name: prop_value}
+            adapter.update_adjustment(adjustment, vcodecsettings, 0)
+            qualities.append(adjustment.props.value)
+        self.assertListEqual(qualities, expected_qualities)
+
+    def test_update_adjustment(self):
+        self.check_adapter(QualityAdapter({"prop1": (0, 3, 5)}),
+                           [Quality.LOW, Quality.LOW, Quality.LOW, Quality.MEDIUM, Quality.MEDIUM, Quality.HIGH])
+        self.check_adapter(QualityAdapter({"prop1": (100, 3, 2)}),
+                           [Quality.HIGH, Quality.HIGH, Quality.HIGH, Quality.MEDIUM, Quality.LOW, Quality.LOW])
+
+        self.check_adapter(quality_adapters[Encoders.X264],
+                           [Quality.HIGH] * 19 + [Quality.MEDIUM] * 3 + [Quality.LOW] * 29)
+        self.check_adapter(quality_adapters[Encoders.VP8],
+                           [Quality.LOW] * 47 + [Quality.MEDIUM] * 16 + [Quality.HIGH] * 1)
+        self.check_adapter(quality_adapters[Encoders.THEORA],
+                           [Quality.LOW] * 48 + [Quality.MEDIUM] * 15 + [Quality.HIGH] * 1)
+        self.check_adapter(quality_adapters[Encoders.JPEG],
+                           [Quality.LOW] * 85 + [Quality.MEDIUM] * 15 + [Quality.HIGH] * 1)
 
 
 class TestRender(BaseTestMediaLibrary):
