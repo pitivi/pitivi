@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-07-28 00:37+0000\n"
-"PO-Revision-Date: 2020-08-02 13:47+0200\n"
+"POT-Creation-Date: 2020-08-11 21:47+0000\n"
+"PO-Revision-Date: 2020-08-16 10:15+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -120,7 +120,7 @@ msgstr "Uruchamianie automatycznego wyrównania"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Wykonywanie automatycznego wyrównania</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1180
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1473
 msgid "Estimating..."
 msgstr "Obliczanie…"
 
@@ -326,7 +326,7 @@ msgstr "Ostatnio używane projekty"
 msgid "Updated"
 msgstr "Zaktualizowano"
 
-#: data/ui/greeter.ui:190 pitivi/preset.py:108
+#: data/ui/greeter.ui:190 pitivi/preset.py:107 pitivi/render.py:208
 msgid "Remove"
 msgstr "Usuń"
 
@@ -476,8 +476,7 @@ msgstr ""
 "Przywraca wszystkie ustawienia do poprzednich wartości (sprzed otwarcia okna "
 "preferencji)"
 
-#: data/ui/preferences.ui:61 data/ui/renderingdialog.ui:41
-#: data/ui/renderingprogress.ui:85
+#: data/ui/preferences.ui:61 data/ui/renderingprogress.ui:85
 msgid "Close"
 msgstr "Zamknij"
 
@@ -495,7 +494,7 @@ msgid "Cancel"
 msgstr "Anuluj"
 
 #: data/ui/projectsettings.ui:148 data/ui/projectsettings.ui:422
-#: data/ui/renderingdialog.ui:234
+#: data/ui/renderingdialog.ui:97
 msgid "Preset:"
 msgstr "Ustawienie:"
 
@@ -516,26 +515,26 @@ msgstr "Ograniczanie proporcji"
 msgid "Maintain aspect ratio"
 msgstr "Utrzymuje proporcje obrazu"
 
-#: data/ui/projectsettings.ui:332 data/ui/renderingdialog.ui:451
+#: data/ui/projectsettings.ui:332 data/ui/renderingdialog.ui:407
 msgid "Frame rate:"
 msgstr "Liczba klatek na sekundę:"
 
 #. The title of the section with the video settings
-#: data/ui/projectsettings.ui:385 data/ui/renderingdialog.ui:469
+#: data/ui/projectsettings.ui:385 data/ui/renderingdialog.ui:425
 #: pitivi/effects.py:247
 msgid "Video"
 msgstr "Wideo"
 
-#: data/ui/projectsettings.ui:488 data/ui/renderingdialog.ui:508
+#: data/ui/projectsettings.ui:488 data/ui/renderingdialog.ui:464
 msgid "Channels:"
 msgstr "Kanały:"
 
-#: data/ui/projectsettings.ui:522 data/ui/renderingdialog.ui:617
+#: data/ui/projectsettings.ui:522 data/ui/renderingdialog.ui:573
 msgid "Sample rate:"
 msgstr "Częstotliwość próbki:"
 
 #. The title of the section with the audio settings
-#: data/ui/projectsettings.ui:566 data/ui/renderingdialog.ui:635
+#: data/ui/projectsettings.ui:566 data/ui/renderingdialog.ui:591
 #: pitivi/effects.py:121 pitivi/effects.py:247
 msgid "Audio"
 msgstr "Dźwięk"
@@ -581,56 +580,52 @@ msgstr "Działanie:"
 msgid "Safe Areas"
 msgstr "Bezpieczne obszary"
 
-#: data/ui/renderingdialog.ui:20 data/ui/renderingdialog.ui:55
+#: data/ui/renderingdialog.ui:35 data/ui/renderingdialog.ui:55
 #: pitivi/editorperspective.py:325
 msgid "Render"
 msgstr "Renderuj"
 
-#: data/ui/renderingdialog.ui:109
-msgid "Folder:"
-msgstr "Katalog:"
+#: data/ui/renderingdialog.ui:142 pitivi/render.py:70
+msgid "Custom"
+msgstr "Inne"
 
-#: data/ui/renderingdialog.ui:124
-msgid "File name:"
-msgstr "Nazwa pliku:"
-
-#: data/ui/renderingdialog.ui:151
-msgid "Container format:"
-msgstr "Format kontenera:"
-
-#: data/ui/renderingdialog.ui:283
+#: data/ui/renderingdialog.ui:239
 msgid "Scale:"
 msgstr "Skalowanie:"
 
-#: data/ui/renderingdialog.ui:316
+#: data/ui/renderingdialog.ui:272
 msgid "Scale"
 msgstr "Skalowanie"
 
-#: data/ui/renderingdialog.ui:336
+#: data/ui/renderingdialog.ui:292
 msgid "Height"
 msgstr "Wysokość"
 
-#: data/ui/renderingdialog.ui:355
+#: data/ui/renderingdialog.ui:311
 msgid "Project Settings..."
 msgstr "Ustawienia projektu…"
 
-#: data/ui/renderingdialog.ui:370 data/ui/renderingdialog.ui:540
+#: data/ui/renderingdialog.ui:326 data/ui/renderingdialog.ui:496
 msgid "Advanced..."
 msgstr "Zaawansowane…"
 
-#: data/ui/renderingdialog.ui:409 data/ui/renderingdialog.ui:580
+#: data/ui/renderingdialog.ui:365 data/ui/renderingdialog.ui:536
 msgid "Codec:"
-msgstr "Kodeku:"
+msgstr "Kodek:"
 
-#: data/ui/renderingdialog.ui:435
+#: data/ui/renderingdialog.ui:391
 msgid "Framerate"
 msgstr "Liczba klatek na sekundę"
 
-#: data/ui/renderingdialog.ui:660
+#: data/ui/renderingdialog.ui:625
+msgid "Container format:"
+msgstr "Format kontenera:"
+
+#: data/ui/renderingdialog.ui:692
 msgid "Automatically render from proxy files"
 msgstr "Automatyczne renderowanie z plików pośrednich"
 
-#: data/ui/renderingdialog.ui:664
+#: data/ui/renderingdialog.ui:696
 msgid ""
 "Use proxy files if they are available and the source asset media format is "
 "not officially supported.\n"
@@ -644,11 +639,11 @@ msgstr ""
 "Ta opcja jest dobrym kompromisem między jakością renderowanego obrazu "
 "a stabilnością."
 
-#: data/ui/renderingdialog.ui:678
+#: data/ui/renderingdialog.ui:711
 msgid "Always render from proxy files"
 msgstr "Renderowanie z plików pośrednich za każdym razem"
 
-#: data/ui/renderingdialog.ui:682
+#: data/ui/renderingdialog.ui:715
 msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
@@ -656,11 +651,11 @@ msgstr ""
 "Renderowanie wszystkich klipów pośrednich z zasobów pośrednich. Podczas "
 "renderowania może wystąpić utrata jakości."
 
-#: data/ui/renderingdialog.ui:694
+#: data/ui/renderingdialog.ui:728
 msgid "Never render from proxy files"
 msgstr "Bez renderowania z plików pośrednich"
 
-#: data/ui/renderingdialog.ui:698
+#: data/ui/renderingdialog.ui:732
 msgid ""
 "Always use source assets for rendering. It is the best choice for the "
 "quality of the rendered video, but you might hit some bugs because of the "
@@ -671,6 +666,18 @@ msgstr ""
 "najlepszy wybór pod względem jakości renderowanego obrazu, ale mogą wystąpić "
 "błędy z powodu użycia oficjalnie nieobsługiwanych formatów multimediów.\n"
 "<i>Należy używać na własne ryzyko.</i>"
+
+#: data/ui/renderingdialog.ui:756
+msgid "Advanced"
+msgstr "Zaawansowane"
+
+#: data/ui/renderingdialog.ui:777
+msgid "Folder:"
+msgstr "Katalog:"
+
+#: data/ui/renderingdialog.ui:813
+msgid "File name:"
+msgstr "Nazwa pliku:"
 
 #: data/ui/renderingprogress.ui:8
 msgid "Rendering"
@@ -707,55 +714,63 @@ msgstr "Inicjowanie…"
 msgid "Estimated filesize:"
 msgstr "Szacowany rozmiar pliku:"
 
-#: data/ui/timelinetoolbar.ui:15
+#: data/ui/timelinetoolbar.ui:16
 msgid "Split clips at playhead position"
 msgstr "Przecina klipy w pozycji głowicy"
 
-#: data/ui/timelinetoolbar.ui:17
+#: data/ui/timelinetoolbar.ui:18
 msgid "Split"
 msgstr "Podziel"
 
-#: data/ui/timelinetoolbar.ui:30
+#: data/ui/timelinetoolbar.ui:31
 msgid "Delete clips"
 msgstr "Usuwa klipy"
 
-#: data/ui/timelinetoolbar.ui:32
+#: data/ui/timelinetoolbar.ui:33
 msgid "Delete"
 msgstr "Usuń"
 
-#: data/ui/timelinetoolbar.ui:45
+#: data/ui/timelinetoolbar.ui:46
 msgid "Group clips"
 msgstr "Grupuje klipy"
 
-#: data/ui/timelinetoolbar.ui:47
+#: data/ui/timelinetoolbar.ui:48
 msgid "Group"
 msgstr "Grupuj"
 
-#: data/ui/timelinetoolbar.ui:60
+#: data/ui/timelinetoolbar.ui:61
 msgid "Ungroup clips"
 msgstr "Rozgrupowuje klipy"
 
-#: data/ui/timelinetoolbar.ui:62
+#: data/ui/timelinetoolbar.ui:63
 msgid "Ungroup"
 msgstr "Rozgrupuj"
 
-#: data/ui/timelinetoolbar.ui:75
+#: data/ui/timelinetoolbar.ui:76
 msgid "Copy clips"
 msgstr "Kopiuje klipy"
 
-#: data/ui/timelinetoolbar.ui:89
+#: data/ui/timelinetoolbar.ui:78
+msgid "Copy"
+msgstr "Skopiuj"
+
+#: data/ui/timelinetoolbar.ui:91
 msgid "Paste clips"
 msgstr "Wkleja klipy"
 
-#: data/ui/timelinetoolbar.ui:103
+#: data/ui/timelinetoolbar.ui:93
+msgid "Paste"
+msgstr "Wklej"
+
+#: data/ui/timelinetoolbar.ui:106
 msgid "Align clips based on their soundtracks"
 msgstr "Wyrównuje klipy na podstawie ich ścieżek dźwiękowych"
 
-#: data/ui/timelinetoolbar.ui:106
+#: data/ui/timelinetoolbar.ui:109
 msgid "Align"
 msgstr "Wyrównaj"
 
-#: data/ui/timelinetoolbar.ui:119
+#: data/ui/timelinetoolbar.ui:122
 msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
@@ -764,7 +779,7 @@ msgstr ""
 "Kiedy jest włączone, sąsiednie klipy są automatycznie przesuwane, aby "
 "uzupełnić przerwy między nimi."
 
-#: data/ui/timelinetoolbar.ui:122
+#: data/ui/timelinetoolbar.ui:125
 msgid "Gapless mode"
 msgstr "Tryb odtwarzania ciągłego"
 
@@ -1026,7 +1041,8 @@ msgstr "Cofnij"
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/editorperspective.py:319 pitivi/editorperspective.py:532
 #: pitivi/editorperspective.py:673 pitivi/editorperspective.py:721
-#: pitivi/editorperspective.py:774 pitivi/preset.py:114 pitivi/project.py:200
+#: pitivi/editorperspective.py:774 pitivi/preset.py:113 pitivi/project.py:200
+#: pitivi/render.py:214
 msgid "Save"
 msgstr "Zapisz"
 
@@ -1112,7 +1128,7 @@ msgid "Detect automatically"
 msgstr "Wykrycie automatyczne"
 
 #: pitivi/editorperspective.py:730 pitivi/editorperspective.py:777
-#: pitivi/project.py:72 pitivi/render.py:436
+#: pitivi/project.py:72 pitivi/render.py:708
 msgid "Untitled"
 msgstr "Bez tytułu"
 
@@ -1173,7 +1189,7 @@ msgstr "Brak efektów"
 msgid "Add to Favourites"
 msgstr "Dodaje do ulubionych"
 
-#: pitivi/greeterperspective.py:228 pitivi/preset.py:102
+#: pitivi/greeterperspective.py:228 pitivi/preset.py:101 pitivi/render.py:202
 msgid "New"
 msgstr "Nowy"
 
@@ -1467,29 +1483,18 @@ msgstr "Wtyczki użytkownika"
 msgid "System plugins"
 msgstr "Wtyczki systemowe"
 
-#: pitivi/preset.py:229
+#: pitivi/preset.py:228
 msgid "New preset"
 msgstr "Nowe ustawienie"
 
-#: pitivi/preset.py:232
+#: pitivi/preset.py:231
 #, python-format
 msgid "New preset %d"
 msgstr "%d. nowe ustawienie"
 
-#. Translators: This must contain exclusively low case alphanum and '-'
-#: pitivi/preset.py:540
-msgid "new-profile"
-msgstr "nowy-profil"
-
-#. Translators: This must contain exclusively low case alphanum and '-'
-#: pitivi/preset.py:544
-#, python-format
-msgid "new-profile-%d"
-msgstr "nowy-profil-%d"
-
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:183 pitivi/render.py:880
+#: pitivi/project.py:183 pitivi/render.py:1173
 msgid "Sorry, something didn’t work right."
 msgstr "Coś nie zadziałało poprawnie."
 
@@ -1567,7 +1572,26 @@ msgstr "projekt"
 msgid "Pitivi encoding profile"
 msgstr "Profil kodowania Pitivi"
 
-#: pitivi/render.py:338
+#: pitivi/render.py:103
+msgid "YouTube"
+msgstr "YouTube"
+
+#: pitivi/render.py:104
+msgid "DVD"
+msgstr "DVD"
+
+#. Translators: This must contain exclusively low case alphanum and '-'
+#: pitivi/render.py:296
+msgid "new-profile"
+msgstr "nowy-profil"
+
+#. Translators: This must contain exclusively low case alphanum and '-'
+#: pitivi/render.py:300
+#, python-format
+msgid "new-profile-%d"
+msgstr "nowy-profil-%d"
+
+#: pitivi/render.py:609
 #, python-format
 msgid "Rendering — %d%% complete"
 msgstr "Renderowanie — ukończono %d%%"
@@ -1578,27 +1602,27 @@ msgstr "Renderowanie — ukończono %d%%"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals).
-#: pitivi/render.py:347
+#: pitivi/render.py:618
 #, python-format
 msgid "About %s left"
 msgstr "Pozostało około: %s"
 
-#: pitivi/render.py:395
+#: pitivi/render.py:666
 msgid "Currently rendering"
 msgstr "Obecnie renderowane"
 
 #. Translators: This item appears in a combobox's popup and
 #. contains as children the unsupported (but still available)
 #. muxers and encoders.
-#: pitivi/render.py:631
+#: pitivi/render.py:924
 msgid "Unsupported"
 msgstr "Nieobsługiwane"
 
-#: pitivi/render.py:702
+#: pitivi/render.py:995
 msgid "A file name is required."
 msgstr "Wymagana jest nazwa pliku."
 
-#: pitivi/render.py:705
+#: pitivi/render.py:998
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1607,23 +1631,23 @@ msgstr ""
 "Jeśli nie ma zostać zastąpiony, to proszę wybrać inną nazwę pliku lub inny "
 "katalog."
 
-#: pitivi/render.py:709
+#: pitivi/render.py:1002
 #, python-format
 msgid "Remove invalid characters from the filename: %s"
 msgstr "Proszę usunąć nieprawidłowe znaki z nazwy pliku: %s"
 
-#: pitivi/render.py:740
+#: pitivi/render.py:1033
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: pitivi/render.py:745
+#: pitivi/render.py:1038
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: pitivi/render.py:874
+#: pitivi/render.py:1167
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
@@ -1633,11 +1657,11 @@ msgstr ""
 "wypadku x264enc może nie być w stanie renderować.</b>\n"
 "\n"
 
-#: pitivi/render.py:882
+#: pitivi/render.py:1175
 msgid "An error occurred while trying to render your project."
 msgstr "Wystąpił błąd podczas renderowania projektu."
 
-#: pitivi/render.py:884
+#: pitivi/render.py:1177
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1645,11 +1669,11 @@ msgstr ""
 "Można sprawdzić podręcznik rozwiązywania błędów lub wysłać zgłoszenie błędu. "
 "Błąd biblioteki GStreamer:"
 
-#: pitivi/render.py:1128 pitivi/render.py:1129 pitivi/render.py:1135
+#: pitivi/render.py:1421 pitivi/render.py:1422 pitivi/render.py:1428
 msgid "Render complete"
 msgstr "Ukończono renderowanie"
 
-#: pitivi/render.py:1133
+#: pitivi/render.py:1426
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "Ukończono renderowanie „%s”."
