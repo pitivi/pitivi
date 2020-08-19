@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 import os
+import re
 import subprocess
 import sys
 import time
@@ -25,6 +26,7 @@ from enum import IntEnum
 from gettext import gettext as _
 from gettext import ngettext
 from hashlib import md5
+from typing import Set
 
 import cairo
 from gi.repository import Gdk
@@ -518,6 +520,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.import_start_time = time.time()
         self._last_imported_uris = set()
         self.__last_proxying_estimate_time = _("Unknown")
+        self._last_prefix: str = ""
+        self._last_suggested_tags: Set[str] = set()
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
         builder = Gtk.Builder()
@@ -548,7 +552,17 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
         self._import_button = builder.get_object("media_import_button")
         self._listview_button = builder.get_object("media_listview_button")
+
         self.search_entry = builder.get_object("media_search_entry")
+        search_completion = Gtk.EntryCompletion()
+        self.search_store = Gtk.ListStore(str)
+        search_completion.set_model(self.search_store)
+        search_completion.set_text_column(0)
+        search_completion.set_minimum_key_length(0)
+        search_completion.set_popup_completion(True)
+        search_completion.set_inline_selection(False)
+        self.search_entry.set_completion(search_completion)
+
         bottom_toolbar_container = builder.get_object("medialibrary_bottom_toolbar_container")
         bottom_toolbar = builder.get_object("medialibrary_bottom_toolbar")
         bg_color = bottom_toolbar_container.get_style_context().get_background_color(Gtk.StateFlags.NORMAL)
@@ -613,8 +627,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                                self.remove_assets_action,
                                _("Remove the selected assets"))
 
-        # self.update_assets_tag.
-
         self.insert_at_end_action = Gio.SimpleAction.new("insert-assets-at-end", None)
         self.insert_at_end_action.connect("activate", self._insert_end_cb)
         actions_group.add_action(self.insert_at_end_action)
@@ -636,6 +648,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.pack_start(self.scrollwin, True, True, 0)
         self.pack_start(self._progressbar, False, False, 0)
         self.pack_start(bottom_toolbar_container, False, False, 0)
+
+        self.filter_store()
 
     def create_iconview_widget_func(self, item):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
@@ -738,7 +752,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def _insert_end_cb(self, unused_action, unused_parameter):
         self.app.gui.editor.timeline_ui.insert_assets(self.get_selected_assets(), -1)
 
-    def _search_entry_changed_cb(self, unused_entry):
+    def _search_entry_search_changed_cb(self, entry):
         self.filter_store()
 
     def _search_entry_icon_press_cb(self, entry, icon_pos, event):
@@ -750,20 +764,77 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self.flowbox.grab_focus()
 
     def filter_store(self):
+        """Updates the search field suggestions and filters the assets."""
         text = self.search_entry.get_text().lower()
+
+        # Process the search text.
+        tags = set()
+        words = []
+        last_token_match = None
+        last_token_tag = None
+        for match in re.finditer(r"\S+", text):
+            token = text[match.start():match.end()]
+            parts = token.split(":", 1)
+            last_token_tag = None
+            if len(parts) == 2 and parts[0] == "tag":
+                tag = parts[1]
+                if tag in self.witnessed_tags:
+                    tags.add(tag)
+                    last_token_tag = tag
+            else:
+                words.append(token)
+            last_token_match = match
+
+        # Update the search suggestions.
+        # The prefix to which we append the suggestions is chosen such that
+        # it excludes the last token, unless there is whitespace after it,
+        # in which case it is included.
+        suggested_tags = set(tags)
+        if last_token_match:
+            if last_token_match.end() == len(text):
+                # Exclude the last token from the suggestions prefix.
+                prefix = text[:last_token_match.start()]
+                suggested_tags.discard(last_token_tag)
+            else:
+                # There is some whitespace after the last token, so then
+                # we include it in the suggestions prefix.
+                prefix = text
+        else:
+            # There is no token, only whitespace or nothing.
+            prefix = text
+        self._update_search_suggestions(prefix, suggested_tags)
+
+        # Filter the assets.
+
         # With many hundred clips in an iconview with dynamic columns and
         # ellipsizing, doing needless searches is very expensive.
         # Realistically, nobody expects to search for only one character,
         # and skipping that makes a huge difference in responsiveness.
-        if len(text) == 1:
-            self.flowbox.show_all()
+        # We must convert to markup form to be able to search for &, ', etc.
+        escaped_words = [GLib.markup_escape_text(word) for word in words if len(word) > 1]
+
+        for i, row_widget in enumerate(self.flowbox):
+            matches = not tags.difference(self.store[i].tags)
+            if matches:
+                row_text = self.store[i].infotext.lower()
+                matches = all([escaped_word in row_text for escaped_word in escaped_words])
+            row_widget.set_visible(bool(matches))
+
+    def _update_search_suggestions(self, prefix: str, entered_tags: Set[str]):
+        """Updates the suggestions for the search field."""
+        tags = self.witnessed_tags - entered_tags
+
+        if self._last_prefix == prefix and self._last_suggested_tags == tags:
+            # Nothing changed.
             return
 
-        # We must convert to markup form to be able to search for &, ', etc.
-        text = GLib.markup_escape_text(text)
-        for i, row_widget in enumerate(self.flowbox):
-            matches = text in self.store[i].infotext.lower()
-            row_widget.set_visible(matches)
+        self._last_prefix = prefix
+        self._last_suggested_tags = tags
+
+        self.search_store.clear()
+        for tag in sorted(tags):
+            autocomplete_suggestion = "{}tag:{}".format(prefix, tag)
+            self.search_store.append([autocomplete_suggestion])
 
     def _connect_to_project(self, project):
         """Connects signal handlers to the specified project."""

@@ -520,8 +520,11 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 class TestTaggingAssets(BaseTestMediaLibrary):
 
     def import_assets_in_medialibrary(self):
-        samples = ["30fps_numeroted_frames_red.mkv",
-                   "30fps_numeroted_frames_blue.webm", "1sec_simpsons_trailer.mp4"]
+        samples = [
+            "30fps_numeroted_frames_red.mkv",
+            "30fps_numeroted_frames_blue.webm",
+            "1sec_simpsons_trailer.mp4",
+        ]
         with common.cloned_sample(*samples):
             self.check_import(samples, proxying_strategy=ProxyingStrategy.NOTHING)
 
@@ -557,7 +560,6 @@ class TestTaggingAssets(BaseTestMediaLibrary):
                 raise Exception(tag_name)
 
     def test_adding_tags(self):
-        self.mainloop = common.create_main_loop()
         self.import_assets_in_medialibrary()
         self.medialibrary.flowbox.unselect_all()
 
@@ -612,7 +614,6 @@ class TestTaggingAssets(BaseTestMediaLibrary):
         self.medialibrary.tags_popover.hide()
 
     def test_removing_tags(self):
-        self.mainloop = common.create_main_loop()
         self.import_assets_in_medialibrary()
         tag = "TAG"
         self.add_new_tag(tag)
@@ -667,3 +668,31 @@ class TestTaggingAssets(BaseTestMediaLibrary):
         self.assertEqual(self.medialibrary.witnessed_tags, set())
         for item in self.medialibrary.store:
             self.assertEqual(item.tags, set())
+
+    def check_suggestions(self, text, expected_suggestions):
+        self.medialibrary.search_entry.props.text = text
+        self.medialibrary.search_entry.emit("search-changed")
+
+        suggestions = [item[0] for item in self.medialibrary.search_store]
+        self.assertListEqual(suggestions, expected_suggestions)
+
+    def test_search_suggestions(self):
+        self.import_assets_in_medialibrary()
+
+        self.medialibrary.witnessed_tags = {"red", "blue", "green"}
+
+        self.check_suggestions("", ["tag:blue", "tag:green", "tag:red"])
+        self.check_suggestions("tag:", ["tag:blue", "tag:green", "tag:red"])
+        # Keep in mind that only the suggestions matching the text are shown.
+        # For example at this point, only the "tag:blue" suggestion is shown
+        # because it's the only one that matches the "tag:b" text.
+        self.check_suggestions("tag:b", ["tag:blue", "tag:green", "tag:red"])
+
+        self.check_suggestions("tag:blue ", ["tag:blue tag:green", "tag:blue tag:red"])
+        self.check_suggestions("tag:blue tag:", ["tag:blue tag:green", "tag:blue tag:red"])
+        self.check_suggestions("tag:blue tag:red", ["tag:blue tag:green", "tag:blue tag:red"])
+
+        self.check_suggestions("tag:blue tag:red ", ["tag:blue tag:red tag:green"])
+        self.check_suggestions("tag:blue tag:red word1", ["tag:blue tag:red tag:green"])
+
+        self.check_suggestions("tag:blue tag:red word1 ", ["tag:blue tag:red word1 tag:green"])
