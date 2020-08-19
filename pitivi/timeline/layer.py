@@ -84,11 +84,20 @@ class LayerControls(Gtk.EventBox, Loggable):
 
         name_row = Gtk.Box()
         name_row.set_orientation(Gtk.Orientation.HORIZONTAL)
-        name_row.props.spacing = PADDING
         name_row.props.margin_top = PADDING
         name_row.props.margin_left = PADDING
         name_row.props.margin_right = PADDING
         vbox.pack_start(name_row, False, False, 0)
+
+        self.menubutton = Gtk.MenuButton.new()
+        self.menubutton.props.valign = Gtk.Align.CENTER
+        self.menubutton.props.relief = Gtk.ReliefStyle.NONE
+        model, action_group = self.__create_menu_model()
+        popover = Gtk.Popover.new_from_model(self.menubutton, model)
+        popover.insert_action_group("layer", action_group)
+        popover.props.position = Gtk.PositionType.LEFT
+        self.menubutton.set_popover(popover)
+        name_row.pack_start(self.menubutton, False, False, 0)
 
         self.name_entry = Gtk.Entry()
         self.name_entry.get_style_context().add_class("LayerControlEntry")
@@ -111,16 +120,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         control_box.add(self.video_button)
         control_box.add(self.audio_button)
         name_row.pack_start(control_box, False, False, 0)
-
-        self.menubutton = Gtk.MenuButton.new()
-        self.menubutton.props.valign = Gtk.Align.CENTER
-        self.menubutton.props.relief = Gtk.ReliefStyle.NONE
-        model, action_group = self.__create_menu_model()
-        popover = Gtk.Popover.new_from_model(self.menubutton, model)
-        popover.insert_action_group("layer", action_group)
-        popover.props.position = Gtk.PositionType.LEFT
-        self.menubutton.set_popover(popover)
-        name_row.pack_start(self.menubutton, False, False, 0)
 
         space = Gtk.Label()
         space.props.vexpand = True
