@@ -13,3 +13,11 @@ For the list of dependencies, look at [pitivi/check.py](pitivi/check.py)
 
 Your involvement is what keeps this project moving forward.
 See the "contributing" section of <http://www.pitivi.org> to get started.
+
+# Hacking
+
+See the [contributing](http://www.pitivi.org/?go=contributing) section to get
+started.
+
+Come [talk to us](http://www.pitivi.org/?go=contact) so we coordinate
+to get the most out of it.
