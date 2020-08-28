@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-03-30 21:39+0000\n"
-"PO-Revision-Date: 2020-04-10 12:06+0700\n"
-"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
+"POT-Creation-Date: 2020-08-11 21:47+0000\n"
+"PO-Revision-Date: 2020-08-22 00:05+0700\n"
+"Last-Translator: Kukuh Syafaat <kukuhsyafaat@gnome.org>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural= n!=1;\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
 msgid "Pitivi video project (legacy)"
@@ -114,9 +114,13 @@ msgstr "Awalan Rata Otomatis"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Melakukan Perataan Otomatis</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1175
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1473
 msgid "Estimating..."
 msgstr "Memperkirakan..."
+
+#: data/ui/clipcolor.ui:21
+msgid "Pick the clip color"
+msgstr "Pilih warna klip"
 
 #: data/ui/clipmediaprops.ui:8
 msgid "Clip Properties"
@@ -159,33 +163,33 @@ msgstr "Kanal"
 msgid "Audio:"
 msgstr "Audio:"
 
-#: data/ui/cliptransformation.ui:50
+#: data/ui/cliptransformation.ui:51
 msgid "Y:"
 msgstr "Y:"
 
-#: data/ui/cliptransformation.ui:94
-msgid "Width:"
-msgstr "Lebar:"
-
-#: data/ui/cliptransformation.ui:106
+#: data/ui/cliptransformation.ui:96
 msgid "Height:"
 msgstr "Tinggi:"
 
-#: data/ui/cliptransformation.ui:149
+#: data/ui/cliptransformation.ui:140
 msgid "X:"
 msgstr "X:"
 
-#: data/ui/cliptransformation.ui:169
+#: data/ui/cliptransformation.ui:161
 msgid "Previous keyframe"
 msgstr "Bingkai kunci sebelumnya"
 
-#: data/ui/cliptransformation.ui:185
+#: data/ui/cliptransformation.ui:177
 msgid "Next keyframe"
 msgstr "Bingkai kunci selanjutnya"
 
-#: data/ui/cliptransformation.ui:215
+#: data/ui/cliptransformation.ui:207
 msgid "Reset to default values"
 msgstr "Menata ulang ke nilai-nilai bawaan"
+
+#: data/ui/cliptransformation.ui:229
+msgid "Width:"
+msgstr "Lebar:"
 
 #: data/ui/customwidgets/alpha.ui:143
 msgid "Angle:"
@@ -291,19 +295,11 @@ msgstr "alfa min"
 msgid "max alpha"
 msgstr "alfa maks"
 
-#: data/ui/effectslibrary.ui:14
-msgid "Show video effects"
-msgstr "Tampilkan efek video"
+#: data/ui/effectslibrary.ui:16
+msgid "Favourites"
+msgstr "Favorit"
 
-#: data/ui/effectslibrary.ui:34
-msgid "Show audio effects"
-msgstr "Tampilkan efek audio"
-
-#: data/ui/effectslibrary.ui:84
-msgid "Clear the current search"
-msgstr "Bersihkan pencarian saat ini"
-
-#: data/ui/effectslibrary.ui:85 data/ui/medialibrary.ui:124
+#: data/ui/effectslibrary.ui:43 data/ui/medialibrary.ui:124
 #: pitivi/transitions.py:74
 msgid "Search..."
 msgstr "Cari..."
@@ -312,7 +308,7 @@ msgstr "Cari..."
 msgid "Reset all"
 msgstr "Reset semua"
 
-#: data/ui/elementsettingsdialog.ui:39 data/ui/projectsettings.ui:74
+#: data/ui/elementsettingsdialog.ui:39 data/ui/projectsettings.ui:94
 msgid "OK"
 msgstr "OK"
 
@@ -324,7 +320,7 @@ msgstr "Proyek Terkini"
 msgid "Updated"
 msgstr "Dimutakhirkan"
 
-#: data/ui/greeter.ui:190 pitivi/preset.py:108
+#: data/ui/greeter.ui:190 pitivi/preset.py:107 pitivi/render.py:208
 msgid "Remove"
 msgstr "Buang"
 
@@ -373,8 +369,8 @@ msgstr "Ekspor bingkai saat ini..."
 msgid "Edit the project settings"
 msgstr "Sunting pengaturan projek"
 
-#: data/ui/mainmenubutton.ui:119 data/ui/projectsettings.ui:41
-#: pitivi/medialibrary.py:160 pitivi/medialibrary.py:518
+#: data/ui/mainmenubutton.ui:119 data/ui/projectsettings.ui:61
+#: pitivi/medialibrary.py:168 pitivi/medialibrary.py:525
 #: pitivi/dialogs/prefs.py:339
 msgid "Project Settings"
 msgstr "Pengaturan Projek"
@@ -473,8 +469,7 @@ msgstr ""
 "Memulihkan semua setelan ke nilai-nilai sebelumnya (sebelum Anda membuka "
 "dialog preferensi)"
 
-#: data/ui/preferences.ui:61 data/ui/renderingdialog.ui:41
-#: data/ui/renderingprogress.ui:85
+#: data/ui/preferences.ui:61 data/ui/renderingprogress.ui:85
 msgid "Close"
 msgstr "Tutup"
 
@@ -483,139 +478,147 @@ msgid "Some changes will not take effect until you restart Pitivi"
 msgstr ""
 "Beberapa perubahan tidak akan berdampak sampai Anda menjalankan ulang Pitivi"
 
-#: data/ui/projectsettings.ui:61 data/ui/renderingprogress.ui:41
+#: data/ui/projectsettings.ui:81 data/ui/renderingprogress.ui:41
 #: pitivi/editorperspective.py:540 pitivi/editorperspective.py:672
 #: pitivi/editorperspective.py:720 pitivi/editorperspective.py:773
-#: pitivi/greeterperspective.py:241 pitivi/medialibrary.py:859
+#: pitivi/greeterperspective.py:241 pitivi/medialibrary.py:779
 #: pitivi/dialogs/browseprojects.py:38 pitivi/dialogs/missingasset.py:46
 msgid "Cancel"
 msgstr "Batal"
 
-#: data/ui/projectsettings.ui:127 data/ui/projectsettings.ui:401
-#: data/ui/renderingdialog.ui:234
+#: data/ui/projectsettings.ui:148 data/ui/projectsettings.ui:422
+#: data/ui/renderingdialog.ui:97
 msgid "Preset:"
 msgstr "Pratata:"
 
-#: data/ui/projectsettings.ui:199
+#: data/ui/projectsettings.ui:220
 msgid "Size:"
 msgstr "Ukuran:"
 
-#: data/ui/projectsettings.ui:259 data/ui/projectsettings.ui:742
+#: data/ui/projectsettings.ui:280 data/ui/projectsettings.ui:763
 msgid "pixels"
 msgstr "piksel"
 
 #. When checked, changing the width or height affects also the other so that the aspect ratio value (width / height) does not change.
-#: data/ui/projectsettings.ui:276 data/ui/projectsettings.ui:759
+#: data/ui/projectsettings.ui:297 data/ui/projectsettings.ui:780
 msgid "Constrain proportions"
 msgstr "Batasi proporsi"
 
-#: data/ui/projectsettings.ui:280
+#: data/ui/projectsettings.ui:301
 msgid "Maintain aspect ratio"
 msgstr "Pertahankan rasio aspek"
 
-#: data/ui/projectsettings.ui:311 data/ui/renderingdialog.ui:451
+#: data/ui/projectsettings.ui:332 data/ui/renderingdialog.ui:407
 msgid "Frame rate:"
 msgstr "Laju bingkai:"
 
 #. The title of the section with the video settings
-#: data/ui/projectsettings.ui:364 data/ui/renderingdialog.ui:469
-#: pitivi/effects.py:239
+#: data/ui/projectsettings.ui:385 data/ui/renderingdialog.ui:425
+#: pitivi/effects.py:247
 msgid "Video"
 msgstr "Video"
 
-#: data/ui/projectsettings.ui:467 data/ui/renderingdialog.ui:508
+#: data/ui/projectsettings.ui:488 data/ui/renderingdialog.ui:464
 msgid "Channels:"
 msgstr "Kanal:"
 
-#: data/ui/projectsettings.ui:501 data/ui/renderingdialog.ui:617
+#: data/ui/projectsettings.ui:522 data/ui/renderingdialog.ui:573
 msgid "Sample rate:"
 msgstr "Laju cuplikan:"
 
 #. The title of the section with the audio settings
-#: data/ui/projectsettings.ui:545 data/ui/renderingdialog.ui:635
-#: pitivi/effects.py:239
+#: data/ui/projectsettings.ui:566 data/ui/renderingdialog.ui:591
+#: pitivi/effects.py:121 pitivi/effects.py:247
 msgid "Audio"
 msgstr "Audio"
 
-#: data/ui/projectsettings.ui:590
+#: data/ui/projectsettings.ui:611
 msgid "Author:"
 msgstr "Penulis:"
 
-#: data/ui/projectsettings.ui:602
+#: data/ui/projectsettings.ui:623
 msgid "Year:"
 msgstr "Tahun:"
 
 #. The title of the section with the name, author, year fields
-#: data/ui/projectsettings.ui:634
+#: data/ui/projectsettings.ui:655
 msgid "Info"
 msgstr "Info"
 
-#: data/ui/projectsettings.ui:678
+#: data/ui/projectsettings.ui:699
 msgid "Scaled proxies resolution:"
 msgstr "Resolusi proksi terskala:"
 
-#: data/ui/projectsettings.ui:699 data/ui/projectsettings.ui:727
+#: data/ui/projectsettings.ui:720 data/ui/projectsettings.ui:748
 msgid "1"
 msgstr "1"
 
-#: data/ui/projectsettings.ui:777
+#: data/ui/projectsettings.ui:798
 msgid "<a href='#'>Proxy Preferences</a>"
 msgstr "<a href='#'>Preferensi Proksi</a>"
 
-#: data/ui/projectsettings.ui:811
+#: data/ui/projectsettings.ui:832
 msgid "Proxy"
 msgstr "Proksi"
 
-#: data/ui/renderingdialog.ui:20 data/ui/renderingdialog.ui:55
+#: data/ui/projectsettings.ui:865
+msgid "Title:"
+msgstr "Judul:"
+
+#: data/ui/projectsettings.ui:882
+msgid "Action:"
+msgstr "Aksi:"
+
+#: data/ui/projectsettings.ui:1007
+msgid "Safe Areas"
+msgstr "Area Aman"
+
+#: data/ui/renderingdialog.ui:35 data/ui/renderingdialog.ui:55
 #: pitivi/editorperspective.py:325
 msgid "Render"
 msgstr "Render"
 
-#: data/ui/renderingdialog.ui:109
-msgid "Folder:"
-msgstr "Folder:"
+#: data/ui/renderingdialog.ui:142 pitivi/render.py:70
+msgid "Custom"
+msgstr "Ubahan"
 
-#: data/ui/renderingdialog.ui:124
-msgid "File name:"
-msgstr "Nama berkas:"
-
-#: data/ui/renderingdialog.ui:151
-msgid "Container format:"
-msgstr "Format wadah:"
-
-#: data/ui/renderingdialog.ui:283
+#: data/ui/renderingdialog.ui:239
 msgid "Scale:"
 msgstr "Skala:"
 
-#: data/ui/renderingdialog.ui:316
+#: data/ui/renderingdialog.ui:272
 msgid "Scale"
 msgstr "Skala"
 
-#: data/ui/renderingdialog.ui:336
+#: data/ui/renderingdialog.ui:292
 msgid "Height"
 msgstr "Tinggi"
 
-#: data/ui/renderingdialog.ui:355
+#: data/ui/renderingdialog.ui:311
 msgid "Project Settings..."
 msgstr "Pengaturan Projek..."
 
-#: data/ui/renderingdialog.ui:370 data/ui/renderingdialog.ui:540
+#: data/ui/renderingdialog.ui:326 data/ui/renderingdialog.ui:496
 msgid "Advanced..."
 msgstr "Tingkat Lanjut..."
 
-#: data/ui/renderingdialog.ui:409 data/ui/renderingdialog.ui:580
+#: data/ui/renderingdialog.ui:365 data/ui/renderingdialog.ui:536
 msgid "Codec:"
 msgstr "Kodek:"
 
-#: data/ui/renderingdialog.ui:435
+#: data/ui/renderingdialog.ui:391
 msgid "Framerate"
 msgstr "Laju frame"
 
-#: data/ui/renderingdialog.ui:660
+#: data/ui/renderingdialog.ui:625
+msgid "Container format:"
+msgstr "Format wadah:"
+
+#: data/ui/renderingdialog.ui:692
 msgid "Automatically render from proxy files"
 msgstr "Secara otomatis render dari berkas proksi"
 
-#: data/ui/renderingdialog.ui:664
+#: data/ui/renderingdialog.ui:696
 msgid ""
 "Use proxy files if they are available and the source asset media format is "
 "not officially supported.\n"
@@ -629,11 +632,11 @@ msgstr ""
 "Opsi ini adalah trade-off yang baik antara kualitas dari video yang dirender "
 "dan stabilitas."
 
-#: data/ui/renderingdialog.ui:678
+#: data/ui/renderingdialog.ui:711
 msgid "Always render from proxy files"
 msgstr "Selalu render dari berkas proksi"
 
-#: data/ui/renderingdialog.ui:682
+#: data/ui/renderingdialog.ui:715
 msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
@@ -641,11 +644,11 @@ msgstr ""
 "Merender semua klip yang disinggahkan dari aset singgahan. Mungkin ada "
 "kehilangan kualitas selama proses perenderan."
 
-#: data/ui/renderingdialog.ui:694
+#: data/ui/renderingdialog.ui:728
 msgid "Never render from proxy files"
 msgstr "Jangan pernah render dari berkas proksi"
 
-#: data/ui/renderingdialog.ui:698
+#: data/ui/renderingdialog.ui:732
 msgid ""
 "Always use source assets for rendering. It is the best choice for the "
 "quality of the rendered video, but you might hit some bugs because of the "
@@ -657,16 +660,28 @@ msgstr ""
 "karena penggunaan format media yang tidak didukung secara resmi.\n"
 "<i>Gunakan ini dengan risiko Anda tanggung sendiri!</i>"
 
+#: data/ui/renderingdialog.ui:756
+msgid "Advanced"
+msgstr "Tingkat Lanjut"
+
+#: data/ui/renderingdialog.ui:777
+msgid "Folder:"
+msgstr "Folder:"
+
+#: data/ui/renderingdialog.ui:813
+msgid "File name:"
+msgstr "Nama berkas:"
+
 #: data/ui/renderingprogress.ui:8
 msgid "Rendering"
 msgstr "Perenderan"
 
-#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:736
+#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:778
 msgid "Pause"
 msgstr "Jeda"
 
-#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:728
-#: pitivi/timeline/timeline.py:1781
+#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:770
+#: pitivi/timeline/timeline.py:1823
 msgid "Play"
 msgstr "Putar"
 
@@ -692,55 +707,63 @@ msgstr "Menginisialisasi..."
 msgid "Estimated filesize:"
 msgstr "Perkiraan ukuran berkas:"
 
-#: data/ui/timelinetoolbar.ui:15
+#: data/ui/timelinetoolbar.ui:16
 msgid "Split clips at playhead position"
 msgstr "Belah klip pada posisi pemutaran"
 
-#: data/ui/timelinetoolbar.ui:17
+#: data/ui/timelinetoolbar.ui:18
 msgid "Split"
 msgstr "Belah"
 
-#: data/ui/timelinetoolbar.ui:30
+#: data/ui/timelinetoolbar.ui:31
 msgid "Delete clips"
 msgstr "Hapus klip"
 
-#: data/ui/timelinetoolbar.ui:32
+#: data/ui/timelinetoolbar.ui:33
 msgid "Delete"
 msgstr "Hapus"
 
-#: data/ui/timelinetoolbar.ui:45
+#: data/ui/timelinetoolbar.ui:46
 msgid "Group clips"
 msgstr "Kelompokkan klip"
 
-#: data/ui/timelinetoolbar.ui:47
+#: data/ui/timelinetoolbar.ui:48
 msgid "Group"
 msgstr "Grup"
 
-#: data/ui/timelinetoolbar.ui:60
+#: data/ui/timelinetoolbar.ui:61
 msgid "Ungroup clips"
 msgstr "Pecahkan kelompok klip"
 
-#: data/ui/timelinetoolbar.ui:62
+#: data/ui/timelinetoolbar.ui:63
 msgid "Ungroup"
 msgstr "Lepaskan kelompok"
 
-#: data/ui/timelinetoolbar.ui:75
+#: data/ui/timelinetoolbar.ui:76
 msgid "Copy clips"
 msgstr "Salin klip"
 
-#: data/ui/timelinetoolbar.ui:89
+#: data/ui/timelinetoolbar.ui:78
+msgid "Copy"
+msgstr "Salin"
+
+#: data/ui/timelinetoolbar.ui:91
 msgid "Paste clips"
 msgstr "Tempel klip"
 
-#: data/ui/timelinetoolbar.ui:103
+#: data/ui/timelinetoolbar.ui:93
+msgid "Paste"
+msgstr "Tempel"
+
+#: data/ui/timelinetoolbar.ui:106
 msgid "Align clips based on their soundtracks"
 msgstr "Ratakan klip berdasarkan trek suara mereka"
 
-#: data/ui/timelinetoolbar.ui:106
+#: data/ui/timelinetoolbar.ui:109
 msgid "Align"
 msgstr "Perataan"
 
-#: data/ui/timelinetoolbar.ui:119
+#: data/ui/timelinetoolbar.ui:122
 msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
@@ -749,39 +772,31 @@ msgstr ""
 "Ketika difungsikan, klip-klip yang bersebelahan otomatis digeser untuk "
 "mengisi celah."
 
-#: data/ui/timelinetoolbar.ui:122
+#: data/ui/timelinetoolbar.ui:125
 msgid "Gapless mode"
 msgstr "Mode tanpa jeda"
 
-#: data/ui/titleeditor.ui:36
-msgid "Create"
-msgstr "Buat"
-
-#: data/ui/titleeditor.ui:64
-msgid "Select a title clip to edit or create a new one."
-msgstr "Pilih suatu klip judul yang akan disunting atau buat baru."
-
-#: data/ui/titleeditor.ui:139
+#: data/ui/titleeditor.ui:71
 msgid "Choose a font"
 msgstr "Pilih sebuah fonta"
 
-#: data/ui/titleeditor.ui:156
+#: data/ui/titleeditor.ui:88
 msgid "Pick a text color"
 msgstr "Pilih warna teks"
 
-#: data/ui/titleeditor.ui:191
+#: data/ui/titleeditor.ui:123
 msgid "Pick a background color"
 msgstr "Pilih warna latar"
 
-#: data/ui/titleeditor.ui:232
+#: data/ui/titleeditor.ui:164
 msgid "Alignment"
 msgstr "Perataan"
 
-#: data/ui/titleeditor.ui:268
+#: data/ui/titleeditor.ui:200
 msgid "Horizontal:"
 msgstr "Horisontal:"
 
-#: data/ui/titleeditor.ui:292
+#: data/ui/titleeditor.ui:224
 msgid "Vertical:"
 msgstr "Vertikal:"
 
@@ -896,55 +911,107 @@ msgstr ""
 "memfungsikan suatu watchdong dalam pipeline GStreamer. Digunakan untuk "
 "mendeteksi kesalahan yang terjadi dalam GStreamer dan memulihkannya"
 
-#: pitivi/clipproperties.py:110
+#: pitivi/clipproperties.py:126
+msgid ""
+"Select a clip on the timeline to configure its properties and effects or "
+"create a new clip:"
+msgstr ""
+"Pilih suatu klip pada lini masa untuk mengonfigurasi properti dan efeknya "
+"atau membuat klip baru:"
+
+#: pitivi/clipproperties.py:132
+msgid "Create a title clip"
+msgstr "Buat klip judul"
+
+#: pitivi/clipproperties.py:137
+msgid "Create a color clip"
+msgstr "Buat klip warna"
+
+#: pitivi/clipproperties.py:222
 msgid "Effects"
 msgstr "Efek"
 
-#: pitivi/clipproperties.py:125
-msgid "To apply an effect to the clip, drag it from the Effect Library."
-msgstr "Untuk menerapkan suatu efek ke klip, seret saja dari Pustaka Efek."
+#: pitivi/clipproperties.py:239
+msgid ""
+"To apply an effect to the clip, drag it from the Effect Library or use the "
+"button below."
+msgstr ""
+"Untuk menerapkan suatu efek ke klip, seret saja dari Pustaka Efek atau "
+"gunakan tombol di bawah ini."
 
-#: pitivi/clipproperties.py:143
-msgid "Remove effect"
-msgstr "Hapus efek"
+#: pitivi/clipproperties.py:247
+msgid "Add Effect"
+msgstr "Tambah Efek"
 
-#: pitivi/clipproperties.py:179
-msgid "Active"
-msgstr "Aktif"
-
-#: pitivi/clipproperties.py:182
-msgid "Type"
-msgstr "Tipe"
-
-#: pitivi/clipproperties.py:191
-msgid "Effect name"
-msgstr "Nama efek"
-
-#: pitivi/clipproperties.py:219
-msgid "Select a clip on the timeline to configure its associated effects"
-msgstr "Pilih suatu klip pada lini masa untuk menata efek-efek terkaitnya"
-
-#: pitivi/clipproperties.py:564
+#: pitivi/clipproperties.py:554
 msgid "Transformation"
 msgstr "Transformasi"
 
-#: pitivi/clipproperties.py:659
+#: pitivi/clipproperties.py:676
 msgid "Show keyframes"
 msgstr "Tampilkan bingkai kunci"
 
-#: pitivi/clipproperties.py:661
+#: pitivi/clipproperties.py:679
 msgid "Activate keyframes"
 msgstr "Aktifkan bingkai kunci"
 
-#: pitivi/clipproperties.py:666
+#: pitivi/clipproperties.py:684
 msgid "Hide keyframes"
 msgstr "Sembunyikan bingkai kunci"
 
-#: pitivi/editorperspective.py:200 pitivi/medialibrary.py:658
+#: pitivi/clip_properties/color.py:53 plugins/console/console.py:125
+msgid "Color"
+msgstr "Warna"
+
+#: pitivi/clip_properties/title.py:43
+msgid "Title clip duration"
+msgstr "Durasi klip judul"
+
+#: pitivi/clip_properties/title.py:45
+msgid ""
+"Default clip length (in milliseconds) of titles when inserting on the "
+"timeline."
+msgstr ""
+"Panjang klip baku (dalam milidetik) dari judul ketika menyisipkan dalam lini "
+"masa."
+
+#: pitivi/clip_properties/title.py:59
+msgid "Title"
+msgstr "Judul"
+
+#: pitivi/clip_properties/title.py:101 pitivi/clip_properties/title.py:108
+msgid "Absolute"
+msgstr "Absolut"
+
+#: pitivi/clip_properties/title.py:102
+msgid "Top"
+msgstr "Puncak"
+
+#: pitivi/clip_properties/title.py:103 pitivi/clip_properties/title.py:110
+msgid "Center"
+msgstr "Tengah"
+
+#: pitivi/clip_properties/title.py:104
+msgid "Bottom"
+msgstr "Dasar"
+
+#: pitivi/clip_properties/title.py:105
+msgid "Baseline"
+msgstr "Baseline"
+
+#: pitivi/clip_properties/title.py:109
+msgid "Left"
+msgstr "Kiri"
+
+#: pitivi/clip_properties/title.py:111
+msgid "Right"
+msgstr "Kanan"
+
+#: pitivi/editorperspective.py:201 pitivi/medialibrary.py:595
 msgid "Media Library"
 msgstr "Pustaka Media"
 
-#: pitivi/editorperspective.py:202
+#: pitivi/editorperspective.py:203
 msgid "Effect Library"
 msgstr "Pustaka Efek"
 
@@ -956,10 +1023,6 @@ msgstr "Klip"
 msgid "Transition"
 msgstr "Transisi"
 
-#: pitivi/editorperspective.py:217
-msgid "Title"
-msgstr "Judul"
-
 #: pitivi/editorperspective.py:308
 msgid "Undo"
 msgstr "Tak Jadi"
@@ -967,7 +1030,8 @@ msgstr "Tak Jadi"
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/editorperspective.py:319 pitivi/editorperspective.py:532
 #: pitivi/editorperspective.py:673 pitivi/editorperspective.py:721
-#: pitivi/editorperspective.py:774 pitivi/preset.py:114 pitivi/project.py:194
+#: pitivi/editorperspective.py:774 pitivi/preset.py:113 pitivi/project.py:200
+#: pitivi/render.py:214
 msgid "Save"
 msgstr "Simpan"
 
@@ -992,7 +1056,7 @@ msgstr "Perkenalan cepat ke Pitivi"
 msgid "Unable to save project \"%s\""
 msgstr "Tidak bisa menyimpan proyek \"%s\""
 
-#: pitivi/editorperspective.py:534 pitivi/project.py:193
+#: pitivi/editorperspective.py:534 pitivi/project.py:199
 msgid "Save as..."
 msgstr "Simpan Sebagai..."
 
@@ -1050,7 +1114,7 @@ msgid "Detect automatically"
 msgstr "Deteksi secara otomatis"
 
 #: pitivi/editorperspective.py:730 pitivi/editorperspective.py:777
-#: pitivi/project.py:72 pitivi/render.py:436
+#: pitivi/project.py:72 pitivi/render.py:708
 msgid "Untitled"
 msgstr "Tanpa judul"
 
@@ -1066,48 +1130,52 @@ msgstr "Citra JPEG"
 msgid "Preview"
 msgstr "Pratinjau"
 
-#: pitivi/effects.py:61
+#: pitivi/effects.py:60
 msgid "Colors"
 msgstr "Warna"
 
-#: pitivi/effects.py:78
+#: pitivi/effects.py:76
 msgid "Compositing"
 msgstr "Pengkompositan"
 
-#: pitivi/effects.py:85
+#: pitivi/effects.py:83
 msgid "Noise & blur"
 msgstr "Derau & kabur"
 
-#: pitivi/effects.py:91
+#: pitivi/effects.py:88
 msgid "Analysis"
 msgstr "Analisis"
 
-#: pitivi/effects.py:99
+#: pitivi/effects.py:95
 msgid "Geometry"
 msgstr "Geometri"
 
-#: pitivi/effects.py:110
+#: pitivi/effects.py:106
 msgid "Fancy"
 msgstr "Kesukaan"
 
-#: pitivi/effects.py:122
+#: pitivi/effects.py:117
 msgid "Time"
 msgstr "Waktu"
 
-#: pitivi/effects.py:239
+#: pitivi/effects.py:247
 msgid "effect"
 msgstr "efek"
 
 #. Add Uncategorized only if there are other categories defined.
-#: pitivi/effects.py:333 pitivi/effects.py:354
+#: pitivi/effects.py:338 pitivi/effects.py:352
 msgid "Uncategorized"
 msgstr "Tanpa kategori"
 
-#: pitivi/effects.py:334 pitivi/effects.py:351
-msgid "All effects"
-msgstr "Semua efek"
+#: pitivi/effects.py:394 pitivi/effects.py:661
+msgid "No effects"
+msgstr "Tidak ada efek"
 
-#: pitivi/greeterperspective.py:228 pitivi/preset.py:102
+#: pitivi/effects.py:482
+msgid "Add to Favourites"
+msgstr "Tambah ke Favorit"
+
+#: pitivi/greeterperspective.py:228 pitivi/preset.py:101 pitivi/render.py:202
 msgid "New"
 msgstr "Baru"
 
@@ -1233,71 +1301,63 @@ msgstr "<b>Resolusi</b>: %d×%d"
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Durasi</b>: %s"
 
-#: pitivi/mediafilespreviewer.py:461 pitivi/medialibrary.py:1220
+#: pitivi/mediafilespreviewer.py:461 pitivi/medialibrary.py:1113
 msgid "Error while analyzing a file"
 msgid_plural "Error while analyzing files"
 msgstr[0] "Galat saat menganalisis berkas"
 msgstr[1] "Galat saat menganalisis berkas"
 
-#: pitivi/medialibrary.py:133
+#: pitivi/medialibrary.py:141
 msgid "Keep dialog open"
 msgstr "Tetap buka dialog"
 
-#: pitivi/medialibrary.py:135
+#: pitivi/medialibrary.py:143
 msgid "When importing files keep the dialog open"
 msgstr "Ketika mengimpor berkas menjaga dialog tetap terbuka"
 
 #. Translators: Create optimized media for unsupported files.
-#: pitivi/medialibrary.py:141
+#: pitivi/medialibrary.py:149
 msgid "Optimize:"
 msgstr "Mengoptimalkan:"
 
-#: pitivi/medialibrary.py:145
+#: pitivi/medialibrary.py:153
 msgid "Unsupported assets"
 msgstr "Aset yang tidak didukung"
 
-#: pitivi/medialibrary.py:146
+#: pitivi/medialibrary.py:154
 msgid "All"
 msgstr "Semua"
 
-#: pitivi/medialibrary.py:227
+#: pitivi/medialibrary.py:235
 #, python-format
 msgid "Scale assets larger than %s×%s px."
 msgstr "Skalakan aset yang lebih besar dari %s×%s px."
 
-#: pitivi/medialibrary.py:506 pitivi/medialibrary.py:1079
+#: pitivi/medialibrary.py:513 pitivi/medialibrary.py:990
 msgid "Unknown"
 msgstr "Tak diketahui"
 
-#: pitivi/medialibrary.py:586
-msgid "Icon"
-msgstr "Ikon"
-
-#: pitivi/medialibrary.py:597
-msgid "Information"
-msgstr "Informasi"
-
-#: pitivi/medialibrary.py:665
+#: pitivi/medialibrary.py:602
 msgid "Remove the selected assets"
 msgstr "Hapus yang aset yang dipilih"
 
-#: pitivi/medialibrary.py:672
+#: pitivi/medialibrary.py:609
 msgid "Insert selected assets at the end of the timeline"
 msgstr "Sisipkan aset yang dipilih di akhir lini masa"
 
-#: pitivi/medialibrary.py:856
+#: pitivi/medialibrary.py:776
 msgid "Select One or More Files"
 msgstr "Pilih Satu Berkas atau Lebih"
 
-#: pitivi/medialibrary.py:860
+#: pitivi/medialibrary.py:780
 msgid "Add"
 msgstr "Tambah"
 
-#: pitivi/medialibrary.py:875
+#: pitivi/medialibrary.py:795
 msgid "Supported file formats"
 msgstr "Format berkas yang didukung"
 
-#: pitivi/medialibrary.py:887 pitivi/dialogs/missingasset.py:117
+#: pitivi/medialibrary.py:807 pitivi/dialogs/missingasset.py:117
 msgid "All files"
 msgstr "Semua berkas"
 
@@ -1307,78 +1367,78 @@ msgstr "Semua berkas"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals)
-#: pitivi/medialibrary.py:986
+#: pitivi/medialibrary.py:896
 #, python-format
 msgid "Transcoding %d asset: %d%% (About %s left)"
 msgid_plural "Transcoding %d assets: %d%% (About %s left)"
 msgstr[0] "Men-transcode %d aset: %d%% (Sekitar %s tersisa)"
 msgstr[1] "Men-transcode %d aset: %d%% (Sekitar %s tersisa)"
 
-#: pitivi/medialibrary.py:1091
+#: pitivi/medialibrary.py:1002
 msgid "View error"
 msgid_plural "View errors"
 msgstr[0] "Tilik galat"
 msgstr[1] "Galat saat menganalisis berkas"
 
 #. Translators: {0:d} is just like %d (integer number variable)
-#: pitivi/medialibrary.py:1093
+#: pitivi/medialibrary.py:1004
 #, python-brace-format
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
 msgstr[0] "{0:d} galat terjadi ketika mengimpor."
 msgstr[1] "{0:d} galat terjadi ketika mengimpor."
 
-#: pitivi/medialibrary.py:1109
+#: pitivi/medialibrary.py:1020
 #, python-format
 msgid "The project settings have been set to match file '%s'"
 msgstr "Setelan proyek telah ditata agar cocok dengan berkas '%s'"
 
-#: pitivi/medialibrary.py:1223
+#: pitivi/medialibrary.py:1116
 msgid "The following file can not be used with Pitivi."
 msgid_plural "The following files can not be used with Pitivi."
 msgstr[0] "Berkas berikut tidak dapat dipakai dengan Pitivi."
 msgstr[1] "Berkas berikut tidak dapat dipakai dengan Pitivi."
 
-#: pitivi/medialibrary.py:1349
+#: pitivi/medialibrary.py:1192
 msgid "Open containing folder"
 msgstr "Buka folder yang mewadahi"
 
-#: pitivi/medialibrary.py:1356
+#: pitivi/medialibrary.py:1199
 msgid "Edit"
 msgstr "Sunting"
 
-#: pitivi/medialibrary.py:1385
+#: pitivi/medialibrary.py:1228
 msgid "Do not use Optimised Proxy for selected asset"
 msgid_plural "Do not use Optimised Proxies for selected assets"
 msgstr[0] "Jangan gunakan Proksi Teroptimasi untuk aset yang dipilih"
 msgstr[1] "Jangan gunakan Proksi Teroptimasi untuk aset yang dipilih"
 
-#: pitivi/medialibrary.py:1396 pitivi/medialibrary.py:1418
-#: pitivi/medialibrary.py:1440
+#: pitivi/medialibrary.py:1239 pitivi/medialibrary.py:1261
+#: pitivi/medialibrary.py:1283
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
 msgstr[0] "Hapus berkas proksi yang terkait"
 msgstr[1] "Hapus berkas proksi yang terkait"
 
-#: pitivi/medialibrary.py:1407
+#: pitivi/medialibrary.py:1250
 msgid "Do not use Proxy for selected asset"
 msgid_plural "Do not use Proxies for selected assets"
 msgstr[0] "Jangan gunakan Proksi untuk aset yang dipilih"
 msgstr[1] "Jangan gunakan Proksi untuk aset yang dipilih"
 
-#: pitivi/medialibrary.py:1429
+#: pitivi/medialibrary.py:1272
 msgid "Do not use Scaled Proxy for selected asset"
 msgid_plural "Do not use Scaled Proxies for selected assets"
 msgstr[0] "Jangan gunakan Proksi Terskala untuk aset yang dipilih"
 msgstr[1] "Jangan gunakan Proksi Terskala untuk aset yang dipilih"
 
-#: pitivi/medialibrary.py:1451
+#: pitivi/medialibrary.py:1294
 msgid "Use Optimised Proxy for selected asset"
 msgid_plural "Use Optimised Proxies for selected assets"
 msgstr[0] "Gunakan Proksi Teroptimasi untuk aset yang dipilih"
 msgstr[1] "Gunakan Proksi Teroptimasi untuk aset yang dipilih"
 
-#: pitivi/medialibrary.py:1461
+#: pitivi/medialibrary.py:1304
 msgid "Use Scaled Proxy for selected asset"
 msgid_plural "Use Scaled Proxies for selected assets"
 msgstr[0] "Gunakan Proksi Terskala untuk aset yang dipilih"
@@ -1392,33 +1452,22 @@ msgstr "Pengaya pengguna"
 msgid "System plugins"
 msgstr "Pengaya sistem"
 
-#: pitivi/preset.py:229
+#: pitivi/preset.py:228
 msgid "New preset"
 msgstr "Prasetel baru"
 
-#: pitivi/preset.py:232
+#: pitivi/preset.py:231
 #, python-format
 msgid "New preset %d"
 msgstr "Prasetel baru %d"
 
-#. Translators: This must contain exclusively low case alphanum and '-'
-#: pitivi/preset.py:540
-msgid "new-profile"
-msgstr "profil-baru"
-
-#. Translators: This must contain exclusively low case alphanum and '-'
-#: pitivi/preset.py:544
-#, python-format
-msgid "new-profile-%d"
-msgstr "profil-baru-%d"
-
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:177 pitivi/render.py:875
+#: pitivi/project.py:183 pitivi/render.py:1173
 msgid "Sorry, something didn’t work right."
 msgstr "Maaf, ada yang tidak bekerja dengan benar."
 
-#: pitivi/project.py:180
+#: pitivi/project.py:186
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1444,11 +1493,11 @@ msgstr ""
 "Sebelum menutup Pitivi, Anda dapat menyimpan perubah ke berkas proyek yang "
 "ada atau sebagai suatu berkas proyek terpisah."
 
-#: pitivi/project.py:195
+#: pitivi/project.py:201
 msgid "Close Pitivi"
 msgstr "Tutup Pitivi"
 
-#: pitivi/project.py:265
+#: pitivi/project.py:271
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1458,15 +1507,15 @@ msgstr ""
 "Bila Anda mencoba menambahkan suatu berkas media ke proyek Anda, gunakan "
 "tombol \"Impor\" sebagai pengganti."
 
-#: pitivi/project.py:287
+#: pitivi/project.py:293
 msgid "Ignore backup"
 msgstr "Abaikan salinan cadangan"
 
-#: pitivi/project.py:289
+#: pitivi/project.py:295
 msgid "Restore from backup"
 msgstr "Pulihkan dari cadangan"
 
-#: pitivi/project.py:300
+#: pitivi/project.py:306
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1479,20 +1528,39 @@ msgstr ""
 "\n"
 "Apakah Anda hendak memuatnya sebagai pengganti?"
 
-#: pitivi/project.py:373
+#: pitivi/project.py:379
 msgid "You do not have permissions to write to this folder."
 msgstr "Anda tidak berhak untuk menulis ke folder ini."
 
 #. Save the project to a temporary file.
-#: pitivi/project.py:406
+#: pitivi/project.py:412
 msgid "project"
 msgstr "proyek"
 
-#: pitivi/project.py:703
+#: pitivi/project.py:714
 msgid "Pitivi encoding profile"
 msgstr "Profil pengkodean Pitivi"
 
-#: pitivi/render.py:338
+#: pitivi/render.py:103
+msgid "YouTube"
+msgstr "YouTube"
+
+#: pitivi/render.py:104
+msgid "DVD"
+msgstr "DVD"
+
+#. Translators: This must contain exclusively low case alphanum and '-'
+#: pitivi/render.py:296
+msgid "new-profile"
+msgstr "profil-baru"
+
+#. Translators: This must contain exclusively low case alphanum and '-'
+#: pitivi/render.py:300
+#, python-format
+msgid "new-profile-%d"
+msgstr "profil-baru-%d"
+
+#: pitivi/render.py:609
 #, python-format
 msgid "Rendering — %d%% complete"
 msgstr "Merender — %d%% selesai"
@@ -1503,27 +1571,27 @@ msgstr "Merender — %d%% selesai"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals).
-#: pitivi/render.py:347
+#: pitivi/render.py:618
 #, python-format
 msgid "About %s left"
 msgstr "Sekitar %s tersisa"
 
-#: pitivi/render.py:395
+#: pitivi/render.py:666
 msgid "Currently rendering"
 msgstr "Sedang merender"
 
 #. Translators: This item appears in a combobox's popup and
 #. contains as children the unsupported (but still available)
 #. muxers and encoders.
-#: pitivi/render.py:632
+#: pitivi/render.py:924
 msgid "Unsupported"
 msgstr "Tak didukung"
 
-#: pitivi/render.py:700
+#: pitivi/render.py:995
 msgid "A file name is required."
 msgstr "Suatu nama berkas diperlukan."
 
-#: pitivi/render.py:703
+#: pitivi/render.py:998
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1531,23 +1599,23 @@ msgstr ""
 "Berkas ini sudah ada.\n"
 "Bila Anda tidak ingin menimpanya, pilihlah folder atau nama berkas lain."
 
-#: pitivi/render.py:707
+#: pitivi/render.py:1002
 #, python-format
 msgid "Remove invalid characters from the filename: %s"
 msgstr "Hapus karakter yang tidak valid dari nama berkas: %s"
 
-#: pitivi/render.py:738
+#: pitivi/render.py:1033
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: pitivi/render.py:743
+#: pitivi/render.py:1038
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: pitivi/render.py:869
+#: pitivi/render.py:1167
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
@@ -1557,11 +1625,11 @@ msgstr ""
 "dirender.</b>\n"
 "\n"
 
-#: pitivi/render.py:877
+#: pitivi/render.py:1175
 msgid "An error occurred while trying to render your project."
 msgstr "Terjadi kesalahan saat mencoba merender proyek Anda."
 
-#: pitivi/render.py:879
+#: pitivi/render.py:1177
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1569,54 +1637,14 @@ msgstr ""
 "Anda mungkin ingin memeriksa panduan penelusuran masalah kami atau "
 "mengirimkan suatu laporan kutu. Kesalahan GStreamernya:"
 
-#: pitivi/render.py:1123 pitivi/render.py:1124 pitivi/render.py:1130
+#: pitivi/render.py:1421 pitivi/render.py:1422 pitivi/render.py:1428
 msgid "Render complete"
 msgstr "Render selesai"
 
-#: pitivi/render.py:1128
+#: pitivi/render.py:1426
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "\"%s\" telah selesai merender."
-
-#: pitivi/titleeditor.py:45
-msgid "Title clip duration"
-msgstr "Durasi klip judul"
-
-#: pitivi/titleeditor.py:47
-msgid ""
-"Default clip length (in milliseconds) of titles when inserting on the "
-"timeline."
-msgstr ""
-"Panjang klip baku (dalam milidetik) dari judul ketika menyisipkan dalam lini "
-"masa."
-
-#: pitivi/titleeditor.py:116 pitivi/titleeditor.py:123
-msgid "Absolute"
-msgstr "Absolut"
-
-#: pitivi/titleeditor.py:117
-msgid "Top"
-msgstr "Puncak"
-
-#: pitivi/titleeditor.py:118 pitivi/titleeditor.py:125
-msgid "Center"
-msgstr "Tengah"
-
-#: pitivi/titleeditor.py:119
-msgid "Bottom"
-msgstr "Dasar"
-
-#: pitivi/titleeditor.py:120
-msgid "Baseline"
-msgstr "Baseline"
-
-#: pitivi/titleeditor.py:124
-msgid "Left"
-msgstr "Kiri"
-
-#: pitivi/titleeditor.py:126
-msgid "Right"
-msgstr "Kanan"
 
 #: pitivi/transitions.py:82
 msgid "Normal"
@@ -1658,27 +1686,47 @@ msgstr "Tajam"
 msgid "Smooth"
 msgstr "Mulus"
 
-#: pitivi/viewer/viewer.py:74
+#: pitivi/viewer/guidelines.py:59
+msgid "3 by 3"
+msgstr "3 oleh 3"
+
+#: pitivi/viewer/guidelines.py:60
+msgid "Vertical/Horizontal"
+msgstr "Vertikal/Horizontal"
+
+#: pitivi/viewer/guidelines.py:61
+msgid "Diagonals"
+msgstr "Diagonal"
+
+#: pitivi/viewer/guidelines.py:92
+msgid "Composition Guidelines"
+msgstr "Pedoman Komposisi"
+
+#: pitivi/viewer/viewer.py:77
 msgid "Currently playing"
 msgstr "Sedang memutar"
 
-#: pitivi/viewer/viewer.py:250
+#: pitivi/viewer/viewer.py:256
+msgid "Select composition guidelines"
+msgstr "Pilih pedoman komposisi"
+
+#: pitivi/viewer/viewer.py:264
 msgid "Go to the beginning of the timeline"
 msgstr "Ke awal lini masa"
 
-#: pitivi/viewer/viewer.py:259
+#: pitivi/viewer/viewer.py:273
 msgid "Go back one second"
 msgstr "Mundur satu detik"
 
-#: pitivi/viewer/viewer.py:272
+#: pitivi/viewer/viewer.py:286
 msgid "Go forward one second"
 msgstr "Maju satu detik"
 
-#: pitivi/viewer/viewer.py:281
+#: pitivi/viewer/viewer.py:295
 msgid "Go to the end of the timeline"
 msgstr "Ke akhir lini masa"
 
-#: pitivi/viewer/viewer.py:288
+#: pitivi/viewer/viewer.py:302
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1686,7 +1734,7 @@ msgstr ""
 "Masukkan suatu kode waktu atau nomor bingkai\n"
 "dan tekan \"Enter\" untuk pergi ke posisi itu"
 
-#: pitivi/viewer/viewer.py:299
+#: pitivi/viewer/viewer.py:313
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1694,11 +1742,23 @@ msgstr ""
 "Copot penilik\n"
 "Anda dapat merekatkannya lagi dengan menutup jendela yang baru dibuat."
 
-#: pitivi/viewer/viewer.py:440 pitivi/viewer/viewer.py:498
+#: pitivi/viewer/viewer.py:340
+msgid "Viewer"
+msgstr "Penampil"
+
+#: pitivi/viewer/viewer.py:348
+msgid "Toggle the currently selected composition guidelines"
+msgstr "Jungkitkan pedoman komposisi yang saat ini dipilih"
+
+#: pitivi/viewer/viewer.py:356
+msgid "Toggle safe areas on viewer"
+msgstr "Jungkitkan area aman pada penampil"
+
+#: pitivi/viewer/viewer.py:482 pitivi/viewer/viewer.py:540
 msgid "Show this window in fullscreen"
 msgstr "Tampilkan jendela ini dalam layar penuh"
 
-#: pitivi/viewer/viewer.py:495
+#: pitivi/viewer/viewer.py:537
 msgid "Exit fullscreen mode"
 msgstr "Keluar mode layar penuh"
 
@@ -1721,45 +1781,53 @@ msgstr ""
 msgid "Timestamp: %s"
 msgstr "Stempel waktu: %s"
 
-#: pitivi/timeline/elements.py:1463
+#: pitivi/timeline/elements.py:1504
 msgid "Audio crossfade"
 msgstr "Crossfade audio"
 
-#: pitivi/timeline/layer.py:166
+#: pitivi/timeline/layer.py:197
 msgid "Move layer to top"
 msgstr "Pindahkan lapisan ke puncak"
 
-#: pitivi/timeline/layer.py:172
+#: pitivi/timeline/layer.py:203
 msgid "Move layer up"
 msgstr "Pindahkan lapisan ke atas"
 
-#: pitivi/timeline/layer.py:178
+#: pitivi/timeline/layer.py:209
 msgid "Move layer down"
 msgstr "Pindahkan lapisan ke bawah"
 
-#: pitivi/timeline/layer.py:184
+#: pitivi/timeline/layer.py:215
 msgid "Move layer to bottom"
 msgstr "Pindahkan lapisan ke dasar"
 
-#: pitivi/timeline/layer.py:190
+#: pitivi/timeline/layer.py:221
 msgid "Delete layer"
 msgstr "Hapus lapisan"
 
-#: pitivi/timeline/layer.py:282
+#: pitivi/timeline/layer.py:346
 #, python-format
 msgid "Layer %d"
 msgstr "Lapisan %d"
 
-#: pitivi/timeline/ruler.py:253
+#: pitivi/timeline/markers.py:135
+msgid "Markers"
+msgstr "Penanda"
+
+#: pitivi/timeline/markers.py:141
+msgid "Add a marker"
+msgstr "Tambah penanda"
+
+#: pitivi/timeline/ruler.py:233
 #, python-format
 msgid "Frame #%d"
 msgstr "Bingkai #%d"
 
-#: pitivi/timeline/timeline.py:81
+#: pitivi/timeline/timeline.py:82
 msgid "Snap distance"
 msgstr "Jarak kancing"
 
-#: pitivi/timeline/timeline.py:82
+#: pitivi/timeline/timeline.py:83
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1767,11 +1835,11 @@ msgstr ""
 "Ambang (dalam piksel) dimana dua klip akan lengket menjadi satu ketika "
 "menyeret atau memangkas."
 
-#: pitivi/timeline/timeline.py:94
+#: pitivi/timeline/timeline.py:95
 msgid "Image clip duration"
 msgstr "Durasi klip gambar"
 
-#: pitivi/timeline/timeline.py:96
+#: pitivi/timeline/timeline.py:97
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
@@ -1779,95 +1847,99 @@ msgstr ""
 "Panjang klip baku (dalam milidetik) dari citra ketika menyisipkan dalam lini "
 "masa."
 
-#: pitivi/timeline/timeline.py:107
+#: pitivi/timeline/timeline.py:108
 msgid "Left click also seeks"
 msgstr "Klik kiri juga seek"
 
-#: pitivi/timeline/timeline.py:109
+#: pitivi/timeline/timeline.py:110
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr "Apakah mengklik kiri juga seek selain memilih dan menyunting klip."
 
-#: pitivi/timeline/timeline.py:338 pitivi/timeline/timeline.py:1712
+#: pitivi/timeline/timeline.py:340 pitivi/timeline/timeline.py:1747
 msgid "Add layer"
 msgstr "Tambah lapisan"
 
-#: pitivi/timeline/timeline.py:1655 pitivi/dialogs/prefs.py:60
+#: pitivi/timeline/timeline.py:1690 pitivi/dialogs/prefs.py:60
 msgid "Timeline"
 msgstr "Alur Waktu"
 
-#: pitivi/timeline/timeline.py:1662
+#: pitivi/timeline/timeline.py:1697
 msgid "Action Search"
 msgstr "Pencarian Aksi"
 
-#: pitivi/timeline/timeline.py:1670
+#: pitivi/timeline/timeline.py:1705
 msgid "Delete selected clips"
 msgstr "Hapus klip yang dipilih"
 
-#: pitivi/timeline/timeline.py:1677
+#: pitivi/timeline/timeline.py:1712
 msgid "Delete selected clips and shift following ones"
 msgstr "Hapus klip yang dipilih dan geser yang selanjutnya"
 
-#: pitivi/timeline/timeline.py:1684
+#: pitivi/timeline/timeline.py:1719
 msgid "Group selected clips together"
 msgstr "Kelompokkan klip yang dipilih menjadi satu"
 
-#: pitivi/timeline/timeline.py:1691
+#: pitivi/timeline/timeline.py:1726
 msgid "Ungroup selected clips"
 msgstr "Bongkar kelompok klip yang dipilih"
 
-#: pitivi/timeline/timeline.py:1698
+#: pitivi/timeline/timeline.py:1733
 msgid "Copy selected clips"
 msgstr "Salin klip yang dipilih"
 
-#: pitivi/timeline/timeline.py:1705
+#: pitivi/timeline/timeline.py:1740
 msgid "Paste selected clips"
 msgstr "Tempelkan klip yang dipilih"
 
-#: pitivi/timeline/timeline.py:1719
+#: pitivi/timeline/timeline.py:1754
 msgid "Seeks to the first clip edge after the playhead."
 msgstr "Lompat ke klip pertama setelah playhead."
 
-#: pitivi/timeline/timeline.py:1726
+#: pitivi/timeline/timeline.py:1761
 msgid "Seeks to the first clip edge before the playhead."
 msgstr "Lompat ke klip pertama sebelum playhead."
 
-#: pitivi/timeline/timeline.py:1739
+#: pitivi/timeline/timeline.py:1768
+msgid "Add an effect to the selected clip"
+msgstr "Tambah efek ke klip yang dipilih"
+
+#: pitivi/timeline/timeline.py:1781
 msgid "Split the clip at the position"
 msgstr "Belah klip pada posisi"
 
-#: pitivi/timeline/timeline.py:1746
+#: pitivi/timeline/timeline.py:1788
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Menambah bingkai kunci ke kurva bingkai kunci dari klip yang dipilih"
 
-#: pitivi/timeline/timeline.py:1751
+#: pitivi/timeline/timeline.py:1793
 msgid "Timeline Navigation"
 msgstr "Navigasi Alur Waktu"
 
-#: pitivi/timeline/timeline.py:1759
+#: pitivi/timeline/timeline.py:1801
 msgid "Zoom in"
 msgstr "Perbesar"
 
-#: pitivi/timeline/timeline.py:1767
+#: pitivi/timeline/timeline.py:1809
 msgid "Zoom out"
 msgstr "Perkecil"
 
-#: pitivi/timeline/timeline.py:1775
+#: pitivi/timeline/timeline.py:1817
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Atur zum agar seluruh proyek pas ke jendela"
 
-#: pitivi/timeline/timeline.py:1788
+#: pitivi/timeline/timeline.py:1830
 msgid "Seek backward one frame"
 msgstr "Seek mundur satu bingkai"
 
-#: pitivi/timeline/timeline.py:1795
+#: pitivi/timeline/timeline.py:1837
 msgid "Seek forward one frame"
 msgstr "Maju satu bingkai"
 
-#: pitivi/timeline/timeline.py:1803
+#: pitivi/timeline/timeline.py:1845
 msgid "Seek backward one second"
 msgstr "Mundur satu detik"
 
-#: pitivi/timeline/timeline.py:1811
+#: pitivi/timeline/timeline.py:1853
 msgid "Seek forward one second"
 msgstr "Maju satu detik"
 
@@ -2069,7 +2141,7 @@ msgstr ""
 "Anda dapat membuat <a href='{doc_url}'>pengaya</a> kedalam <a "
 "href='{dir_url}'>direktori pengaya</a> Anda."
 
-#: pitivi/utils/misc.py:272
+#: pitivi/utils/misc.py:276
 msgid ""
 "Failed to open the user manual. Make sure to have either the `yelp` GNOME  "
 "documentation viewer or a web browser installed"
@@ -2077,7 +2149,7 @@ msgstr ""
 "Gagal membuka manual penggunal. Pastikan telah terpasangnya penampil "
 "dokumentasi GNOME 'yelp' atau suatu peramban web"
 
-#: pitivi/utils/misc.py:281
+#: pitivi/utils/misc.py:285
 msgid ""
 "The system's locale that you are using is not UTF-8 capable. Unicode support "
 "is required for Python3 software like Pitivi. Please correct your system "
@@ -2089,7 +2161,7 @@ msgstr ""
 "perbaiki setelan sistem Anda; bila Anda mencoba memakai Pitivi dengan locale "
 "yang rusak, bug yang aneh akan terjadi."
 
-#: pitivi/utils/misc.py:291
+#: pitivi/utils/misc.py:295
 msgid "Error while decoding a string"
 msgstr "Kesalahan saat mendekode sebuah string"
 
@@ -2265,10 +2337,6 @@ msgstr "%d nanodetik ditampilkan, karena kami bisa"
 msgid "Console"
 msgstr "Konsol"
 
-#: plugins/console/console.py:125
-msgid "Color"
-msgstr "Warna"
-
 #. Translators: The color of the content from stderr.
 #: plugins/console/console.py:130
 msgid "Standard error color"
@@ -2307,3 +2375,33 @@ msgid ""
 msgstr ""
 "Tidak mungkin untuk mengganti {key}, karena perintah pintasan bersifat hanya-"
 "baca."
+
+#~ msgid "Show video effects"
+#~ msgstr "Tampilkan efek video"
+
+#~ msgid "Show audio effects"
+#~ msgstr "Tampilkan efek audio"
+
+#~ msgid "Clear the current search"
+#~ msgstr "Bersihkan pencarian saat ini"
+
+#~ msgid "Create"
+#~ msgstr "Buat"
+
+#~ msgid "Select a title clip to edit or create a new one."
+#~ msgstr "Pilih suatu klip judul yang akan disunting atau buat baru."
+
+#~ msgid "Remove effect"
+#~ msgstr "Hapus efek"
+
+#~ msgid "Type"
+#~ msgstr "Tipe"
+
+#~ msgid "Effect name"
+#~ msgstr "Nama efek"
+
+#~ msgid "Icon"
+#~ msgstr "Ikon"
+
+#~ msgid "Information"
+#~ msgstr "Informasi"
