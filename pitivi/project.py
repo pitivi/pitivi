@@ -1083,19 +1083,8 @@ class Project(Loggable, GES.Project):
         return self.audio_profile.get_preset_name()
 
     @aencoder.setter
-    def aencoder(self, value):
-        if self.audio_profile.get_preset_name() != value and value:
-            caps = self._get_caps_from_feature(value)
-            if caps:
-                self.audio_profile.set_format(caps)
-
-            # Set the name of the factory for producing the audio encoder.
-            self.audio_profile.set_preset_name(value)
-
-            # Make sure the encoder does not use any encoding preset.
-            # Gst.Preset can be set exclusively through EncodingTargets for now.
-            self.audio_profile.set_preset(None)
-
+    def aencoder(self, preset_factory_name):
+        if self._update_encoding_profile(self.audio_profile, preset_factory_name):
             self._emit_change("aencoder")
 
     @property
@@ -1103,19 +1092,8 @@ class Project(Loggable, GES.Project):
         return self.video_profile.get_preset_name()
 
     @vencoder.setter
-    def vencoder(self, value):
-        if self.video_profile.get_preset_name() != value and value:
-            caps = self._get_caps_from_feature(value)
-            if caps:
-                self.video_profile.set_format(caps)
-
-            # Set the name of the factory for producing the video encoder.
-            self.video_profile.set_preset_name(value)
-
-            # Make sure the encoder does not use any encoding preset.
-            # Gst.Preset can be set exclusively through EncodingTargets for now.
-            self.video_profile.set_preset(None)
-
+    def vencoder(self, preset_factory_name):
+        if self._update_encoding_profile(self.video_profile, preset_factory_name):
             self._emit_change("vencoder")
 
     @property
@@ -1123,20 +1101,36 @@ class Project(Loggable, GES.Project):
         return self.container_profile.get_preset_name()
 
     @muxer.setter
-    def muxer(self, value):
-        if self.container_profile.get_preset_name() != value and value:
-            caps = self._get_caps_from_feature(value)
-            if caps:
-                self.container_profile.set_format(caps)
-
-            # Set the name of the factory for producing the container.
-            self.container_profile.set_preset_name(value)
-
-            # Make sure the encoder does not use any encoding preset.
-            # Gst.Preset can be set exclusively through EncodingTargets for now.
-            self.container_profile.set_preset(None)
-
+    def muxer(self, preset_factory_name):
+        if self._update_encoding_profile(self.container_profile, preset_factory_name):
             self._emit_change("muxer")
+
+    def _update_encoding_profile(self, profile, preset_factory_name):
+        """Updates the specified encoding profile.
+
+        Args:
+            profile (GstPbutils.EncodingProfile): The profile to be updated.
+            preset_factory_name (str): The name of the Gst.Preset’s factory
+                to be used in the profile.
+
+        Returns:
+            bool: Whether the profile has been changed.
+        """
+        if profile.get_preset_name() == preset_factory_name or not preset_factory_name:
+            return False
+
+        caps = self._get_caps_from_feature(preset_factory_name)
+        if caps:
+            profile.set_format(caps)
+
+        # Set the name of the factory for producing the audio encoder.
+        profile.set_preset_name(preset_factory_name)
+
+        # Make sure the encoder does not use any encoding preset.
+        # Gst.Preset can be set exclusively through EncodingTargets for now.
+        profile.set_preset(None)
+
+        return True
 
     def _get_caps_from_feature(self, name):
         """Gets the caps for the source static pad template of a feature."""
