@@ -187,17 +187,14 @@ class TransitionsListWidget(Gtk.Box, Loggable):
     def _transition_selected_cb(self, unused_widget):
         transition_asset = self.get_selected_item()
         if not transition_asset:
-            # The user clicked between icons
+            # Nothing to apply. The user clicked between icons.
             return False
 
-        self.debug(
-            "New transition type selected: %s", transition_asset.get_id())
-        if transition_asset.get_id() == "crossfade":
-            self.props_widgets.set_sensitive(False)
-        else:
-            self.props_widgets.set_sensitive(True)
+        self.debug("New transition type selected: %s", transition_asset.get_id())
 
         self.element.get_parent().set_asset(transition_asset)
+        self._update_ui()
+
         self.app.write_action("element-set-asset",
                               asset_id=transition_asset.get_id(),
                               element_name=self.element.get_name())
