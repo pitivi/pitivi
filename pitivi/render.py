@@ -1429,11 +1429,10 @@ class RenderDialog(Loggable):
 
         # Use HQ Proxy (or equivalent) only for unsupported assets
         if self.__automatically_use_proxies.get_active():
-            if self.app.proxy_manager.is_asset_format_well_supported(
-                    asset_target):
+            if self.app.proxy_manager.is_asset_format_well_supported(asset_target):
                 return asset_target
-            else:
-                proxy_unsupported = True
+
+            proxy_unsupported = True
 
         # Use HQ Proxy (or equivalent) whenever available
         if self.__always_use_proxies.get_active() or proxy_unsupported:
