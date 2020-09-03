@@ -24,12 +24,13 @@ from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk
 from matplotlib.backend_bases import MouseEvent
-from tests import common
-from tests.test_timeline_timeline import BaseTestTimeline
 
 from pitivi.timeline.elements import GES_TYPE_UI_TYPE
 from pitivi.undo.undo import UndoableActionLog
 from pitivi.utils.timeline import Zoomable
+from pitivi.utils.ui import LAYER_HEIGHT
+from tests import common
+from tests.test_timeline_timeline import BaseTestTimeline
 
 
 class TestKeyframeCurve(BaseTestTimeline):
@@ -72,7 +73,6 @@ class TestKeyframeCurve(BaseTestTimeline):
         offsets = (1, int(duration / 2), int(duration) - 1)
         timeline.selection.select([ges_clip])
 
-        ges_video_source = None
         ges_video_source = ges_clip.find_track_element(None, GES.VideoSource)
         binding = ges_video_source.get_control_binding("alpha")
         control_source = binding.props.control_source
@@ -156,6 +156,7 @@ class TestKeyframeCurve(BaseTestTimeline):
                 get_event_widget.return_value = keyframe_curve
                 event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
                 keyframe_curve._mpl_button_press_event_cb(event)
+
                 event.name = "button_release_event"
                 event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
                 keyframe_curve._mpl_button_release_event_cb(event)
@@ -182,14 +183,18 @@ class TestKeyframeCurve(BaseTestTimeline):
                 get_event_widget.return_value = keyframe_curve
                 event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
                 keyframe_curve._mpl_button_press_event_cb(event)
+
                 event.name = "button_release_event"
                 event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
                 keyframe_curve._mpl_button_release_event_cb(event)
+
                 event.name = "button_press_event"
                 event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
                 keyframe_curve._mpl_button_press_event_cb(event)
+
                 event.guiEvent = Gdk.Event.new(Gdk.EventType._2BUTTON_PRESS)
                 keyframe_curve._mpl_button_press_event_cb(event)
+
                 event.name = "button_release_event"
                 event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
                 keyframe_curve._mpl_button_release_event_cb(event)
@@ -202,6 +207,47 @@ class TestKeyframeCurve(BaseTestTimeline):
         timeline_container = common.create_timeline_container()
         # Make sure this does not raise any exception
         timeline_container._keyframe_cb(None, None)
+
+    def test_clip_deselect(self):
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+        ges_clip1 = self.add_clip(ges_layer, 0, duration=Gst.SECOND)
+        ges_clip2 = self.add_clip(ges_layer, Gst.SECOND, duration=Gst.SECOND)
+
+        # Select clip1 to show its keyframes widget.
+        timeline.selection.select([ges_clip1])
+        # Select both clips. Now clip1 still has the keyframes visible.
+        timeline.selection.select([ges_clip1, ges_clip2])
+
+        ges_video_source = ges_clip1.find_track_element(None, GES.VideoSource)
+        binding = ges_video_source.get_control_binding("alpha")
+        control_source = binding.props.control_source
+        keyframe_curve = ges_video_source.ui.keyframe_curve
+
+        # Simulate a mouse click.
+        xdata, ydata = 1, LAYER_HEIGHT // 2
+        x, y = keyframe_curve._ax.transData.transform((xdata, ydata))
+
+        event = MouseEvent(
+            name="button_press_event",
+            canvas=keyframe_curve,
+            x=x,
+            y=y,
+            button=1
+        )
+        keyframe_curve.translate_coordinates = mock.Mock(return_value=(1, None))
+
+        with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
+            get_event_widget.return_value = keyframe_curve
+            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+            keyframe_curve._mpl_button_press_event_cb(event)
+
+            event.name = "button_release_event"
+            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
+            keyframe_curve._mpl_button_release_event_cb(event)
+
+        self.assertListEqual([item.timestamp for item in control_source.get_all()], [0, 1000000000])
 
 
 class TestVideoSource(BaseTestTimeline):
