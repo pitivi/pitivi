@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2019-01-20 00:11+0000\n"
+"POT-Creation-Date: 2020-06-27 07:41+0000\n"
 "PO-Revision-Date: 2019-01-22 12:38+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: es <gnome-es-list@gnome.org>\n"
@@ -106,11 +106,6 @@ msgstr "El equipo de Pitivi"
 #: data/org.pitivi.Pitivi.desktop.in:5
 msgid "Video Editor"
 msgstr "Editor de vídeo"
-
-#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
-#: data/org.pitivi.Pitivi.desktop.in:11
-msgid "org.pitivi.Pitivi"
-msgstr "org.pitivi.Pitivi"
 
 #. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
 #: data/org.pitivi.Pitivi.desktop.in:16
@@ -402,7 +397,7 @@ msgstr "Tasa de fotogramas:"
 
 #. The title of the section with the video settings
 #: data/ui/projectsettings.ui:348 data/ui/renderingdialog.ui:466
-#: pitivi/effects.py:229
+#: pitivi/effects.py:242
 msgid "Video"
 msgstr "Vídeo"
 
@@ -416,7 +411,7 @@ msgstr "Frecuencia de muestreo:"
 
 #. The title of the section with the audio settings
 #: data/ui/projectsettings.ui:529 data/ui/renderingdialog.ui:632
-#: pitivi/effects.py:229
+#: pitivi/effects.py:242
 msgid "Audio"
 msgstr "Sonido"
 
@@ -570,7 +565,7 @@ msgstr "Tamaño de archivo estimado:"
 
 #: data/ui/startupwizard.ui:7
 msgid "Welcome"
-msgstr "Bienvenido"
+msgstr "Bienvenido/a"
 
 #: data/ui/startupwizard.ui:36
 msgid "Double-click a project below to load it:"
@@ -846,44 +841,44 @@ msgstr "Quitar el efecto seleccionado"
 msgid "Transformation"
 msgstr "Transformación"
 
-#: pitivi/effects.py:60
+#: pitivi/effects.py:63
 msgid "Colors"
 msgstr "Colores"
 
-#: pitivi/effects.py:77
+#: pitivi/effects.py:80
 msgid "Compositing"
 msgstr "Composición"
 
-#: pitivi/effects.py:84
+#: pitivi/effects.py:87
 msgid "Noise & blur"
 msgstr "Ruido y desenfoque"
 
-#: pitivi/effects.py:90
+#: pitivi/effects.py:93
 msgid "Analysis"
 msgstr "Análisis"
 
-#: pitivi/effects.py:98
+#: pitivi/effects.py:101
 msgid "Geometry"
 msgstr "Geometría"
 
-#: pitivi/effects.py:109
+#: pitivi/effects.py:112
 msgid "Fancy"
 msgstr "Fantasía"
 
-#: pitivi/effects.py:121
+#: pitivi/effects.py:124
 msgid "Time"
 msgstr "Duración"
 
-#: pitivi/effects.py:229
+#: pitivi/effects.py:242
 msgid "effect"
 msgstr "efecto"
 
 #. Add Uncategorized only if there are other categories defined.
-#: pitivi/effects.py:332 pitivi/effects.py:353
+#: pitivi/effects.py:336 pitivi/effects.py:357
 msgid "Uncategorized"
 msgstr "Sin categorizar"
 
-#: pitivi/effects.py:333 pitivi/effects.py:350
+#: pitivi/effects.py:337 pitivi/effects.py:354
 msgid "All effects"
 msgstr "Todos los efectos"
 
@@ -913,7 +908,7 @@ msgstr "Deshacer"
 
 #: pitivi/mainwindow.py:387 pitivi/mainwindow.py:779 pitivi/mainwindow.py:1076
 #: pitivi/mainwindow.py:1124 pitivi/mainwindow.py:1177 pitivi/preset.py:116
-#: pitivi/project.py:177
+#: pitivi/project.py:180
 msgid "Save"
 msgstr "Guardar"
 
@@ -1028,7 +1023,7 @@ msgstr "Todos los formatos soportados"
 msgid "Unable to save project \"%s\""
 msgstr "No se pudo guardar el proyecto «%s»"
 
-#: pitivi/mainwindow.py:781 pitivi/project.py:176
+#: pitivi/mainwindow.py:781 pitivi/project.py:179
 msgid "Save as..."
 msgstr "Guardar como…"
 
@@ -1112,7 +1107,7 @@ msgstr "Archivador tar"
 msgid "Detect automatically"
 msgstr "Detectar automáticamente"
 
-#: pitivi/mainwindow.py:1133 pitivi/mainwindow.py:1180 pitivi/project.py:63
+#: pitivi/mainwindow.py:1133 pitivi/mainwindow.py:1180 pitivi/project.py:64
 #: pitivi/render.py:428
 msgid "Untitled"
 msgstr "Sin título"
@@ -1316,11 +1311,11 @@ msgstr "perfil-nuevo-%d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:160 pitivi/render.py:863
+#: pitivi/project.py:163 pitivi/render.py:863
 msgid "Sorry, something didn’t work right."
 msgstr "Algo no ha funcionado correctamente."
 
-#: pitivi/project.py:163
+#: pitivi/project.py:166
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1346,11 +1341,11 @@ msgstr ""
 "Antes de cerrar Pitivi puede guardar los cambios en el archivo del proyecto "
 "existente o como un archivo de proyecto separado."
 
-#: pitivi/project.py:178
+#: pitivi/project.py:181
 msgid "Close Pitivi"
 msgstr "Cerrar Pitivi"
 
-#: pitivi/project.py:249
+#: pitivi/project.py:252
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1360,15 +1355,15 @@ msgstr ""
 "soportado. Si está intentando añadir un archivo multimedia a su proyecto, "
 "use el botón «Importar» en su lugar."
 
-#: pitivi/project.py:271
+#: pitivi/project.py:274
 msgid "Ignore backup"
 msgstr "Ignorar respaldo"
 
-#: pitivi/project.py:272
+#: pitivi/project.py:275
 msgid "Restore from backup"
 msgstr "Restaurar desde un respaldo"
 
-#: pitivi/project.py:288
+#: pitivi/project.py:291
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1381,16 +1376,16 @@ msgstr ""
 "\n"
 "¿Quiere cargarla en su lugar?"
 
-#: pitivi/project.py:364
+#: pitivi/project.py:367
 msgid "You do not have permissions to write to this folder."
 msgstr "No tiene permiso para escribir en esta carpeta."
 
 #. Save the project to a temporary file.
-#: pitivi/project.py:397
+#: pitivi/project.py:400
 msgid "project"
 msgstr "proyecto"
 
-#: pitivi/project.py:707
+#: pitivi/project.py:710
 msgid "Pitivi encoding profile"
 msgstr "Perfil de codificación de Pitivi"
 
@@ -1775,12 +1770,12 @@ msgstr "Información extra: "
 
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
-#: pitivi/dialogs/prefs.py:179 pitivi/utils/widgets.py:714
+#: pitivi/dialogs/prefs.py:179 pitivi/utils/widgets.py:716
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: pitivi/dialogs/prefs.py:189 pitivi/utils/widgets.py:873
+#: pitivi/dialogs/prefs.py:189 pitivi/utils/widgets.py:875
 msgid "Reset to default value"
 msgstr "Restablecer al valor predeterminado"
 
@@ -1967,38 +1962,41 @@ msgstr[1] "%d días"
 msgid "Implement Me"
 msgstr "Impleméntame"
 
-#: pitivi/utils/widgets.py:739
+#: pitivi/utils/widgets.py:741
 msgid "No properties."
 msgstr "No hay propiedades."
 
 #. Avoid the ugly selection outline
-#: pitivi/utils/widgets.py:858
+#: pitivi/utils/widgets.py:860
 msgid "Show keyframes for this value"
 msgstr "Mostrar marcos clave para este valor"
 
-#: pitivi/utils/widgets.py:1035
+#: pitivi/utils/widgets.py:1037
 #, python-format
 msgid "Properties for %s"
 msgstr "Propiedades para %s"
 
-#: pitivi/utils/widgets.py:1183
+#: pitivi/utils/widgets.py:1185
 msgid "Zoom Fit"
 msgstr "Ajustar ampliación"
 
-#: pitivi/utils/widgets.py:1188
+#: pitivi/utils/widgets.py:1190
 msgid "Zoom"
 msgstr "Ampliación"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: pitivi/utils/widgets.py:1262
+#: pitivi/utils/widgets.py:1264
 #, python-format
 msgid "%s displayed"
 msgstr "Mostrados %s"
 
-#: pitivi/utils/widgets.py:1266
+#: pitivi/utils/widgets.py:1268
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Mostrados %d nanosegundos, porque podemos"
+
+#~ msgid "org.pitivi.Pitivi"
+#~ msgstr "org.pitivi.Pitivi"
 
 #~ msgid "Pixel aspect ratio:"
 #~ msgstr "Proporción de aspecto de los píxeles:"
