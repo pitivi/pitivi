@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-08-11 21:47+0000\n"
+"POT-Creation-Date: 2020-08-14 09:12+0000\n"
 "PO-Revision-Date: 2020-08-14 11:08+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
@@ -332,7 +332,7 @@ msgstr "Quitar"
 
 #: data/ui/greeter.ui:230
 msgid "Welcome to Pitivi"
-msgstr "Bienvenido a Pitivi"
+msgstr "Bienvenido/a a Pitivi"
 
 #: data/ui/greeter.ui:244
 msgid "Beautiful, powerful and intuitive movie editor"
@@ -666,7 +666,6 @@ msgstr ""
 "<i>Úselo bajo su propia responsabilidad</i>"
 
 #: data/ui/renderingdialog.ui:756
-#| msgid "Advanced..."
 msgid "Advanced"
 msgstr "Avanzado"
 
@@ -941,7 +940,6 @@ msgid "Effects"
 msgstr "Efectos"
 
 #: pitivi/clipproperties.py:239
-#| msgid "To apply an effect to the clip, drag it from the Effect Library."
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
@@ -950,7 +948,6 @@ msgstr ""
 "use el siguiente botón."
 
 #: pitivi/clipproperties.py:247
-#| msgid "Effects"
 msgid "Add Effect"
 msgstr "Añadir efecto"
 
@@ -1178,7 +1175,6 @@ msgid "Uncategorized"
 msgstr "Sin categorizar"
 
 #: pitivi/effects.py:394 pitivi/effects.py:661
-#| msgid "All effects"
 msgid "No effects"
 msgstr "Sin efectos"
 
@@ -1238,7 +1234,7 @@ msgstr "Iniciar vista general"
 
 #: pitivi/interactiveintro.py:212
 msgid "Welcome to Pitivi!"
-msgstr "Bienvenido a Pitivi"
+msgstr "Bienvenido/a a Pitivi"
 
 #: pitivi/interactiveintro.py:214
 msgid "Drag files here to import them"
@@ -1831,7 +1827,6 @@ msgid "Markers"
 msgstr "Marcadores"
 
 #: pitivi/timeline/markers.py:141
-#| msgid "Add layer"
 msgid "Add a marker"
 msgstr "Añadir un marcador"
 
@@ -1919,7 +1914,6 @@ msgid "Seeks to the first clip edge before the playhead."
 msgstr "Busca el borde del primer vídeo antes de la posición actual."
 
 #: pitivi/timeline/timeline.py:1768
-#| msgid "Render only the selected clips"
 msgid "Add an effect to the selected clip"
 msgstr "Añadir un efecto al vídeo seleccionado"
 
@@ -2542,7 +2536,7 @@ msgstr ""
 #~ msgstr "Abrir proyecto…"
 
 #~ msgid "Welcome"
-#~ msgstr "Bienvenido"
+#~ msgstr "Bienvenido/a"
 
 #~ msgid "Double-click a project below to load it:"
 #~ msgstr "Pulsar abajo dos veces sobre un proyecto para cargarlo:"
