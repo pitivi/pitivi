@@ -138,6 +138,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
         return True
 
     def set_current_sources(self, sources):
+        """Sets the sources at the playhead."""
         self.__visible_overlays = []
         # check if source has instanced viewer
         for source in sources:
@@ -155,6 +156,11 @@ class OverlayStack(Gtk.Overlay, Loggable):
         self.__overlays[source].update_from_source()
 
     def select(self, source):
+        """Specifies the selected source between the sources at the playhead."""
+        if not source:
+            self.selected_overlay = None
+            return
+
         self.selected_overlay = self.__overlay_for_source(source)
         self.selected_overlay.queue_draw()
 

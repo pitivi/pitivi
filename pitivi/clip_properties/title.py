@@ -207,15 +207,16 @@ class TitleProperties(Gtk.Expander, Loggable):
         Args:
             source (GES.TitleSource): The source of the clip.
         """
-        self.debug("Source set to %s", source)
-        if self._children_props_handler is not None:
+        self.debug("Setting source to %s", source)
+        if self.source:
             self.source.disconnect(self._children_props_handler)
             self._children_props_handler = None
-        self.source = None
+
+        self.source = source
+
         if source:
             assert isinstance(source, (GES.TextOverlay, GES.TitleSource))
             self._update_from_source(source)
-            self.source = source
             self._children_props_handler = self.source.connect("deep-notify",
                                                                self._source_deep_notify_cb)
         self.set_visible(bool(self.source))

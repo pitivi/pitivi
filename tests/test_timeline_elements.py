@@ -353,8 +353,8 @@ class TestVideoSource(common.TestCase):
 
         def check_set_pos_and_project_size(new_position, new_project_width,
                                            new_project_height, expected_position):
-
             self.timeline_container.timeline.selection.select([clip])
+            self.transformation_box.set_source(source)
             reset_clip_properties_button.clicked()
 
             assert_child_props(source, {"width": self.project.videowidth, "height": self.project.videoheight})

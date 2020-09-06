@@ -27,10 +27,10 @@ class TestViewerContainer(common.TestCase):
         """Checks the effect of the toggle_safe_areas_action."""
         app = common.create_pitivi_mock()
         app.project_manager = ProjectManager(app)
-
         viewer_container = ViewerContainer(app)
 
-        app.project_manager.new_blank_project()
+        project = app.project_manager.new_blank_project()
+        viewer_container.set_project(project)
         self.assertFalse(viewer_container.overlay_stack.safe_areas_overlay.get_visible())
 
         viewer_container.toggle_safe_areas_action.activate()

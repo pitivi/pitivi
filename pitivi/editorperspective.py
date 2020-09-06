@@ -476,8 +476,8 @@ class EditorPerspective(Perspective, Loggable):
         self._connect_to_project(project)
         project.pipeline.activate_position_listener()
 
-        self.clipconfig.project = project
-
+        self.viewer.set_project(project)
+        self.clipconfig.set_project(project, self.timeline_ui)
         self.timeline_ui.set_project(project)
 
         # When creating a blank project there's no project URI yet.
@@ -591,7 +591,10 @@ class EditorPerspective(Perspective, Loggable):
         self.info("Project closed")
         if project.loaded:
             self._disconnect_from_project(project)
+
         self.timeline_ui.set_project(None)
+        self.clipconfig.set_project(None, None)
+
         self.render_button.set_sensitive(False)
         return False
 

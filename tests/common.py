@@ -274,7 +274,7 @@ def setup_clipproperties(func):
         app = self.timeline_container.app
 
         self.clipproperties = ClipProperties(app)
-        self.clipproperties.new_project_loaded_cb(None, self.project)
+        self.clipproperties.set_project(self.project, self.timeline_container)
 
         self.transformation_box = self.clipproperties.transformation_expander
         self.transformation_box._new_project_loaded_cb(None, self.project)

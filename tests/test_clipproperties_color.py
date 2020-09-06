@@ -51,6 +51,9 @@ class ColorPropertiesTest(common.TestCase):
 
         self.clipproperties.create_color_clip_cb(None)
 
+        mainloop = common.create_main_loop()
+        mainloop.run(until_empty=True)
+
         color_expander = self.clipproperties.color_expander
         color_picker_mock = mock.Mock()
         color_picker_mock.calculate_argb.return_value = 1 << 24 | 2 << 16 | 3 << 8 | 4

@@ -107,16 +107,13 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.helper_box = self.create_helper_box()
         self.clips_box.pack_start(self.helper_box, False, False, 0)
 
+        self.transformation_expander.set_source(None)
         self.title_expander.set_source(None)
         self.color_expander.set_source(None)
         self.effect_expander.set_clip(None)
 
         self._project = None
         self._selection = None
-        self.app.project_manager.connect_after(
-            "new-project-loaded", self.new_project_loaded_cb)
-        self.app.project_manager.connect_after(
-            "project-closed", self.__project_closed_cb)
 
     def create_helper_box(self):
         """Creates the widgets to display when no clip is selected."""
@@ -174,13 +171,13 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
             self.app.gui.editor.timeline_ui.insert_clips_on_first_layer([color_clip])
         self._selection.set_selection([color_clip], SELECT)
 
-    def new_project_loaded_cb(self, unused_project_manager, project):
-        if self._selection is not None:
+    def set_project(self, project, timeline_ui):
+        if self._project:
             self._selection.disconnect_by_func(self._selection_changed_cb)
             self._selection = None
         if project:
-            self._selection = project.ges_timeline.ui.selection
-            self._selection.connect('selection-changed', self._selection_changed_cb)
+            self._selection = timeline_ui.timeline.selection
+            self._selection.connect("selection-changed", self._selection_changed_cb)
         self._project = project
 
     def _selection_changed_cb(self, selection):
@@ -188,23 +185,27 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         single_clip_selected = len(selected_clips) == 1
         self.helper_box.set_visible(not single_clip_selected)
 
+        video_source = None
         title_source = None
         color_clip_source = None
         if single_clip_selected:
             ges_clip = list(selected_clips)[0]
             self.effect_expander.set_clip(ges_clip)
+
             for child in ges_clip.get_children(False):
+                if isinstance(child, GES.VideoSource):
+                    video_source = child
+
                 if isinstance(child, GES.TitleSource):
                     title_source = child
-                    break
-                if isinstance(child, GES.VideoTestSource):
+                elif isinstance(child, GES.VideoTestSource):
                     color_clip_source = child
-                    break
+
+        self.transformation_expander.set_source(video_source)
         self.title_expander.set_source(title_source)
         self.color_expander.set_source(color_clip_source)
 
-    def __project_closed_cb(self, unused_project_manager, unused_project):
-        self._project = None
+        self.app.gui.editor.viewer.overlay_stack.select(video_source)
 
 
 class EffectProperties(Gtk.Expander, Loggable):
@@ -546,9 +547,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         Loggable.__init__(self)
         self.app = app
         self._project = None
-        self._selection = None
         self.source = None
-        self._selected_clip = None
         self.spin_buttons = {}
         self.spin_buttons_handler_ids = {}
         self.set_label(_("Transformation"))
@@ -578,18 +577,12 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.app.project_manager.connect_after(
             "project-closed", self.__project_closed_cb)
 
-    def _new_project_loaded_cb(self, unused_app, project):
-        if self._selection is not None:
-            self._selection.disconnect_by_func(self._selection_changed_cb)
-            self._selection = None
+    def _new_project_loaded_cb(self, unused_project_manager, project):
         if self._project:
             self._project.pipeline.disconnect_by_func(self._position_cb)
 
         self._project = project
         if project:
-            self._selection = project.ges_timeline.ui.selection
-            self._selection.connect(
-                'selection-changed', self._selection_changed_cb)
             self._project.pipeline.connect("position", self._position_cb)
 
     def __project_closed_cb(self, unused_project_manager, unused_project):
@@ -787,6 +780,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def _position_cb(self, unused_pipeline, unused_position):
         if not self.__source_uses_keyframes():
             return
+
         for prop in ["posx", "posy", "width", "height"]:
             self.__update_spin_btn(prop)
         # Keep the overlay stack in sync with the spin buttons values
@@ -867,16 +861,15 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 self.__set_prop(prop, value)
             self.app.gui.editor.viewer.overlay_stack.update(self.source)
 
-    def __set_source(self, source):
+    def set_source(self, source):
+        self.debug("Setting source to %s", source)
+
         if self.source:
-            try:
-                self.source.disconnect_by_func(
-                    self.__source_property_changed_cb)
-                disconnect_all_by_func(
-                    self.source, self._control_bindings_changed)
-            except TypeError:
-                pass
+            self.source.disconnect_by_func(self.__source_property_changed_cb)
+            disconnect_all_by_func(self.source, self._control_bindings_changed)
+
         self.source = source
+
         if self.source:
             self.__update_control_bindings()
             for prop in self.spin_buttons:
@@ -886,20 +879,4 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self.source.connect("control-binding-added", self._control_bindings_changed)
             self.source.connect("control-binding-removed", self._control_bindings_changed)
 
-    def _selection_changed_cb(self, unused_timeline):
-        if len(self._selection) == 1:
-            clip = list(self._selection)[0]
-            source = clip.find_track_element(None, GES.VideoSource)
-            if source:
-                self._selected_clip = clip
-                self.__set_source(source)
-                self.app.gui.editor.viewer.overlay_stack.select(source)
-                self.show()
-                return
-
-        # Deselect
-        if self._selected_clip:
-            self._selected_clip = None
-            self._project.pipeline.commit_timeline()
-        self.__set_source(None)
-        self.hide()
+        self.set_visible(bool(self.source))

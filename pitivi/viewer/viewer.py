@@ -102,13 +102,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.__translation = None
 
         pm = self.app.project_manager
-        pm.connect("new-project-loaded", self._project_manager_new_project_loaded_cb)
         pm.connect("project-closed", self._project_manager_project_closed_cb)
-
-    def _project_manager_new_project_loaded_cb(self, unused_project_manager, project):
-        project.connect("rendering-settings-changed",
-                        self._project_rendering_settings_changed_cb)
-        self.set_project(project)
 
     def _project_manager_project_closed_cb(self, unused_project_manager, project):
         if self.project == project:
@@ -149,6 +143,9 @@ class ViewerContainer(Gtk.Box, Loggable):
         # This must be done at the end, otherwise the created sink widget
         # appears in a separate window.
         project.pipeline.pause()
+
+        project.connect("rendering-settings-changed",
+                        self._project_rendering_settings_changed_cb)
 
     def __create_new_viewer(self):
         _, sink_widget = self.project.pipeline.create_sink()
