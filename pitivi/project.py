@@ -1503,7 +1503,7 @@ class Project(Loggable, GES.Project):
         Args:
             container_profile (GstPbutils.EncodingContainerProfile): The profile to use.
         """
-        if self.container_profile.is_equal(container_profile):
+        if container_profile == self.container_profile:
             return True
 
         muxer = self._get_element_factory_name(container_profile)
