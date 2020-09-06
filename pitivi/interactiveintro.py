@@ -211,7 +211,7 @@ class InteractiveIntro(GObject.Object):
         self.tips = [
             (self.intro_button, _("Welcome to Pitivi!"),
              Gtk.PositionType.BOTTOM, False, 4000),
-            (editor.medialibrary.iconview_scrollwin, _("Drag files here to import them"),
+            (editor.medialibrary.scrollwin, _("Drag files here to import them"),
              Gtk.PositionType.RIGHT, True, 5000),
             (editor.timeline_ui.timeline, _("Drag clips in the timeline to arrange them"),
              Gtk.PositionType.TOP, True, 7000),
