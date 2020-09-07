@@ -148,8 +148,6 @@ BLACKLISTED_EFFECTS = [
     "volume",
 ]
 
-BLACKLISTED_PLUGINS = []
-
 HIDDEN_EFFECTS = [
     # Overlaying an image onto a video stream can already be done.
     "gdkpixbufoverlay"]
@@ -261,7 +259,7 @@ class EffectsManager(Loggable):
             klass = factory.get_klass()
             name = factory.get_name()
             if ("Effect" not in klass or
-                    any(black in name for black in BLACKLISTED_PLUGINS)):
+                    any(black in name for black in BLACKLISTED_EFFECTS)):
                 continue
 
             media_type = None
