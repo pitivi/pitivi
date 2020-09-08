@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2019-11-07 05:09+0000\n"
-"PO-Revision-Date: 2020-01-27 14:11+0100\n"
+"POT-Creation-Date: 2020-09-04 11:17+0000\n"
+"PO-Revision-Date: 2020-09-08 11:49+0200\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
 "Language: sk\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
 msgid "Pitivi video project (legacy)"
-msgstr ""
+msgstr "Pitivi video projekt (zastaraný)"
 
 # GtkMenuItem
 #: data/org.pitivi.Pitivi-mime.xml.in:12
@@ -1580,6 +1580,9 @@ msgid ""
 "render otherwise.</b>\n"
 "\n"
 msgstr ""
+"<b>Uistite sa, že vaša vykresľovaná veľkosť je párna, inak ju dekodér "
+"x264enc nebude môcť vykresliť.</b>\n"
+"\n"
 
 # label
 #: pitivi/render.py:864
@@ -2043,7 +2046,6 @@ msgid "Stereo"
 msgstr "Stereo"
 
 #: pitivi/utils/ui.py:215
-#| msgid "6 Channels (5.1)"
 msgid "6 (5.1)"
 msgstr "6 (5.1)"
 
@@ -2085,7 +2087,6 @@ msgstr[2] "<b>Zvuk:</b> %d kanály, %d <i>Hz</i> (%d <i>bitov</i>)"
 
 #: pitivi/utils/ui.py:409
 #, python-format
-#| msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
 msgstr "<b>Video:</b> %d×%d <i>pixelovs</i> o %s <i>sn./s</i>"
 
