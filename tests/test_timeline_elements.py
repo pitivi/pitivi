@@ -30,10 +30,9 @@ from pitivi.undo.undo import UndoableActionLog
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import LAYER_HEIGHT
 from tests import common
-from tests.test_timeline_timeline import BaseTestTimeline
 
 
-class TestKeyframeCurve(BaseTestTimeline):
+class TestKeyframeCurve(common.TestCase):
     """Tests for the KeyframeCurve class."""
 
     def test_keyframe_toggle(self):
@@ -250,7 +249,7 @@ class TestKeyframeCurve(BaseTestTimeline):
         self.assertListEqual([item.timestamp for item in control_source.get_all()], [0, 1000000000])
 
 
-class TestVideoSource(BaseTestTimeline):
+class TestVideoSource(common.TestCase):
     """Tests for the VideoSource class."""
 
     def test_video_source_scaling(self):
@@ -330,7 +329,7 @@ class TestVideoSource(BaseTestTimeline):
         self.assertEqual(height, 400)
 
     @common.setup_project_with_clips
-    @common.setup_transformation_box
+    @common.setup_clipproperties
     def test_change_set_project_size(self):
         """Checks the size of the scaled clips after project settings changes."""
         clip, = self.layer.get_clips()

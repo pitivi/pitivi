@@ -35,27 +35,7 @@ THIN = LAYER_HEIGHT / 2
 THICK = LAYER_HEIGHT
 
 
-class BaseTestTimeline(common.TestCase):
-    """Test case with tools for setting up a timeline."""
-
-    def add_clip(self, layer, start, inpoint=0, duration=10, clip_type=GES.TrackType.UNKNOWN):
-        """Creates a clip on the specified layer."""
-        asset = GES.UriClipAsset.request_sync(
-            common.get_sample_uri("tears_of_steel.webm"))
-        clip = layer.add_asset(asset, start, inpoint, duration, clip_type)
-        self.assertIsNotNone(clip)
-
-        return clip
-
-    def add_clips_simple(self, timeline, num_clips):
-        """Creates a number of clips on a new layer."""
-        layer = timeline.ges_timeline.append_layer()
-        clips = [self.add_clip(layer, i * 10) for i in range(num_clips)]
-        self.assertEqual(len(clips), num_clips)
-        return clips
-
-
-class TestLayers(BaseTestTimeline):
+class TestLayers(common.TestCase):
     """Tests for the layers."""
 
     def test_dragging_layer(self):
@@ -289,7 +269,7 @@ class TestLayers(BaseTestTimeline):
         self.check_priorities_and_positions(timeline, ges_layers, expected_priorities)
 
 
-class TestGrouping(BaseTestTimeline):
+class TestGrouping(common.TestCase):
 
     def __check_can_group_ungroup(self, timeline_container, can_group, can_ungroup):
         self.assertEqual(timeline_container.group_action.props.enabled, can_group)
@@ -505,7 +485,7 @@ class TestGrouping(BaseTestTimeline):
                          "No new layer should have been created")
 
 
-class TestCopyPaste(BaseTestTimeline):
+class TestCopyPaste(common.TestCase):
 
     def copy_clips(self, num_clips):
         timeline_container = common.create_timeline_container()
@@ -579,7 +559,7 @@ class TestCopyPaste(BaseTestTimeline):
         self.assertEqual(len(layer.get_clips()), 1)
 
 
-class TestEditing(BaseTestTimeline):
+class TestEditing(common.TestCase):
 
     def test_trimming_on_layer_separator(self):
         # Create a clip
@@ -616,7 +596,7 @@ class TestEditing(BaseTestTimeline):
                          "No new layer should have been created")
 
 
-class TestShiftSelection(BaseTestTimeline):
+class TestShiftSelection(common.TestCase):
 
     def __reset_clips_selection(self, timeline):
         """Unselects all clips in the timeline."""
@@ -784,7 +764,7 @@ class TestShiftSelection(BaseTestTimeline):
         self.__check_shift_selection_multiple_layers(left_click_also_seeks=True)
 
 
-class TestTimelineContainer(BaseTestTimeline):
+class TestTimelineContainer(common.TestCase):
     """Tests for the TimelineContainer class."""
 
     def test_update_clips_asset(self):
@@ -802,7 +782,7 @@ class TestTimelineContainer(BaseTestTimeline):
         timeline_container.update_clips_asset(mock.Mock(), mock.Mock())
 
 
-class TestClipsEdges(BaseTestTimeline):
+class TestClipsEdges(common.TestCase):
 
     def test_clips_edges(self):
         """Test function for function clips_edges."""
@@ -826,7 +806,7 @@ class TestClipsEdges(BaseTestTimeline):
         self.assertEqual(timeline_container.first_clip_edge(before=20), 15)
 
 
-class TestDragFromOutside(BaseTestTimeline):
+class TestDragFromOutside(common.TestCase):
 
     def setUp(self):
         super().setUp()

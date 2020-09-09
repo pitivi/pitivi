@@ -20,15 +20,14 @@ import tempfile
 from gi.repository import Gst
 
 from tests import common
-from tests.test_undo_timeline import BaseTestUndoTimeline
 
 
-class TestMarkers(BaseTestUndoTimeline):
+class TestMarkers(common.TestCase):
     """Tests for the various classes."""
 
+    @common.setup_timeline
     def test_marker_added(self):
         """Checks marker addition."""
-        self.setup_timeline_container()
         markers = self.timeline.get_marker_list("markers")
 
         with self.action_log.started("Added marker"):
@@ -79,9 +78,9 @@ class TestMarkers(BaseTestUndoTimeline):
             self.action_log.redo()
             self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
 
+    @common.setup_timeline
     def test_marker_removed(self):
         """Checks marker removal."""
-        self.setup_timeline_container()
         markers = self.timeline.get_marker_list("markers")
         marker1 = markers.add(10)
         marker2 = markers.add(20)
@@ -107,9 +106,9 @@ class TestMarkers(BaseTestUndoTimeline):
             self.action_log.redo()
             self.assert_markers(markers, [])
 
+    @common.setup_timeline
     def test_marker_moved(self):
         """Checks marker moving."""
-        self.setup_timeline_container()
         markers = self.timeline.get_marker_list("markers")
         marker1 = markers.add(10)
         markers.add(20)
@@ -130,10 +129,9 @@ class TestMarkers(BaseTestUndoTimeline):
             self.action_log.redo()
             self.assert_markers(markers, [(20, None), (30, None)])
 
+    @common.setup_timeline
     def test_marker_comment(self):
         """Checks marker comment."""
-        self.setup_timeline_container()
-
         markers = self.timeline.get_marker_list("markers")
 
         with self.action_log.started("Added marker"):
@@ -175,6 +173,7 @@ class TestMarkers(BaseTestUndoTimeline):
             self.action_log.redo()
             self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
 
+    @common.setup_timeline
     def test_marker_load_project(self):
         """Checks marker addition."""
         # TODO: When there is nothing connected to closing-project,
@@ -206,7 +205,7 @@ class TestMarkers(BaseTestUndoTimeline):
         project.connect("loaded", loaded_cb)
         mainloop = common.create_main_loop()
         mainloop.run()
-        self.action_log = self.app.action_log
+        action_log = self.app.action_log
 
         markers = project.ges_timeline.get_marker_list("markers")
         self.assert_markers(markers, [(10, None), (20, None)])
@@ -214,23 +213,23 @@ class TestMarkers(BaseTestUndoTimeline):
         ges_markers = markers.get_markers()
         marker1, marker2 = ges_markers
 
-        with self.action_log.started("new comment"):
+        with action_log.started("new comment"):
             marker1.set_string("comment", "comment 1")
         self.assert_markers(markers, [(10, "comment 1"), (20, None)])
 
-        with self.action_log.started("new comment"):
+        with action_log.started("new comment"):
             marker2.set_string("comment", "comment 2")
         self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
 
         for _ in range(4):
-            self.action_log.undo()
+            action_log.undo()
             self.assert_markers(markers, [(10, "comment 1"), (20, None)])
 
-            self.action_log.undo()
+            action_log.undo()
             self.assert_markers(markers, [(10, None), (20, None)])
 
-            self.action_log.redo()
+            action_log.redo()
             self.assert_markers(markers, [(10, "comment 1"), (20, None)])
 
-            self.action_log.redo()
+            action_log.redo()
             self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])

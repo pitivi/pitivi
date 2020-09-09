@@ -25,7 +25,6 @@ from pitivi.utils.timeline import Selected
 from pitivi.utils.timeline import Selection
 from pitivi.utils.timeline import UNSELECT
 from tests import common
-from tests.test_timeline_timeline import BaseTestTimeline
 
 
 class TestSelected(common.TestCase):
@@ -41,7 +40,7 @@ class TestSelected(common.TestCase):
         self.assertFalse(selected)
 
 
-class TestSelection(BaseTestTimeline):
+class TestSelection(common.TestCase):
 
     def test_bool_evaluation(self):
         clip1 = mock.MagicMock()

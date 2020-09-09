@@ -22,15 +22,15 @@ from gi.repository import Gdk
 from gi.repository import Gtk
 
 from pitivi.utils.timeline import Zoomable
-from tests.test_undo_timeline import BaseTestUndoTimeline
+from tests import common
 
 
-class TestMarkers(BaseTestUndoTimeline):
+class TestMarkers(common.TestCase):
     """Tests for markers."""
 
+    @common.setup_timeline
     def test_marker_added_ui(self):
         """Checks the add marker UI."""
-        self.setup_timeline_container()
         markers = self.timeline.get_marker_list("markers")
         marker_box = self.timeline_container.markers
         marker_box.markers_container = markers
@@ -51,9 +51,9 @@ class TestMarkers(BaseTestUndoTimeline):
         position = Zoomable.pixel_to_ns(event.x)
         self.assert_markers(markers, [(position, None)])
 
+    @common.setup_timeline
     def test_marker_removed_ui(self):
         """Checks the remove marker UI."""
-        self.setup_timeline_container()
         markers = self.timeline.get_marker_list("markers")
         marker_box = self.timeline_container.markers
         marker_box.markers_container = markers
@@ -77,9 +77,9 @@ class TestMarkers(BaseTestUndoTimeline):
 
         self.assert_markers(markers, [])
 
+    @common.setup_timeline
     def test_marker_moved_ui(self):
         """Checks the move marker UI."""
-        self.setup_timeline_container()
         markers = self.timeline.get_marker_list("markers")
         marker_box = self.timeline_container.markers
         marker_box.markers_container = markers
@@ -111,9 +111,9 @@ class TestMarkers(BaseTestUndoTimeline):
         self.assert_markers(markers, [(position2, None)])
 
     # pylint: disable=unbalanced-tuple-unpacking
+    @common.setup_timeline
     def test_marker_comment_ui(self):
         """Checks the comments marker UI."""
-        self.setup_timeline_container()
         markers = self.timeline.get_marker_list("markers")
         marker_box = self.timeline_container.markers
         marker_box.markers_container = markers

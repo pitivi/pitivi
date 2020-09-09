@@ -37,7 +37,7 @@ from gi.repository import Gst
 from gi.repository import Gtk
 
 from pitivi.application import Pitivi
-from pitivi.clipproperties import TransformationProperties
+from pitivi.clipproperties import ClipProperties
 from pitivi.editorstate import EditorState
 from pitivi.project import ProjectManager
 from pitivi.settings import GlobalSettings
@@ -240,20 +240,49 @@ def setup_project_with_clips(func, assets_names=None):
     return wrapper
 
 
-def setup_transformation_box(func):
+def setup_timeline(func):
     def wrapped(self):
-        has_container = hasattr(self, "timeline_container")
-        if not has_container:
-            self.timeline_container = create_timeline_container()
+        self.app = create_pitivi()
+        self.project = self.app.project_manager.new_blank_project()
+        self.timeline = self.project.ges_timeline
+        self.layer = self.timeline.append_layer()
+        self.action_log = self.app.action_log
+
+        project = self.app.project_manager.current_project
+        self.timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
+        self.timeline_container.set_project(project)
+        self.app.gui.editor.timeline_ui = self.timeline_container
+
+        timeline = self.timeline_container.timeline
+        timeline.app.project_manager.current_project = project
+        timeline.get_parent = mock.MagicMock(return_value=self.timeline_container)
+
+        func(self)
+
+        del self.timeline_container
+        del self.action_log
+        del self.layer
+        del self.timeline
+        del self.project
+        del self.app
+
+    return wrapped
+
+
+def setup_clipproperties(func):
+    def wrapped(self):
         app = self.timeline_container.app
-        self.transformation_box = TransformationProperties(app)
-        self.transformation_box._new_project_loaded_cb(app, self.timeline_container._project)
+
+        self.clipproperties = ClipProperties(app)
+        self.clipproperties.new_project_loaded_cb(None, self.project)
+
+        self.transformation_box = self.clipproperties.transformation_expander
+        self.transformation_box._new_project_loaded_cb(None, self.project)
 
         func(self)
 
         del self.transformation_box
-        if not has_container:
-            del self.timeline_container
+        del self.clipproperties
 
     return wrapped
 
@@ -347,6 +376,22 @@ class TestCase(unittest.TestCase, Loggable):
 
         return proj_uri
 
+    def add_clip(self, layer, start, inpoint=0, duration=10, clip_type=GES.TrackType.UNKNOWN):
+        """Creates a clip on the specified layer."""
+        asset = GES.UriClipAsset.request_sync(
+            get_sample_uri("tears_of_steel.webm"))
+        clip = layer.add_asset(asset, start, inpoint, duration, clip_type)
+        self.assertIsNotNone(clip)
+
+        return clip
+
+    def add_clips_simple(self, timeline, num_clips):
+        """Creates a number of clips on a new layer."""
+        layer = timeline.ges_timeline.append_layer()
+        clips = [self.add_clip(layer, i * 10) for i in range(num_clips)]
+        self.assertEqual(len(clips), num_clips)
+        return clips
+
     def toggle_clip_selection(self, ges_clip, expect_selected):
         """Toggles the selection state of @ges_clip."""
         selected = bool(ges_clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED)
@@ -391,6 +436,54 @@ class TestCase(unittest.TestCase, Loggable):
 
         comments = [ges_marker.get_string("comment") for ges_marker in markers]
         self.assertListEqual(comments, expected_comments)
+
+    def assert_layers(self, layers):
+        self.assertEqual(self.timeline.get_layers(), layers)
+        # Import TestLayers locally, otherwise its tests are discovered and
+        # run twice.
+        from tests.test_timeline_timeline import TestLayers
+        TestLayers.check_priorities_and_positions(self, self.timeline.ui, layers, list(range(len(layers))))
+
+    def assert_effect_count(self, clip, count):
+        effects = [effect for effect in clip.get_children(True)
+                   if isinstance(effect, GES.Effect)]
+        self.assertEqual(len(effects), count)
+
+    def assert_control_source_values(self, control_source, expected_values, expected_timestamps):
+        values = [timed_value.value for timed_value in control_source.get_all()]
+        self.assertListEqual(values, expected_values)
+
+        timestamps = [timed_value.timestamp for timed_value in control_source.get_all()]
+        self.assertListEqual(timestamps, expected_timestamps)
+
+    def get_timeline_clips(self):
+        for layer in self.timeline.layers:
+            for clip in layer.get_clips():
+                yield clip
+
+    def get_transition_element(self, ges_layer):
+        """Gets the first found GES.VideoTransition clip."""
+        for clip in ges_layer.get_clips():
+            if isinstance(clip, GES.TransitionClip):
+                for element in clip.get_children(False):
+                    if isinstance(element, GES.VideoTransition):
+                        return element
+        return None
+
+    @staticmethod
+    def commit_cb(action_log, stack, stacks):
+        stacks.append(stack)
+
+    def _wait_until_project_loaded(self):
+        # Run the mainloop so the project is set up properly so that
+        # the timeline creates transitions automatically.
+        mainloop = create_main_loop()
+
+        def loaded_cb(project, timeline):
+            mainloop.quit()
+        self.app.project_manager.current_project.connect("loaded", loaded_cb)
+        mainloop.run()
+        self.assertTrue(self.timeline.props.auto_transition)
 
 
 @contextlib.contextmanager

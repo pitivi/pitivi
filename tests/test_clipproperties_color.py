@@ -20,29 +20,19 @@ from unittest import mock
 
 from gi.repository import GES
 
-from pitivi.clipproperties import ClipProperties
 from tests import common
-from tests.test_undo_timeline import BaseTestUndoTimeline
 
 
-class ColorPropertiesTest(BaseTestUndoTimeline):
+class ColorPropertiesTest(common.TestCase):
     """Tests for the ColorProperties class."""
 
+    @common.setup_timeline
+    @common.setup_clipproperties
     def test_create_hard_coded(self):
         """Exercise creation of a color test clip."""
-        # Wait until the project creates a layer in the timeline.
-        common.create_main_loop().run(until_empty=True)
-
-        from pitivi.timeline.timeline import TimelineContainer
-        timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
-        timeline_container.set_project(self.project)
-        self.app.gui.editor.timeline_ui = timeline_container
-
-        clipproperties = ClipProperties(self.app)
-        clipproperties.new_project_loaded_cb(None, self.project)
         self.project.pipeline.get_position = mock.Mock(return_value=0)
 
-        clipproperties.create_color_clip_cb(None)
+        self.clipproperties.create_color_clip_cb(None)
         clips = self.layer.get_clips()
         pattern = clips[0].get_vpattern()
         self.assertEqual(pattern, GES.VideoTestPattern.SOLID_COLOR)
@@ -53,23 +43,15 @@ class ColorPropertiesTest(BaseTestUndoTimeline):
         self.action_log.redo()
         self.assertListEqual(self.layer.get_clips(), clips)
 
+    @common.setup_timeline
+    @common.setup_clipproperties
     def test_color_change(self):
         """Exercise the changing of colors for color clip."""
-        # Wait until the project creates a layer in the timeline.
-        common.create_main_loop().run(until_empty=True)
-
-        from pitivi.timeline.timeline import TimelineContainer
-        timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
-        timeline_container.set_project(self.project)
-        self.app.gui.editor.timeline_ui = timeline_container
-
-        clipproperties = ClipProperties(self.app)
-        clipproperties.new_project_loaded_cb(None, self.project)
         self.project.pipeline.get_position = mock.Mock(return_value=0)
 
-        clipproperties.create_color_clip_cb(None)
+        self.clipproperties.create_color_clip_cb(None)
 
-        color_expander = clipproperties.color_expander
+        color_expander = self.clipproperties.color_expander
         color_picker_mock = mock.Mock()
         color_picker_mock.calculate_argb.return_value = 1 << 24 | 2 << 16 | 3 << 8 | 4
         color_expander._color_picker_value_changed_cb(color_picker_mock)

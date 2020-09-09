@@ -29,7 +29,6 @@ from pitivi.undo.undo import UndoableActionStack
 from pitivi.undo.undo import UndoError
 from pitivi.undo.undo import UndoWrongStateError
 from tests import common
-from tests.test_undo_timeline import BaseTestUndoTimeline
 
 
 class TestUndoableActionStack(common.TestCase):
@@ -416,12 +415,9 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.redo_stacks), 0)
 
 
-class TestRollback(BaseTestUndoTimeline):
+class TestRollback(common.TestCase):
 
-    def setUp(self):
-        super().setUp()
-        self.setup_timeline_container()
-
+    @common.setup_timeline
     def test_rollback_of_nested_operation_does_not_add_actions_to_parent(self):
         clip1 = GES.TitleClip()
         clip1.set_start(0 * Gst.SECOND)

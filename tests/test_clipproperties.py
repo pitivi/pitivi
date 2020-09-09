@@ -19,17 +19,15 @@
 from unittest import mock
 
 from gi.repository import GES
+
 from tests import common
-from tests.test_timeline_timeline import BaseTestTimeline
-from tests.test_undo_timeline import BaseTestUndoTimeline
-
-from pitivi.clipproperties import ClipProperties
 
 
-class TransformationPropertiesTest(BaseTestTimeline):
+class TransformationPropertiesTest(common.TestCase):
     """Tests for the TransformationProperties widget."""
 
-    @common.setup_transformation_box
+    @common.setup_timeline
+    @common.setup_clipproperties
     def test_spin_buttons_read(self):
         """Checks the spin buttons update when the source properties change."""
         # Create transformation box
@@ -59,7 +57,8 @@ class TransformationPropertiesTest(BaseTestTimeline):
             spin_btn_value = spin_buttons[prop].get_value_as_int()
             self.assertEqual(new_val, spin_btn_value)
 
-    @common.setup_transformation_box
+    @common.setup_timeline
+    @common.setup_clipproperties
     def test_spin_buttons_write(self):
         """Checks the spin buttons changing updates the source properties."""
         # Create transformation box
@@ -93,7 +92,8 @@ class TransformationPropertiesTest(BaseTestTimeline):
                 self.assertTrue(ret)
                 self.assertEqual(current_spin_values[source_prop], source_value)
 
-    @common.setup_transformation_box
+    @common.setup_timeline
+    @common.setup_clipproperties
     def test_spin_buttons_source_change(self):
         """Checks the spin buttons update when the selected clip changes."""
         # Create transformation box
@@ -126,7 +126,8 @@ class TransformationPropertiesTest(BaseTestTimeline):
         for prop in ["posx", "posy", "width", "height"]:
             self.assertEqual(spin_buttons[prop].get_value_as_int(), new_values[prop])
 
-    @common.setup_transformation_box
+    @common.setup_timeline
+    @common.setup_clipproperties
     def test_keyframes_activate(self):
         """Checks transformation properties keyframes activation."""
         # Create transformation box
@@ -161,7 +162,8 @@ class TransformationPropertiesTest(BaseTestTimeline):
             self.assertEqual(keyframes, [(inpoint, initial_values[prop]),
                                          (inpoint + duration, initial_values[prop])])
 
-    @common.setup_transformation_box
+    @common.setup_timeline
+    @common.setup_clipproperties
     def test_keyframes_add(self):
         """Checks keyframe creation."""
         # Create transformation box
@@ -194,7 +196,8 @@ class TransformationPropertiesTest(BaseTestTimeline):
                 keyframes = [(item.timestamp, item.value) for item in control_source.get_all()]
                 self.assertEqual((timestamp, value), keyframes[index + 1])
 
-    @common.setup_transformation_box
+    @common.setup_timeline
+    @common.setup_clipproperties
     def test_keyframes_navigation(self):
         """Checks keyframe navigation."""
         # Create transformation box
@@ -243,7 +246,8 @@ class TransformationPropertiesTest(BaseTestTimeline):
             if position in offsets and position != 0:
                 prev_index += 1
 
-    @common.setup_transformation_box
+    @common.setup_timeline
+    @common.setup_clipproperties
     def test_reset_to_default(self):
         """Checks "reset to default" button."""
         # Create transformation box
@@ -276,7 +280,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
             self.assertEqual(value, source.ui.default_position[prop])
 
 
-class ClipPropertiesTest(BaseTestUndoTimeline, BaseTestTimeline):
+class ClipPropertiesTest(common.TestCase):
     """Tests for the TitleProperties class."""
 
     def _get_title_source_child_props(self):
@@ -291,22 +295,13 @@ class ClipPropertiesTest(BaseTestUndoTimeline, BaseTestTimeline):
                                                        "color",
                                                        "foreground-color")]
 
+    @common.setup_timeline
+    @common.setup_clipproperties
     def test_create_title(self):
         """Exercise creating a title clip."""
-        # Wait until the project creates a layer in the timeline.
-        common.create_main_loop().run(until_empty=True)
-
-        # pylint: disable=import-outside-toplevel
-        from pitivi.timeline.timeline import TimelineContainer
-        timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
-        timeline_container.set_project(self.project)
-        self.app.gui.editor.timeline_ui = timeline_container
-
-        clipproperties = ClipProperties(self.app)
-        clipproperties.new_project_loaded_cb(None, self.project)
         self.project.pipeline.get_position = mock.Mock(return_value=0)
 
-        clipproperties.create_title_clip_cb(None)
+        self.clipproperties.create_title_clip_cb(None)
         ps1 = self._get_title_source_child_props()
 
         self.action_log.undo()
@@ -317,27 +312,16 @@ class ClipPropertiesTest(BaseTestUndoTimeline, BaseTestTimeline):
         ps2 = self._get_title_source_child_props()
         self.assertListEqual(ps1, ps2)
 
+    @common.setup_timeline
+    @common.setup_clipproperties
     def test_alignment_editor(self):
         """Exercise aligning a clip using the alignment editor."""
-        # Wait until the project creates a layer in the timeline.
-        common.create_main_loop().run(until_empty=True)
-
-        from pitivi.timeline.timeline import TimelineContainer
-        timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
-        timeline_container.set_project(self.project)
-        self.app.gui.editor.timeline_ui = timeline_container
-
-        clipproperties = ClipProperties(self.app)
-        clipproperties.new_project_loaded_cb(None, self.project)
         self.project.pipeline.get_position = mock.Mock(return_value=0)
 
-        transformation_box = clipproperties.transformation_expander
-        transformation_box._new_project_loaded_cb(self.app, self.project)
-
-        timeline = timeline_container.timeline
+        timeline = self.timeline_container.timeline
         clip = self.add_clips_simple(timeline, 1)[0]
         timeline.selection.select([clip])
-        source = transformation_box.source
+        source = self.transformation_box.source
         self.assertIsNotNone(source)
 
         height = source.get_child_property("height").value
@@ -346,7 +330,7 @@ class ClipPropertiesTest(BaseTestUndoTimeline, BaseTestTimeline):
         self.assertEqual(source.get_child_property("posx").value, 0)
         self.assertEqual(source.get_child_property("posy").value, 0)
 
-        alignment_editor = transformation_box.alignment_editor
+        alignment_editor = self.transformation_box.alignment_editor
         event = mock.MagicMock()
         event.x = 0
         event.y = 0
