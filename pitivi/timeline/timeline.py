@@ -1579,7 +1579,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             if clip_names:
                 clips = [self.ges_timeline.get_element(clip_name)
                          for clip_name in clip_names]
-                self.timeline.selection.set_selection(clips, SELECT)
+                if all(clips):
+                    self.timeline.selection.set_selection(clips, SELECT)
 
             zoom_level = self.editor_state.get_value("zoom-level")
             if zoom_level:
