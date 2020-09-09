@@ -188,9 +188,9 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         video_source = None
         title_source = None
         color_clip_source = None
+        ges_clip = None
         if single_clip_selected:
             ges_clip = list(selected_clips)[0]
-            self.effect_expander.set_clip(ges_clip)
 
             for child in ges_clip.get_children(False):
                 if isinstance(child, GES.VideoSource):
@@ -204,6 +204,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.transformation_expander.set_source(video_source)
         self.title_expander.set_source(title_source)
         self.color_expander.set_source(color_clip_source)
+        self.effect_expander.set_clip(ges_clip)
 
         self.app.gui.editor.viewer.overlay_stack.select(video_source)
 
