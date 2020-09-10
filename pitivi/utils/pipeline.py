@@ -164,7 +164,7 @@ class SimplePipeline(GObject.Object, Loggable):
                 else:
                     timeout = MAX_SET_STATE_DURATION
 
-                self._add_waiting_for_async_done_timeout(timeout)
+                self._add_waiting_for_async_done_timeout("set_simple_state: %s" % state, timeout)
         else:
             self._remove_waiting_for_async_done_timeout()
 
@@ -297,8 +297,8 @@ class SimplePipeline(GObject.Object, Loggable):
             GLib.source_remove(self._listening_sig_id)
             self._listening_sig_id = 0
 
-    def _async_done_not_received_cb(self):
-        self.error("we didn't get async done, this is a bug")
+    def _async_done_not_received_cb(self, reason, timeout):
+        self.error("Async operation timed out after %d seconds, aborting: %s", timeout, reason)
         self._remove_waiting_for_async_done_timeout()
         self._recover()
         return False
@@ -306,13 +306,15 @@ class SimplePipeline(GObject.Object, Loggable):
     def _remove_waiting_for_async_done_timeout(self):
         if not self._busy_async:
             return
+
         GLib.source_remove(self._timeout_async_id)
         self._timeout_async_id = 0
 
-    def _add_waiting_for_async_done_timeout(self, timeout=WATCHDOG_TIMEOUT):
+    def _add_waiting_for_async_done_timeout(self, reason, timeout=WATCHDOG_TIMEOUT):
         self._remove_waiting_for_async_done_timeout()
         self._timeout_async_id = GLib.timeout_add_seconds(timeout,
-                                                          self._async_done_not_received_cb)
+                                                          self._async_done_not_received_cb,
+                                                          reason, timeout)
 
     @property
     def _busy_async(self):
@@ -362,7 +364,7 @@ class SimplePipeline(GObject.Object, Loggable):
         if not res:
             raise PipelineError(self.get_name() + " seek failed: " + str(position))
 
-        self._add_waiting_for_async_done_timeout()
+        self._add_waiting_for_async_done_timeout("simple_seek: %s" % position)
 
         self.emit('position', position)
 
@@ -633,7 +635,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         if message.type == Gst.MessageType.ASYNC_DONE and\
                 self._commit_wanted:
             self.debug("Committing now that ASYNC is DONE")
-            self._add_waiting_for_async_done_timeout()
+            self._add_waiting_for_async_done_timeout("_bus_message_cb: committing")
             self.props.timeline.commit()
             self._commit_wanted = False
         else:
@@ -654,13 +656,14 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             # No need to commit. NLE will do it automatically when
             # changing state from READY to PAUSED.
             return
+
         is_empty = self.props.timeline.is_empty()
         if self._busy_async and not self._was_empty and not is_empty:
             self._commit_wanted = True
             self._was_empty = False
             self.log("commit wanted")
         else:
-            self._add_waiting_for_async_done_timeout()
+            self._add_waiting_for_async_done_timeout("commit_timeline")
             self.props.timeline.commit()
             self.debug("Committing right now")
             self._was_empty = is_empty

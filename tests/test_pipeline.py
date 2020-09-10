@@ -92,7 +92,7 @@ class TestPipeline(common.TestCase):
         # We mock set_state because we don't actually care about the state,
         # and setting the state to PAUSED could show a video window.
         with mock.patch.object(pipe, "set_state"):
-            pipe._async_done_not_received_cb()
+            pipe._async_done_not_received_cb("reason1", 1)
         # Make sure the pipeline started a watchdog timer waiting for async-done
         # as part of setting the state from NULL to PAUSED.
         self.assertTrue(pipe._busy_async)
