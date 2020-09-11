@@ -163,13 +163,13 @@ there are six levels: ( <span style="color:red;">ERROR</span>,
 want to see errors and warnings only, you launch
 
 ```
-PITIVI_DEBUG=2 bin/pitivi
+PITIVI_DEBUG=2 pitivi
 ```
 
 ...and if you want to see everything you do
 
 ```
-PITIVI_DEBUG=6 bin/pitivi
+PITIVI_DEBUG=6 pitivi
 ```
 
 If that's “too much” and you want to focus on particular parts of the
@@ -177,7 +177,7 @@ code, you can do so. For example, you can get output from the `Timeline`
 and `MediaLibraryWidget` classes only:
 
 ```
-PITIVI_DEBUG=timeline:6,medialibrarywidget:6 bin/pitivi
+PITIVI_DEBUG=timeline:6,medialibrarywidget:6 pitivi
 ```
 
 Here are various examples of commands you can use to generate detailed
@@ -187,20 +187,20 @@ GStreamer's:
 A basic log can be obtained by running:
 
 ```
-PITIVI_DEBUG=*:5 GST_DEBUG=2 bin/pitivi > debug.log 2>&1
+PITIVI_DEBUG=*:5 GST_DEBUG=2 pitivi > debug.log 2>&1
 ```
 
 To get debugging information from Non-Linear Engine, you could use:
 
 ```
-PITIVI_DEBUG=5 GST_DEBUG=3,nle*:5,python:5 bin/pitivi > debug.log 2>&1
+PITIVI_DEBUG=5 GST_DEBUG=3,nle*:5,python:5 pitivi > debug.log 2>&1
 ```
 
 The information most likely to be useful would probably be the debug
 info from [GES](GES.md) in addition to Pitivi's:
 
 ```
-PITIVI_DEBUG=5 GST_DEBUG=ges:5 bin/pitivi > debug.log 2>&1;
+PITIVI_DEBUG=5 GST_DEBUG=ges:5 pitivi > debug.log 2>&1;
 ```
 
 
