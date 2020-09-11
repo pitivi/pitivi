@@ -164,7 +164,7 @@ msgid ""
 "\"movearoundtimeline#movingplayhead\"/> for details."
 msgstr ""
 "Per defecte quan premeu sobre la línia de temps canvieu la selecció i moveu "
-"el punt de reproducció. Per  tindre un millor control sobre el punt de "
+"el punt de reproducció. Per tindre un millor control sobre el punt de "
 "reproducció podeu deshabilitar la cerca quan premeu el botó esquerre. "
 "D'aquesta forma al prémer el botó esquerre sols canvieu la selecció i el "
 "punt de reproducció no es perdrà quan feu seleccions. Això es pot "
@@ -611,7 +611,7 @@ msgid ""
 "Click on the <gui>Split</gui> button on the timeline toolbar or press "
 "<key>S</key>."
 msgstr ""
-"Premeu sobre el botó  <gui>Divideix</gui> en la barra d'eines de la línia de "
+"Premeu sobre el botó <gui>Divideix</gui> en la barra d'eines de la línia de "
 "temps o premeu <key>S</key>."
 
 #. (itstool) path: page/p
@@ -957,7 +957,7 @@ msgstr ""
 msgid ""
 "Applying crossfades, fade-ins, fade-outs and other types of transitions."
 msgstr ""
-"Aplicació  d'esvaïments creuats, aparicions, esvaïments i altres tipus de "
+"Aplicació d'esvaïments creuats, aparicions, esvaïments i altres tipus de "
 "transicions."
 
 #. (itstool) path: page/title
@@ -1408,7 +1408,7 @@ msgstr ""
 "utilitzareu per editar. Verticalment està dividida en capes que podeu omplir "
 "amb seqüències de vídeo i àudio. Horitzontalment, constitueix una "
 "representació proporcional al temps de la cronologia del vostre projecte. Es "
-"poden aplicar diferents nivells per ampliar la línia de temps. Tot i així, això "
+"poden aplicar diferents nivells per ampliar la línia de temps. Tot i això, això "
 "sols es pot aplicar a la dimensió horitzontal (cronològica) de la línia de "
 "temps."
 
@@ -1806,7 +1806,7 @@ msgid ""
 "button on the left of the zoom slider. Another way to do this is by pressing "
 "<keyseq><key>Ctrl</key><key>0</key></keyseq>."
 msgstr ""
-"Per tindre  una vista global de la línia de temps, podeu prémer el botó "
+"Per tindre una vista global de la línia de temps, podeu prémer el botó "
 "<gui>Zoom</gui> a l'esquerra del control lliscant del zoom. Una altra forma "
 "de fer això és pressionar <keyseq><key>Ctrl</key><key>0</key></keyseq>."
 
@@ -1858,7 +1858,7 @@ msgstr ""
 "Podeu saltar a una posició exacta en la línia de temps editant el valor del "
 "temps mostrat en la barra d'eines de reproducció ( mireu la descripció de "
 "<link xref=\"mainwindow\">La finestra principal</link>). Per editar-ho "
-"premeu sobre el giny, sobreescriviu el valor i premeu  <key>Retorn</key>. El "
+"premeu sobre el giny, sobreescriviu el valor i premeu <key>Retorn</key>. El "
 "valor pot representar un codi de temps o un número de fotograma. El codi de "
 "temps té el següent formulari: <em>hh:mm:ss.milisec</em>, on les hores són "
 "opcionals. Per inserir un número de fotograma, sobreescriu el codi de temps "
@@ -1915,7 +1915,7 @@ msgstr "Quant a aquest manual"
 #: C/about.page:22
 msgid "This user manual is written and maintained by Jean-François Fortin Tam."
 msgstr ""
-"Aquest manual d'usuari està escrit i mantingut per  Jean-François Fortin Tam."
+"Aquest manual d'usuari està escrit i mantingut per Jean-François Fortin Tam."
 
 #. (itstool) path: section/title
 #: C/about.page:24
@@ -2052,7 +2052,7 @@ msgstr "Quin tipus de maquinari es necessita per fer edició de vídeo?"
 #. (itstool) path: page/title
 #: C/sysreq.page:25
 msgid "System requirements"
-msgstr "Requeriments de sistema"
+msgstr "Requisits de sistema"
 
 #. (itstool) path: page/p
 #: C/sysreq.page:26
@@ -2140,7 +2140,7 @@ msgid ""
 "compatibility</link> and <link xref=\"effects\">Introduction to effects</"
 "link>."
 msgstr ""
-"Els requeriments de programari estan coberts a <link xref=\"gstreamer"
+"Els requisits de programari estan coberts a <link xref=\"gstreamer"
 "\">Gstreamer i la seva compatibilitat</link> i <link xref=\"effects"
 "\">Introducció als seus efectes</link>."
 
@@ -2416,7 +2416,7 @@ msgid ""
 "compressed video (such as <em>MJPEG</em> or <em>DV</em>)."
 msgstr ""
 "Alguns formats, com ara <em>MPEG</em>, estan orientats a la reproducció "
-"només i no comprimeixen cada fotograma independentment. Tot i que  "
+"només i no comprimeixen cada fotograma independentment. Tot i que "
 "l'objectiu de <app>Pitivi</app> és treballar amb aquests fitxers, algunes "
 "operacions (com ara la cerca ràpida) no funcionaran tan bé com ho farien amb "
 "un vídeo comprimit independent del marc (com ara <em>MJPEG</em> o <em>DV"
@@ -2695,7 +2695,7 @@ msgid ""
 "If there is no <gui>Show keyframes for this value</gui> button next to the "
 "effect variable, it cannot be controlled with keyframes."
 msgstr ""
-"Si no hi ha el botó  <gui>Mostra els fotogrames claus per aquest valor</gui> "
+"Si no hi ha el botó <gui>Mostra els fotogrames claus per aquest valor</gui> "
 "a la vora de l'efecte variable, no es pot controlar amb fotogrames clau."
 
 #. (itstool) path: info/desc
@@ -2812,7 +2812,7 @@ msgid ""
 "in the media library but not in the timeline. There are various reasons to "
 "do this:"
 msgstr ""
-"Podeu trobar-vos que importeu més seqüències de les necessiteu al vostre "
+"Podeu trobar-vos que importeu més seqüències de les que necessiteu al vostre "
 "projecte. <app>Pitivi</app> us permet seleccionar seqüències que hi són a la "
 "biblioteca multimèdia però no hi són a la línia de temps. Hi ha diferents raons "
 "per fer-ho:"
@@ -2909,7 +2909,7 @@ msgid ""
 msgstr ""
 "<gui>Insereix les seqüències seleccionades al final de la línia de temps </"
 "gui> insereix les seqüències seleccionades una darrere l'altra a la capa més "
-"llarga de la línia de temps on l'últim seqüència d'aquesta capa acabi."
+"llarga de la línia de temps on l'última seqüència d'aquesta capa acabi."
 
 #. (itstool) path: note/p
 #: C/medialibrary.page:82
@@ -3135,7 +3135,7 @@ msgid ""
 "Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, "
 "<app>GNOME Search Tool</app>, etc.)."
 msgstr ""
-"Aprofiteu la capacitat de cerca d'un altre aplicació (com <app>GNOME Shell</"
+"Aprofiteu la capacitat de cerca d'un altra aplicació (com <app>GNOME Shell</"
 "app>, <app>Tracker</app>, <app>Diari d'activitat de GNOME</app>, <app>Eina "
 "de cerca de GNOME</app> , etc.)."
 
@@ -3422,7 +3422,7 @@ msgstr ""
 "retallaran al mateix temps quan arrossegueu l'eina de retall. Per retallar "
 "només la seqüència de l'àudio o només la seqüència de vídeo, primer heu de "
 "desagrupar-los (consulteu la pàgina <link xref=\"selectiongrouping"
-"\">Selecció i agrupament</link>  per obtenir instruccions sobre com fer-ho)."
+"\">Selecció i agrupament</link> per obtenir instruccions sobre com fer-ho)."
 
 #. (itstool) path: section/title
 #: C/trimming.page:34
@@ -3632,12 +3632,12 @@ msgstr ""
 #. (itstool) path: page/title
 #: C/usingclips.page:25
 msgid "Using clips"
-msgstr "Usant seqüències"
+msgstr "Usar seqüències"
 
 #. (itstool) path: section/title
 #: C/usingclips.page:27
 msgid "Clips vs files"
-msgstr "seqüències vs fitxers"
+msgstr "Seqüències vs fitxers"
 
 #. (itstool) path: section/p
 #: C/usingclips.page:28
@@ -3792,7 +3792,7 @@ msgid ""
 msgstr ""
 "Mentre arrossegueu seqüències en la línia de temps, podeu utilitzar la "
 "tècnica <link xref=\"trimming#ripple\">edició d'ondulació</link> per moure "
-"les <em>següents</em> seqüències  (les seqüències que comencen després de la "
+"les <em>següents</em> seqüències (les seqüències que comencen després de la "
 "que esteu editant) en sincronia amb la seqüència moguda."
 
 #. (itstool) path: item/p
@@ -3857,7 +3857,7 @@ msgstr "<keyseq><key>Ctrl</key><key>N</key></keyseq>: Creeu un projecte nou"
 #: C/cheatsheet.page:24
 msgid "<keyseq><key>Ctrl</key><key>O</key></keyseq>: Open a project file"
 msgstr ""
-"<keyseq><key>Ctrl</key><key>O</key></keyseq>:  Obriu un fitxer de projecte"
+"<keyseq><key>Ctrl</key><key>O</key></keyseq>: Obriu un fitxer de projecte"
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:27
@@ -3867,7 +3867,7 @@ msgstr "<keyseq><key>Ctrl</key><key>S</key></keyseq>: Deseu el projecte actual"
 #. (itstool) path: item/p
 #: C/cheatsheet.page:30
 msgid "<keyseq><key>Ctrl</key><key>Q</key></keyseq>: Quit the application"
-msgstr "<keyseq><key>Ctrl</key><key>Q</key></keyseq>:  Sortiu de l'aplicació"
+msgstr "<keyseq><key>Ctrl</key><key>Q</key></keyseq>: Sortiu de l'aplicació"
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:33
@@ -3898,7 +3898,7 @@ msgstr "Biblioteca multimèdia"
 #. (itstool) path: item/p
 #: C/cheatsheet.page:50
 msgid "<key>Enter</key>: Preview (playback) the selected clip"
-msgstr "<key>Retorn</key>:  Visualitzeu (reproducció) la seqüència seleccionada"
+msgstr "<key>Retorn</key>: Visualitzeu (reproducció) la seqüència seleccionada"
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:53
