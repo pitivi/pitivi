@@ -54,7 +54,12 @@
   </section>
   <section id="grouping">
     <title>Grouping and ungrouping clips</title>
-    <p>The grouping and ungrouping functions are useful when you want to add or separate audio tracks from video clips, or when you want to create a block of clips that you can select, edit and move all at once.</p>
+    <p>Pitivi allows you to combine</p>
+      <list>
+        <item><p>audio and video into clips, and</p></item>
+        <item><p>multiple clips into groups.</p></item>
+      </list>
+    <p>This means you can edit multiple pieces of media together, such as moving them along the timeline together.  This section shows you how to group and ungroup audio and video tracks within clips, and also how to group and ungroup multiple clips together.</p>
     <p>Grouping clips in timeline:</p>
     <steps>
       <item>
