@@ -324,6 +324,22 @@
             ]
         },
         {
+            "name": "meson",
+            "buildsystem": "simple",
+            "ensure-writable": ["easy-install.pth"],
+            "build-commands": [
+               "mkdir -p /app/lib/python3.7/site-packages",
+               "PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.pythonhosted.org/packages/5e/da/e6f22f0d3730635aa8504cc0d7ae16406b3794bbfea04c854e2c215c7acb/meson-0.55.3.tar.gz",
+                    "sha256": "6bed2a25a128bbabe97cf40f63165ebe800e4fcb46db8ab7ef5c2b5789f092a5"
+                }
+            ]
+        },
+        {
             "name": "gstreamer",
             "buildsystem": "meson",
             "builddir": true,
@@ -500,22 +516,25 @@
             ]
         },
         {
-            "name": "libpeas",
-            "buildsystem": "meson",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/GNOME/libpeas.git"
-                }
-            ]
-        },
-        {
             "name": "pygobject",
             "buildsystem": "meson",
             "sources": [
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/pygobject.git"
+                }
+            ]
+        },
+        {
+            "name": "libpeas",
+            "buildsystem": "meson",
+            "config-opts": [
+                "--libdir=lib"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GNOME/libpeas.git"
                 }
             ]
         },
