@@ -317,6 +317,13 @@ class PresetsManager(GObject.Object, Loggable):
         self.action_save.set_enabled(writable)
         self.emit("profile-selected", preset_item)
 
+    def select_default_preset(self):
+        """Selects the default hardcoded preset."""
+        for item in self.model:
+            if item.name == "youtube":
+                self.select_preset(item)
+                break
+
 
 class Encoders(Loggable):
     """Registry of available Muxers, Audio encoders and Video encoders.
@@ -834,6 +841,10 @@ class RenderDialog(Loggable):
         self.widgets_group.add_edge(self.preset_selection_menubutton, self.audio_encoder_combo)
         self.widgets_group.add_edge(self.preset_selection_menubutton, self.video_encoder_combo)
         self.widgets_group.add_edge(self.video_encoder_combo, self.quality_adjustment)
+
+        if not self.project.vcodecsettings:
+            self.presets_manager.select_default_preset()
+            self.quality_adjustment.props.value = Quality.MEDIUM
 
     def _presets_manager_profile_selected_cb(self, unused_target, preset_item):
         """Handles the selection of a render preset."""
