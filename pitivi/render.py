@@ -96,6 +96,14 @@ def set_icon_and_title(icon, title, preset_item, icon_size=Gtk.IconSize.DND):
 
 
 class PresetItem(GObject.Object):
+    """Info about a render preset.
+
+    Attributes:
+        name (string): Name of the target containing the profile.
+        target (GstPbutils.EncodingTarget): The encoding target containing
+            the profile.
+        profile (GstPbutils.EncodingContainerProfile): The represented preset.
+    """
 
     def __init__(self, name, target, profile):
         GObject.Object.__init__(self)
@@ -168,7 +176,7 @@ class PresetsManager(GObject.Object, Loggable):
     """
 
     __gsignals__ = {
-        "profile-selected": (GObject.SignalFlags.RUN_LAST, None, (PresetItem,))
+        "profile-updated": (GObject.SignalFlags.RUN_LAST, None, (PresetItem,))
     }
 
     def __init__(self, project):
@@ -242,7 +250,7 @@ class PresetsManager(GObject.Object, Loggable):
         self.model.remove(pos)
 
         self.cur_preset_item = None
-        self.emit("profile-selected", None)
+        self.emit("profile-updated", None)
 
     def _save_preset_cb(self, unused_action, unused_param):
         name = self.cur_preset_item.target.get_name()
@@ -254,7 +262,7 @@ class PresetsManager(GObject.Object, Loggable):
 
         # Recreate the preset with the current values.
         self.cur_preset_item = self.create_preset(name)
-        self.emit("profile-selected", self.cur_preset_item)
+        self.emit("profile-updated", self.cur_preset_item)
 
     def _add_target(self, encoding_target):
         """Adds the profiles of the specified encoding_target as render presets.
@@ -311,11 +319,12 @@ class PresetsManager(GObject.Object, Loggable):
             preset_item (PresetItem): The row representing the preset to be applied.
         """
         self.cur_preset_item = preset_item
-        writable = len(preset_item.target.get_profiles()) == 1 and os.access(preset_item.target.get_path(), os.W_OK)
+        writable = bool(preset_item) and \
+                   len(preset_item.target.get_profiles()) == 1 and \
+                   os.access(preset_item.target.get_path(), os.W_OK)
 
         self.action_remove.set_enabled(writable)
         self.action_save.set_enabled(writable)
-        self.emit("profile-selected", preset_item)
 
     def select_default_preset(self):
         """Selects the default hardcoded preset."""
@@ -323,6 +332,15 @@ class PresetsManager(GObject.Object, Loggable):
             if item.name == "youtube":
                 self.select_preset(item)
                 break
+
+    def select_matching_preset(self):
+        """Selects the first preset matching the project's encoders settings."""
+        for item in self.model:
+            if self.project.matches_container_profile(item.profile):
+                self.select_preset(item)
+                return
+
+        self.select_preset(None)
 
 
 class Encoders(Loggable):
@@ -587,7 +605,7 @@ class QualityAdapter(Loggable):
             prop_name = list(props_values.keys())[0]
         self.prop_name = prop_name
 
-    def update_adjustment(self, adjustment, vcodecsettings, callback_handler_id):
+    def calculate_quality(self, vcodecsettings):
         if self.prop_name in vcodecsettings:
             encoder_property_value = vcodecsettings[self.prop_name]
             values = self.props_values[self.prop_name]
@@ -601,11 +619,7 @@ class QualityAdapter(Loggable):
             quality = Quality.LOW
             self.debug("Cannot calculate quality from missing prop %s", self.prop_name)
 
-        adjustment.handler_block(callback_handler_id)
-        try:
-            adjustment.props.value = quality
-        finally:
-            adjustment.handler_unblock(callback_handler_id)
+        return quality
 
     def update_project_vcodecsettings(self, project, quality):
         for prop_name, values in self.props_values.items():
@@ -779,7 +793,6 @@ class RenderDialog(Loggable):
         self._gst_signal_handlers_ids = {}
 
         self.presets_manager = PresetsManager(project)
-        self.presets_manager.connect("profile-selected", self._presets_manager_profile_selected_cb)
 
         # Whether encoders changing are a result of changing the muxer.
         self.muxer_combo_changing = False
@@ -819,41 +832,44 @@ class RenderDialog(Loggable):
         self.project.connect("rendering-settings-changed",
                              self._rendering_settings_changed_cb)
 
-        # Monitor changes
+        self.presets_manager.connect("profile-updated", self._presets_manager_profile_updated_cb)
 
+        has_vcodecsettings = bool(self.project.vcodecsettings)
+        if has_vcodecsettings:
+            self.presets_manager.select_matching_preset()
+        else:
+            self.presets_manager.select_default_preset()
+            cur_preset_item = self.presets_manager.cur_preset_item
+            if cur_preset_item and self.apply_preset(cur_preset_item):
+                self.apply_vcodecsettings_quality(Quality.MEDIUM)
+            else:
+                self.presets_manager.select_preset(None)
+
+        set_icon_and_title(self.preset_icon, self.preset_label, self.presets_manager.cur_preset_item)
+        self._update_quality_scale()
+
+        # Monitor changes to keep the preset_selection_menubutton updated.
         self.widgets_group = RippleUpdateGroup()
+        self.widgets_group.add_vertex(self.preset_selection_menubutton,
+                                      update_func=self._update_preset_selection_menubutton_func)
+
+        self.widgets_group.add_vertex(self.muxer_combo, signal="changed")
+        self.widgets_group.add_vertex(self.video_encoder_combo, signal="changed")
         self.widgets_group.add_vertex(self.frame_rate_combo, signal="changed")
+        self.widgets_group.add_vertex(self.audio_encoder_combo, signal="changed")
         self.widgets_group.add_vertex(self.channels_combo, signal="changed")
         self.widgets_group.add_vertex(self.sample_rate_combo, signal="changed")
-        self.widgets_group.add_vertex(self.muxer_combo, signal="changed")
-        self.widgets_group.add_vertex(self.audio_encoder_combo, signal="changed")
-        self.widgets_group.add_vertex(self.video_encoder_combo, signal="changed")
-        self.widgets_group.add_vertex(self.preset_menubutton, signal="clicked")
-        self.widgets_group.add_vertex(self.preset_selection_menubutton, signal="clicked")
-        self.widgets_group.add_vertex(self.quality_adjustment, signal="value-changed", update_func=self._update_quality_adjustment_func)
 
-        self.widgets_group.add_edge(self.frame_rate_combo, self.preset_menubutton)
-        self.widgets_group.add_edge(self.audio_encoder_combo, self.preset_menubutton)
-        self.widgets_group.add_edge(self.video_encoder_combo, self.preset_menubutton)
-        self.widgets_group.add_edge(self.muxer_combo, self.preset_menubutton)
-        self.widgets_group.add_edge(self.channels_combo, self.preset_menubutton)
-        self.widgets_group.add_edge(self.sample_rate_combo, self.preset_menubutton)
-        self.widgets_group.add_edge(self.preset_selection_menubutton, self.audio_encoder_combo)
-        self.widgets_group.add_edge(self.preset_selection_menubutton, self.video_encoder_combo)
-        self.widgets_group.add_edge(self.video_encoder_combo, self.quality_adjustment)
+        self.widgets_group.add_edge(self.muxer_combo, self.preset_selection_menubutton)
+        self.widgets_group.add_edge(self.video_encoder_combo, self.preset_selection_menubutton)
+        self.widgets_group.add_edge(self.frame_rate_combo, self.preset_selection_menubutton)
+        self.widgets_group.add_edge(self.audio_encoder_combo, self.preset_selection_menubutton)
+        self.widgets_group.add_edge(self.channels_combo, self.preset_selection_menubutton)
+        self.widgets_group.add_edge(self.sample_rate_combo, self.preset_selection_menubutton)
 
-        if not self.project.vcodecsettings:
-            self.presets_manager.select_default_preset()
-            self.quality_adjustment.props.value = Quality.MEDIUM
-
-    def _presets_manager_profile_selected_cb(self, unused_target, preset_item):
-        """Handles the selection of a render preset."""
+    def _presets_manager_profile_updated_cb(self, presets_manager, preset_item):
+        """Handles the saving or removing of a render preset."""
         set_icon_and_title(self.preset_icon, self.preset_label, preset_item)
-
-        if preset_item:
-            old_profile = self.project.container_profile
-            if not self._set_encoding_profile(preset_item.profile):
-                self._set_encoding_profile(old_profile)
 
     def _set_encoding_profile(self, encoding_profile):
         """Sets the encoding profile of the project.
@@ -869,6 +885,7 @@ class RenderDialog(Loggable):
         try:
             muxer = Encoders().factories_by_name.get(self.project.muxer)
             if not set_combo_value(self.muxer_combo, muxer):
+                self.error("Failed to set muxer_combo to %s", muxer)
                 return False
 
             self.update_available_encoders()
@@ -988,8 +1005,28 @@ class RenderDialog(Loggable):
         return PresetBoxRow(preset_item)
 
     def _preset_listbox_row_activated_cb(self, listbox, row):
-        self.presets_manager.select_preset(row.preset_item)
-        self.preset_popover.hide()
+        if self.apply_preset(row.preset_item):
+            quality = Quality.MEDIUM
+            if self.quality_scale.get_sensitive():
+                quality = self.quality_adjustment.props.value
+
+            self.apply_vcodecsettings_quality(quality)
+            self._update_quality_scale()
+
+            self.preset_popover.hide()
+
+    def apply_preset(self, preset_item):
+        old_profile = self.project.container_profile
+        profile = preset_item.profile.copy()
+        if not self._set_encoding_profile(profile):
+            self.error("failed to apply the encoding profile, reverting to previous one")
+            self._set_encoding_profile(old_profile)
+            return False
+
+        self.presets_manager.select_preset(preset_item)
+        set_icon_and_title(self.preset_icon, self.preset_label, preset_item)
+
+        return True
 
     def _preset_selection_menubutton_clicked_cb(self, button):
         self.preset_popover.show_all()
@@ -1638,12 +1675,14 @@ class RenderDialog(Loggable):
     def _frame_rate_combo_changed_cb(self, combo):
         if self._setting_encoding_profile:
             return
+
         framerate = get_combo_value(combo)
         self.project.videorate = framerate
 
     def _video_encoder_combo_changed_cb(self, combo):
         if self._setting_encoding_profile:
             return
+
         factory = get_combo_value(combo)
         name = factory.get_name()
         self.project.vencoder = name
@@ -1652,26 +1691,31 @@ class RenderDialog(Loggable):
             self.debug("User chose a video encoder: %s", name)
             self.preferred_vencoder = name
         self._update_valid_video_restrictions(factory)
+        self._update_quality_scale()
 
     def _video_settings_button_clicked_cb(self, unused_button):
         if self._setting_encoding_profile:
             return
+
         factory = get_combo_value(self.video_encoder_combo)
         self._element_settings_dialog(factory, "video")
 
     def _channels_combo_changed_cb(self, combo):
         if self._setting_encoding_profile:
             return
+
         self.project.audiochannels = get_combo_value(combo)
 
     def _sample_rate_combo_changed_cb(self, combo):
         if self._setting_encoding_profile:
             return
+
         self.project.audiorate = get_combo_value(combo)
 
     def _audio_encoder_changed_combo_cb(self, combo):
         if self._setting_encoding_profile:
             return
+
         factory = get_combo_value(combo)
         name = factory.get_name()
         self.project.aencoder = name
@@ -1703,18 +1747,36 @@ class RenderDialog(Loggable):
         # Update muxer-dependent widgets.
         self.update_available_encoders()
 
-    def _update_quality_adjustment_func(self, unused_source, adjustment):
+    def _update_preset_selection_menubutton_func(self, source_widget, target_widget):
+        if self._setting_encoding_profile:
+            return
+
+        self.presets_manager.select_matching_preset()
+
+    def _update_quality_scale(self):
         encoder = get_combo_value(self.video_encoder_combo)
         adapter = quality_adapters.get(encoder.get_name())
+
         self.quality_scale.set_sensitive(bool(adapter))
 
         if adapter:
-            adapter.update_adjustment(self.quality_adjustment, self.project.vcodecsettings, self.quality_adjustment_handler_id)
+            quality = adapter.calculate_quality(self.project.vcodecsettings)
         else:
-            self.quality_adjustment.props.value = self.quality_adjustment.props.lower
+            quality = self.quality_adjustment.props.lower
+        self.quality_adjustment.handler_block(self.quality_adjustment_handler_id)
+        try:
+            self.quality_adjustment.props.value = quality
+        finally:
+            self.quality_adjustment.handler_unblock(self.quality_adjustment_handler_id)
 
     def _quality_adjustment_value_changed_cb(self, adjustment):
+        self.apply_vcodecsettings_quality(self.quality_adjustment.props.value)
+
+    def apply_vcodecsettings_quality(self, quality):
         encoder = get_combo_value(self.video_encoder_combo)
         adapter = quality_adapters.get(encoder.get_name())
-        quality = round(self.quality_adjustment.props.value)
-        adapter.update_project_vcodecsettings(self.project, quality)
+        if not adapter:
+            # The current video encoder is not yet supported.
+            return
+
+        adapter.update_project_vcodecsettings(self.project, round(quality))

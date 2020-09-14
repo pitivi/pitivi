@@ -1494,6 +1494,7 @@ class Project(Loggable, GES.Project):
         if profiles:
             # The project just loaded, check the new
             # encoding profile and make use of it now.
+            self.info("Using first encoding profile: %s", [p.get_preset_name() for p in profiles])
             self.set_container_profile(profiles[0])
             self._load_encoder_settings(profiles)
 
@@ -1540,6 +1541,7 @@ class Project(Loggable, GES.Project):
         if not aencoder:
             self.error("Can't use profile, no audio encoder found.")
             return False
+
         if not vencoder:
             self.error("Can't use profile, no video encoder found.")
             return False
@@ -1547,6 +1549,55 @@ class Project(Loggable, GES.Project):
         self.container_profile = container_profile
         self.video_profile = video_profile
         self.audio_profile = audio_profile
+
+        return True
+
+    def is_profile_subset(self, profile, superset):
+        return self._get_element_factory_name(profile) == self._get_element_factory_name(superset)
+
+    def matches_container_profile(self, container_profile):
+        if not self.is_profile_subset(container_profile, self.container_profile):
+            return False
+
+        video_matches = False
+        has_video = False
+        audio_matches = False
+        has_audio = False
+        for profile in container_profile.get_profiles():
+            if isinstance(profile, GstPbutils.EncodingVideoProfile):
+                has_video = True
+                video_matches |= self.is_profile_subset(profile, self.video_profile)
+
+                # For example: "Profile Youtube"
+                preset_name = profile.get_preset()
+                if preset_name:
+                    # We assume container_profile has the same preset
+                    # as the included video profile.
+
+                    current_preset_name = self.video_profile.get_preset()
+                    if not current_preset_name:
+                        return False
+
+                    # For example: "x264enc"
+                    preset_factory_name = self.video_profile.get_preset_name()
+                    tmp_preset = Gst.ElementFactory.make(preset_factory_name, None)
+                    tmp_preset.load_preset(current_preset_name)
+
+                    res, last_applied_preset_name = tmp_preset.get_meta(current_preset_name, "pitivi::OriginalPreset")
+                    if res and preset_name != last_applied_preset_name:
+                        return False
+
+            elif isinstance(profile, GstPbutils.EncodingAudioProfile):
+                has_audio = True
+                audio_matches |= self.is_profile_subset(profile, self.audio_profile)
+
+        if has_audio:
+            if not audio_matches:
+                return False
+
+        if has_video:
+            if not video_matches:
+                return False
 
         return True
 
@@ -1626,6 +1677,10 @@ class Project(Loggable, GES.Project):
                 if cache_key not in cache:
                     continue
 
+                current_preset = profile.get_preset()
+                if current_preset and current_preset.startswith("encoder_settings_"):
+                    current_preset = None
+
                 # The settings for the current GstPbutils.EncodingProfile.
                 settings = cache[cache_key]
                 # The name of the Gst.Preset storing the settings.
@@ -1638,13 +1693,18 @@ class Project(Loggable, GES.Project):
                 # automatically.
                 profile.set_preset(preset_name)
 
+                # The original preset name is also important.
+                preset.set_meta(preset_name, "pitivi::OriginalPreset", current_preset)
+
                 # Store the current GstPbutils.EncodingProfile's settings
                 # in the Gst.Preset.
                 for prop, value in settings.items():
                     preset.set_property(prop, value)
 
                 # Serialize the GstPbutils.EncodingProfile's settings
-                # from the cache into a Gst.Preset.
+                # from the cache into e.g.
+                # $XDG_DATA_HOME/gstreamer-1.0/presets/GstX264Enc.prs
+                # for x264enc presets.
                 res = preset.save_preset(preset_name)
                 assert res
 
@@ -2091,7 +2151,7 @@ class Project(Loggable, GES.Project):
         if profile.get_preset_name():
             return profile.get_preset_name()
 
-        factories = self.__factories_compatible_with_profile(profile)
+        factories = Project.__factories_compatible_with_profile(profile)
         if not factories:
             return None
 
@@ -2112,7 +2172,8 @@ class Project(Loggable, GES.Project):
         self.error("Could not find any element with preset %s", preset)
         return None
 
-    def __factories_compatible_with_profile(self, profile):
+    @staticmethod
+    def __factories_compatible_with_profile(profile):
         """Finds factories of the same type as the specified profile.
 
         Args:

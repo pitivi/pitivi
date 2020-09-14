@@ -95,13 +95,12 @@ class TestQualityAdapter(common.TestCase):
     def check_adapter(self, adapter, expected_qualities):
         qualities = []
         for prop_value in range(len(expected_qualities)):
-            adjustment = mock.Mock()
             vcodecsettings = {adapter.prop_name: prop_value}
-            adapter.update_adjustment(adjustment, vcodecsettings, 0)
-            qualities.append(adjustment.props.value)
+            quality = adapter.calculate_quality(vcodecsettings)
+            qualities.append(quality)
         self.assertListEqual(qualities, expected_qualities)
 
-    def test_update_adjustment(self):
+    def test_calculate_quality(self):
         self.check_adapter(QualityAdapter({"prop1": (0, 3, 5)}),
                            [Quality.LOW, Quality.LOW, Quality.LOW, Quality.MEDIUM, Quality.MEDIUM, Quality.HIGH])
         self.check_adapter(QualityAdapter({"prop1": (100, 3, 2)}),
@@ -529,3 +528,95 @@ class TestRender(BaseTestMediaLibrary):
 
         caps = dialog.dialog.get_caps()
         self.assert_caps_equal(caps, "video/x-h264,profile=baseline")
+
+    def check_quality_widget(self, dialog, vencoder, vcodecsettings, preset, sensitive, value):
+        if vencoder:
+            self.assertEqual(dialog.project.vencoder, vencoder)
+        if vcodecsettings is not None:
+            self.assertDictEqual(dialog.project.vcodecsettings, vcodecsettings)
+
+        if preset:
+            self.assertEqual(dialog.presets_manager.cur_preset_item.name, preset)
+        else:
+            self.assertIsNone(dialog.presets_manager.cur_preset_item)
+
+        self.assertEqual(dialog.quality_scale.props.sensitive, sensitive)
+        self.assertEqual(dialog.quality_adjustment.props.value, value)
+
+    @skipUnless(*encoding_target_exists("dvd"))
+    @skipUnless(*encoding_target_exists("youtube"))
+    @skipUnless(*factory_exists("pngenc"))
+    def test_quality_widget(self):
+        project = self.create_simple_project()
+        dialog = self.create_rendering_dialog(project)
+        self.check_quality_widget(dialog,
+                                  vencoder="x264enc", vcodecsettings={"quantizer": 21, "pass": 5},
+                                  preset="youtube",
+                                  sensitive=True, value=Quality.MEDIUM)
+
+        self.assertEqual(project.video_profile.get_preset_name(), "x264enc")
+        dialog.quality_adjustment.props.value = Quality.HIGH
+        self.check_quality_widget(dialog,
+                                  vencoder="x264enc", vcodecsettings={"quantizer": 18, "pass": 5},
+                                  preset="youtube",
+                                  sensitive=True, value=Quality.HIGH)
+
+        self.select_render_preset(dialog, "dvd")
+        self.check_quality_widget(dialog,
+                                  vencoder=None, vcodecsettings={},
+                                  preset="dvd",
+                                  sensitive=False, value=Quality.LOW)
+
+        self.select_render_preset(dialog, "youtube")
+        self.assertEqual(project.video_profile.get_preset_name(), "x264enc")
+        self.check_quality_widget(dialog,
+                                  vencoder="x264enc", vcodecsettings={"quantizer": 21, "pass": 5},
+                                  preset="youtube",
+                                  sensitive=True, value=Quality.MEDIUM)
+
+        self.assertTrue(set_combo_value(dialog.video_encoder_combo,
+                                        Gst.ElementFactory.find("pngenc")))
+        self.check_quality_widget(dialog,
+                                  vencoder="pngenc", vcodecsettings={},
+                                  preset=None,
+                                  sensitive=False, value=Quality.LOW)
+
+        self.select_render_preset(dialog, "youtube")
+        self.check_quality_widget(dialog,
+                                  vencoder="x264enc", vcodecsettings={"quantizer": 21, "pass": 5},
+                                  preset="youtube",
+                                  sensitive=True, value=Quality.MEDIUM)
+
+    def test_preset_persistent(self):
+        """Checks the render preset is remembered when loading a project."""
+        project = self.create_simple_project()
+        self.assertEqual(project.muxer, "webmmux")
+        self.assertEqual(project.vencoder, "vp8enc")
+        self.assertDictEqual(project.vcodecsettings, {})
+
+        dialog = self.create_rendering_dialog(project)
+        self.check_quality_widget(dialog,
+                                  vencoder="x264enc", vcodecsettings={"quantizer": 21, "pass": 5},
+                                  preset="youtube",
+                                  sensitive=True, value=Quality.MEDIUM)
+
+        project_manager = project.app.project_manager
+        with tempfile.NamedTemporaryFile() as temp_file:
+            uri = Gst.filename_to_uri(temp_file.name)
+            project_manager.save_project(uri=uri, backup=False)
+
+            app2 = common.create_pitivi()
+            project2 = app2.project_manager.load_project(uri)
+            timeline_container = TimelineContainer(app2, editor_state=app2.gui.editor.editor_state)
+            timeline_container.set_project(project2)
+            common.create_main_loop().run(until_empty=True)
+            self.assertEqual(project2.muxer, "qtmux")
+            self.assertEqual(project2.vencoder, "x264enc")
+            self.assertTrue(set({"quantizer": 21, "pass": 5}.items()).issubset(set(project2.vcodecsettings.items())))
+
+        dialog2 = self.create_rendering_dialog(project2)
+        self.assertTrue(set({"quantizer": 21, "pass": 5}.items()).issubset(set(project2.vcodecsettings.items())))
+        self.check_quality_widget(dialog2,
+                                  vencoder="x264enc", vcodecsettings=None,
+                                  preset="youtube",
+                                  sensitive=True, value=Quality.MEDIUM)
