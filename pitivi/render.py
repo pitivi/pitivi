@@ -856,38 +856,48 @@ class RenderDialog(Loggable):
                 self._set_encoding_profile(old_profile)
 
     def _set_encoding_profile(self, encoding_profile):
+        """Sets the encoding profile of the project.
+
+        Args:
+            encoding_profile(GstPbutils.EncodingContainerProfile): The profile to set.
+
+        Returns:
+            bool: Whether the operation succeeded.
+        """
         self.project.set_container_profile(encoding_profile)
         self._setting_encoding_profile = True
-
-        muxer = Encoders().factories_by_name.get(self.project.muxer)
-        if not set_combo_value(self.muxer_combo, muxer):
-            return False
-
-        self.update_available_encoders()
-        self._update_valid_audio_restrictions(Gst.ElementFactory.find(self.project.aencoder))
-        self._update_valid_video_restrictions(Gst.ElementFactory.find(self.project.vencoder))
-        aencoder = Encoders().factories_by_name.get(self.project.aencoder)
-        vencoder = Encoders().factories_by_name.get(self.project.vencoder)
-        for i, (combo, name, value) in enumerate([
-                (self.audio_encoder_combo, "aencoder", aencoder),
-                (self.video_encoder_combo, "vencoder", vencoder),
-                (self.sample_rate_combo, "audiorate", self.project.audiorate),
-                (self.channels_combo, "audiochannels", self.project.audiochannels),
-                (self.frame_rate_combo, "videorate", self.project.videorate)]):
-            if value is None:
-                self.error("%d - Got no value for %s (%s)... rolling back",
-                           i, name, combo)
+        try:
+            muxer = Encoders().factories_by_name.get(self.project.muxer)
+            if not set_combo_value(self.muxer_combo, muxer):
                 return False
 
-            if not set_combo_value(combo, value):
-                self.error("%d - Could not set value %s for combo %s... rolling back",
-                           i, value, combo)
-                return False
+            self.update_available_encoders()
+            self._update_valid_audio_restrictions(Gst.ElementFactory.find(self.project.aencoder))
+            self._update_valid_video_restrictions(Gst.ElementFactory.find(self.project.vencoder))
+            aencoder = Encoders().factories_by_name.get(self.project.aencoder)
+            vencoder = Encoders().factories_by_name.get(self.project.vencoder)
+            for i, (combo, name, value) in enumerate([
+                    (self.audio_encoder_combo, "aencoder", aencoder),
+                    (self.video_encoder_combo, "vencoder", vencoder),
+                    (self.sample_rate_combo, "audiorate", self.project.audiorate),
+                    (self.channels_combo, "audiochannels", self.project.audiochannels),
+                    (self.frame_rate_combo, "videorate", self.project.videorate)]):
+                if value is None:
+                    self.error("%d - Got no value for %s (%s)... rolling back",
+                               i, name, combo)
+                    return False
 
-        self.update_resolution()
-        self.project.add_encoding_profile(self.project.container_profile)
-        self._update_file_extension()
-        self._setting_encoding_profile = False
+                if not set_combo_value(combo, value):
+                    self.error("%d - Could not set value %s for combo %s... rolling back",
+                               i, value, combo)
+                    return False
+
+            self.update_resolution()
+            self.project.add_encoding_profile(self.project.container_profile)
+            self._update_file_extension()
+        finally:
+            self._setting_encoding_profile = False
+
         return True
 
     def _create_ui(self):
