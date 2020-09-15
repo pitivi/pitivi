@@ -1557,15 +1557,15 @@ class Project(Loggable, GES.Project):
                 continue
 
             for profile in container_profile.get_profiles():
-                preset = profile.get_preset()
-                if not preset:
+                preset_name = profile.get_preset()
+                if not preset_name:
                     continue
 
-                encoder_factory_name = profile.get_preset_name()
-                encoder = Gst.ElementFactory.make(encoder_factory_name, None)
-                if not isinstance(encoder, Gst.Preset):
+                preset_factory_name = profile.get_preset_name()
+                preset = Gst.ElementFactory.make(preset_factory_name, None)
+                if not isinstance(preset, Gst.Preset):
                     self.warning("Element %s does not implement Gst.Preset. Cannot load"
-                                 "its rendering settings", encoder)
+                                 "its rendering settings", preset)
                     continue
 
                 if profile.get_type_nick() == "video":
@@ -1575,14 +1575,14 @@ class Project(Loggable, GES.Project):
                 else:
                     self.warning("Unrecognized profile type for profile %s", profile)
                     continue
-                cache_key = (container_profile, encoder_factory_name)
+                cache_key = (container_profile, preset_factory_name)
 
-                if not encoder.load_preset(preset):
-                    self.warning("No preset named %s for encoder %s", preset, encoder)
+                if not preset.load_preset(preset_name):
+                    self.warning("No preset named %s for encoder %s", preset_name, preset)
                     continue
 
-                cache[cache_key] = {prop.name: encoder.get_property(prop.name)
-                                    for prop in GObject.list_properties(encoder)
+                cache[cache_key] = {prop.name: preset.get_property(prop.name)
+                                    for prop in GObject.list_properties(preset)
                                     if prop.name not in IGNORED_PROPS and prop.flags & GObject.ParamFlags.WRITABLE}
 
     # ------------------------------------------ #
@@ -1608,11 +1608,11 @@ class Project(Loggable, GES.Project):
                 continue
 
             for profile in container_profile.get_profiles():
-                encoder_factory_name = profile.get_preset_name()
-                encoder = Gst.ElementFactory.make(encoder_factory_name, None)
-                if not isinstance(encoder, Gst.Preset):
+                preset_factory_name = profile.get_preset_name()
+                preset = Gst.ElementFactory.make(preset_factory_name, None)
+                if not isinstance(preset, Gst.Preset):
                     self.warning("Element %s does not implement Gst.Preset. Cannot save"
-                                 "its rendering settings", encoder)
+                                 "its rendering settings", preset)
                     continue
 
                 if profile.get_type_nick() == "video":
@@ -1622,19 +1622,30 @@ class Project(Loggable, GES.Project):
                 else:
                     self.warning("Unrecognized profile type for profile %s", profile)
                     continue
-                cache_key = (container_profile, encoder_factory_name)
+                cache_key = (container_profile, preset_factory_name)
                 if cache_key not in cache:
                     continue
 
-                # Save the encoder settings in a Gst.Preset so they are
-                # available in GES.Project.save() for serialization
+                # The settings for the current GstPbutils.EncodingProfile.
                 settings = cache[cache_key]
-                preset = "encoder_settings_%s" % uuid.uuid4().hex
-                profile.set_preset(preset)
+                # The name of the Gst.Preset storing the settings.
+                preset_name = "encoder_settings_%s" % uuid.uuid4().hex
+                # The project has three GstPbutils.EncodingProfile,
+                # for the container, for the video, for the audio.
+                # Each of them keeps the encoding settings in a Gst.Preset
+                # saved externally in a separate file.
+                # When the project is loaded, the encoding settings are loaded
+                # automatically.
+                profile.set_preset(preset_name)
 
+                # Store the current GstPbutils.EncodingProfile's settings
+                # in the Gst.Preset.
                 for prop, value in settings.items():
-                    encoder.set_property(prop, value)
-                res = encoder.save_preset(preset)
+                    preset.set_property(prop, value)
+
+                # Serialize the GstPbutils.EncodingProfile's settings
+                # from the cache into a Gst.Preset.
+                res = preset.save_preset(preset_name)
                 assert res
 
         return GES.Project.save(self, ges_timeline, uri, formatter_asset, overwrite)
