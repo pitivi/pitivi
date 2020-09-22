@@ -29,7 +29,6 @@ from gi.repository import Gtk
 
 from pitivi.render import Encoders
 from pitivi.render import extension_for_muxer
-from pitivi.render import PresetBoxRow
 from pitivi.render import PresetsManager
 from pitivi.render import Quality
 from pitivi.render import quality_adapters
@@ -57,15 +56,6 @@ def encoding_target_exists(tname):
         if tname in target.get_name().split(";"):
             return True, ""
     return False, "EncodingTarget %s not present on the system" % tname
-
-
-def get_preset_model_row(model, name):
-    """Finds @name in preset model."""
-    for item in model:
-        if item.name == name:
-            return PresetBoxRow(item)
-
-    return None
 
 
 def setup_render_presets(*profiles):
@@ -254,12 +244,9 @@ class TestRender(BaseTestMediaLibrary):
         }
 
         dialog._preset_selection_menubutton_clicked_cb(None)
-        preset_listbox = dialog.preset_listbox
 
         for preset_name, values in test_data:
-            row = get_preset_model_row(dialog.presets_manager.model, preset_name)
-            dialog._preset_listbox_row_activated_cb(preset_listbox, row)
-            self.assertEqual(dialog.presets_manager.cur_preset_item.name, preset_name)
+            self.select_render_preset(dialog, preset_name)
 
             for attr, val in values.items():
                 val = val if isinstance(val, list) else [val]
@@ -279,7 +266,7 @@ class TestRender(BaseTestMediaLibrary):
         """Tests removing EncodingProfile and re-saving it."""
         project = self.create_simple_project()
         dialog = self.create_rendering_dialog(project)
-        self.set_preset_listbox_profile_for_dialog(dialog, "test-remove")
+        self.select_render_preset(dialog, "test-remove")
 
         # Check the "test" profile is selected
         self.assertEqual(dialog.presets_manager.cur_preset_item.name, "test-remove")
@@ -293,18 +280,13 @@ class TestRender(BaseTestMediaLibrary):
             self.assertIsNone(dialog.presets_manager.cur_preset_item)
             self.assertEqual(dialog.preset_label.get_text(), "Custom")
 
-    def setup_project_with_profile(self, profile_name):
-        """Creates a simple project, open the render dialog and select @profile_name."""
+    def check_simple_rendering_profile(self, profile_name=None):
+        """Checks that rendering with the specified profile works."""
         project = self.create_simple_project()
         dialog = self.create_rendering_dialog(project)
-
-        self.set_preset_listbox_profile_for_dialog(dialog, profile_name)
-
-        return project, dialog
-
-    def check_simple_rendering_profile(self, profile_name):
-        """Checks that rendering with the specified profile works."""
-        self.render(self.setup_project_with_profile(profile_name)[1])
+        if profile_name:
+            self.select_render_preset(dialog, profile_name)
+        self.render(dialog)
 
     def render(self, dialog):
         """Renders pipeline from @dialog."""
@@ -399,10 +381,12 @@ class TestRender(BaseTestMediaLibrary):
                 old_use_proxy_assets(self)
 
             RenderDialog._use_proxy_assets = check_use_proxy_assets
-            dialog = self.create_rendering_dialog(project)
-            self.render(dialog)
-            self.mainloop.run(until_empty=True)
-            RenderDialog._use_proxy_assets = old_use_proxy_assets
+            try:
+                dialog = self.create_rendering_dialog(project)
+                self.render(dialog)
+                self.mainloop.run(until_empty=True)
+            finally:
+                RenderDialog._use_proxy_assets = old_use_proxy_assets
 
             # Check rendering did not use scaled proxy
             self.assertFalse(proxy_manager.is_scaled_proxy(rendering_asset))
@@ -462,7 +446,9 @@ class TestRender(BaseTestMediaLibrary):
     @skipUnless(*encoding_target_exists("youtube"))
     def test_preset_reset_when_changing_muxer(self):
         """Tests setting the container profile manually."""
-        _, dialog = self.setup_project_with_profile("youtube")
+        project = self.create_simple_project()
+        dialog = self.create_rendering_dialog(project)
+        self.select_render_preset(dialog, "youtube")
 
         # The container and video encoder profiles in the "youtube"
         # EncodingTarget are "qtmux" and "x264enc". They have a common
@@ -478,38 +464,45 @@ class TestRender(BaseTestMediaLibrary):
 
     def test_preset_changes_file_extension(self):
         """Test file extension changes according to the chosen preset."""
-        _, dialog = self.setup_project_with_profile("youtube")
+        project = self.create_simple_project()
+        dialog = self.create_rendering_dialog(project)
+        self.select_render_preset(dialog, "youtube")
         self.assertTrue(dialog.fileentry.get_text().endswith("mov"))
 
-        self.set_preset_listbox_profile_for_dialog(dialog, "dvd")
+        self.select_render_preset(dialog, "dvd")
         self.assertTrue(dialog.fileentry.get_text().endswith("mpeg"))
 
-        self.set_preset_listbox_profile_for_dialog(dialog, "youtube")
+        self.select_render_preset(dialog, "youtube")
         self.assertTrue(dialog.fileentry.get_text().endswith("mov"))
 
-    def set_preset_listbox_profile_for_dialog(self, dialog, profile_name):
+    def select_render_preset(self, dialog, profile_name):
         """Sets the preset value for an existing dialog."""
-        preset_model = dialog.presets_manager.model
-        preset_listbox = dialog.preset_listbox
-        if profile_name:
-            row = get_preset_model_row(preset_model, profile_name)
-            self.assertIsNotNone(row)
-            dialog._preset_listbox_row_activated_cb(preset_listbox, row)
+        row = None
+        for item in dialog.presets_manager.model:
+            if item.name == profile_name:
+                row = mock.Mock()
+                row.preset_item = item
+                break
+        self.assertIsNotNone(row)
+
+        dialog._preset_listbox_row_activated_cb(None, row)
+        self.assertEqual(dialog.presets_manager.cur_preset_item.name, profile_name)
 
     @skipUnless(*encoding_target_exists("dvd"))
     def test_rendering_with_dvd_profile(self):
         """Tests rendering a simple timeline with the DVD profile."""
         self.check_simple_rendering_profile("dvd")
 
-    # pylint: disable=invalid-name
     def test_rendering_with_default_profile(self):
         """Tests rendering a simple timeline with the default profile."""
-        self.check_simple_rendering_profile(None)
+        self.check_simple_rendering_profile()
 
     @skipUnless(*encoding_target_exists("youtube"))
     def test_setting_caps_fields_in_advanced_dialog(self):
         """Tests setting special advanced setting (which are actually set on caps)."""
-        project, dialog = self.setup_project_with_profile("youtube")
+        project = self.create_simple_project()
+        dialog = self.create_rendering_dialog(project)
+        self.select_render_preset(dialog, "youtube")
 
         dialog.window = None  # Make sure the dialog window is never set to Mock.
         dialog._video_settings_button_clicked_cb(None)
