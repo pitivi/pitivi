@@ -7,6 +7,27 @@ short-description: What the GSoC students did in the previous years
 See [Google Summer of Code](Google_Summer_of_Code.md) for how to
 get involved.
 
+## 2020
+
+-   [Abhishek Kumar Singh](https://gaharavara.github.io)
+    refactored the Media Library to use a single `Gtk.FlowBox` for both the
+    Icon view and the List view modes. This allowed implementing [tagging of
+    the clips](https://gaharavara.github.io/gsoc-2020-final-report/) in the
+    Media Library.
+-   [Ayush Mittal](https://ayush9398.github.io/blog/) simplified the Render
+    Dialog to avoid overwhelming people, while still allowing full control.
+    The new UI asks only about the desired render preset and quality,
+    [taking care of the
+    rest](https://ayush9398.github.io/blog/GSOC'20-work-product).
+-   [Vivek R](https://123vivekr.github.io/) implemented object tracking.
+    This required a new GStreamer element which uses
+    [OpenCV](https://docs.opencv.org/4.4.0/d2/d0a/tutorial_introduction_to_tracker.html)
+    to track an object.
+    A new UI perspective allows tracking objects and editing the tracked data.
+    For now it's possible to [cover each tracked
+    object](https://123vivekr.github.io/2020/08/29/pitivi-gsoc-work-product.html)
+    with a black rectangle.
+
 ## 2019
 
 -   [Millan Castro](https://millancv.github.io/) implemented [timeline
@@ -93,7 +114,7 @@ report](http://pecisk.blogspot.ca/2012/11/state-of-libwaveform-after-gsoc.html))
 
 ## 2011
 
--   Feroze Naina worked on adding profiles for rendering.
+-   Feroze Naina worked on adding [profiles for rendering](Feroze_gsoc.md).
 -   [Lubosz Sarnecki](https://lubosz.wordpress.com/) implemented a nifty
     user interface for [resizing/cropping clips directly in the
     viewer](https://lubosz.wordpress.com/2016/09/26/making-viewer-uis-for-pitivi/).

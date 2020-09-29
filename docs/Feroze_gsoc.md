@@ -39,7 +39,7 @@ Presets Suggested : iPod , iPad, PlayStation 3, DVD (NTSC, PAL), HTML5 (
 Theora + Vorbis ), Flash video (for embedding), HD (using mkv -&gt; good
 compression)
 
-Reference : [design/Rendering_Profiles.md]
+Reference : [](design/Rendering_Profiles.md)
 
 ### 2. Upload to video services
 
