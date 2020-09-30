@@ -41,6 +41,49 @@
   <developer_name>The Pitivi Team</developer_name>
 
   <releases>
+    <release version="2020.09" date="2020-09-30">
+      <description>
+        <p>
+          This release includes lots of new features, originating from GSoC
+          internships, from University of Nebraska-Lincoln's Soft-261 class
+          Spring 2020 and from individual contributors.
+          If you're interested to contribute, please get in touch with us.
+        </p>
+        <ul>
+          <li>A plugin system allows extending the Pitivi functionality medium-term, targeted for teams of editors.</li>
+          <li>A developer console plugin allows interacting with the project in a Python console.</li>
+          <li>Custom UI replaces the automatically generated UI for a handful of effects.</li>
+          <li>Easy Ken-Burns effect.</li>
+
+          <li>The new Greeter perspective replaces the Welcome wizard dialog and allows a slick selection of a recently opened project.</li>
+          <li>When being resized, the Viewer shows the percent of the actual widget size in relation to the project video size.</li>
+          <li>The Viewer size snaps at 50% when being resized.</li>
+          <li>Scaled proxies if optimized media is too much for your machine.</li>
+
+          <li>Timeline markers.</li>
+          <li>Support for nested timelines by importing entire XGES files as a clip.</li>
+          <li>The Effects Library has been redesigned to allow quick access to effects.</li>
+          <li>Ability to favorite effects in the Effects Library.</li>
+          <li>Improved workflow for adding effects.</li>
+          <li>The refreshed clip effects UI allows working on multiple effects at a time.</li>
+
+          <li>Refactored Media Library using same logic for different view modes.</li>
+          <li>Refactored Render Dialog UI to avoid overwhelming people. Tell us what you think about it.</li>
+
+          <li>Restoring the editing state when reopening a project.</li>
+          <li>Safe areas visualization in the Viewer.</li>
+          <li>Easy alignment for video clips.</li>
+          <li>Composition guidelines in the Viewer.</li>
+          <li>Solid color clips.</li>
+          <li>Ability to mute or hide an entire layer.</li>
+
+          <li>Interactive intro so newcomers get familiar with the names of the UI elements.</li>
+          <li>The action search is a shortcut to everything possible in the timeline, if you can find it. Press "/".</li>
+          <li>New keyboard shortcuts for pros.</li>
+        </ul>
+      </description>
+    </release>
+
     <release version="0.999" date="2018-08-20">
       <description>
         <p>

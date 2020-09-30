@@ -1,16 +1,23 @@
 # How to make a release
 
-Ideally these instructions are in line with the [GNOME releasing process](https://live.gnome.org/MaintainersCorner/Releasing).
+Ideally these instructions are in line with the [GNOME releasing
+process](https://live.gnome.org/MaintainersCorner/Releasing).
 
 We make two types of releases:
 - regular releases, when we have new features or improvements, and
 - "smaller" bug-fix releases, when a regular release needs patching.
 
-The regular releases have the version number X.YY, and the bug-fix
-releases have the version number X.YY.Z, where Z is hopefully a relatively small
+The regular releases have the version number YYYY.MM, and the bug-fix releases
+have the version number YYYY.MM.Z, where Z is hopefully a relatively small
 number (1, 2, 3...).
 
-Most of the steps below should be done in the [development environment](HACKING.md): `$ source bin/pitivi-env` -> `(ptv-flatpak) $`
+Most of the steps below should be done in the [development
+environment](HACKING.md):
+
+```
+$ source bin/pitivi-env
+(ptv-flatpak) $
+```
 
 1. Check [GitLab](https://gitlab.gnome.org/GNOME/pitivi/milestones)
     * Make sure there are no significant issues open against the current milestone.
@@ -26,9 +33,9 @@ Most of the steps below should be done in the [development environment](HACKING.
 If doing a bugfix release, add or increase the micro.
 If doing a regular release, bump YY up and remove the micro from
 the version number, for example: 0.97.1 -> 0.98. Normally this is the
-same as the name of the Phabricator milestone you just archived.
+same as the name of the GitLab milestone you just archived.
      * [data/org.pitivi.Pitivi.appdata.xml.in](https://gitlab.gnome.org/GNOME/pitivi/blob/master/data/org.pitivi.Pitivi.appdata.xml.in):
-Add a new release tag with the exec summary of changes.
+Add a new release entry with the exec summary of changes.
      * [NEWS](https://gitlab.gnome.org/GNOME/pitivi/blob/master/NEWS):
 Copy the exec summary of changes also here. This ends up in the `.news` file at [download.gnome.org/sources/pitivi](https://download.gnome.org/sources/pitivi/).
      * [AUTHORS](https://gitlab.gnome.org/GNOME/pitivi/blob/master/AUTHORS):
@@ -48,7 +55,7 @@ If there are new maintainers.
    $ cd /tmp
    $ asp checkout pitivi
    $ cd /tmp/pitivi/repos/community-x86_64/
-   $ cp .../pitivi-X.YY.Z.tar.xz .
+   $ cp .../pitivi-YYYY.MM.Z.tar.xz .
    $ vim PKGBUILD
    ... Update "pkgver",
    ... Make sure "source" ends in .tar.xz

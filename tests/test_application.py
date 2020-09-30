@@ -52,15 +52,6 @@ class TestPitivi(common.TestCase):
         self.assertTrue(app.is_latest())
         self.assertEqual(configure.VERSION, app.get_latest())
 
-        app = self.call_version_info_received("999.0=CURRENT")
-        self.assertFalse(app.is_latest())
-        self.assertEqual("999.0", app.get_latest())
-
-        app = self.call_version_info_received(
-            "999.0=CURRENT\n%s=SUPPORTED" % configure.VERSION)
-        self.assertFalse(app.is_latest())
-        self.assertEqual("999.0", app.get_latest())
-
         app = self.call_version_info_received("0.91=current")
         self.assertTrue(app.is_latest())
         self.assertEqual("0.91", app.get_latest())

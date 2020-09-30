@@ -1,3 +1,40 @@
+2020 September 30th - Pitivi 2020.09
+
+This release includes lots of new features, originating from GSoC
+internships, from University of Nebraska-Lincoln's Soft-261 class
+Spring 2020 and from individual contributors.
+
+  * A plugin system allows extending the Pitivi functionality medium-term, targeted for teams of editors.
+  * A developer console plugin allows interacting with the project in a Python console.
+  * Custom UI replaces the automatically generated UI for a handful of effects.
+  * Easy Ken-Burns effect.
+
+  * The new Greeter perspective replaces the Welcome wizard dialog and allows a slick selection of a recently opened project.
+  * When being resized, the Viewer shows the percent of the actual widget size in relation to the project video size.
+  * The Viewer size snaps at 50% when being resized.
+  * Scaled proxies if optimized media is too much for your machine.
+
+  * Timeline markers.
+  * Support for nested timelines by importing entire XGES files as a clip.
+  * The Effects Library has been redesigned to allow quick access to effects.
+  * Ability to favorite effects in the Effects Library.
+  * Improved workflow for adding effects.
+  * The refreshed clip effects UI allows working on multiple effects at a time.
+
+  * Refactored Media Library using same logic for different view modes.
+  * Refactored Render Dialog UI to avoid overwhelming people. Tell us what you think about it.
+
+  * Restoring the editing state when reopening a project.
+  * Safe areas visualization in the Viewer.
+  * Easy alignment for video clips.
+  * Composition guidelines in the Viewer.
+  * Solid color clips.
+  * Ability to mute or hide an entire layer.
+
+  * Interactive intro so newcomers get familiar with the names of the UI elements.
+  * The action search is a shortcut to everything possible in the timeline, if you can find it. Press "/".
+  * New keyboard shortcuts for pros.
+
 2018 August 29th - Pitivi 0.999
 
   * Selecting a range of clips can be done by clicking followed by Shift+click

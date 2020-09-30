@@ -3,12 +3,12 @@ Now with half the codebase and twice the power
 
 2012 - ...
 
-Maintained by Thibault Saunier, Jeff Fortin, Mathieu Duponchelle and Alex Băluț
-with the help of many contributors.
+Maintained by Thibault Saunier and Alex Băluț with the help of many
+contributors.
 
 A handwritten list here would be too long, be frequently outdated,
 and would not give their relative merit. Out of respect for our contributors,
-we point you instead to: http://ohloh.net/p/pitivi/contributors
+we point you instead to: https://www.openhub.net/p/pitivi/contributors
 
 Or you can run: git shortlog -s -n
 
