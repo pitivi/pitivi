@@ -728,8 +728,10 @@ class Project(Loggable, GES.Project):
         self.muxer = Encoders().default_muxer
         self.vencoder = Encoders().default_video_encoder
         self.aencoder = Encoders().default_audio_encoder
-        self._ensure_audio_restrictions()
-        self._ensure_video_restrictions()
+        res = self._ensure_audio_restrictions()
+        assert res
+        res = self._ensure_video_restrictions()
+        assert res
         self._has_default_audio_settings = has_default_settings
         self._has_default_video_settings = has_default_settings
 
@@ -952,8 +954,10 @@ class Project(Loggable, GES.Project):
 
     def set_rendering(self, rendering):
         """Sets the a/v restrictions for rendering or for editing."""
-        self._ensure_audio_restrictions()
-        self._ensure_video_restrictions()
+        res = self._ensure_audio_restrictions()
+        assert res
+        res = self._ensure_video_restrictions()
+        assert res
 
         video_restrictions = self.video_profile.get_restriction().copy_nth(0)
 
@@ -1491,12 +1495,14 @@ class Project(Loggable, GES.Project):
             return
 
         profiles = self.list_encoding_profiles()
-        if profiles:
-            # The project just loaded, check the new
-            # encoding profile and make use of it now.
-            self.info("Using first encoding profile: %s", [p.get_preset_name() for p in profiles])
-            self.set_container_profile(profiles[0])
-            self._load_encoder_settings(profiles)
+        # The project just loaded, check the new
+        # encoding profile and make use of it now.
+        self.info("Using first usable encoding profile: %s", [p.get_preset_name() for p in profiles])
+        for profile in profiles:
+            if self.set_container_profile(profile):
+                break
+
+        self._load_encoder_settings(profiles)
 
     def set_container_profile(self, container_profile):
         """Sets @container_profile as new profile if usable.
@@ -1522,7 +1528,9 @@ class Project(Loggable, GES.Project):
                 if profile.get_restriction() is None:
                     profile.set_restriction(Gst.Caps("video/x-raw"))
 
-                self._ensure_video_restrictions(profile)
+                if not self._ensure_video_restrictions(profile):
+                    return False
+
                 vencoder = self._get_element_factory_name(profile)
                 if vencoder:
                     profile.set_preset_name(vencoder)
@@ -1531,7 +1539,9 @@ class Project(Loggable, GES.Project):
                 if profile.get_restriction() is None:
                     profile.set_restriction(Gst.Caps("audio/x-raw"))
 
-                self._ensure_audio_restrictions(profile)
+                if not self._ensure_audio_restrictions(profile):
+                    return False
+
                 aencoder = self._get_element_factory_name(profile)
                 if aencoder:
                     profile.set_preset_name(aencoder)
@@ -2028,18 +2038,23 @@ class Project(Loggable, GES.Project):
                                          of @values if available.
 
         """
-        encoder = None
         if isinstance(profile, GstPbutils.EncodingAudioProfile):
             facttype = Gst.ELEMENT_FACTORY_TYPE_AUDIO_ENCODER
         else:
             facttype = Gst.ELEMENT_FACTORY_TYPE_VIDEO_ENCODER
 
-        ebin = Gst.ElementFactory.make('encodebin', None)
+        ebin = Gst.ElementFactory.make("encodebin", None)
         ebin.props.profile = profile
+
+        encoder = None
         for element in ebin.iterate_recurse():
             if element.get_factory().list_is_type(facttype):
                 encoder = element
                 break
+
+        if not encoder:
+            self.error("element '%s' not available for profile %s", profile.get_preset(), profile)
+            return False
 
         encoder_sinkcaps = encoder.sinkpads[0].get_pad_template().get_caps().copy()
         self.debug("%s - Ensuring %s\n  defaults: %s\n  ref_restrictions: %s\n  prev_vals: %s)",
@@ -2055,6 +2070,7 @@ class Project(Loggable, GES.Project):
         profile.set_preset_name(preset_name)
 
         self.info("Fully set restriction: %s", profile.get_restriction().to_string())
+        return True
 
     def _ensure_video_restrictions(self, profile=None):
         defaults = {
@@ -2074,8 +2090,7 @@ class Project(Loggable, GES.Project):
         else:
             ref_restrictions = profile.get_restriction()
 
-        self._ensure_restrictions(profile, defaults, ref_restrictions,
-                                  prev_vals)
+        return self._ensure_restrictions(profile, defaults, ref_restrictions, prev_vals)
 
     def _ensure_audio_restrictions(self, profile=None):
         ref_restrictions = None
@@ -2090,8 +2105,7 @@ class Project(Loggable, GES.Project):
         if self.audio_profile:
             prev_vals = self.audio_profile.get_restriction().copy()
 
-        return self._ensure_restrictions(profile, defaults, ref_restrictions,
-                                         prev_vals)
+        return self._ensure_restrictions(profile, defaults, ref_restrictions, prev_vals)
 
     def _maybe_init_settings_from_asset(self, asset):
         """Updates the project settings to match the specified asset.
