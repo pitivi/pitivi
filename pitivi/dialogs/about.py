@@ -23,8 +23,6 @@ from gi.repository import Gtk
 
 from pitivi.configure import APPNAME
 from pitivi.configure import APPURL
-from pitivi.configure import GITVERSION
-from pitivi.configure import in_devel
 from pitivi.configure import VERSION
 
 
@@ -43,16 +41,12 @@ class AboutDialog(Gtk.AboutDialog):
         self.set_program_name(APPNAME)
         self.set_website(APPURL)
 
-        if in_devel():
-            version_str = _("Development version: %s") % GITVERSION
-        elif not app.is_latest():
-            version_str = _("Version %(cur_ver)s — %(new_ver)s is available") % \
-                {"cur_ver": GITVERSION,
-                 "new_ver": app.get_latest()}
-        elif GITVERSION:
-            version_str = _("Version %s") % GITVERSION
-        else:
+        if app.is_latest():
             version_str = _("Version %s") % VERSION
+        else:
+            version_str = _("Version %(cur_ver)s — %(new_ver)s is available") % \
+                {"cur_ver": VERSION,
+                 "new_ver": app.get_latest()}
         self.set_version(version_str)
 
         comments = ["",

@@ -1,4 +1,4 @@
-project('pitivi', 'c', version : '2020.09', meson_version : '>= 0.46.0')
+project('pitivi', 'c', version : '2020.09.1', meson_version : '>= 0.46.0')
 host_system = host_machine.system()
 
 pymod = import('python')
@@ -33,13 +33,6 @@ podir = join_paths(meson.current_source_dir(), 'po')
 itsdir = join_paths(meson.current_source_dir(), 'gettext')
 pkgdatadir = join_paths(get_option('datadir'), meson.project_name())
 
-git = find_program('git', required : false)
-if git.found()
-    GITVERSION = run_command(git, 'describe', '--always').stdout().strip()
-else
-    GITVERSION = ''
-endif
-
 
 geteenvvar = find_program('getenvvar.py')
 cdata = configuration_data()
@@ -57,7 +50,7 @@ cdata.set('LIBDIR', join_paths(get_option('prefix'), get_option('libdir')))
 cdata.set('DATADIR', join_paths(get_option('prefix'), get_option('datadir')))
 cdata.set('PACKAGE_NAME', 'Pitivi')
 cdata.set('PACKAGE', 'pitivi')
-cdata.set('GITVERSION', GITVERSION)
+cdata.set('GITVERSION', '')
 cdata.set('VERSION', meson.project_version())
 cdata.set('BUILDDIR', meson.current_build_dir())
 
