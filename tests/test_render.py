@@ -79,6 +79,34 @@ def setup_render_presets(*profiles):
     return setup_wrapper
 
 
+class TestPresetsManager(common.TestCase):
+
+    @skipUnless(*encoding_target_exists("youtube"))
+    @skipUnless(*factory_exists("x264enc"))
+    def test_initial_preset(self):
+        project = common.create_project()
+        manager = PresetsManager(project)
+
+        self.assertEqual(manager.initial_preset().name, "youtube")
+
+    def test_missing_x264(self):
+        # Simulate no encoder being available for the profile's format.
+        targets = GstPbutils.encoding_list_all_targets()
+        for target in targets:
+            for profile in target.get_profiles():
+                for sub_profile in profile.get_profiles():
+                    raw_caps = "audio/non_existing_whatever_it_s_true"
+                    sub_profile.get_format = mock.Mock(return_value=raw_caps)
+
+        with mock.patch.object(GstPbutils, "encoding_list_all_targets") as encoding_list_all_targets:
+            encoding_list_all_targets.return_value = targets
+
+            project = common.create_project()
+            manager = PresetsManager(project)
+
+            self.assertIsNone(manager.initial_preset())
+
+
 class TestQualityAdapter(common.TestCase):
     """Tests for the QualityAdapter class."""
 

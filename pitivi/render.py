@@ -277,6 +277,13 @@ class PresetsManager(GObject.Object, Loggable):
             if len(encoding_target.get_profiles()) != 1 and profile.get_name().lower() != "default":
                 name += "_" + profile.get_name()
 
+            # Check the GStreamer elements are available.
+            profiles = [profile] + profile.get_profiles()
+            if not all([self.project.get_element_factory_name(p)
+                        for p in profiles]):
+                self.warning("unusable preset: %s", name)
+                continue
+
             preset_item = PresetItem(name, encoding_target, profile)
             self.model.insert_sorted(preset_item, PresetItem.compare_func)
             preset_items.append(preset_item)
@@ -320,27 +327,32 @@ class PresetsManager(GObject.Object, Loggable):
         """
         self.cur_preset_item = preset_item
         writable = bool(preset_item) and \
-                   len(preset_item.target.get_profiles()) == 1 and \
-                   os.access(preset_item.target.get_path(), os.W_OK)
+            len(preset_item.target.get_profiles()) == 1 and \
+            os.access(preset_item.target.get_path(), os.W_OK)
 
         self.action_remove.set_enabled(writable)
         self.action_save.set_enabled(writable)
 
-    def select_default_preset(self):
-        """Selects the default hardcoded preset."""
-        for item in self.model:
-            if item.name == "youtube":
-                self.select_preset(item)
-                break
+    def initial_preset(self):
+        """Returns the initial preset to be displayed."""
+        has_vcodecsettings = bool(self.project.vcodecsettings)
+        if has_vcodecsettings:
+            # It's a project with previous render settings, see what matches.
+            return self.matching_preset()
+        else:
+            # It's a new project.
+            for item in self.model:
+                if item.name == "youtube":
+                    return item
 
-    def select_matching_preset(self):
-        """Selects the first preset matching the project's encoders settings."""
+            return None
+
+    def matching_preset(self):
+        """Returns the first preset matching the project's encoding profile."""
         for item in self.model:
             if self.project.matches_container_profile(item.profile):
-                self.select_preset(item)
-                return
-
-        self.select_preset(None)
+                return item
+        return None
 
 
 class Encoders(Loggable):
@@ -834,16 +846,11 @@ class RenderDialog(Loggable):
 
         self.presets_manager.connect("profile-updated", self._presets_manager_profile_updated_cb)
 
-        has_vcodecsettings = bool(self.project.vcodecsettings)
-        if has_vcodecsettings:
-            self.presets_manager.select_matching_preset()
-        else:
-            self.presets_manager.select_default_preset()
-            cur_preset_item = self.presets_manager.cur_preset_item
-            if cur_preset_item and self.apply_preset(cur_preset_item):
+        preset_item = self.presets_manager.initial_preset()
+        if preset_item:
+            if self.apply_preset(preset_item):
                 self.apply_vcodecsettings_quality(Quality.MEDIUM)
-            else:
-                self.presets_manager.select_preset(None)
+                self.presets_manager.select_preset(preset_item)
 
         set_icon_and_title(self.preset_icon, self.preset_label, self.presets_manager.cur_preset_item)
         self._update_quality_scale()
@@ -1751,7 +1758,8 @@ class RenderDialog(Loggable):
         if self._setting_encoding_profile:
             return
 
-        self.presets_manager.select_matching_preset()
+        preset_item = self.presets_manager.matching_preset()
+        self.presets_manager.select_preset(preset_item)
 
     def _update_quality_scale(self):
         encoder = get_combo_value(self.video_encoder_combo)

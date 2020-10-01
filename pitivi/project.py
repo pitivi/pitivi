@@ -1513,7 +1513,7 @@ class Project(Loggable, GES.Project):
         if container_profile == self.container_profile:
             return True
 
-        muxer = self._get_element_factory_name(container_profile)
+        muxer = self.get_element_factory_name(container_profile)
         if muxer is None:
             muxer = Encoders().default_muxer
         container_profile.set_preset_name(muxer)
@@ -1531,7 +1531,7 @@ class Project(Loggable, GES.Project):
                 if not self._ensure_video_restrictions(profile):
                     return False
 
-                vencoder = self._get_element_factory_name(profile)
+                vencoder = self.get_element_factory_name(profile)
                 if vencoder:
                     profile.set_preset_name(vencoder)
             elif isinstance(profile, GstPbutils.EncodingAudioProfile):
@@ -1542,7 +1542,7 @@ class Project(Loggable, GES.Project):
                 if not self._ensure_audio_restrictions(profile):
                     return False
 
-                aencoder = self._get_element_factory_name(profile)
+                aencoder = self.get_element_factory_name(profile)
                 if aencoder:
                     profile.set_preset_name(aencoder)
             else:
@@ -1563,7 +1563,7 @@ class Project(Loggable, GES.Project):
         return True
 
     def is_profile_subset(self, profile, superset):
-        return self._get_element_factory_name(profile) == self._get_element_factory_name(superset)
+        return self.get_element_factory_name(profile) == self.get_element_factory_name(superset)
 
     def matches_container_profile(self, container_profile):
         if not self.is_profile_subset(container_profile, self.container_profile):
@@ -2151,7 +2151,7 @@ class Project(Loggable, GES.Project):
         self.emit("rendering-settings-changed", key)
         self.set_modification_state(True)
 
-    def _get_element_factory_name(self, profile):
+    def get_element_factory_name(self, profile):
         """Finds a factory for an element compatible with the specified profile.
 
         Args:
@@ -2174,17 +2174,17 @@ class Project(Loggable, GES.Project):
             # The element does not need to support a specific preset.
             # Return the compatible factory with the highest rank.
             return factories[0].get_name()
+        else:
+            # Make sure that if a #Gst.Preset is set we find an
+            # element that can handle that preset.
+            for factory in factories:
+                elem = factory.create()
+                if isinstance(elem, Gst.Preset):
+                    if elem.load_preset(preset):
+                        return factory.get_name()
 
-        # Make sure that if a #Gst.Preset is set we find an
-        # element that can handle that preset.
-        for factory in factories:
-            elem = factory.create()
-            if isinstance(elem, Gst.Preset):
-                if elem.load_preset(preset):
-                    return factory.get_name()
-
-        self.error("Could not find any element with preset %s", preset)
-        return None
+            self.error("Could not find any element with preset %s", preset)
+            return None
 
     @staticmethod
     def __factories_compatible_with_profile(profile):
