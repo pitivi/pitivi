@@ -1453,6 +1453,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.control_mask = False
 
         self._project = None
+        self.state_restored = False
         self.ges_timeline = None
         self.__copied_group = None
 
@@ -1571,30 +1572,37 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.ruler.set_pipeline(project.pipeline)
             self.ruler.zoom_changed()
 
-            position = self.editor_state.get_value("playhead-position")
-            if position:
-                self._project.pipeline.simple_seek(position)
-
-            clip_names = self.editor_state.get_value("selection")
-            if clip_names:
-                clips = [self.ges_timeline.get_element(clip_name)
-                         for clip_name in clip_names]
-                if all(clips):
-                    self.timeline.selection.set_selection(clips, SELECT)
-
-            zoom_level = self.editor_state.get_value("zoom-level")
-            if zoom_level:
-                Zoomable.set_zoom_level(zoom_level)
-            else:
-                self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
-
             self.timeline.update_snapping_distance()
             self.markers.markers_container = project.ges_timeline.get_marker_list("markers")
 
-            scroll = self.editor_state.get_value("scroll")
-            if scroll:
-                # TODO: Figure out why self.scroll_to_pixel(scroll) which calls _scroll_to_pixel directly does not work.
-                GLib.idle_add(self._scroll_to_pixel, scroll)
+    def restore_state(self):
+        if self.state_restored:
+            return
+
+        # One attempt is enough.
+        self.state_restored = True
+
+        position = self.editor_state.get_value("playhead-position")
+        if position:
+            self._project.pipeline.simple_seek(position)
+
+        clip_names = self.editor_state.get_value("selection")
+        if clip_names:
+            clips = [self.ges_timeline.get_element(clip_name)
+                     for clip_name in clip_names]
+            if all(clips):
+                self.timeline.selection.set_selection(clips, SELECT)
+
+        zoom_level = self.editor_state.get_value("zoom-level")
+        if zoom_level:
+            Zoomable.set_zoom_level(zoom_level)
+        else:
+            self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
+
+        scroll = self.editor_state.get_value("scroll")
+        if scroll:
+            # TODO: Figure out why self.scroll_to_pixel(scroll) which calls _scroll_to_pixel directly does not work.
+            GLib.idle_add(self._scroll_to_pixel, scroll)
 
     def update_actions(self):
         selection = self.timeline.selection

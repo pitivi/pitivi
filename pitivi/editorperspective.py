@@ -111,6 +111,7 @@ class EditorPerspective(Perspective, Loggable):
 
     def refresh(self):
         """Refreshes the perspective."""
+        self.timeline_ui.restore_state()
         self.focus_timeline()
 
     def __setup_css(self):
