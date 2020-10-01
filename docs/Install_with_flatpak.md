@@ -1,13 +1,15 @@
 # Install with flatpak
 
-The Pitivi community supports a [flatpak](http://flatpak.org/)
-repository to let users install the latest Pitivi releases. This is the
-official, recommended way of installing Pitivi on Linux. The repository
-contains only 64-bit builds.
+We release every few months, meaning you most likely want to install the latest
+release [from Flathub](https://flathub.org/apps/details/org.pitivi.Pitivi).
 
-If you see problems, come to our [IRC
-channel](http://www.pitivi.org/?go=contact) or [file a
-bug](Bug_reporting.md).
+To try out the latest development branch, get the development snapshot from our
+own [flatpak](http://flatpak.org/) repository. The repository contains only
+64-bit builds.
+
+Please [file an issue](Bug_reporting.md) if you have exact steps to reproduce
+the bug. Feel free to [contact us](http://www.pitivi.org/?go=contact) if you see
+any problems.
 
 ## Getting Flatpak
 
@@ -21,26 +23,20 @@ only one time.
 
 ## Installing Pitivi
 
-Currently there are no less than three options for installing Pitivi. Each
-can be installed by running the commands below as normal user, no root/sudo
-needed.
+Run the commands below as normal user, no root/sudo needed.
 
-- **latest release**, for production work:
+### Latest release
+
+Suited for production work.
 
 ```
 $ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 $ flatpak install flathub org.pitivi.Pitivi
 ```
 
-- **1.0 development snapshot**, for testing the next release:
+### Development snapshot
 
-```
-$ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-$ flatpak install flathub org.gnome.Platform//3.36
-$ flatpak install http://flatpak.pitivi.org/pitivi.flatpakref
-```
-
-- **master development snapshot**, which includes the latest features:
+Built daily out of the development branch.
 
 ```
 $ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -71,7 +67,7 @@ $ flatpak run org.pitivi.Pitivi//0.96
 
 ## Updating Pitivi
 
-If your software manager doesn't allow this yet, updating manually by running:
+If your software manager doesn't allow this yet, update manually by running:
 
 ```
 $ flatpak update org.pitivi.Pitivi
@@ -91,9 +87,3 @@ $ flatpak uninstall org.pitivi.Pitivi
 
 In the sandbox gstreamer-vaapi is installed but it requires the
 `org.freedesktop.Platform.VAAPI.Intel` extension to be installed.
-
-As the support is experimental, you need to set `PITIVI_UNSTABLE_FEATURES`
-to enable them:
-```
-$ flatpak run --env=PITIVI_UNSTABLE_FEATURES=vaapi org.pitivi.Pitivi
-```

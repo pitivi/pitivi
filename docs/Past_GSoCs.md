@@ -37,7 +37,7 @@ get involved.
     timelines](https://swaynethoughts.wordpress.com/2019/08/25/gsoc-2019-final-report/).
 -   [Yatin Maan](https://yatinmaan.github.io/) improved the [effects
     usability](https://yatinmaan.github.io/2019/08/26/GSoC-19-Final-Report/).
-    The Effects Library has been refactored to
+    The Effects Library has been refactored to provide a better experience.
 
 ## 2018
 
