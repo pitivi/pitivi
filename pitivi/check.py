@@ -396,7 +396,7 @@ def initialize_modules():
     GstPbutils.DiscovererVideoInfo.get_rotation = video_info_get_rotation
 
     from pitivi.utils import validate
-    if validate.init() and "--inspect-action-type" in sys.argv:
+    if "--inspect-action-type" in sys.argv and validate.init():
         try:
             action_type = [sys.argv[1 + sys.argv.index("--inspect-action-type")]]
         except IndexError:
