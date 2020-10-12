@@ -11,7 +11,8 @@ variables:
   GST_DEBUG_NO_COLOR: "true"
 
 
-.docker_image_template:
+pitivi:master:
+  stage: docker_image
   tags:
     - privileged
   image: docker:latest
@@ -21,6 +22,9 @@ variables:
   services:
     - docker:19.03.0-dind
   script:
+    # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
+    - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
+    - export BRANCH=master
     - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}-sdk_3.36"
     - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.36"
     - export TMPIMAGENAME="tmp-pitivi-${BRANCH}-sdk_3.36"
@@ -39,22 +43,6 @@ variables:
     - triggers
     - schedules
   retry: 1
-
-pitivi:master:
-  stage: docker_image
-  extends: .docker_image_template
-  before_script:
-    # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
-    - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
-    - export BRANCH=master
-
-pitivi:1.0:
-  stage: docker_image
-  extends: .docker_image_template
-  before_script:
-    # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
-    - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
-    - export BRANCH=1.0
 
 
 build:
@@ -112,5 +100,4 @@ deploy:
     - flatpak build-commit-from --src-repo=flatpak_repo /srv/http --timestamp=NOW --gpg-sign=739E841A
   only:
     - master@GNOME/pitivi
-    - 1.0@GNOME/pitivi
     - thiblahute/sdk3.36@GNOME/pitivi
