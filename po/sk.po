@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-09-17 20:13+0000\n"
-"PO-Revision-Date: 2020-09-22 11:31+0200\n"
+"POT-Creation-Date: 2020-10-11 23:20+0000\n"
+"PO-Revision-Date: 2020-10-12 09:35+0200\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
 "Language: sk\n"
@@ -89,7 +89,7 @@ msgstr ""
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:18
 msgid "Easy to use crossfades and SMPTE transitions"
-msgstr "Jednoduché využitie prelínačiek a SMPTE prechodov"
+msgstr "Jednoduché využitie prelínania a prechodov SMPTE"
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:19
 msgid "Multihead-friendly with detachable user interface components"
@@ -118,7 +118,7 @@ msgstr "Spúšťa sa automatické zarovnanie"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Vykonáva sa automatické zarovnanie</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1465
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1628
 msgid "Estimating..."
 msgstr "Odhaduje sa..."
 
@@ -338,7 +338,7 @@ msgid "Updated"
 msgstr "Aktualizované"
 
 # toolbar button
-#: data/ui/greeter.ui:190 pitivi/preset.py:107 pitivi/render.py:208
+#: data/ui/greeter.ui:190 pitivi/preset.py:107 pitivi/render.py:217
 msgid "Remove"
 msgstr "Odstrániť"
 
@@ -355,8 +355,8 @@ msgstr "Krásny, výkonný a intuitívny editor filmov"
 msgid "Save the current project under a new name or a different location"
 msgstr "Uloží aktuálny projekt s novým názvom alebo umiestnením"
 
-#: data/ui/mainmenubutton.ui:25 pitivi/editorperspective.py:717
-#: pitivi/editorperspective.py:771
+#: data/ui/mainmenubutton.ui:25 pitivi/editorperspective.py:721
+#: pitivi/editorperspective.py:775
 msgid "Save As..."
 msgstr "Uložiť ako..."
 
@@ -429,7 +429,7 @@ msgstr "O aplikácii Pitivi"
 # action
 # PK: media a multimedia nemysli sa to iste tu? viackrat
 # PM: nie som celkom stotožnený s prekladom, tu sa tým mislia zvukové a video súbory, volajú to tu aj klipy
-#: data/ui/medialibrary.ui:14 pitivi/editorperspective.py:395
+#: data/ui/medialibrary.ui:14 pitivi/editorperspective.py:396
 msgid "Add media files to your project"
 msgstr "Pridá multimediálne súbory do vášho projektu"
 
@@ -514,15 +514,15 @@ msgid "Some changes will not take effect until you restart Pitivi"
 msgstr "Niektoré zmeny sa prejavia až po reštarte aplikácie Pitivi"
 
 #: data/ui/projectsettings.ui:81 data/ui/renderingprogress.ui:41
-#: pitivi/editorperspective.py:540 pitivi/editorperspective.py:672
-#: pitivi/editorperspective.py:720 pitivi/editorperspective.py:773
+#: pitivi/editorperspective.py:541 pitivi/editorperspective.py:676
+#: pitivi/editorperspective.py:724 pitivi/editorperspective.py:777
 #: pitivi/greeterperspective.py:241 pitivi/medialibrary.py:779
 #: pitivi/dialogs/browseprojects.py:38 pitivi/dialogs/missingasset.py:46
 msgid "Cancel"
 msgstr "Zrušiť"
 
 #: data/ui/projectsettings.ui:148 data/ui/projectsettings.ui:422
-#: data/ui/renderingdialog.ui:97
+#: data/ui/renderingdialog.ui:131
 msgid "Preset:"
 msgstr "Predvoľba:"
 
@@ -543,26 +543,26 @@ msgstr "Zachovať rozmery"
 msgid "Maintain aspect ratio"
 msgstr "Zachovať pomer strán"
 
-#: data/ui/projectsettings.ui:332 data/ui/renderingdialog.ui:407
+#: data/ui/projectsettings.ui:332 data/ui/renderingdialog.ui:785
 msgid "Frame rate:"
 msgstr "Frekvencia snímok:"
 
 #. The title of the section with the video settings
-#: data/ui/projectsettings.ui:385 data/ui/renderingdialog.ui:425
+#: data/ui/projectsettings.ui:385 data/ui/renderingdialog.ui:803
 #: pitivi/effects.py:245
 msgid "Video"
 msgstr "Video"
 
-#: data/ui/projectsettings.ui:488 data/ui/renderingdialog.ui:464
+#: data/ui/projectsettings.ui:488 data/ui/renderingdialog.ui:451
 msgid "Channels:"
 msgstr "Kanály:"
 
-#: data/ui/projectsettings.ui:522 data/ui/renderingdialog.ui:573
+#: data/ui/projectsettings.ui:522 data/ui/renderingdialog.ui:560
 msgid "Sample rate:"
 msgstr "Vzorkovacia frekvencia:"
 
 #. The title of the section with the audio settings
-#: data/ui/projectsettings.ui:566 data/ui/renderingdialog.ui:591
+#: data/ui/projectsettings.ui:566 data/ui/renderingdialog.ui:578
 #: pitivi/effects.py:121 pitivi/effects.py:245
 msgid "Audio"
 msgstr "Zvuk"
@@ -609,57 +609,40 @@ msgstr "Akcia:"
 msgid "Safe Areas"
 msgstr "Bezpečné oblasti"
 
-#: data/ui/renderingdialog.ui:35 data/ui/renderingdialog.ui:55
-#: pitivi/editorperspective.py:325
+#: data/ui/renderingdialog.ui:40 data/ui/renderingdialog.ui:59
+#: pitivi/editorperspective.py:326
 msgid "Render"
 msgstr "Zhotoviť"
+
+#: data/ui/renderingdialog.ui:116
+msgid "Quality:"
+msgstr "Kvalita:"
 
 # combo append text (- Vlastné)
 # peter: vlastné prednastavenie
 # https://bugzilla.gnome.org/show_bug.cgi?id=637496
-#: data/ui/renderingdialog.ui:142 pitivi/render.py:70
+#: data/ui/renderingdialog.ui:179 pitivi/render.py:71
 msgid "Custom"
 msgstr "Vlastné"
 
-#: data/ui/renderingdialog.ui:239
-msgid "Scale:"
-msgstr "Mierka:"
+#: data/ui/renderingdialog.ui:241
+msgid "Folder:"
+msgstr "Priečinok:"
 
-#: data/ui/renderingdialog.ui:272
-msgid "Scale"
-msgstr "Mierka"
+#: data/ui/renderingdialog.ui:266
+msgid "File name:"
+msgstr "Názov súboru:"
 
-#: data/ui/renderingdialog.ui:292
-msgid "Height"
-msgstr "Výška"
-
-#: data/ui/renderingdialog.ui:311
-msgid "Project Settings..."
-msgstr "Nastavenia projektu..."
-
-# https://bugzilla.gnome.org/show_bug.cgi?id=637496
-#: data/ui/renderingdialog.ui:326 data/ui/renderingdialog.ui:496
-msgid "Advanced..."
-msgstr "Pokročilé..."
-
-#: data/ui/renderingdialog.ui:365 data/ui/renderingdialog.ui:536
-msgid "Codec:"
-msgstr "Kodek:"
-
-#: data/ui/renderingdialog.ui:391
-msgid "Framerate"
-msgstr "Frekvencia snímok"
-
-#: data/ui/renderingdialog.ui:625
+#: data/ui/renderingdialog.ui:297
 msgid "Container format:"
 msgstr "Formát kontajnera:"
 
-#: data/ui/renderingdialog.ui:692
+#: data/ui/renderingdialog.ui:364
 msgid "Automatically render from proxy files"
 msgstr "Automaticky vykresliť zo súborov proxy"
 
 # tooltip
-#: data/ui/renderingdialog.ui:696
+#: data/ui/renderingdialog.ui:368
 msgid ""
 "Use proxy files if they are available and the source asset media format is "
 "not officially supported.\n"
@@ -673,12 +656,12 @@ msgstr ""
 "Táto voľba je dobrým kompromisom medzi kvalitou vykresleného videa a "
 "stabilitou."
 
-#: data/ui/renderingdialog.ui:711
+#: data/ui/renderingdialog.ui:383
 msgid "Always render from proxy files"
 msgstr "Vždy vykresliť zo súborov proxy"
 
 # tooltip
-#: data/ui/renderingdialog.ui:715
+#: data/ui/renderingdialog.ui:387
 msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
@@ -686,12 +669,12 @@ msgstr ""
 "Vykreslí všetky klipy s proxy z prvkov proxy. Počas procesu vykresľovania "
 "môže dôjsť k čiastočnej strate kvality."
 
-#: data/ui/renderingdialog.ui:728
+#: data/ui/renderingdialog.ui:400
 msgid "Never render from proxy files"
 msgstr "Nikdy nevykresľovať zo súborov proxy"
 
 # tooltip
-#: data/ui/renderingdialog.ui:732
+#: data/ui/renderingdialog.ui:404
 msgid ""
 "Always use source assets for rendering. It is the best choice for the "
 "quality of the rendered video, but you might hit some bugs because of the "
@@ -704,17 +687,38 @@ msgstr ""
 "<i>Použite túto voľbu na vlastné riziko!</i>"
 
 # https://bugzilla.gnome.org/show_bug.cgi?id=637496
-#: data/ui/renderingdialog.ui:756
+#: data/ui/renderingdialog.ui:483 data/ui/renderingdialog.ui:704
+msgid "Advanced..."
+msgstr "Pokročilé..."
+
+#: data/ui/renderingdialog.ui:523 data/ui/renderingdialog.ui:743
+msgid "Codec:"
+msgstr "Kodek:"
+
+#: data/ui/renderingdialog.ui:617
+msgid "Scale:"
+msgstr "Mierka:"
+
+#: data/ui/renderingdialog.ui:650
+msgid "Scale"
+msgstr "Mierka"
+
+#: data/ui/renderingdialog.ui:670
+msgid "Height"
+msgstr "Výška"
+
+#: data/ui/renderingdialog.ui:689
+msgid "Project Settings..."
+msgstr "Nastavenia projektu..."
+
+#: data/ui/renderingdialog.ui:769
+msgid "Framerate"
+msgstr "Frekvencia snímok"
+
+# https://bugzilla.gnome.org/show_bug.cgi?id=637496
+#: data/ui/renderingdialog.ui:832
 msgid "Advanced"
 msgstr "Pokročilé"
-
-#: data/ui/renderingdialog.ui:777
-msgid "Folder:"
-msgstr "Priečinok:"
-
-#: data/ui/renderingdialog.ui:813
-msgid "File name:"
-msgstr "Názov súboru:"
 
 # zaujímavý preklad ;-)
 #: data/ui/renderingprogress.ui:8
@@ -722,13 +726,13 @@ msgid "Rendering"
 msgstr "Zhotovovanie"
 
 # tooltip
-#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:778
+#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:775
 msgid "Pause"
 msgstr "Pozastaviť"
 
 # tooltip
-#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:770
-#: pitivi/timeline/timeline.py:1823
+#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:767
+#: pitivi/timeline/timeline.py:1832
 msgid "Play"
 msgstr "Prehrať"
 
@@ -978,7 +982,7 @@ msgstr ""
 "chýb vyskytujúcich sa v GStreameri a ich obnovenie"
 
 # info bar
-#: pitivi/clipproperties.py:126
+#: pitivi/clipproperties.py:123
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
@@ -987,21 +991,21 @@ msgstr ""
 "vytvorte nový klip:"
 
 # button label
-#: pitivi/clipproperties.py:132
+#: pitivi/clipproperties.py:129
 msgid "Create a title clip"
 msgstr "Vytvoriť klip s titulmi"
 
 # button label
-#: pitivi/clipproperties.py:137
+#: pitivi/clipproperties.py:134
 msgid "Create a color clip"
 msgstr "Vytvoriť klip s farbami"
 
 # label
-#: pitivi/clipproperties.py:222
+#: pitivi/clipproperties.py:224
 msgid "Effects"
 msgstr "Efekty"
 
-#: pitivi/clipproperties.py:239
+#: pitivi/clipproperties.py:241
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
@@ -1010,7 +1014,7 @@ msgstr ""
 "tlačidla nižšie."
 
 # label
-#: pitivi/clipproperties.py:247
+#: pitivi/clipproperties.py:249
 msgid "Add Effect"
 msgstr "Pridať efekt"
 
@@ -1020,17 +1024,17 @@ msgid "Transformation"
 msgstr "Transformácia"
 
 # tooltip
-#: pitivi/clipproperties.py:676
+#: pitivi/clipproperties.py:670
 msgid "Show keyframes"
 msgstr "Zobrazí kľúčové snímky"
 
 # tooltip
-#: pitivi/clipproperties.py:679
+#: pitivi/clipproperties.py:673
 msgid "Activate keyframes"
 msgstr "Aktivuje kľúčové snímky"
 
 # tooltip
-#: pitivi/clipproperties.py:684
+#: pitivi/clipproperties.py:678
 msgid "Hide keyframes"
 msgstr "Skryje kľúčové snímky"
 
@@ -1084,96 +1088,96 @@ msgid "Right"
 msgstr "Výška"
 
 # projecttabs page
-#: pitivi/editorperspective.py:201 pitivi/medialibrary.py:595
+#: pitivi/editorperspective.py:202 pitivi/medialibrary.py:595
 msgid "Media Library"
 msgstr "Knižnica multimédií"
 
 # projecttabs page
-#: pitivi/editorperspective.py:203
+#: pitivi/editorperspective.py:204
 msgid "Effect Library"
 msgstr "Knižnica efektov"
 
-#: pitivi/editorperspective.py:213
+#: pitivi/editorperspective.py:214
 msgid "Clip"
 msgstr "Klip"
 
 # label
-#: pitivi/editorperspective.py:215
+#: pitivi/editorperspective.py:216
 msgid "Transition"
 msgstr "Prechod"
 
 # gtk button label
-#: pitivi/editorperspective.py:308
+#: pitivi/editorperspective.py:309
 msgid "Undo"
 msgstr "Vrátiť späť"
 
 # gtk button label
 #. pylint: disable=attribute-defined-outside-init
-#: pitivi/editorperspective.py:319 pitivi/editorperspective.py:532
-#: pitivi/editorperspective.py:673 pitivi/editorperspective.py:721
-#: pitivi/editorperspective.py:774 pitivi/preset.py:113 pitivi/project.py:200
-#: pitivi/render.py:214
+#: pitivi/editorperspective.py:320 pitivi/editorperspective.py:533
+#: pitivi/editorperspective.py:677 pitivi/editorperspective.py:725
+#: pitivi/editorperspective.py:778 pitivi/preset.py:113 pitivi/project.py:200
+#: pitivi/render.py:223
 msgid "Save"
 msgstr "Uložiť"
 
 # action tooltip
-#: pitivi/editorperspective.py:327
+#: pitivi/editorperspective.py:328
 msgid "Export your project as a finished movie"
 msgstr "Exportuje projekt ako hotový film"
 
 # action tooltip
-#: pitivi/editorperspective.py:360
+#: pitivi/editorperspective.py:361
 msgid "Save the current project"
 msgstr "Uloženie aktuálneho projektu"
 
 # action tooltip
-#: pitivi/editorperspective.py:368
+#: pitivi/editorperspective.py:369
 msgid "Save the current project as"
 msgstr "Uloženie aktuálneho projektu ako"
 
-#: pitivi/editorperspective.py:388
+#: pitivi/editorperspective.py:389
 msgid "Quick intros to Pitivi"
 msgstr "Rýchle interaktívne ukážky k aplikácii Pitivi"
 
 # dialog
-#: pitivi/editorperspective.py:504
+#: pitivi/editorperspective.py:505
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "Nie je možné uložiť projekt „%s“"
 
-#: pitivi/editorperspective.py:534 pitivi/project.py:199
+#: pitivi/editorperspective.py:535 pitivi/project.py:199
 msgid "Save as..."
 msgstr "Uložiť ako..."
 
 # dialog
-#: pitivi/editorperspective.py:537
+#: pitivi/editorperspective.py:538
 msgid "Close without saving"
 msgstr "Zavrieť bez uloženia"
 
 # primary message
-#: pitivi/editorperspective.py:547
+#: pitivi/editorperspective.py:548
 msgid "Save changes to the current project before closing?"
 msgstr "Chcete pred zavretím uložiť zmeny v aktuálnom projekte?"
 
 # secondary messge
-#: pitivi/editorperspective.py:556
+#: pitivi/editorperspective.py:557
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr ""
 "V prípade neuloženia budú všetky posledné zmeny za posledných %s stratené."
 
 # secondary messge
-#: pitivi/editorperspective.py:560
+#: pitivi/editorperspective.py:561
 msgid "If you don't save, your changes will be lost."
 msgstr "V prípade neuloženia budú vaše zmeny stratené."
 
 # dialog title
-#: pitivi/editorperspective.py:604
+#: pitivi/editorperspective.py:608
 msgid "Revert to saved project version?"
 msgstr "Vrátiť sa k uloženej verzii projektu?"
 
 # seondary text
-#: pitivi/editorperspective.py:609
+#: pitivi/editorperspective.py:613
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
 "Týmto sa načíta aktuálny projekt. Všetky neuložené zmeny budú stratené."
@@ -1181,7 +1185,7 @@ msgstr ""
 #. Signal the project loading failure.
 #. You have to do this *after* successfully creating a blank project,
 #. or the startupwizard will still be connected to that signal too.
-#: pitivi/editorperspective.py:640
+#: pitivi/editorperspective.py:644
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -1193,34 +1197,34 @@ msgstr ""
 "Pitivi momentálne nepodporuje nekompletné projekty."
 
 # action
-#: pitivi/editorperspective.py:669
+#: pitivi/editorperspective.py:673
 msgid "Export To..."
 msgstr "Exportovať do ..."
 
-#: pitivi/editorperspective.py:686
+#: pitivi/editorperspective.py:690
 msgid "Tar archive"
 msgstr "Archív tar"
 
 # default format
-#: pitivi/editorperspective.py:690 pitivi/editorperspective.py:736
+#: pitivi/editorperspective.py:694 pitivi/editorperspective.py:740
 msgid "Detect automatically"
 msgstr "Rozpoznať automaticky"
 
-#: pitivi/editorperspective.py:730 pitivi/editorperspective.py:777
-#: pitivi/project.py:72 pitivi/render.py:708
+#: pitivi/editorperspective.py:734 pitivi/editorperspective.py:781
+#: pitivi/project.py:72 pitivi/render.py:819
 msgid "Untitled"
 msgstr "Nepomenovaný"
 
-#: pitivi/editorperspective.py:779
+#: pitivi/editorperspective.py:783
 msgid "PNG image"
 msgstr "Obrázok PNG"
 
-#: pitivi/editorperspective.py:780
+#: pitivi/editorperspective.py:784
 msgid "JPEG image"
 msgstr "Obrázok JPEG"
 
 # action
-#: pitivi/editorperspective.py:821
+#: pitivi/editorperspective.py:825
 msgid "Preview"
 msgstr "Náhľad"
 
@@ -1281,7 +1285,7 @@ msgid "Add to Favourites"
 msgstr "Pridá do obľúbených"
 
 # projekt
-#: pitivi/greeterperspective.py:228 pitivi/preset.py:101 pitivi/render.py:202
+#: pitivi/greeterperspective.py:228 pitivi/preset.py:101 pitivi/render.py:211
 msgid "New"
 msgstr "Nový"
 
@@ -1605,7 +1609,7 @@ msgstr "Nová predvoľba č. %d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:183 pitivi/render.py:1165
+#: pitivi/project.py:183 pitivi/render.py:1328
 msgid "Sorry, something didn’t work right."
 msgstr "Ľutujeme, niečo nepracovalo správne."
 
@@ -1685,26 +1689,26 @@ msgstr "projekt"
 msgid "Pitivi encoding profile"
 msgstr "Profil kódovania Pitivi"
 
-#: pitivi/render.py:103
+#: pitivi/render.py:112
 msgid "YouTube"
 msgstr "YouTube"
 
-#: pitivi/render.py:104
+#: pitivi/render.py:113
 msgid "DVD"
 msgstr "DVD"
 
 #. Translators: This must contain exclusively low case alphanum and '-'
-#: pitivi/render.py:296
+#: pitivi/render.py:314
 msgid "new-profile"
 msgstr "nový-profil"
 
 #. Translators: This must contain exclusively low case alphanum and '-'
-#: pitivi/render.py:300
+#: pitivi/render.py:318
 #, python-format
 msgid "new-profile-%d"
 msgstr "nový-profil-%d"
 
-#: pitivi/render.py:609
+#: pitivi/render.py:721
 #, python-format
 msgid "Rendering — %d%% complete"
 msgstr "Vykresľovanie — hotové na %d%%"
@@ -1715,29 +1719,37 @@ msgstr "Vykresľovanie — hotové na %d%%"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals).
-#: pitivi/render.py:618
+#: pitivi/render.py:730
 #, python-format
 msgid "About %s left"
 msgstr "Zostáva %s"
 
-#: pitivi/render.py:666
+#: pitivi/render.py:778
 msgid "Currently rendering"
 msgstr "Prebieha vykresľovanie"
+
+#: pitivi/render.py:972
+msgid "medium"
+msgstr "stredná"
+
+#: pitivi/render.py:973
+msgid "high"
+msgstr "vysoká"
 
 #. Translators: This item appears in a combobox's popup and
 #. contains as children the unsupported (but still available)
 #. muxers and encoders.
-#: pitivi/render.py:916
+#: pitivi/render.py:1079
 msgid "Unsupported"
 msgstr "Nepodporované"
 
 # tooltip
-#: pitivi/render.py:987
+#: pitivi/render.py:1150
 msgid "A file name is required."
 msgstr "Vyžaduje sa názov súboru."
 
 # tooltip
-#: pitivi/render.py:990
+#: pitivi/render.py:1153
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1745,35 +1757,38 @@ msgstr ""
 "Tento súbor už existuje.\n"
 "Ak ho nechcete prepísať, zvoľte iný názov alebo priečinok."
 
-#: pitivi/render.py:994
+#: pitivi/render.py:1157
 #, python-format
 msgid "Remove invalid characters from the filename: %s"
 msgstr "Odstráňte neplatné znaky z názvu súboru: %s"
 
-#: pitivi/render.py:1025
+#: pitivi/render.py:1188
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: pitivi/render.py:1030
+#: pitivi/render.py:1193
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: pitivi/render.py:1159
+#: pitivi/render.py:1322
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
 "\n"
 msgstr ""
+"<b>Uistite sa, že vaša vykresľovaná veľkosť je párna. V opačnom prípade "
+"dekodér x264enc nebude schopný vykresľovať.</b>\n"
+"\n"
 
 # label
-#: pitivi/render.py:1167
+#: pitivi/render.py:1330
 msgid "An error occurred while trying to render your project."
 msgstr "Vyskytla sa chyba počas pokusu o vykreslenie vášho projektu."
 
-#: pitivi/render.py:1169
+#: pitivi/render.py:1332
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1782,11 +1797,11 @@ msgstr ""
 "problémov, alebo vyplniť chybové hlásenie. S knižnicou GStreamer nastala "
 "táto chyba:"
 
-#: pitivi/render.py:1413 pitivi/render.py:1414 pitivi/render.py:1420
+#: pitivi/render.py:1576 pitivi/render.py:1577 pitivi/render.py:1583
 msgid "Render complete"
 msgstr "Vykresľovanie dokončené"
 
-#: pitivi/render.py:1418
+#: pitivi/render.py:1581
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "„%s“ dokončil vykresľovanie."
@@ -1846,40 +1861,39 @@ msgid "Diagonals"
 msgstr "Diagonály"
 
 #: pitivi/viewer/guidelines.py:92
-#, fuzzy
-#| msgid "Compositing"
 msgid "Composition Guidelines"
-msgstr "Skladanie"
+msgstr "Vodidlá kompozície"
 
 #: pitivi/viewer/viewer.py:77
 msgid "Currently playing"
 msgstr "Práve sa prehráva"
 
-#: pitivi/viewer/viewer.py:256
+# tooltip
+#: pitivi/viewer/viewer.py:253
 msgid "Select composition guidelines"
-msgstr ""
+msgstr "Vyberie vodidlá kompozície"
 
 # toolbutton tooltip
-#: pitivi/viewer/viewer.py:264
+#: pitivi/viewer/viewer.py:261
 msgid "Go to the beginning of the timeline"
 msgstr "Prejde na začiatok časovej osi"
 
 # toolbutton tooltip
-#: pitivi/viewer/viewer.py:273
+#: pitivi/viewer/viewer.py:270
 msgid "Go back one second"
 msgstr "Prejde o jednu sekundu dozadu"
 
 # toolbutton tooltip
-#: pitivi/viewer/viewer.py:286
+#: pitivi/viewer/viewer.py:283
 msgid "Go forward one second"
 msgstr "Prejde o jednu sekundu dopredu"
 
 # toolbutton tooltip
-#: pitivi/viewer/viewer.py:295
+#: pitivi/viewer/viewer.py:292
 msgid "Go to the end of the timeline"
 msgstr "Prejde na koniec časovej osi"
 
-#: pitivi/viewer/viewer.py:302
+#: pitivi/viewer/viewer.py:299
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1888,7 +1902,7 @@ msgstr ""
 "a stlačte „Enter“ pre presun na vybranú pozíciu"
 
 # tooltip
-#: pitivi/viewer/viewer.py:313
+#: pitivi/viewer/viewer.py:310
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1897,24 +1911,24 @@ msgstr ""
 "Môžete ho znovu pripojiť zavretím novovytvoreného okna."
 
 # button
-#: pitivi/viewer/viewer.py:340
+#: pitivi/viewer/viewer.py:337
 msgid "Viewer"
 msgstr "Prehliadač"
 
-#: pitivi/viewer/viewer.py:348
+#: pitivi/viewer/viewer.py:345
 msgid "Toggle the currently selected composition guidelines"
-msgstr ""
+msgstr "Prepnutie aktuálne vybraných vodidiel kompozície"
 
-#: pitivi/viewer/viewer.py:356
+#: pitivi/viewer/viewer.py:353
 msgid "Toggle safe areas on viewer"
 msgstr "Prepnutie bezpečných oblastí v prehliadači"
 
 # toggleaction tooltip
-#: pitivi/viewer/viewer.py:482 pitivi/viewer/viewer.py:540
+#: pitivi/viewer/viewer.py:479 pitivi/viewer/viewer.py:537
 msgid "Show this window in fullscreen"
 msgstr "Zobrazí toto okno na celú obrazovku"
 
-#: pitivi/viewer/viewer.py:537
+#: pitivi/viewer/viewer.py:534
 msgid "Exit fullscreen mode"
 msgstr "Opustiť režim celej obrazovky"
 
@@ -2016,128 +2030,123 @@ msgstr ""
 "klipov."
 
 # playhead_action
-#: pitivi/timeline/timeline.py:340 pitivi/timeline/timeline.py:1747
+#: pitivi/timeline/timeline.py:340 pitivi/timeline/timeline.py:1756
 msgid "Add layer"
 msgstr "Pridať vrstvu"
 
 # video_categories_effects
-#: pitivi/timeline/timeline.py:1690 pitivi/dialogs/prefs.py:60
+#: pitivi/timeline/timeline.py:1699 pitivi/dialogs/prefs.py:60
 msgid "Timeline"
 msgstr "Časová os"
 
-#: pitivi/timeline/timeline.py:1697
+#: pitivi/timeline/timeline.py:1706
 msgid "Action Search"
 msgstr "Vyhľadanie akcie"
 
-#: pitivi/timeline/timeline.py:1705
+#: pitivi/timeline/timeline.py:1714
 msgid "Delete selected clips"
 msgstr "Odstránenie vybraných klipov"
 
-#: pitivi/timeline/timeline.py:1712
+#: pitivi/timeline/timeline.py:1721
 msgid "Delete selected clips and shift following ones"
 msgstr "Odstránenie vybraných klipov a posun nasledujúceho"
 
 # action
-#: pitivi/timeline/timeline.py:1719
+#: pitivi/timeline/timeline.py:1728
 msgid "Group selected clips together"
 msgstr "Zoskupenie vybraných klipov dohromady"
 
 # tooltip text for toolbar
-#: pitivi/timeline/timeline.py:1726
+#: pitivi/timeline/timeline.py:1735
 msgid "Ungroup selected clips"
 msgstr "Zrušenie zoskupenia vybraných klipov"
 
 # tooltip
-#: pitivi/timeline/timeline.py:1733
+#: pitivi/timeline/timeline.py:1742
 msgid "Copy selected clips"
 msgstr "Skopírovanie vybraných klipov"
 
-#: pitivi/timeline/timeline.py:1740
+#: pitivi/timeline/timeline.py:1749
 msgid "Paste selected clips"
 msgstr "Vloženie vybraných klipov"
 
-#: pitivi/timeline/timeline.py:1754
+#: pitivi/timeline/timeline.py:1763
 msgid "Seeks to the first clip edge after the playhead."
 msgstr "Posun na hranu prvého klipu za kurzorom prehrávania."
 
-#: pitivi/timeline/timeline.py:1761
+#: pitivi/timeline/timeline.py:1770
 msgid "Seeks to the first clip edge before the playhead."
 msgstr "Posun na hranu prvého klipu pred kurzorom prehrávania."
 
-#: pitivi/timeline/timeline.py:1768
+#: pitivi/timeline/timeline.py:1777
 msgid "Add an effect to the selected clip"
 msgstr "Pridanie efektu vybranému klipu"
 
 # tooltip
-#: pitivi/timeline/timeline.py:1781
+#: pitivi/timeline/timeline.py:1790
 msgid "Split the clip at the position"
 msgstr "Rozdelenie klipu na pozícii"
 
-#: pitivi/timeline/timeline.py:1788
+#: pitivi/timeline/timeline.py:1797
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Pridanie kľúčového snímku na krivku kľúčových snímkov vybraného klipu"
 
-#: pitivi/timeline/timeline.py:1793
+#: pitivi/timeline/timeline.py:1802
 msgid "Timeline Navigation"
 msgstr "Navigácia po časovej osi"
 
 # tooltip text for toolbar
-#: pitivi/timeline/timeline.py:1801
+#: pitivi/timeline/timeline.py:1810
 msgid "Zoom in"
 msgstr "Priblíženie"
 
 # tooltip text for toolbar
-#: pitivi/timeline/timeline.py:1809
+#: pitivi/timeline/timeline.py:1818
 msgid "Zoom out"
 msgstr "Oddialenie"
 
-#: pitivi/timeline/timeline.py:1817
+#: pitivi/timeline/timeline.py:1826
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Upravenie priblíženia na prispôsobenie projektu do okna"
 
-#: pitivi/timeline/timeline.py:1830
+#: pitivi/timeline/timeline.py:1839
 msgid "Seek backward one frame"
 msgstr "Prejdenie o jeden snímok dozadu"
 
 # toolbutton tooltip
-#: pitivi/timeline/timeline.py:1837
+#: pitivi/timeline/timeline.py:1846
 msgid "Seek forward one frame"
 msgstr "Prejdenie o jeden snímok dopredu"
 
 # toolbutton tooltip
-#: pitivi/timeline/timeline.py:1845
+#: pitivi/timeline/timeline.py:1854
 msgid "Seek backward one second"
 msgstr "Prejdenie o jednu sekundu dozadu"
 
 # toolbutton tooltip
-#: pitivi/timeline/timeline.py:1853
+#: pitivi/timeline/timeline.py:1862
 msgid "Seek forward one second"
 msgstr "Prejdenie o jednu sekundu dopredu"
 
-#: pitivi/dialogs/about.py:47
-#, python-format
-msgid "Development version: %s"
-msgstr "Vývojová verzia: %s"
-
-#: pitivi/dialogs/about.py:49
-#, python-format
-msgid "Version %(cur_ver)s — %(new_ver)s is available"
-msgstr "Je dostupná verzia %(cur_ver)s — %(new_ver)s"
-
-#: pitivi/dialogs/about.py:53 pitivi/dialogs/about.py:55
+#: pitivi/dialogs/about.py:45
 #, python-format
 msgid "Version %s"
 msgstr "Verzia %s"
 
-#: pitivi/dialogs/about.py:64
+#: pitivi/dialogs/about.py:47
+#, python-format
+msgid "Version %(cur_ver)s — %(new_ver)s is available"
+msgstr "Je dostupná verzia %(cur_ver)s — %(new_ver)s"
+
+#: pitivi/dialogs/about.py:58
 msgid "Current maintainers:"
 msgstr "Aktuálni správcovia:"
 
-#: pitivi/dialogs/about.py:69
+#: pitivi/dialogs/about.py:63
 msgid "Past maintainers:"
 msgstr "Predchádzajúci správcovia:"
 
-#: pitivi/dialogs/about.py:75
+#: pitivi/dialogs/about.py:69
 msgid "Contributors:"
 msgstr "Prispievatelia:"
 
@@ -2145,7 +2154,7 @@ msgstr "Prispievatelia:"
 #. Translators: See
 #. https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
 #. for details on how this is used.
-#: pitivi/dialogs/about.py:82
+#: pitivi/dialogs/about.py:76
 msgid "translator-credits"
 msgstr ""
 "Peter Mráz <etkinator@gmail.com>\n"
@@ -2524,12 +2533,12 @@ msgstr "Vlastnosti pre %s"
 # tooltip text for toolbar
 #: pitivi/utils/widgets.py:1230
 msgid "Zoom Fit"
-msgstr "Prispôsobí zobrazenie"
+msgstr "Prispôsobí priblíženie"
 
 # zoom fit button
 #: pitivi/utils/widgets.py:1235
 msgid "Zoom"
-msgstr "Lupa"
+msgstr "Priblíženie"
 
 #. Translators: %s represents a duration, for example "10 minutes"
 #: pitivi/utils/widgets.py:1311
@@ -2584,6 +2593,9 @@ msgid ""
 msgstr ""
 "Nie je možné nahradiť kláves {key}, pretože príkazy klávesových skratiek sú "
 "iba na čítanie."
+
+#~ msgid "Development version: %s"
+#~ msgstr "Vývojová verzia: %s"
 
 #~ msgid "Missing Dependencies"
 #~ msgstr "Chýbajúce závislosti"
@@ -3064,9 +3076,6 @@ msgstr ""
 # tooltip
 #~ msgid "Make layer visible"
 #~ msgstr "Spraví vrstvu viditeľnou"
-
-#~ msgid "Opacity:"
-#~ msgstr "Krytie:"
 
 #~ msgid "Change video opacity"
 #~ msgstr "Zmeniť krytie videa"
