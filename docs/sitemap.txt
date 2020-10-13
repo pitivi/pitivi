@@ -19,33 +19,6 @@ index.md
 	Praise.md
 	Project_history.md
 	Current_events.md
-		releases/1.0.md
-		releases/0.999.md
-		releases/0.99.md
-		releases/0.98.md
-		releases/0.97.md
-		releases/0.96.md
-		releases/0.95.md
-		releases/0.94.md
-		releases/0.93.md
-		releases/0.92.md
-		releases/0.91.md
-		releases/0.15.2.md
-		releases/0.15.1.md
-		releases/0.15.md
-		releases/0.14.md
-		releases/0.13.5.md
-		releases/0.13.4.md
-		releases/0.13.3.md
-		releases/0.13.2.md
-		releases/0.13.1.md
-		releases/0.11.3.md
-		releases/0.11.2.md
-		releases/0.11.1.md
-		releases/0.11.0.md
-		releases/0.10.3.md
-		releases/0.10.2.md
-		releases/0.10.1.md
 	Google_Summer_of_Code.md
 		GSoC_Ideas.md
 		GSoC_Application.md
@@ -90,3 +63,29 @@ index.md
 		attic/Project_loading_and_saving.md
 		attic/Project_file_format.md
 		attic/building_with_ges.md
+		releases/0.999.md
+		releases/0.99.md
+		releases/0.98.md
+		releases/0.97.md
+		releases/0.96.md
+		releases/0.95.md
+		releases/0.94.md
+		releases/0.93.md
+		releases/0.92.md
+		releases/0.91.md
+		releases/0.15.2.md
+		releases/0.15.1.md
+		releases/0.15.md
+		releases/0.14.md
+		releases/0.13.5.md
+		releases/0.13.4.md
+		releases/0.13.3.md
+		releases/0.13.2.md
+		releases/0.13.1.md
+		releases/0.11.3.md
+		releases/0.11.2.md
+		releases/0.11.1.md
+		releases/0.11.0.md
+		releases/0.10.3.md
+		releases/0.10.2.md
+		releases/0.10.1.md

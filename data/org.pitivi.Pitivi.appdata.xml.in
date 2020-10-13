@@ -43,104 +43,522 @@
   <releases>
     <release version="2020.09" date="2020-09-30">
       <description>
-        <p>
-          This release includes lots of new features, originating from GSoC
-          internships, from University of Nebraska-Lincoln's Soft-261 class
-          Spring 2020 and from individual contributors.
-          If you're interested to contribute, please get in touch with us.
-        </p>
+        <p>This release adds the following features:</p>
         <ul>
-          <li>A plugin system allows extending the Pitivi functionality medium-term, targeted for teams of editors.</li>
-          <li>A developer console plugin allows interacting with the project in a Python console.</li>
-          <li>Custom UI replaces the automatically generated UI for a handful of effects.</li>
+          <li>
+            A plugin system allows extending the Pitivi functionality
+            medium-term, targeted for teams of editors.
+          </li>
+          <li>
+            A developer console plugin allows interacting with the project in a
+            Python console.
+          </li>
+          <li>
+            Custom UI replaces the automatically generated UI for a handful of
+            effects.
+          </li>
           <li>Easy Ken-Burns effect.</li>
-
-          <li>The new Greeter perspective replaces the Welcome wizard dialog and allows a slick selection of a recently opened project.</li>
-          <li>When being resized, the Viewer shows the percent of the actual widget size in relation to the project video size.</li>
+          <li>
+            The new Greeter perspective replaces the Welcome wizard dialog and
+            allows a slick selection of a recently opened project.
+          </li>
+          <li>
+            When being resized, the Viewer shows the percent of the actual widget
+            size in relation to the project video size.
+          </li>
           <li>The Viewer size snaps at 50% when being resized.</li>
           <li>Scaled proxies if optimized media is too much for your machine.</li>
-
           <li>Timeline markers.</li>
-          <li>Support for nested timelines by importing entire XGES files as a clip.</li>
-          <li>The Effects Library has been redesigned to allow quick access to effects.</li>
+          <li>
+            Support for nested timelines by importing entire XGES files as a
+            clip.
+          </li>
+          <li>
+            The Effects Library has been redesigned to allow quick access to
+            effects.
+          </li>
           <li>Ability to favorite effects in the Effects Library.</li>
           <li>Improved workflow for adding effects.</li>
-          <li>The refreshed clip effects UI allows working on multiple effects at a time.</li>
-
+          <li>
+            The refreshed clip effects UI allows working on multiple effects at a
+            time.
+          </li>
           <li>Refactored Media Library using same logic for different view modes.</li>
-          <li>Refactored Render Dialog UI to avoid overwhelming people. Tell us what you think about it.</li>
-
+          <li>
+            Refactored Render Dialog UI to avoid overwhelming people. Tell us
+            what you think about it.
+          </li>
           <li>Restoring the editing state when reopening a project.</li>
           <li>Safe areas visualization in the Viewer.</li>
           <li>Easy alignment for video clips.</li>
           <li>Composition guidelines in the Viewer.</li>
           <li>Solid color clips.</li>
           <li>Ability to mute or hide an entire layer.</li>
-
-          <li>Interactive intro so newcomers get familiar with the names of the UI elements.</li>
-          <li>The action search is a shortcut to everything possible in the timeline, if you can find it. Press "/".</li>
+          <li>
+            Interactive intro so newcomers get familiar with the names of the UI
+            elements.
+          </li>
+          <li>
+            The action search is a shortcut to everything possible in the
+            timeline, if you can find it. Press &quot;/&quot;.
+          </li>
           <li>New keyboard shortcuts for pros.</li>
         </ul>
       </description>
     </release>
-
-    <release version="0.999" date="2018-08-20">
+    <release version="0.999" date="2018-08-29">
       <description>
-        <p>
-          This release includes bug fixes, small important features, and a feature removal.
-        </p>
+        <p>This release adds the following features:</p>
         <ul>
-          <li>Rendering non-square pixels was broken and has been disabled.</li>
-          <li>Selecting a range of clips can be done by clicking followed by Shift+click.</li>
-          <li>The advanced settings of the h264 encoder allow specifying a Profile.</li>
-          <li>The xges files have an icon associated.</li>
-          <li>The Save and Render buttons in the headerbar have been moved on the right side.</li>
+          <li>Rendering non-square pixels was broken and has been disabled</li>
+          <li>The xges files have an icon associated</li>
+          <li>
+            The Save and Render buttons in the headerbar have been moved on the
+            right side
+          </li>
+          <li>Lots of bug fixing</li>
         </ul>
       </description>
     </release>
-
-    <release version="0.99" date="2017-09-21">
+    <release version="0.99" date="2017-09-2">
       <description>
-        <p>
-          This release includes bug fixes and performance improvements.
-        </p>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>Many performance improvements</li>
+          <li>Lots of bug fixing</li>
+        </ul>
       </description>
     </release>
-
-    <release version="0.98" date="2016-12-06">
+    <release version="0.98" date="2016-12-5">
       <description>
-        <p>
-          This release includes bug fixes, and allows customizing the
-          keyboard shortcuts.
-        </p>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>Customizable keyboard shortcuts</li>
+          <li>
+            Used the warnings printed by GTK 3.22 to fix issues in the timeline
+            widget
+          </li>
+          <li>Lots of bug fixing, mostly on the timeline</li>
+        </ul>
       </description>
     </release>
-
-    <release version="0.97" date="2016-08-08">
+    <release version="0.97" date="2016-08-8">
       <description>
-        <p>
-          This release includes bug fixes and shows in the rendering dialog
-          what encoders and muxers are officially supported.
-        </p>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>
+            The rendering dialog has been reworked to clearly state what encoders
+            and muxer are  officially supported
+          </li>
+          <li>
+            The build system has been ported to Meson and gst-transcoder is now a
+            subproject
+          </li>
+          <li>Usual bug fixes</li>
+        </ul>
       </description>
     </release>
-
     <release version="0.96" date="2016-06-30">
       <description>
-        <p>
-          This release includes bug fixes, usability improvements, and
-          one important accuracy improvement.
-        </p>
+        <p>This release adds the following features:</p>
         <ul>
-          <li>Media files using an unsupported format can be transcoded
-              automatically into high-quality proxy files for reliable
-              processing.</li>
-          <li>Initial project settings are computed automatically when
-              the first media files are imported.</li>
-          <li>The project settings and rendering dialogs have been redesigned
-              for fast access.</li>
-          <li>The undo/redo system has been refactored and re-enabled.</li>
-          <li>The keyboard shortcuts can be revealed with Ctrl+F1.</li>
+          <li>Proxy editing</li>
+          <li>The clip graphical transformation box has been reimplemented</li>
+          <li>Some timeline behaviour enhancements</li>
+          <li>Project settings are now automatically computed if possible</li>
+          <li>New project settings and rendering UI</li>
+          <li>Keyboard shortcuts window</li>
+          <li>The undo/redo removal has been undone</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.95" date="2015-11-19">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>The timeline has been rewritten purely in GTK+</li>
+          <li>The glimagesink video rendering widget was replaced by gtk(gl)sink</li>
+          <li>The clip transformation box has been reimplemented</li>
+          <li>Direct importing to the timeline</li>
+          <li>Ability to copy and paste clips across the timeline</li>
+          <li>Integration with GstValidate and the &quot;scenarios&quot; system</li>
+          <li>Rewritten video mixing elements</li>
+          <li>We finally killed GNonLin</li>
+          <li>Now compatible again with smaller screen resolutions</li>
+          <li>Massive bug fixing all over the place</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.94" date="2014-11-2">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>
+            The main toolbar and menubar have been replaced by a headerbar and
+            menubutton, saving a significant amount of precious vertical space
+            and using the horizontal space better.
+          </li>
+          <li>
+            The viewer has been ported to use a GStreamer GL video output sink
+            instead of the Clutter sink. This solves crashes when running Pitivi
+            outside of GNOME Shell and is expected to be a more future-proof
+            solution.
+          </li>
+          <li>
+            We dropped our use of CoGL APIs, namely path_round_rectangle which
+            caused crashes on various Linux distributions shipping a broken
+            version of CoGL
+          </li>
+          <li>Pitivi has been ported to Python 3</li>
+          <li>
+            Text wrapping in the rendering progress dialog and title editor has
+            been fixed
+          </li>
+          <li>Effects can now be reordered within a clip&apos;s properties</li>
+          <li>The default positioning of UI components</li>
+          <li>Undocked window components do not shift position on startup anymore</li>
+          <li>
+            Docked window components do not shift position on startup anymore,
+            when the window is not maximized.
+          </li>
+          <li>
+            The title editor&apos;s UI has been simplified, and now supports
+            decimal font sizes
+          </li>
+          <li>
+            Educational infobars throughout the UI have been tweaked to make
+            their colors less intrusive
+          </li>
+          <li>
+            The user manual is now up to date with the state of the new Pitivi
+            series
+          </li>
+          <li>Port deprecated GTK+ widgets to new ones</li>
+          <li>Timeline UI animations have been tweaked</li>
+          <li>Code refactoring and cleanup all over the place</li>
+          <li>Various build and packaging fixes</li>
+          <li>Various fixes to the test suite</li>
+          <li>Various other bugs have been corrected</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.93" date="2014-03-20">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>
+            Port the viewer and media file previewers to use a Clutter video
+            output sink
+          </li>
+          <li>Visual refinements to the timeline</li>
+          <li>Improvements to the ruler and timecode display</li>
+          <li>Allow importing MPEG-TS/AVCHD files</li>
+          <li>Fixes and improvements to the timeline&apos;s clip thumbnailers</li>
+          <li>Clip thumbnailing in the media library, better import error handling</li>
+          <li>Various fixes to the application version checking</li>
+          <li>Rework the way dependencies are checked on startup</li>
+          <li>Make some features contextual and cleanup menus</li>
+          <li>Many content updates to the user manual</li>
+          <li>Papercut fixes to keyframe curves</li>
+          <li>Many fixes for rendering</li>
+          <li>Fix pylint errors</li>
+          <li>Various fixes to the automated test suite</li>
+          <li>Code refactoring and cleanup all over the place</li>
+          <li>Fixes for AppData XML spec compliance</li>
+          <li>Various build and packaging fixes</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.92" date="2013-11-3">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>Fix a bug where transitions would stop working</li>
+          <li>Fix the handling of rendering parameters</li>
+          <li>Fixes for the keyframes UI in the timeline</li>
+          <li>Usability improvements for the welcome dialog</li>
+          <li>Update the preview immediately when adding an effect</li>
+          <li>Fixes for AppData XML spec compliance</li>
+          <li>Various build and packaging fixes</li>
+          <li>Drop the PyXDG dependency</li>
+          <li>Translations have been updated</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.91" date="2013-09-29">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>
+            Replacing the core of Pitivi by GES; 20 thousand lines of code
+            removed
+          </li>
+          <li>Porting to GStreamer 1.x</li>
+          <li>Porting to GTK+ 3.x</li>
+          <li>Replacing GooCanvas by Clutter for the timeline</li>
+          <li>
+            An automated UI test suite, with many checks for mission-critical
+            parts
+          </li>
+          <li>Fixing hundreds of bugs</li>
+          <li>Implementing many new features</li>
+          <li>UI polish all over the place</li>
+          <li>Refactoring pretty much the entire codebase</li>
+          <li>See http://developer.pitivi.org/releases/0-91.html for details</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.15.2" date="2012-05-3">
+      <description>
+      </description>
+    </release>
+    <release version="0.15.1" date="2012-02-24">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>
+            Bug fix release to ensure compatibility with Gst &quot;good&quot;
+            plugins &gt;0.10.29
+          </li>
+          <li>Minor string fixes and additions to the user manual</li>
+          <li>Translations have been updated</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.15" date="2011-09-26">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>
+            A new transformation feature allows resizing, panning and cropping
+            clips directly in the previewer
+          </li>
+          <li>
+            Automatic clip alignment by analyzing soundtracks to sync multicamera
+            footage
+          </li>
+          <li>Ability to have presets for rendering</li>
+          <li>Default set of project settings and rendering presets</li>
+          <li>Cleaner preferences dialog</li>
+          <li>Integrated offline user manual</li>
+          <li>Cleaner advanced codec settings dialog</li>
+          <li>Improved video thumbnailing performance</li>
+          <li>
+            &quot;Soft dependencies&quot; manager to warn the user of features
+            requiring additional packages
+          </li>
+          <li>Port to gtkbuilder</li>
+          <li>Respect GNOME&apos;s button icons setting</li>
+          <li>Improved startup time</li>
+          <li>Code cleanups and remove dead code</li>
+          <li>Properly show property descriptions</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.14" date="2011-05-31">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>Audio and video effects</li>
+          <li>
+            Completely redesigned project settings dialog, with the ability to
+            create presets
+          </li>
+          <li>Completely redesigned rendering dialog</li>
+          <li>
+            Welcome dialog that helps you start a project or load recent projects
+            in two clicks
+          </li>
+          <li>Ability to preview video, audio and image files before importing</li>
+          <li>Add a &quot;best fit&quot; zoom button</li>
+          <li>Ability to jump to an exact position in the timeline</li>
+          <li>Ability to specify custom aspect ratios and framerates</li>
+          <li>Show a progress bar when loading projects</li>
+          <li>300% faster project timeline loading</li>
+          <li>Search bar in the Media Library</li>
+          <li>Ability to detach all the tabs and the previewer</li>
+          <li>New manpage</li>
+          <li>Commandline render mode</li>
+          <li>Use the standard infobar widget all around</li>
+          <li>Remove hal dependency</li>
+          <li>Lots of bug fixing</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.13.5" date="2010-09-16">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>periodic backup of the current project file</li>
+          <li>easy crossfading transitions of overlapping clips</li>
+          <li>better icons for link and group operations</li>
+          <li>new add keyframe button</li>
+          <li>fixed support for the missing plugins installer</li>
+          <li>improved support for pictures</li>
+          <li>various performance improvements</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.13.4" date="2010-03-10">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>video mixing/transparency support</li>
+          <li>icon view in source list</li>
+          <li>smoother scrolling</li>
+          <li>modeless splitting</li>
+          <li>seek on click</li>
+          <li>faster waveforms</li>
+          <li>zoom slider</li>
+          <li>UI beautifications</li>
+          <li>Speed optimisations</li>
+          <li>dbus/hal dependency now optional</li>
+          <li>translated in 30 languages</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.13.3" date="2009-09-12">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>Fix rendering failures</li>
+          <li>UI beautifications</li>
+          <li>Switch to themeable ruler</li>
+          <li>Speed optimisations</li>
+          <li>Show the project name in the window title</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.13.2" date="2009-08-13">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>Undo/Redo support</li>
+          <li>Audio-mixing</li>
+          <li>Ripple/Roll edit</li>
+          <li>misc fixes</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.13.1" date="2009-05-27">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>core rewrite</li>
+          <li>multi-layered timeline</li>
+          <li>trimming features</li>
+          <li>audio waveforms and video thumbnails in timeline</li>
+          <li>picture support</li>
+          <li>New project file format support</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.11.3" date="2008-12-11">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>Remove usage of gobject as much as possible from non-ui components</li>
+          <li>Make smarter choices about audio/video sinks</li>
+          <li>Fix issues with seeking in ruler/viewer</li>
+          <li>general pylint cleanup</li>
+          <li>Picture support in the timeline</li>
+          <li>Improve viewer for proper Display Aspect Ratio</li>
+          <li>Timeline : Unlink-ing sources is now possible</li>
+          <li>Fix some issues when using very long sources</li>
+          <li>SourceList now detachable from main window</li>
+          <li>Now requires GNonLin 0.10.10 and python &gt;= 2.5</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.11.2" date="2008-10-15">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>New advanced timeline interface by Brandon Lewis</li>
+          <li>Capture interface for webcams and network sources by Sarath Lakshman</li>
+          <li>Simple Timeline is gone.</li>
+          <li>Project save/load now activated by default</li>
+          <li>Cutting/Trimming/Removing features added to advanced timeline.</li>
+          <li>Misc fixes and improvements</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.11.1" date="2007-11-18">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>More work on project save/load, use PITIVI_FILE_SUPPORT=1 to try it.</li>
+          <li>
+            Be more flexible with encoding caps, should fix more issues when
+            encoding.
+          </li>
+          <li>Fixed issues for non icon-theme-spec compliant systems</li>
+          <li>i18n updates</li>
+          <li>Misc fixes</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.11.0" date="2007-10-14">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>Merging of all the 2007 Summer-Of-Code branch</li>
+          <li>Simple timeline improvements : trimming and moving of sources</li>
+          <li>Simple timeline improvement : volume change</li>
+          <li>Advanced timeline re-activated</li>
+          <li>Advanced timeline features : cutting and moving of sources</li>
+          <li>Plugin framework added</li>
+          <li>File save/load framework added, not activated yet</li>
+          <li>i18n support, translated in 16 languages</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.10.3" date="2007-05-30">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>Improvement of first time user experience.</li>
+          <li>Frame-by-frame seeking</li>
+          <li>UI improvements for usability</li>
+          <li>New graphics</li>
+          <li>i18n support, translated in 14 languages</li>
+          <li>Critical bugfixes</li>
+          <li>Unit tests</li>
+          <li>Advanced view disabled by default</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.10.2" date="2007-01-31">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>UI improvements for usability</li>
+          <li>decodebin2 support</li>
+          <li>Rendering improvements</li>
+          <li>i18n support, translated in 12 languages</li>
+          <li>Critical bugfixes</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.10.1" date="2006-05-23">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>More UI improvements for usability</li>
+          <li>Works with X11/Imagesink</li>
+          <li>Handles more formats</li>
+          <li>More startup checks</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.10.0" date="2006-04-26">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>Lots of UI improvements for usability</li>
+          <li>Better error handling</li>
+          <li>Many playback issues fixed</li>
+          <li>Works in non-gnome environments</li>
         </ul>
       </description>
     </release>

@@ -41,10 +41,9 @@ If doing a bugfix release, make sure the micro (Z) from the version number has
 been increased. If doing a regular release, update the version number with the
 current year and month and remove the micro, if any. Normally this is the
 same as the name of the GitLab milestone you just archived.
-     * [data/org.pitivi.Pitivi.appdata.xml.in](https://gitlab.gnome.org/GNOME/pitivi/blob/master/data/org.pitivi.Pitivi.appdata.xml.in):
-Add a new release entry with the exec summary of changes.
      * [NEWS](https://gitlab.gnome.org/GNOME/pitivi/blob/master/NEWS):
 Copy the exec summary of changes also here. This ends up in the `.news` file at [download.gnome.org/sources/pitivi](https://download.gnome.org/sources/pitivi/).
+     * [data/org.pitivi.Pitivi.appdata.xml.in](https://gitlab.gnome.org/GNOME/pitivi/blob/master/data/org.pitivi.Pitivi.appdata.xml.in): Run `appstream-util news-to-appdata NEWS` and copy the new content to the appdata.xml file.
      * [AUTHORS](https://gitlab.gnome.org/GNOME/pitivi/blob/master/AUTHORS):
 If there are new maintainers.
 
