@@ -19,6 +19,12 @@ $ source bin/pitivi-env
 (ptv-flatpak) $ _
 ```
 
+0. Freeze the strings
+    * Send an email to [gnome-i18n](https://mail.gnome.org/archives/gnome-i18n/)
+    @gnome.org to inform the translators the strings have been frozen and that
+    in **one week** the release will be cut.
+    * It would be good to start preparing a blogpost already.
+
 1. Check [GitLab](https://gitlab.gnome.org/GNOME/pitivi/milestones)
     * Make sure there are no significant issues open against the current milestone.
     * Move the remaining open issues somewhere else, for example to the next milestone.
