@@ -274,7 +274,7 @@ def show_user_manual(page=None):
                                    message_type=Gtk.MessageType.ERROR,
                                    buttons=Gtk.ButtonsType.OK,
                                    text=_("Failed to open the user manual."
-                                          " Make sure to have either the `yelp` GNOME "
+                                          " Make sure to have either the `yelp` GNOME"
                                           " documentation viewer or a web browser"
                                           " installed"))
         dialog.run()
