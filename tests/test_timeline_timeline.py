@@ -779,7 +779,7 @@ class TestTimelineContainer(common.TestCase):
         self.assertListEqual(list(timeline_container.timeline.clips()), [title_clip])
 
         # Check the title clips are ignored.
-        timeline_container.update_clips_asset(mock.Mock(), mock.Mock())
+        timeline_container.update_clips_asset(mock.Mock())
 
 
 class TestClipsEdges(common.TestCase):

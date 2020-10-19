@@ -123,11 +123,13 @@ def create_pitivi(**settings):
     return app
 
 
-def create_timeline_container(**settings):
-    app = create_pitivi_mock(leftClickAlsoSeeks=False, **settings)
-    app.project_manager = ProjectManager(app)
-    project = app.project_manager.new_blank_project()
+def create_timeline_container(app=None, **settings):
+    if not app:
+        app = create_pitivi_mock(leftClickAlsoSeeks=False, **settings)
+        app.project_manager = ProjectManager(app)
+        app.project_manager.new_blank_project()
 
+    project = app.project_manager.current_project
     timeline_container = TimelineContainer(app, app.gui.editor.editor_state)
     timeline_container.set_project(project)
 

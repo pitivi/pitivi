@@ -44,7 +44,6 @@ from pitivi.timeline.ruler import TimelineScaleRuler
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import asset_get_duration
-from pitivi.utils.proxy import get_proxy_target
 from pitivi.utils.timeline import EditingContext
 from pitivi.utils.timeline import SELECT
 from pitivi.utils.timeline import Selection
@@ -1464,21 +1463,30 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     # Public API
 
-    def update_clips_asset(self, asset, proxy):
+    def update_clips_asset(self, asset):
         """Updates the relevant clips to use the asset or the proxy.
 
         Args:
-            asset (GES.Asset): Only the clips who's current asset's target is
-                this will be updated.
-            proxy (Ges.Asset): The proxy to use, or None to use the asset itself.
+            asset (GES.Asset): Only the clips which contain this asset will be
+                updated.
         """
-        original_asset = get_proxy_target(asset)
-        replacement_asset = proxy or asset
+        proxy = asset.props.proxy
+
+        if not proxy:
+            proxy_uris = (self.app.proxy_manager.get_proxy_uri(asset),
+                          self.app.proxy_manager.get_proxy_uri(asset, scaled=True))
+
         for clip in self.timeline.clips():
             if not isinstance(clip, GES.UriClip):
                 continue
-            if get_proxy_target(clip) == original_asset:
-                clip.set_asset(replacement_asset)
+
+            if not proxy:
+                if clip.get_asset().props.id in proxy_uris:
+                    clip.set_asset(asset)
+            else:
+                if clip.get_asset() == asset:
+                    clip.set_asset(proxy)
+
         self._project.pipeline.commit_timeline()
 
     def insert_assets(self, assets, position=None):

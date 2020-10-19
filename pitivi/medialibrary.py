@@ -927,7 +927,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._add_asset(asset)
 
         if self._project.loaded:
-            self.app.gui.editor.timeline_ui.update_clips_asset(asset, proxy)
+            self.app.gui.editor.timeline_ui.update_clips_asset(asset)
 
     def _asset_added_cb(self, unused_project, asset):
         """Checks whether the asset added to the project should be shown."""

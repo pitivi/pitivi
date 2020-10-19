@@ -390,6 +390,42 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.assertEqual(clip.props.duration, duration)
             self.assertEqual(clip.props.max_duration, duration)
 
+    def test_timeline_proxy_switching(self):
+        sample_name = "30fps_numeroted_frames_red.mkv"
+        with common.cloned_sample(sample_name):
+            self.check_import([sample_name], proxying_strategy=ProxyingStrategy.NOTHING)
+
+            common.create_timeline_container(self.app)
+            timeline = self.app.project_manager.current_project.ges_timeline
+
+            asset = self.medialibrary.store[0].asset
+            timeline.append_layer().add_asset(asset, 0, 0, Gst.CLOCK_TIME_NONE,
+                                              GES.TrackType.VIDEO)
+
+            def check_timeline_clip(expected_asset):
+                for layer in timeline.layers:
+                    for clip in layer.get_clips():
+                        self.assertEqual(clip.get_asset(), expected_asset)
+
+            # Check asset is in the timeline
+            check_timeline_clip(asset)
+
+            # Check asset is replaced by scaled proxy
+            scaled_proxy = self.check_add_proxy(asset, scaled=True)
+            check_timeline_clip(scaled_proxy)
+
+            # Check proxy is replaced back by asset
+            self.check_disable_proxy(scaled_proxy, asset, delete=True)
+            check_timeline_clip(asset)
+
+            # Check asset is replaced by HQ proxy
+            hq_proxy = self.check_add_proxy(asset)
+            check_timeline_clip(hq_proxy)
+
+            # Check proxy was replaced back by asset
+            self.check_disable_proxy(hq_proxy, asset, delete=True)
+            check_timeline_clip(asset)
+
     def test_regenerate_scaled_proxy(self):
         sample_name = "30fps_numeroted_frames_red.mkv"
         with common.cloned_sample(sample_name):
