@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-10-11 23:20+0000\n"
-"PO-Revision-Date: 2020-10-12 09:35+0200\n"
+"POT-Creation-Date: 2020-10-25 19:33+0000\n"
+"PO-Revision-Date: 2020-10-27 10:17+0100\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
 "Language: sk\n"
@@ -732,7 +732,7 @@ msgstr "Pozastaviť"
 
 # tooltip
 #: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:767
-#: pitivi/timeline/timeline.py:1832
+#: pitivi/timeline/timeline.py:1840
 msgid "Play"
 msgstr "Prehrať"
 
@@ -1995,12 +1995,12 @@ msgid "Frame #%d"
 msgstr "Snímka č. %d"
 
 # gst label
-#: pitivi/timeline/timeline.py:82
+#: pitivi/timeline/timeline.py:81
 msgid "Snap distance"
 msgstr "Vzdialenosť prichytávania"
 
 # gst description
-#: pitivi/timeline/timeline.py:83
+#: pitivi/timeline/timeline.py:82
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -2008,123 +2008,123 @@ msgstr ""
 "Vzdialenosť (v pixeloch), pri ktorej sa dva klipy pripoja k sebe počas "
 "ťahania alebo strihania."
 
-#: pitivi/timeline/timeline.py:95
+#: pitivi/timeline/timeline.py:94
 msgid "Image clip duration"
 msgstr "Dĺžka klipu s obrázkami"
 
-#: pitivi/timeline/timeline.py:97
+#: pitivi/timeline/timeline.py:96
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
 msgstr ""
 "Predvolená dĺžka klipu obrázkov (v milisekundách) pri vkladaní na časovú os."
 
-#: pitivi/timeline/timeline.py:108
+#: pitivi/timeline/timeline.py:107
 msgid "Left click also seeks"
 msgstr "Posúvať tiež kliknutím ľavého tlačidla"
 
-#: pitivi/timeline/timeline.py:110
+#: pitivi/timeline/timeline.py:109
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
 "Určuje, či klikanie ľavým tlačidlom tiež posúva popri vyberaní a úprave "
 "klipov."
 
 # playhead_action
-#: pitivi/timeline/timeline.py:340 pitivi/timeline/timeline.py:1756
+#: pitivi/timeline/timeline.py:339 pitivi/timeline/timeline.py:1764
 msgid "Add layer"
 msgstr "Pridať vrstvu"
 
 # video_categories_effects
-#: pitivi/timeline/timeline.py:1699 pitivi/dialogs/prefs.py:60
+#: pitivi/timeline/timeline.py:1707 pitivi/dialogs/prefs.py:60
 msgid "Timeline"
 msgstr "Časová os"
 
-#: pitivi/timeline/timeline.py:1706
+#: pitivi/timeline/timeline.py:1714
 msgid "Action Search"
 msgstr "Vyhľadanie akcie"
 
-#: pitivi/timeline/timeline.py:1714
+#: pitivi/timeline/timeline.py:1722
 msgid "Delete selected clips"
 msgstr "Odstránenie vybraných klipov"
 
-#: pitivi/timeline/timeline.py:1721
+#: pitivi/timeline/timeline.py:1729
 msgid "Delete selected clips and shift following ones"
 msgstr "Odstránenie vybraných klipov a posun nasledujúceho"
 
 # action
-#: pitivi/timeline/timeline.py:1728
+#: pitivi/timeline/timeline.py:1736
 msgid "Group selected clips together"
 msgstr "Zoskupenie vybraných klipov dohromady"
 
 # tooltip text for toolbar
-#: pitivi/timeline/timeline.py:1735
+#: pitivi/timeline/timeline.py:1743
 msgid "Ungroup selected clips"
 msgstr "Zrušenie zoskupenia vybraných klipov"
 
 # tooltip
-#: pitivi/timeline/timeline.py:1742
+#: pitivi/timeline/timeline.py:1750
 msgid "Copy selected clips"
 msgstr "Skopírovanie vybraných klipov"
 
-#: pitivi/timeline/timeline.py:1749
+#: pitivi/timeline/timeline.py:1757
 msgid "Paste selected clips"
 msgstr "Vloženie vybraných klipov"
 
-#: pitivi/timeline/timeline.py:1763
+#: pitivi/timeline/timeline.py:1771
 msgid "Seeks to the first clip edge after the playhead."
 msgstr "Posun na hranu prvého klipu za kurzorom prehrávania."
 
-#: pitivi/timeline/timeline.py:1770
+#: pitivi/timeline/timeline.py:1778
 msgid "Seeks to the first clip edge before the playhead."
 msgstr "Posun na hranu prvého klipu pred kurzorom prehrávania."
 
-#: pitivi/timeline/timeline.py:1777
+#: pitivi/timeline/timeline.py:1785
 msgid "Add an effect to the selected clip"
 msgstr "Pridanie efektu vybranému klipu"
 
 # tooltip
-#: pitivi/timeline/timeline.py:1790
+#: pitivi/timeline/timeline.py:1798
 msgid "Split the clip at the position"
 msgstr "Rozdelenie klipu na pozícii"
 
-#: pitivi/timeline/timeline.py:1797
+#: pitivi/timeline/timeline.py:1805
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Pridanie kľúčového snímku na krivku kľúčových snímkov vybraného klipu"
 
-#: pitivi/timeline/timeline.py:1802
+#: pitivi/timeline/timeline.py:1810
 msgid "Timeline Navigation"
 msgstr "Navigácia po časovej osi"
 
 # tooltip text for toolbar
-#: pitivi/timeline/timeline.py:1810
+#: pitivi/timeline/timeline.py:1818
 msgid "Zoom in"
 msgstr "Priblíženie"
 
 # tooltip text for toolbar
-#: pitivi/timeline/timeline.py:1818
+#: pitivi/timeline/timeline.py:1826
 msgid "Zoom out"
 msgstr "Oddialenie"
 
-#: pitivi/timeline/timeline.py:1826
+#: pitivi/timeline/timeline.py:1834
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Upravenie priblíženia na prispôsobenie projektu do okna"
 
-#: pitivi/timeline/timeline.py:1839
+#: pitivi/timeline/timeline.py:1847
 msgid "Seek backward one frame"
 msgstr "Prejdenie o jeden snímok dozadu"
 
 # toolbutton tooltip
-#: pitivi/timeline/timeline.py:1846
+#: pitivi/timeline/timeline.py:1854
 msgid "Seek forward one frame"
 msgstr "Prejdenie o jeden snímok dopredu"
 
 # toolbutton tooltip
-#: pitivi/timeline/timeline.py:1854
+#: pitivi/timeline/timeline.py:1862
 msgid "Seek backward one second"
 msgstr "Prejdenie o jednu sekundu dozadu"
 
 # toolbutton tooltip
-#: pitivi/timeline/timeline.py:1862
+#: pitivi/timeline/timeline.py:1870
 msgid "Seek forward one second"
 msgstr "Prejdenie o jednu sekundu dopredu"
 
@@ -2343,7 +2343,7 @@ msgstr ""
 
 #: pitivi/utils/misc.py:276
 msgid ""
-"Failed to open the user manual. Make sure to have either the `yelp` GNOME  "
+"Failed to open the user manual. Make sure to have either the `yelp` GNOME "
 "documentation viewer or a web browser installed"
 msgstr ""
 "Zlyhalo otvorenie používateľskej príručky. Uistite sa, že máte nainštalovaný "
