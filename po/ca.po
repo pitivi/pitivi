@@ -8,6 +8,7 @@
 #   clip -> seqüència
 #   crossfade -> encadenament (TERMCAT)
 #   keyframe -> fotograma clau
+#   playhead -> punt de reproducció
 #   proxy -> intermediari
 #   proxy file -> fitxer intermediari
 #
@@ -16,7 +17,7 @@
 # Pau Iranzo <paugnu@gmail.com>, 2010.
 # Joan Duran <jodufi@gmail.com>, 2011.
 # Pere Orga <pere@orga.cat>, 2012.
-# Jordi Mas i Hernàndez <jmas@softcatala.org>, 2016, 2017
+# Jordi Mas i Hernàndez <jmas@softcatala.org>, 2016, 2017, 2020
 # Carles Ferrando Garcia <carles.ferrando@gmail.com>, 2017.
 msgid ""
 msgstr ""
@@ -380,8 +381,8 @@ msgstr "Exporta com a arxiu..."
 #: data/ui/mainmenubutton.ui:85
 msgid "Export the frame at the current playhead position as an image file."
 msgstr ""
-"Exporta el fotograma de la posició actual del cap lector com un fitxer "
-"d'imatge."
+"Exporta el fotograma de la posició actual del punt de reproducció com un "
+"fitxer d'imatge."
 
 #: data/ui/mainmenubutton.ui:89
 msgid "Export current frame..."
@@ -570,9 +571,8 @@ msgid "Info"
 msgstr "Informació"
 
 #: data/ui/projectsettings.ui:699
-#, fuzzy
 msgid "Scaled proxies resolution:"
-msgstr "Resolució de servidors intermediaris escalars"
+msgstr "Resolució de intermediaris escalats:"
 
 #: data/ui/projectsettings.ui:720 data/ui/projectsettings.ui:748
 msgid "1"
@@ -580,11 +580,11 @@ msgstr "1"
 
 #: data/ui/projectsettings.ui:798
 msgid "<a href='#'>Proxy Preferences</a>"
-msgstr "<a href='#'>Preferències dels servidors intermediaris</a>"
+msgstr "<a href='#'>Preferències dels intermediaris</a>"
 
 #: data/ui/projectsettings.ui:832
 msgid "Proxy"
-msgstr "Servidor intermediari"
+msgstr "Intermediari"
 
 #: data/ui/projectsettings.ui:865
 msgid "Title:"
@@ -633,7 +633,7 @@ msgid ""
 "\n"
 "This option is a good trade-off between quality of the rendered video and stability."
 msgstr ""
-"Useu fitxers de servidor intermediari si estan disponibles i el format dels mitjans de recursos font no està oficialment suportat.\n"
+"Useu fitxers intermediaris si estan disponibles i el format dels mitjans de recursos font no està oficialment suportat.\n"
 "\n"
 "Aquesta opció és una bona compensació entre la qualitat del vídeo renderitzat i l'estabilitat."
 
@@ -730,7 +730,7 @@ msgstr "Mida estimada del fitxer:"
 
 #: data/ui/timelinetoolbar.ui:16
 msgid "Split clips at playhead position"
-msgstr "Divideix la seqüència a la posició del cap lector"
+msgstr "Divideix la seqüència a la posició punt de reproducció"
 
 #: data/ui/timelinetoolbar.ui:18
 msgid "Split"
@@ -866,15 +866,13 @@ msgstr "- El connector %s del GStreamer no es troba al sistema"
 
 #. Translators: %s is a Python module name or another os component
 #: pitivi/check.py:189
-#, fuzzy, python-format
-#| msgid ""
-#| "- %s version %s is installed but Pitivi requires at least version %s"
+#, python-format
 msgid ""
 "- %s Gstreamer plug-in version %s is installed but Pitivi requires at least "
 "version %s"
 msgstr ""
-"-% S'instal·la el connector Gstreamer, però Pitivi requereix com a mínim un "
-"1% de versió"
+"- %s El connector del Gstreamer versió %s està instal·lat però Pitivi "
+"requereix com a mínim la versió %s"
 
 #: pitivi/check.py:298
 msgid "ERROR - The following hard dependencies are unmet:"
@@ -936,19 +934,16 @@ msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening"
 " in GStreamer and recover from them"
 msgstr ""
-"Habilita un vigilant a la canonada GStreamer. Useu-lo per detectar errors "
+"babilita un vigilant a la canonada GStreamer. Useu-lo per detectar errors "
 "que ocorrin en GStreamer i recupereu-los des d'ell"
 
 #: pitivi/clipproperties.py:123
-#, fuzzy
-#| msgid ""
-#| "Select a clip on the timeline to configure its associated effects"
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
 msgstr ""
 "Seleccioneu un clip a la línia de temps per configurar les seves propietats "
-"i efectes o creeu un clip nou"
+"i efectes o creeu un clip nou:"
 
 #: pitivi/clipproperties.py:129
 msgid "Create a title clip"
@@ -967,8 +962,8 @@ msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
 msgstr ""
-"Per aplicar un efecte al clip, arrossegueu-lo des de la Biblioteca d'efectes "
-"o utilitzeu el botó de sota."
+"Per aplicar un efecte al clip, arrossegueu-lo des de la Biblioteca d'efectes"
+" o utilitzeu el botó de sota."
 
 #: pitivi/clipproperties.py:249
 msgid "Add Effect"
@@ -1355,16 +1350,16 @@ msgstr "Optimitza:"
 
 #: pitivi/medialibrary.py:153
 msgid "Unsupported assets"
-msgstr "Actius no compatibles"
+msgstr "Recursos no compatibles"
 
 #: pitivi/medialibrary.py:154
 msgid "All"
 msgstr "Tot"
 
 #: pitivi/medialibrary.py:235
-#, fuzzy, python-format
+#, python-format
 msgid "Scale assets larger than %s×%s px."
-msgstr "Escala els actius més grans que per cents×%s px."
+msgstr "Escala els recursos més grans de %s×%s px"
 
 #: pitivi/medialibrary.py:513 pitivi/medialibrary.py:990
 msgid "Unknown"
@@ -1442,11 +1437,12 @@ msgid "Edit"
 msgstr "Edita"
 
 #: pitivi/medialibrary.py:1228
-#, fuzzy
 msgid "Do not use Optimised Proxy for selected asset"
 msgid_plural "Do not use Optimised Proxies for selected assets"
 msgstr[0] ""
+"No utilitzis l'intermediari optimitzat per al recurs seleccionat"
 msgstr[1] ""
+"No utilitzis els intermediaris optimitzats per als recursos seleccionats"
 
 #: pitivi/medialibrary.py:1239 pitivi/medialibrary.py:1261
 #: pitivi/medialibrary.py:1283
@@ -1456,32 +1452,32 @@ msgstr[0] "Suprimeix el fitxer intermediari corresponent"
 msgstr[1] "Suprimeix els fitxers intermediaris corresponents"
 
 #: pitivi/medialibrary.py:1250
-#, fuzzy
 msgid "Do not use Proxy for selected asset"
 msgid_plural "Do not use Proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "No utilitzis l'intermediari per al recurs seleccionat"
+msgstr[1] "No utilitzis els intermediaris per als recursos seleccionats"
 
 #: pitivi/medialibrary.py:1272
-#, fuzzy
 msgid "Do not use Scaled Proxy for selected asset"
 msgid_plural "Do not use Scaled Proxies for selected assets"
 msgstr[0] ""
-msgstr[1] ""
+"No utilitzis l'intermediari escalat per al recurs seleccionat"
+msgstr[1] "No utilitzis els intermediaris escalats per als recursos seleccionats"
 
 #: pitivi/medialibrary.py:1294
-#, fuzzy
 msgid "Use Optimised Proxy for selected asset"
 msgid_plural "Use Optimised Proxies for selected assets"
 msgstr[0] ""
-msgstr[1] ""
+"Utilitza el servidor intermediari optimitzat per a l'actiu seleccionat"
+msgstr[1] "Utilitza els avantatges optimitzats per als actius seleccionats"
 
 #: pitivi/medialibrary.py:1304
-#, fuzzy
 msgid "Use Scaled Proxy for selected asset"
 msgid_plural "Use Scaled Proxies for selected assets"
 msgstr[0] ""
+"Utilitza l'intermediari escalat per al recurs seleccionat"
 msgstr[1] ""
+"Utilitza els intermediaris escalats per als recursos seleccionats"
 
 #: pitivi/pluginmanager.py:54
 msgid "User plugins"
@@ -1649,33 +1645,24 @@ msgid "%d MB"
 msgstr "%d MB"
 
 #: pitivi/render.py:1322
-#, fuzzy
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to render otherwise.</b>\n"
 "\n"
 msgstr ""
-"<b>Assegura que la mida de la vostra renderització és parell x264enc podria "
-"no ser capaç de renderitzar en cas contrari.</b>"
+"<b>Assegura que la mida de la vostra renderització és parell, x264enc podria no ser capaç de renderitzar en cas contrari.</b>\n"
+"\n"
 
 #: pitivi/render.py:1330
-#, fuzzy
-#| msgid "An error occurred while importing."
-#| msgid_plural "{0:d} errors occurred while importing."
 msgid "An error occurred while trying to render your project."
 msgstr "S'ha produït un error en intentar renderitzar el projecte."
 
 #: pitivi/render.py:1332
-#, fuzzy
-#| msgid ""
-#| "An error occurred while trying to render your project. You might want to "
-#| "check our troubleshooting guide or file a bug report. The GStreamer error "
-#| "was:"
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
 msgstr ""
 "Potser voldreu comprovar la nostra guia de resolució de problemes o enviar "
-"un informe d'error. L'error de GStreamer ha estat"
+"un informe d'error. L'error de GStreamer ha estat:"
 
 #: pitivi/render.py:1576 pitivi/render.py:1577 pitivi/render.py:1583
 msgid "Render complete"
@@ -1788,9 +1775,8 @@ msgid "Viewer"
 msgstr "Visor"
 
 #: pitivi/viewer/viewer.py:345
-#, fuzzy
 msgid "Toggle the currently selected composition guidelines"
-msgstr "Commuta les directrius de composició seleccionades"
+msgstr "Commuta les directrius de composició seleccionades actualment"
 
 #: pitivi/viewer/viewer.py:353
 msgid "Toggle safe areas on viewer"
@@ -1916,8 +1902,6 @@ msgid "Delete selected clips"
 msgstr "Suprimeix les seqüències seleccionades"
 
 #: pitivi/timeline/timeline.py:1721
-#, fuzzy
-#| msgid "Delete selected clips"
 msgid "Delete selected clips and shift following ones"
 msgstr "Suprimeix les seqüències seleccionades i desplaça les següents"
 
@@ -1938,18 +1922,14 @@ msgid "Paste selected clips"
 msgstr "Enganxa les seqüències seleccionades"
 
 #: pitivi/timeline/timeline.py:1763
-#, fuzzy
 msgid "Seeks to the first clip edge after the playhead."
 msgstr "Cerca a la primera vora del clip després del punt de reproducció."
 
 #: pitivi/timeline/timeline.py:1770
-#, fuzzy
 msgid "Seeks to the first clip edge before the playhead."
 msgstr "Cerca a la primera vora del clip abans del punt de reproducció."
 
 #: pitivi/timeline/timeline.py:1777
-#, fuzzy
-#| msgid "Add keyframe to the keyframe curve of selected clip"
 msgid "Add an effect to the selected clip"
 msgstr "Afegeix un efecte al clip seleccionat"
 
@@ -2091,7 +2071,6 @@ msgid "Shortcuts"
 msgstr "Tecles de drecera"
 
 #: pitivi/dialogs/prefs.py:63
-#, fuzzy
 msgid "Proxies"
 msgstr "Proxies"
 
@@ -2104,7 +2083,6 @@ msgid "Reset to default value"
 msgstr "Reinicia als valors predeterminats"
 
 #: pitivi/dialogs/prefs.py:331
-#, fuzzy
 msgid ""
 "This resolution will be used as the default target resolution for new "
 "projects and projects missing scaled proxy meta-data."
@@ -2114,16 +2092,14 @@ msgstr ""
 "intermediari escalat."
 
 #: pitivi/dialogs/prefs.py:344
-#, fuzzy
 msgid "Initial proxy size for new projects"
 msgstr "Mida inicial del servidor intermediari per als projectes nous"
 
 #: pitivi/dialogs/prefs.py:379
-#, fuzzy, python-format
+#, python-format
 msgid "Proxy resolution for the current project is %d×%d px"
 msgstr ""
-"La resolució del servidor intermediari per al projecte actual és percentd×%d"
-" px"
+"La resolució de l'intermediari per al projecte actual és %d×%d px"
 
 #: pitivi/dialogs/prefs.py:458
 msgid "Reset the shortcut to the default accelerator"
@@ -2181,9 +2157,9 @@ msgid "No description available."
 msgstr "No hi ha cap descripció disponible."
 
 #: pitivi/dialogs/prefs.py:844
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Unable to load the plugin '{module_name}'"
-msgstr "No s'ha pogut carregar el connector '{modulename}'"
+msgstr "No s'ha pogut carregar el connector '{module_name}'"
 
 #. We could use Gtk.ListBox.set_placeholder, but it
 #. appears bad inside the list widget.
@@ -2192,13 +2168,13 @@ msgid "No plugins available"
 msgstr "No hi ha cap connector disponible"
 
 #: pitivi/dialogs/prefs.py:941
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "You can create <a href='{doc_url}'>plugins</a> into your <a "
 "href='{dir_url}'>plugins directory</a>."
 msgstr ""
-"Podeu crear <a href='{docurl}'>plugins</a> dins del vostre <a "
-"href='{dirurl}'>plugins directori</a>."
+"Podeu crear <a href='{doc_url}'>connectors</a> dins del directori <a "
+"href='{dir_url}'>plugins</a>."
 
 #: pitivi/utils/misc.py:276
 msgid ""
@@ -2225,12 +2201,10 @@ msgid "Error while decoding a string"
 msgstr "S'ha produït un error mentre es descodificava una cadena"
 
 #: pitivi/utils/proxy.py:61
-#, fuzzy
 msgid "Max number of parallel transcoding jobs"
-msgstr "Nombre màxim de treballs de transcodificació paral·lela"
+msgstr "Nombre màxim de treballs de transcodificació paral·lels"
 
 #: pitivi/utils/proxy.py:72
-#, fuzzy
 msgid "Max CPU usage dedicated to transcoding"
 msgstr "Ús màxim de CPU dedicat a la transcodificació"
 
@@ -2288,10 +2262,9 @@ msgstr[0] "<b>Àudio:</b> %d canal a %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[1] "<b>Àudio:</b> %d canals a %d <i>Hz</i> (%d <i>bits</i>)"
 
 #: pitivi/utils/ui.py:588
-#, fuzzy, python-format
-#| msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
+#, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
-msgstr "<b>Video</b> per centd×%d <i>píxels</i> at per cents <i>fps</i>"
+msgstr "<b>Video</b> %d×%d <i>píxels</i> a %s <i>fps</i>"
 
 #: pitivi/utils/ui.py:591
 #, python-format
@@ -2343,16 +2316,15 @@ msgid "Yesterday"
 msgstr "Ahir"
 
 #: pitivi/utils/ui.py:729
-#, fuzzy
 msgid "About a year ago"
-msgstr "Fa un any"
+msgstr "Fa aproximadament un any"
 
 #: pitivi/utils/ui.py:732
-#, python-format, fuzzy
+#, python-format
 msgid "About %d year ago"
 msgid_plural "About %d years ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Fa aproximadament %d any"
+msgstr[1] "Fa aproximadament %d anys"
 
 #: pitivi/utils/widgets.py:74
 msgid "Implement Me"
@@ -2427,16 +2399,14 @@ msgid "You can use the following shortcuts:"
 msgstr "Podeu utilitzar les dreceres següents:"
 
 #: plugins/console/console.py:204
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Type \"{help}(<command>)\" for more information."
 msgstr "Escriviu «{help}(<command>)» per a més informació."
 
 #: plugins/console/utils.py:81
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "Not possible to override {key}, because shortcuts commands are read-only."
 msgstr ""
 "No és possible sobreescriure {key} perquè les ordres de dreceres són només "
 "de lectura."
-
-
