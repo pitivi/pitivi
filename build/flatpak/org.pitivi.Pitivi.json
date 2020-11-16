@@ -2,7 +2,7 @@
     "app-id": "org.pitivi.Pitivi",
     "branch": "master",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.36",
+    "runtime-version": "3.38",
     "command": "pitivi",
     "finish-args": [
         "--socket=x11",
@@ -35,6 +35,16 @@
         "python3-hotdoc.json",
         "python3-pylint.json",
         "python3-matplotlib.json",
+        {
+            "name": "libcanberra",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://git.0pointer.de/libcanberra",
+                    "branch": "c0620e432650e81062c1967cc669829dbd29b310"
+                }
+            ]
+        },
         {
             "name": "gsound",
             "ensure-writable": [
@@ -324,18 +334,13 @@
             ]
         },
         {
-            "name": "meson",
-            "buildsystem": "simple",
-            "ensure-writable": ["easy-install.pth"],
-            "build-commands": [
-               "mkdir -p /app/lib/python3.7/site-packages",
-               "PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app"
-            ],
+            "name": "orc",
+            "buildsystem": "meson",
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/5e/da/e6f22f0d3730635aa8504cc0d7ae16406b3794bbfea04c854e2c215c7acb/meson-0.55.3.tar.gz",
-                    "sha256": "6bed2a25a128bbabe97cf40f63165ebe800e4fcb46db8ab7ef5c2b5789f092a5"
+                    "type": "git",
+                    "branch": "0.4.32",
+                    "url": "https://gitlab.freedesktop.org/gstreamer/orc.git"
                 }
             ]
         },
@@ -456,7 +461,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dpygi-overrides-dir=/app/lib/python3.7/site-packages/gi/overrides/",
+                "-Dpygi-overrides-dir=/app/lib/python3.8/site-packages/gi/overrides/",
                 "--libdir=lib"
             ],
             "sources": [
@@ -512,16 +517,6 @@
                     "type": "git",
                     "branch": "master",
                     "url": "https://gitlab.freedesktop.org/gstreamer/gst-editing-services.git"
-                }
-            ]
-        },
-        {
-            "name": "pygobject",
-            "buildsystem": "meson",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/GNOME/pygobject.git"
                 }
             ]
         },

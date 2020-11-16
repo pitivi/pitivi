@@ -24,10 +24,9 @@ pitivi:master:
   script:
     # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
     - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
-    - export BRANCH=master
-    - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}-sdk_3.36"
-    - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.36"
-    - export TMPIMAGENAME="tmp-pitivi-${BRANCH}-sdk_3.36"
+    - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:master-sdk_3.38"
+    - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.38"
+    - export TMPIMAGENAME="tmp-pitivi-master-sdk_3.38"
     - export BUILDDIR="\${HOME}/pitivi"
     - export CLONE_PITIVI="git clone ${CI_PROJECT_URL}.git --single-branch \${HOME}/pitivi -b ${CI_COMMIT_REF_NAME}"
     - export BUILD_PITIVI="flatpak-builder --user --disable-rofiles-fuse ${BUILDDIR}/app ${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json --state-dir=\${HOME}/flatpak-cache --ccache"
@@ -49,7 +48,7 @@ build:
   stage: build
   tags:
     - flatpak
-  image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_3.36
+  image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_3.38
   variables:
     BLACKLIST: >
       -b tests.test_effects.EffectsPropertiesManagerTest.test_dependent_properties
@@ -100,4 +99,3 @@ deploy:
     - flatpak build-commit-from --src-repo=flatpak_repo /srv/http --timestamp=NOW --gpg-sign=739E841A
   only:
     - master@GNOME/pitivi
-    - thiblahute/sdk3.36@GNOME/pitivi
