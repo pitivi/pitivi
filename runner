@@ -1,0 +1,44 @@
+ARG GNOME_SDK
+
+# See all available images at
+# https://quay.io/repository/gnome_infrastructure/gnome-runtime-images?tab=tags&tag=latest
+FROM quay.io/gnome_infrastructure/gnome-runtime-images:x86_64-gnome-${GNOME_SDK}
+
+# Debug
+RUN env
+RUN pwd
+
+RUN git clone ${CI_PROJECT_URL} --single-branch ${REPO} -b ${CI_COMMIT_REF_NAME}
+
+# Populate the flatpak cache by creating the build dir AKA sandbox.
+# All the downloads, build dirs, build cache, etc. are stored in
+# FLATPAK_BUILDER_CACHE.
+RUN flatpak-builder \
+  --user \
+  --disable-rofiles-fuse \
+  --ccache \
+  --state-dir=${FLATPAK_BUILDER_CACHE} \
+  ${FLATPAK_BUILD_DIR} \
+  ${REPO}/build/flatpak/org.pitivi.Pitivi.json
+
+# Run pre-commit to download and cache its hooks.
+RUN cd ${REPO}
+RUN flatpak-builder \
+  --disable-rofiles-fuse \
+  --filesystem=${REPO} \
+  --env=PRE_COMMIT_HOME=${PRE_COMMIT_HOME} \
+  --share=network \
+  --run \
+  ${FLATPAK_BUILD_DIR} \
+  ${REPO}/build/flatpak/org.pitivi.Pitivi.json \
+  pre-commit install-hooks
+
+RUN cd /
+
+# The repo will be provided by GitLab, no need to keep it around.
+RUN rm -rf ${REPO}
+
+# The sandbox is very large and can be recreated easily out of the
+# FLATPAK_BUILDER_CACHE.
+# We're only interested in the FLATPAK_BUILDER_CACHE being populated.
+RUN rm -rf ${FLATPAK_BUILD_DIR}

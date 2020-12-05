@@ -1,81 +1,108 @@
+# The .gitlab-ci.yml keyword reference can be found at
+# https://docs.gitlab.com/ee/ci/yaml/
+
 ---
 stages:
-  - docker_image
-  - build
+  - image
+  - tests
 
 variables:
-  MANIFEST: /build/pitivi/build/flatpak/org.pitivi.Pitivi.json
+  REPO: /build/pitivi
+  FLATPAK_BUILDER_CACHE: /build/flatpak-builder-cache
+  FLATPAK_BUILD_DIR: /build/flatpak-build-dir
+  FLATPAK_REPO: /build/flatpak-repo
+  PRE_COMMIT_HOME: /build/pre-commit-home
   DBUS_ID: org.pitivi.Pitivi
   GST_DEBUG_NO_COLOR: "true"
   GNOME_SDK: 43
 
-
 pitivi:master:
-  stage: docker_image
-  tags:
-    - privileged
-  image: docker:latest
+  stage: image
+  image: quay.io/buildah/stable:latest
   variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: ""
-  services:
-    - docker:20.10.11-dind
   before_script:
-    - docker info
+    - buildah version
+    - buildah info
   script:
     # GNOME -> gnome
-    - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
+    - export NAMESPACE=$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)
     - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:master-sdk_${GNOME_SDK}"
-    - export BASE_IMAGE="quay.io/gnome_infrastructure/gnome-runtime-images:x86_64-gnome-${GNOME_SDK}"
 
-    # Commands to be run in the Docker image.
-    # Clone the Pitivi repo.
-    - export CLONE_PITIVI="git clone ${CI_PROJECT_URL}.git --single-branch /build/pitivi -b ${CI_COMMIT_REF_NAME}"
-    # All the downloads, build dirs, build cache, etc. are stored in /build/flatpak-cache.
-    - export BUILD_PITIVI="flatpak-builder --user --disable-rofiles-fuse /build/flatpak-build-dir ${MANIFEST} --state-dir=/build/flatpak-cache --ccache"
-    # Run pre-commit to download and cache the hooks.
-    - export PRE_COMMIT="cd /build/pitivi && flatpak-builder --disable-rofiles-fuse --filesystem=/build/pitivi --env=PRE_COMMIT_HOME=/build/pre-commit-home --share=network --run /build/flatpak-build-dir ${MANIFEST} pre-commit install-hooks"
-    # The /build/flatpak-build-dir since it's very large and can be recreated
-    # easily out of /build/flatpak-cache.
-    - export CLEANUP="rm -rf /build/pitivi && rm -rf /build/flatpak-build-dir"
-
+    # Debug
+    # https://docs.gitlab.com/ee/ci/variables/predefined_variables.html
     - env
+    - whoami
+    - pwd
+    - ls -al
+    - uname -a
 
-    - docker run --privileged --name local-pitivi-image ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && ${PRE_COMMIT} && ${CLEANUP}"
-    - docker commit local-pitivi-image ${IMAGE}
-    - docker rm local-pitivi-image
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker push ${IMAGE}
+    # Login to be able to push the image at the end.
+    - buildah login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
+
+    # Create an image with the flatpak-builder cache populated.
+    # This allows rebuilding the sandbox quickly when running the tests.
+    - curl -o flatpak-docker-seccomp.json https://raw.githubusercontent.com/flatpak/flatpak/main/data/flatpak-docker-seccomp.json
+    - buildah build
+      --isolation=chroot
+      --format=docker
+      --storage-driver vfs
+      --build-arg GNOME_SDK=${GNOME_SDK}
+      --env REPO
+      --env CI_PROJECT_URL
+      --env CI_COMMIT_REF_NAME
+      --env FLATPAK_BUILDER_CACHE
+      --env FLATPAK_BUILD_DIR
+      --file ./runner
+      --tag ${IMAGE}
+      --squash
+      # --security-opt seccomp=flatpak-docker-seccomp.json
+      # --volume /proc:/host/proc
+
+    - buildah push ${IMAGE}
   only:
     - triggers
     - schedules
-  retry: 1
+  retry: 0
 
 
-build:
-  stage: build
+tests:
+  stage: tests
   tags:
     - flatpak
   image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_${GNOME_SDK}
-  variables:
-    XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
   script:
-    - export RUN_IN_SANDBOX="flatpak-builder --disable-rofiles-fuse --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --env=GST_DEBUG_NO_COLOR=true --env=PRE_COMMIT_HOME=/build/pre-commit-home --env=SKIP=gitlab-ci-linter --env=GITLAB_CI=${GITLAB_CI} --run /build/flatpak-build-dir ${MANIFEST}"
-
+    # Debug
     - env
+    - whoami
+    - pwd
+    - ls -al
+    - ls -al /build
 
     # Move the Pitivi git repo so it has the same location as when the
-    # /build/flatpak-cache has been created.
-    - mv ${CI_PROJECT_DIR} /build/pitivi
+    # FLATPAK_BUILDER_CACHE has been created.
+    - mv ${CI_PROJECT_DIR} ${REPO}
 
-    # Create the folder as we need to store here the artifacts.
+    # Create the folder as we need to store here the artifacts to be uploaded.
     - mkdir ${CI_PROJECT_DIR}
 
     # Recreate the flatpak build dir using the cache.
-    - flatpak-builder --user --disable-rofiles-fuse --state-dir=/build/flatpak-cache --disable-download --ccache --force-clean /build/flatpak-build-dir ${MANIFEST}
+    - flatpak-builder
+      --user
+      --disable-rofiles-fuse
+      --ccache
+      --state-dir=${FLATPAK_BUILDER_CACHE}
+      --disable-download
+      --force-clean
+      --repo=${FLATPAK_REPO}
+      ${FLATPAK_BUILD_DIR}
+      ${REPO}/build/flatpak/org.pitivi.Pitivi.json
+
+    # This is how we do it
+    - export RUN_IN_SANDBOX="flatpak-builder --disable-rofiles-fuse --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --env=GST_DEBUG_NO_COLOR=true --env=PRE_COMMIT_HOME=/build/pre-commit-home --env=GITLAB_CI=${GITLAB_CI} --run ${FLATPAK_BUILD_DIR} ${REPO}/build/flatpak/org.pitivi.Pitivi.json"
+    - echo ${RUN_IN_SANDBOX}
+    - cd ${REPO}
 
     # Build Pitivi.
-    - cd /build/pitivi
     - ${RUN_IN_SANDBOX} meson mesonbuild/
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
 
@@ -83,15 +110,21 @@ build:
     - ${RUN_IN_SANDBOX} pre-commit run --all-files
 
     # Run the unit tests.
-    - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher /build/pitivi/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 10 --xunit-file ${XUNIT_PATH} --logs-dir ${CI_PROJECT_DIR}/tests-logs
-  cache:
-    paths:
-      - flatpak-cache
+    - xvfb-run
+      -n 32
+      -s "-screen 0 640x480x24"
+      ${RUN_IN_SANDBOX} gst-validate-launcher
+      ${REPO}/tests/ptv_testsuite.py
+      --dump-on-failure
+      --timeout-factor 10
+      --xunit-file ${CI_PROJECT_DIR}/xunit.xml
+      --logs-dir=${CI_PROJECT_DIR}/tests-logs
   artifacts:
     expire_in: 30 days
     paths:
       - xunit.xml
       - tests-logs/
+      # TODO: export /app/manifest.json from FLATPAK_REPO somehow
     reports:
       junit:
         - ${XUNIT_PATH}
