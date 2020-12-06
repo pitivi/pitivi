@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2020-10-15 16:17+0000\n"
-"PO-Revision-Date: 2020-10-19 17:37+0200\n"
+"POT-Creation-Date: 2020-10-25 19:33+0000\n"
+"PO-Revision-Date: 2020-12-06 13:59+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -24,7 +24,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Project-Style: gnome\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
@@ -692,7 +692,7 @@ msgid "Pause"
 msgstr "Pausa"
 
 #: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:767
-#: pitivi/timeline/timeline.py:1832
+#: pitivi/timeline/timeline.py:1840
 msgid "Play"
 msgstr "Spela upp"
 
@@ -1846,11 +1846,11 @@ msgstr "Lägg till en markör"
 msgid "Frame #%d"
 msgstr "Bildruta #%d"
 
-#: pitivi/timeline/timeline.py:82
+#: pitivi/timeline/timeline.py:81
 msgid "Snap distance"
 msgstr "Fästavstånd"
 
-#: pitivi/timeline/timeline.py:83
+#: pitivi/timeline/timeline.py:82
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1858,11 +1858,11 @@ msgstr ""
 "Tröskelvärde (i bildpunkter) med vilket två klipp ska fästas tillsammans när "
 "de dras eller finjusteras."
 
-#: pitivi/timeline/timeline.py:95
+#: pitivi/timeline/timeline.py:94
 msgid "Image clip duration"
 msgstr "Bildklippsvaraktighet"
 
-#: pitivi/timeline/timeline.py:97
+#: pitivi/timeline/timeline.py:96
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
@@ -1870,101 +1870,101 @@ msgstr ""
 "Standardlängd för videoklipp (i millisekunder) för bilder vid infogande på "
 "tidslinjen."
 
-#: pitivi/timeline/timeline.py:108
+#: pitivi/timeline/timeline.py:107
 msgid "Left click also seeks"
 msgstr "Vänsterklick spolar också"
 
-#: pitivi/timeline/timeline.py:110
+#: pitivi/timeline/timeline.py:109
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
 "Huruvida vänsterklickande också spolar förutom att välja och redigera "
 "videoklipp."
 
-#: pitivi/timeline/timeline.py:340 pitivi/timeline/timeline.py:1756
+#: pitivi/timeline/timeline.py:339 pitivi/timeline/timeline.py:1764
 msgid "Add layer"
 msgstr "Lägg till lager"
 
-#: pitivi/timeline/timeline.py:1699 pitivi/dialogs/prefs.py:60
+#: pitivi/timeline/timeline.py:1707 pitivi/dialogs/prefs.py:60
 msgid "Timeline"
 msgstr "Tidslinje"
 
-#: pitivi/timeline/timeline.py:1706
+#: pitivi/timeline/timeline.py:1714
 msgid "Action Search"
 msgstr "Åtgärdssökning"
 
-#: pitivi/timeline/timeline.py:1714
+#: pitivi/timeline/timeline.py:1722
 msgid "Delete selected clips"
 msgstr "Ta bort markerade klipp"
 
-#: pitivi/timeline/timeline.py:1721
+#: pitivi/timeline/timeline.py:1729
 msgid "Delete selected clips and shift following ones"
 msgstr "Ta bort markerade klipp och skifta efterföljande"
 
-#: pitivi/timeline/timeline.py:1728
+#: pitivi/timeline/timeline.py:1736
 msgid "Group selected clips together"
 msgstr "Gruppera markerade klipp tillsammans"
 
-#: pitivi/timeline/timeline.py:1735
+#: pitivi/timeline/timeline.py:1743
 msgid "Ungroup selected clips"
 msgstr "Avgruppera markerade klipp"
 
-#: pitivi/timeline/timeline.py:1742
+#: pitivi/timeline/timeline.py:1750
 msgid "Copy selected clips"
 msgstr "Kopiera markerade klipp"
 
-#: pitivi/timeline/timeline.py:1749
+#: pitivi/timeline/timeline.py:1757
 msgid "Paste selected clips"
 msgstr "Klistra in markerade klipp"
 
-#: pitivi/timeline/timeline.py:1763
+#: pitivi/timeline/timeline.py:1771
 msgid "Seeks to the first clip edge after the playhead."
 msgstr "Spolar till den första klippkanten efter uppspelningshuvudet."
 
-#: pitivi/timeline/timeline.py:1770
+#: pitivi/timeline/timeline.py:1778
 msgid "Seeks to the first clip edge before the playhead."
 msgstr "Spolar till den första klippkanten innan uppspelningshuvudet."
 
-#: pitivi/timeline/timeline.py:1777
+#: pitivi/timeline/timeline.py:1785
 msgid "Add an effect to the selected clip"
 msgstr "Lägg till en effekt till det markerade klippet"
 
-#: pitivi/timeline/timeline.py:1790
+#: pitivi/timeline/timeline.py:1798
 msgid "Split the clip at the position"
 msgstr "Dela upp klipp vid positionen"
 
-#: pitivi/timeline/timeline.py:1797
+#: pitivi/timeline/timeline.py:1805
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Lägg till nyckelbildruta till nyckelbildskurvan för valt klipp"
 
-#: pitivi/timeline/timeline.py:1802
+#: pitivi/timeline/timeline.py:1810
 msgid "Timeline Navigation"
 msgstr "Tidslinjenavigering"
 
-#: pitivi/timeline/timeline.py:1810
+#: pitivi/timeline/timeline.py:1818
 msgid "Zoom in"
 msgstr "Zooma in"
 
-#: pitivi/timeline/timeline.py:1818
+#: pitivi/timeline/timeline.py:1826
 msgid "Zoom out"
 msgstr "Zooma ut"
 
-#: pitivi/timeline/timeline.py:1826
+#: pitivi/timeline/timeline.py:1834
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Justera zoom för att anpassa projektet till fönstret"
 
-#: pitivi/timeline/timeline.py:1839
+#: pitivi/timeline/timeline.py:1847
 msgid "Seek backward one frame"
 msgstr "Spola bakåt en bildruta"
 
-#: pitivi/timeline/timeline.py:1846
+#: pitivi/timeline/timeline.py:1854
 msgid "Seek forward one frame"
 msgstr "Spola framåt en bildruta"
 
-#: pitivi/timeline/timeline.py:1854
+#: pitivi/timeline/timeline.py:1862
 msgid "Seek backward one second"
 msgstr "Spola bakåt en sekund"
 
-#: pitivi/timeline/timeline.py:1862
+#: pitivi/timeline/timeline.py:1870
 msgid "Seek forward one second"
 msgstr "Spola framåt en sekund"
 
@@ -2165,7 +2165,7 @@ msgstr ""
 
 #: pitivi/utils/misc.py:276
 msgid ""
-"Failed to open the user manual. Make sure to have either the `yelp` GNOME  "
+"Failed to open the user manual. Make sure to have either the `yelp` GNOME "
 "documentation viewer or a web browser installed"
 msgstr ""
 "Misslyckades med att öppna användarhandboken. Försäkra dig om att du har "
