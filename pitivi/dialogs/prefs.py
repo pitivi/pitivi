@@ -714,19 +714,22 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.destroy()
 
 
+@Gtk.Template(filename=os.path.join(get_ui_dir(), "pluginpreferencesrow.ui"))
 class PluginPreferencesRow(Gtk.ListBoxRow):
     """A row in the plugins list allowing activating and deactivating a plugin."""
 
+    __gtype_name__ = "PluginPreferencesRow"
+
+    _title_label = Gtk.Template.Child()
+    _description_label = Gtk.Template.Child()
+    switch = Gtk.Template.Child()
+
     def __init__(self, item):
-        Gtk.ListBoxRow.__init__(self)
+        super().__init__()
         self.plugin_info = item.plugin_info
+        self.switch_handler_id = None
 
-        self._container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        self.add(self._container)
-
-        self._title_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self._title_label = Gtk.Label(self.plugin_info.get_name())
-        self._description_label = Gtk.Label()
+        self._title_label.set_text(self.plugin_info.get_name())
 
         description = self.plugin_info.get_description()
         if not description:
@@ -735,26 +738,6 @@ class PluginPreferencesRow(Gtk.ListBoxRow):
                 "<span style=\"italic\">%s</span>" % description)
         else:
             self._description_label.set_text(description)
-
-        self.switch = Gtk.Switch()
-        self.switch.props.valign = Gtk.Align.CENTER
-        self.switch_handler_id = None
-
-        # Pack widgets.
-        self._title_box.pack_start(self._title_label, True, True, 0)
-        self._title_box.pack_start(self._description_label, True, True, 0)
-        self._container.pack_start(self._title_box, True, True, 0)
-        self._container.pack_end(self.switch, False, False, 0)
-
-        # Widgets' design.
-        self._container.props.margin_left = PADDING * 2
-        self._container.props.margin_right = PADDING * 2
-        self._container.props.margin_top = PADDING
-        self._container.props.margin_bottom = PADDING
-        self._title_label.props.xalign = 0
-        self._description_label.props.xalign = 0
-        self._description_label.get_style_context().add_class("dim-label")
-        self.switch.props.margin_left = PADDING
 
 
 class PluginItem(GObject.Object):
