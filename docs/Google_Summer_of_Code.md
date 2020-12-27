@@ -1,4 +1,4 @@
-# Google Summer of Code
+# GSoC
 
 The [Google “Summer of Code” program] is available for students only. If
 we accept your project proposal, in June-July-August you work on your

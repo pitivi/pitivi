@@ -8,25 +8,27 @@ index.md
 		Git.md
 		Coding_style_guide.md
 		Command_line_tools.md
-	The_people.md
-	release.md
+	Testing.md
+		QA_Scenarios.md
 	Architecture.md
 		GES.md
 	Plugins.md
 		Advanced_plugin.md
 	crossplatform.md
 		Mac_OS_X.md
-	Praise.md
-	Project_history.md
-	Current_events.md
 	Google_Summer_of_Code.md
 		GSoC_Ideas.md
 		GSoC_Application.md
 		Past_GSoCs.md
 			Google_SoC_2007_-_Simple_Timeline.md
 			Feroze_gsoc.md
-	Testing.md
-		QA_Scenarios.md
+	The_people.md
+	Administrative.md
+		release.md
+		How_to_update_SDK.md
+	Praise.md
+	Project_history.md
+	Current_events.md
 	design.md
 		design/Why_python.md
 		design/Proxy_editing_requirements.md

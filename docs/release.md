@@ -1,3 +1,7 @@
+---
+short-description: How to make a new release
+...
+
 # How to make a release
 
 Ideally these instructions are in line with the [GNOME releasing
