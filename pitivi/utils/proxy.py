@@ -457,8 +457,11 @@ class ProxyManager(GObject.Object, Loggable):
                 self.__create_transcoder(asset)
                 return
         else:
-            transcoder.props.pipeline.props.video_filter.finalize()
-            transcoder.props.pipeline.props.audio_filter.finalize()
+            if transcoder.props.pipeline.props.video_filter:
+                transcoder.props.pipeline.props.video_filter.finalize()
+
+            if transcoder.props.pipeline.props.audio_filter:
+                transcoder.props.pipeline.props.audio_filter.finalize()
 
             del transcoder
 
@@ -676,15 +679,17 @@ class ProxyManager(GObject.Object, Loggable):
         else:
             transcoder.props.position_update_interval = 1000
 
-        thumbnailbin = Gst.ElementFactory.make("teedthumbnailbin")
-        thumbnailbin.props.uri = asset.get_id()
+        info = asset.get_info()
+        if info.get_video_streams():
+            thumbnailbin = Gst.ElementFactory.make("teedthumbnailbin")
+            thumbnailbin.props.uri = asset.get_id()
+            transcoder.props.pipeline.props.video_filter = thumbnailbin
 
-        waveformbin = Gst.ElementFactory.make("waveformbin")
-        waveformbin.props.uri = asset.get_id()
-        waveformbin.props.duration = asset.get_duration()
-
-        transcoder.props.pipeline.props.video_filter = thumbnailbin
-        transcoder.props.pipeline.props.audio_filter = waveformbin
+        if info.get_audio_streams():
+            waveformbin = Gst.ElementFactory.make("waveformbin")
+            waveformbin.props.uri = asset.get_id()
+            waveformbin.props.duration = asset.get_duration()
+            transcoder.props.pipeline.props.audio_filter = waveformbin
 
         transcoder.set_cpu_usage(self.app.settings.max_cpu_usage)
         transcoder.connect("position-updated",
