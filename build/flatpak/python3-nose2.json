@@ -2,23 +2,18 @@
     "name": "python3-nose2",
     "buildsystem": "simple",
     "build-commands": [
-        "pip3 install --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} nose2"
+        "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"nose2\""
     ],
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/85/d5/818d0e603685c4a613d56f065a721013e942088047ff1027a632948bdae6/coverage-4.5.4.tar.gz",
-            "sha256": "e07d9f1a23e9e93ab5c62902833bf3e4b1f65502927379148b6622686223125c"
+            "url": "https://files.pythonhosted.org/packages/2e/e8/a97059872bbedb3414c358660b4851b979774dabcc3b05c997b02eb6652a/coverage-5.3.1-cp38-cp38-manylinux2010_x86_64.whl",
+            "sha256": "3a3c3f8863255f3c31db3889f8055989527173ef6192a283eb6f4db3c579d830"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/65/26/32b8464df2a97e6dd1b656ed26b2c194606c16fe163c695a992b36c11cdf/six-1.13.0-py2.py3-none-any.whl",
-            "sha256": "1f1b7d42e254082a9db6279deae68afb421ceba6158efa6131de7b3003ee93fd"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/2a/c6/f1941e6af8e97cb5cf7405283d5240ba3fb0ce9ace68403904436d6fff65/nose2-0.9.1-py2.py3-none-any.whl",
-            "sha256": "31d8beb00aed3ccc6efb1742bb90227d883e471715188249f594310676e0ef0e"
+            "url": "https://files.pythonhosted.org/packages/b9/ad/27561695e863f5df064f1715864afb3ebe723a6e19e875eca85570e0a7cd/nose2-0.9.2-py2.py3-none-any.whl",
+            "sha256": "fd4b84c65ecea869080a23bdb8916716f5363df3b899933991c861ada8aa3f48"
         }
     ]
 }

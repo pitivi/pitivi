@@ -1,128 +1,44 @@
 {
     "name": "python3-matplotlib",
     "buildsystem": "simple",
-    "build-commands": [],
-    "modules": [
+    "build-commands": [
+        "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"matplotlib\""
+    ],
+    "sources": [
         {
-            "name": "numpy",
-            "buildsystem": "simple",
-            "ensure-writable": [
-                "easy-install.pth"
-            ],
-            "build-commands": [
-                "mkdir -p /app/lib/python3.8/site-packages",
-                "CFLAGS='-L/usr/lib -I/usr/include -I/usr/include/python3.8m/' CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app # Working around linking issues"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/2d/80/1809de155bad674b494248bcfca0e49eb4c5d8bee58f26fe7a0dd45029e2/numpy-1.15.4.zip",
-                    "sha256": "3d734559db35aa3697dadcea492a423118c5c55d176da2f3be9c98d4803fc2a7"
-                }
-            ]
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/c9/57/a6c81c1d6b8973d288ec6df0993a71a61318c862afc1de71fd3aa1ba1dcd/Pillow-8.1.0-cp38-cp38-manylinux1_x86_64.whl",
+            "sha256": "cdbbe7dff4a677fb555a54f9bc0450f2a21a93c5ba2b44e09e54fcb72d2bd13d"
         },
         {
-            "name": "pyparsing",
-            "buildsystem": "simple",
-            "ensure-writable": [
-                "easy-install.pth"
-            ],
-            "build-commands": [
-                "python3 setup.py install --prefix=/app"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/d0/09/3e6a5eeb6e04467b737d55f8bba15247ac0876f98fae659e58cd744430c6/pyparsing-2.3.0.tar.gz",
-                    "sha256": "f353aab21fd474459d97b709e527b5571314ee5f067441dc9f88e33eecd96592"
-                }
-            ]
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/f7/d2/e07d3ebb2bd7af696440ce7e754c59dd546ffe1bbe732c8ab68b9c834e61/cycler-0.10.0-py2.py3-none-any.whl",
+            "sha256": "1d8a5ae1ff6c5cf9b93e8811e581232ad8920aeec647c37316ceac982b08cb2d"
         },
         {
-            "name": "cycler",
-            "buildsystem": "simple",
-            "ensure-writable": [
-                "easy-install.pth"
-            ],
-            "build-commands": [
-                "python3 setup.py install --prefix=/app"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/c2/4b/137dea450d6e1e3d474e1d873cd1d4f7d3beed7e0dc973b06e8e10d32488/cycler-0.10.0.tar.gz",
-                    "sha256": "cd7b2d1018258d7247a71425e9f26463dfb444d411c39569972f4ce586b0c9d8"
-                }
-            ]
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/99/04/41e831621ddec54f99e9e3693b8d4f2f583d7f3ee8df33bf9a7d6bf764de/kiwisolver-1.3.1-cp38-cp38-manylinux1_x86_64.whl",
+            "sha256": "78751b33595f7f9511952e7e60ce858c6d64db2e062afb325985ddbd34b5c131"
         },
         {
-            "name": "setuptools-scm",
-            "buildsystem": "simple",
-            "ensure-writable": [
-                "easy-install.pth"
-            ],
-            "build-commands": [
-                "python3 setup.py install --prefix=/app"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/09/b4/d148a70543b42ff3d81d57381f33104f32b91f970ad7873f463e75bf7453/setuptools_scm-3.1.0.tar.gz",
-                    "sha256": "1191f2a136b5e86f7ca8ab00a97ef7aef997131f1f6d4971be69a1ef387d8b40"
-                }
-            ]
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/de/cf/d81fece6931ab0a3427eb29c2da7c3dc8e611927609d737a55964a3e0ef5/matplotlib-3.3.3-cp38-cp38-manylinux1_x86_64.whl",
+            "sha256": "83e6c895d93fdf93eeff1a21ee96778ba65ef258e5d284160f7c628fee40c38f"
         },
         {
-            "name": "python-dateutil",
-            "buildsystem": "simple",
-            "ensure-writable": [
-                "easy-install.pth"
-            ],
-            "build-commands": [
-                "python3 setup.py install --prefix=/app"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/0e/01/68747933e8d12263d41ce08119620d9a7e5eb72c876a3442257f74490da0/python-dateutil-2.7.5.tar.gz",
-                    "sha256": "88f9287c0174266bb0d8cedd395cfba9c58e87e5ad86b2ce58859bc11be3cf02"
-                }
-            ]
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/e5/7d/fe25dcdfc46d14e037cbb87e480ac067da36f56a8e65928bf1040ff35793/numpy-1.19.4-cp38-cp38-manylinux2010_x86_64.whl",
+            "sha256": "1aeef46a13e51931c0b1cf8ae1168b4a55ecd282e6688fdb0a948cc5a1d5afb9"
         },
         {
-            "name": "kiwisolver",
-            "buildsystem": "simple",
-            "ensure-writable": [
-                "easy-install.pth"
-            ],
-            "build-commands": [
-                "python3 setup.py install --prefix=/app"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/31/60/494fcce70d60a598c32ee00e71542e52e27c978e5f8219fae0d4ac6e2864/kiwisolver-1.0.1.tar.gz",
-                    "sha256": "ce3be5d520b4d2c3e5eeb4cd2ef62b9b9ab8ac6b6fedbaa0e39cdb6f50644278"
-                }
-            ]
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/8a/bb/488841f56197b13700afd5658fc279a2025a39e22449b7cf29864669b15d/pyparsing-2.4.7-py2.py3-none-any.whl",
+            "sha256": "ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"
         },
         {
-            "name": "matplotlib",
-            "buildsystem": "simple",
-            "ensure-writable": [
-                "easy-install.pth",
-                "setuptools.pth"
-            ],
-            "build-commands": [
-                "CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/26/04/8b381d5b166508cc258632b225adbafec49bbe69aa9a4fa1f1b461428313/matplotlib-3.0.3.tar.gz",
-                    "sha256": "e1d33589e32f482d0a7d1957bf473d43341115d40d33f578dad44432e47df7b7"
-                }
-            ]
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/d4/70/d60450c3dd48ef87586924207ae8907090de0b306af2bce5d134d78615cb/python_dateutil-2.8.1-py2.py3-none-any.whl",
+            "sha256": "75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"
         }
     ]
 }

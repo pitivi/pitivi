@@ -2,43 +2,23 @@
     "name": "python3-pylint",
     "buildsystem": "simple",
     "build-commands": [
-        "pip3 install --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} pylint"
+        "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"pylint\""
     ],
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/59/b0/11710a598e1e148fb7cbf9220fd2a0b82c98e94efbdecb299cb25e7f0b39/wheel-0.33.6.tar.gz",
-            "sha256": "10c9da68765315ed98850f8e048347c3eb06dd81822dc2ab1d4fde9dc9702646"
+            "url": "https://files.pythonhosted.org/packages/24/a8/5133f51967fb21e46ee50831c3f5dda49e976b7f915408d670b1603d41d6/astroid-2.4.2-py3-none-any.whl",
+            "sha256": "bc58d83eb610252fd8de6363e39d4f1d0619c894b0ed24603b881c02e64c7386"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/f7/b6/5b98441b6749ea1db1e41e5e6e7a93cbdd7ffd45e11fe1b22d45884bc777/setuptools-42.0.2.zip",
-            "sha256": "c5b372090d7c8709ce79a6a66872a91e518f7d65af97fca78135e1cb10d4b940"
+            "url": "https://files.pythonhosted.org/packages/cc/89/6888f573886e9dc0906ec98f1b15888de20919a142c355d7f57ebd977d36/isort-5.7.0-py3-none-any.whl",
+            "sha256": "fff4f0c04e1825522ce6949973e83110a6e907750cd92d128b0d14aaaadbffdc"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/83/44/53cad68ce686585d12222e6769682c4bdb9686808d2739671f9175e2938b/setuptools_scm-3.3.3.tar.gz",
-            "sha256": "bd25e1fb5e4d603dcf490f1fde40fb4c595b357795674c3e5cb7f6217ab39ea5"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/34/de/d0cfe2ea7ddfd8b2b8374ed2e04eeb08b6ee6e1e84081d151341bba596e5/typed_ast-1.4.0.tar.gz",
-            "sha256": "66480f95b8167c9c5c5c87f32cf437d585937970f3fc24386f313a4c97b44e34"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/07/3f/a3d687f83c7d44970f70ff0400677746c8860b11f0c08f6b4e07205f0cdc/lazy-object-proxy-1.4.3.tar.gz",
-            "sha256": "f3900e8a5de27447acbf900b4750b0ddfd7ec1ea7fbaf11dfa911141bc522af0"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/23/84/323c2415280bc4fc880ac5050dddfb3c8062c2552b34c2e512eb4aa68f79/wrapt-1.11.2.tar.gz",
-            "sha256": "565a021fd19419476b9362b05eeaa094178de64f8361e44468f9e9d7843901e1"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/65/26/32b8464df2a97e6dd1b656ed26b2c194606c16fe163c695a992b36c11cdf/six-1.13.0-py2.py3-none-any.whl",
-            "sha256": "1f1b7d42e254082a9db6279deae68afb421ceba6158efa6131de7b3003ee93fd"
+            "url": "https://files.pythonhosted.org/packages/34/8c/74acd0ad5a0518be9e0f3b4d022e84da0c1d9b78972afce73259ac85d78b/lazy_object_proxy-1.4.3-cp38-cp38-manylinux1_x86_64.whl",
+            "sha256": "a6ae12d08c0bf9909ce12385803a543bfe99b95fe01e752536a60af2b7797c62"
         },
         {
             "type": "file",
@@ -47,18 +27,18 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/e5/b0/c121fd1fa3419ea9bfd55c7f9c4fedfec5143208d8c7ad3ce3db6c623c21/isort-4.3.21-py2.py3-none-any.whl",
-            "sha256": "6e811fcb295968434526407adb8796944f1988c5b65e8139058f2014cbe100fd"
+            "url": "https://files.pythonhosted.org/packages/fb/13/519c1264a134beab2be4bac8dd3e64948980a5ca7833b31cf0255b21f20a/pylint-2.6.0-py3-none-any.whl",
+            "sha256": "bfe68f020f8a0fece830a22dd4d5dddb4ecc6137db04face4c3420a46a52239f"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/ad/ae/86734823047962e7b8c8529186a1ac4a7ca19aaf1aa0c7713c022ef593fd/astroid-2.3.3-py3-none-any.whl",
-            "sha256": "840947ebfa8b58f318d42301cf8c0a20fd794a33b61cc4638e28e9e61ba32f42"
+            "url": "https://files.pythonhosted.org/packages/44/6f/7120676b6d73228c96e17f1f794d8ab046fc910d781c8d151120c3f1569e/toml-0.10.2-py2.py3-none-any.whl",
+            "sha256": "806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/e9/59/43fc36c5ee316bb9aeb7cf5329cdbdca89e5749c34d5602753827c0aa2dc/pylint-2.4.4-py3-none-any.whl",
-            "sha256": "886e6afc935ea2590b462664b161ca9a5e40168ea99e5300935f6591ad467df4"
+            "url": "https://files.pythonhosted.org/packages/82/f7/e43cefbe88c5fd371f4cf0cf5eb3feccd07515af9fd6cf7dbf1d1793a797/wrapt-1.12.1.tar.gz",
+            "sha256": "b62ffa81fb85f4332a4f609cab4ac40709470da05643a082ec1eb88e6d9b97d7"
         }
     ]
 }
