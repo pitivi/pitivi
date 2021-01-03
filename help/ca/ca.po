@@ -139,7 +139,7 @@ msgid ""
 "productivity tremendously."
 msgstr ""
 "Aquesta pàgina és una llista de dreceres importants per a accedir a funcions "
-"d'ús comú o ocult. Preneu el temps per familiaritzar-vos amb ells, ja que "
+"d'ús comú o ocult. Preneu el temps per a familiaritzar-vos amb ells, ja que "
 "milloraran tremendament la vostra productivitat."
 
 #. (itstool) path: section/title
@@ -498,7 +498,7 @@ msgid ""
 "the effect, or for performance reasons), click the corresponding checkbox in "
 "the <guiseq><gui>middle pane</gui><gui>Clip</gui><gui>Effects</gui></guiseq>."
 msgstr ""
-"Si voleu deshabilitar un efecte temporalment ( per comparar amb l'efecte i "
+"Si voleu deshabilitar un efecte temporalment (per a comparar amb l'efecte i "
 "sense ell, o per raons de rendiment), premeu la casella de selecció a "
 "<guiseq><gui>centre del panell</gui><gui>Configuració de la seqüència</"
 "gui><gui>Efectes</gui></guiseq>."
@@ -564,7 +564,7 @@ msgid ""
 "in <app>GStreamer</app> instead of putting temporary workarounds inside "
 "<app>Pitivi</app>."
 msgstr ""
-"Per maximitzar les capacitats de <app>Pitivi</app> i reduir les "
+"Per a maximitzar les capacitats de <app>Pitivi</app> i reduir les "
 "possibilitats d'errors, es recomana una versió molt recent de "
 "<app>GStreamer</app>. Això és degut a que els desenvolupadors <app>Pitivi</"
 "app> treballen de valent per a solucionar problemes directament a "
@@ -609,12 +609,12 @@ msgid ""
 msgstr ""
 "Els connectors <app>GStreamer</app> es troben en tres categories: Good, Bad "
 "i Ugly. És possible que necessiteu instal·lar connectors de qualsevol "
-"categoria per garantir la compatibilitat amb els vostres fitxers multimèdia. "
-"Tant si els instal·leu o no, pot dependre de la jurisdicció del vostre país "
-"sobre les patents de programari. Podeu trobar una descripció general dels "
-"connectors gstreamer i la seva classificació en categories <link href = "
-"\"http://gstreamer.freedesktop.org/documentation/plugins.html\"> Lloc web de "
-"Gstreamer </link>."
+"categoria per a garantir la compatibilitat amb els vostres fitxers "
+"multimèdia. Tant si els instal·leu o no, pot dependre de la jurisdicció del "
+"vostre país sobre les patents de programari. Podeu trobar una descripció "
+"general dels connectors gstreamer i la seva classificació en categories "
+"<link href = \"http://gstreamer.freedesktop.org/documentation/plugins.html"
+"\"> Lloc web de Gstreamer </link>."
 
 #. (itstool) path: item/p
 #: C/gstreamer.page:48
@@ -661,7 +661,7 @@ msgid ""
 "<em>gstreamer-ffmpeg</em> package to have access to ffmpeg's set of codecs."
 msgstr ""
 "A més a més dels connectors Good, Bad i Ugly, podeu instal·lar el paquet "
-"<em>gstreamer-ffmpeg</em> per tindre accés al conjunt de còdecs de ffmpeg."
+"<em>gstreamer-ffmpeg</em> per a tindre accés al conjunt de còdecs de ffmpeg."
 
 #. (itstool) path: section/title
 #: C/gstreamer.page:62
@@ -766,11 +766,11 @@ msgstr ""
 "de filmació durant els darrers anys, i per a assegurar que <app>Pitivi</app> "
 "segueix sent robust i senzill d'utilitzar, no intentem donar suport a tot "
 "dispositiu de maquinari possible. Com a resultat, actualment no podeu "
-"utilitzar <app>Pitivi</app> per capturar directament des d'una càmera de "
+"utilitzar <app>Pitivi</app> per a capturar directament des d'una càmera de "
 "vídeo; les aplicacions especialitzades són més adequades per a aquesta "
 "tasca. Per exemple, per càmeres de vídeo DV/HDV que utilitzen una connexió "
-"IEEE 1394, podeu utilitzar <app>Kino</app> o <app>dvgrab</app> per capturar "
-"imatges."
+"IEEE 1394, podeu utilitzar <app>Kino</app> o <app>dvgrab</app> per a "
+"capturar imatges."
 
 #. (itstool) path: section/title
 #: C/importing.page:34
@@ -1380,8 +1380,8 @@ msgid ""
 "gui> again."
 msgstr ""
 "Per silenciar una capa feu clic a la icona <gui>Volum</gui>. La icona es "
-"canviarà per a mostrar la capa s'ha silenciat. Per activar el so d'una capa "
-"feu clic a la icona <gui>Volum</gui> una altra vegada."
+"canviarà per a mostrar la capa s'ha silenciat. Per a activar el so d'una "
+"capa feu clic a la icona <gui>Volum</gui> una altra vegada."
 
 #. (itstool) path: section/title
 #: C/layers.page:62
@@ -1463,7 +1463,7 @@ msgid ""
 "of the work)."
 msgstr ""
 "Cal que reconegueu el treball de la forma especificada per l'autor o el "
-"llicenciatari (però no de forma que suggereixi que us dóna suport personal o "
+"llicenciatari (però no de forma que suggereixi que us dona suport personal o "
 "de l'ús del treball)."
 
 #. (itstool) path: item/title
@@ -1587,7 +1587,7 @@ msgstr ""
 #. (itstool) path: note/title
 #: C/mainwindow.page:55
 msgid "Hovering for more information"
-msgstr "Passeu per sobre per obtindre més informació"
+msgstr "Passeu per sobre per a obtindre més informació"
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:56
@@ -1709,7 +1709,7 @@ msgid ""
 "information on how to work with the timeline."
 msgstr ""
 "Mireu <link xref=\"layers\">Entenent les capes</link> i la pàgina <link xref="
-"\"movearoundtimeline\"> Movent la línia de temps</link> per obtindre més "
+"\"movearoundtimeline\"> Movent la línia de temps</link> per a obtindre més "
 "informació sobre com funciona la línia de temps."
 
 #. (itstool) path: section/title
@@ -1771,8 +1771,8 @@ msgid ""
 msgstr ""
 "Fixeu-vos que la majoria de les accions esdevenen disponibles sols quan es "
 "selecciona una seqüència (mireu la pàgina <link xref=\"selectiongrouping"
-"\">Selecció i agrupament</link> per obtindre més detalls). Quan no hi ha cap "
-"subjecte per a rebre l'acció, continua oculta (indicant la no "
+"\">Selecció i agrupament</link> per a obtindre més detalls). Quan no hi ha "
+"cap subjecte per a rebre l'acció, continua oculta (indicant la no "
 "disponibilitat)."
 
 #. (itstool) path: section/title
@@ -1798,22 +1798,22 @@ msgstr "Reprodueix/pausa"
 #. (itstool) path: item/p
 #: C/mainwindow.page:120
 msgid "Go forward one second"
-msgstr "Vés endavant un segon"
+msgstr "Ves endavant un segon"
 
 #. (itstool) path: item/p
 #: C/mainwindow.page:123
 msgid "Go back one second"
-msgstr "Vés enrere un segon"
+msgstr "Ves enrere un segon"
 
 #. (itstool) path: item/p
 #: C/mainwindow.page:126
 msgid "Go to the end of the timeline"
-msgstr "Vés al final de la línia de temps"
+msgstr "Ves al final de la línia de temps"
 
 #. (itstool) path: item/p
 #: C/mainwindow.page:129
 msgid "Go to the beginning of the timeline"
-msgstr "Vés al començament de la línia de temps"
+msgstr "Ves al començament de la línia de temps"
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:132
@@ -2045,8 +2045,8 @@ msgstr ""
 "una llista o en una visualització d'icones. El mode per defecte és "
 "visualització d'icones ja que us mostra moltes seqüències sense necessitar "
 "desplaçament cap avall. Tanmateix, la visualització llista mostra més "
-"detalls sobre cada seqüència. Per activar-la / desactivar-la premeu sobre el "
-"botó <gui>Mostra seqüències com a llista detallada</gui> al costat de la "
+"detalls sobre cada seqüència. Per a activar-la / desactivar-la premeu sobre "
+"el botó <gui>Mostra seqüències com a llista detallada</gui> al costat de la "
 "barra de cerca."
 
 #. (itstool) path: section/title
@@ -2218,7 +2218,7 @@ msgid ""
 "timeline layers vertically"
 msgstr ""
 "Useu qualsevol roda del ratolí en qualsevol lloc sobre la línia de temps per "
-"a desplaçar-vos horitzontalment, o mantindre premuda la tecla <key>Maj</key> "
+"a desplaçar-vos horitzontalment, o mantenir premuda la tecla <key>Maj</key> "
 "mentre la roda del ratolí es desplaça verticalment per les capes de la línia "
 "de temps"
 
@@ -2324,7 +2324,7 @@ msgid ""
 "button on the left of the zoom slider. Another way to do this is by pressing "
 "<keyseq><key>Ctrl</key><key>0</key></keyseq>."
 msgstr ""
-"Per tindre una vista global de la línia de temps, podeu prémer el botó "
+"Per a tindre una vista global de la línia de temps, podeu prémer el botó "
 "<gui>Zoom</gui> a l'esquerra del control lliscant del zoom. Una altra forma "
 "de fer això és pressionar <keyseq><key>Ctrl</key><key>0</key></keyseq>."
 
@@ -2340,7 +2340,7 @@ msgid ""
 "to another in a single click. To do that, click anywhere on the zoom slider."
 msgstr ""
 "Usant el ratolí, podeu també <em>deformar</em> de forma instantània des d'un "
-"nivell de zoom fins un altre amb un clic. Per a fer això, premeu a qualsevol "
+"nivell de zoom fins a un altre amb un clic. Per a fer això, premeu a qualsevol "
 "lloc sobre el lliscador del zoom."
 
 #. (itstool) path: section/title
@@ -2477,7 +2477,7 @@ msgid ""
 msgstr ""
 "Premeu a la dreta del quadre combinat dels predefinits el botó "
 "<guiseq><gui>Menú</gui><gui>Nou</gui></guiseq>. Si aquesta opció està "
-"desactivada omet i vés al següent pas."
+"desactivada omet i ves al següent pas."
 
 #. (itstool) path: item/p
 #: C/presets.page:39
@@ -2486,7 +2486,7 @@ msgid ""
 "you're done, press <key>Enter</key>."
 msgstr ""
 "Doneu al vostre predefinit un nom únic: Premeu sobre el quadre combinat per "
-"a editar el nom. Quan ho hageu fet, premeu <key>Retorn</key>."
+"a editar el nom. Quan ho hàgeu fet, premeu <key>Retorn</key>."
 
 #. (itstool) path: section/p
 #: C/presets.page:42
@@ -2707,7 +2707,7 @@ msgid ""
 msgstr ""
 "Quan seleccioneu una seqüència, especifiqueu a quin element s'hauria "
 "d'aplicar les accions posteriors. Quan seleccioneu múltiples seqüències "
-"podeu aplicar accions (arrossegar, eliminar, agrupar, etc.) a tots elles a "
+"podeu aplicar accions (arrossegar, eliminar, agrupar, etc.) a tots elles al "
 "mateix temps. Per a seleccionar una seqüència individual, premeu sobre ella."
 
 #. (itstool) path: section/p
@@ -2779,7 +2779,7 @@ msgid ""
 "\"movearoundtimeline#movingplayhead\"/> for details."
 msgstr ""
 "Per defecte quan premeu sobre la línia de temps canvieu la selecció i moveu "
-"el punt de reproducció. Per tindre un millor control sobre el punt de "
+"el punt de reproducció. Per a tindre un millor control sobre el punt de "
 "reproducció podeu deshabilitar la cerca quan premeu el botó esquerre. "
 "D'aquesta forma al prémer el botó esquerre sols canvieu la selecció i el "
 "punt de reproducció no es perdrà quan feu seleccions. Això es pot "
@@ -2888,7 +2888,7 @@ msgstr ""
 "heu «d'activar» una eina particular abans de fer l'acció de dividir. La "
 "divisió succeeix on el punt de reproducció està situat actualment (mireu "
 "també <link xref=\"movearoundtimeline\">Movent el punt de reproducció</"
-"link>). Combinat amb amplia, cercant fotograma-a-fotograma amb el teclat o "
+"link>). Combinat amb l'ampliació, cercant fotograma-a-fotograma amb el teclat o "
 "el tractament de neteja, dividir sense models no sols és més ràpid, també és "
 "més eficient."
 
@@ -3231,7 +3231,7 @@ msgid ""
 "following images illustrate how to fade a clip to black:"
 msgstr ""
 "Podeu crear transicions apareix i esvaeix en seqüències si useu fotogrames "
-"clau que controlin l'opacitat de la seqüència. Per tindre més informació "
+"clau que controlin l'opacitat de la seqüència. Per a tindre més informació "
 "sobre fotogrames clau mireu les <link xref=\"keyframecurves\">corbes de "
 "fotogrames clau</link>. Per entendre l'opacitat, mireu <link xref=\"layers"
 "\">Entenent les capes</link>. Les següents imatges il·lustren com esvair una "
@@ -3901,8 +3901,9 @@ msgstr ""
 "a la part superior de la <gui>Biblioteca d'efectes</gui>. En escriure a "
 "l'entrada de cerca es filtren els continguts de la <gui>Biblioteca "
 "d'efectes</gui> per a mostrar només efectes el nom o la descripció dels "
-"quals coincideixen amb els vostres termes de cerca. Per restablir l'entrada "
-"de cerca, feu clic a la icona <gui>Neteja</gui> a l'entrada de cerca."
+"quals coincideixen amb els vostres termes de cerca. Per a restablir "
+"l'entrada de cerca, feu clic a la icona <gui>Neteja</gui> a l'entrada de "
+"cerca."
 
 #. (itstool) path: section/title
 #: C/usingeffects.page:26
@@ -4105,7 +4106,7 @@ msgid ""
 "changed to match. See <link xref=\"importing\">Getting media</link> for "
 "details."
 msgstr ""
-"Quan importeu el primer vídeo els paràmetres del projecte canvien per "
+"Quan importeu el primer vídeo els paràmetres del projecte canvien per a "
 "coincidir. Mireu <link xref=\"importing\">Primers passos amb el multimèdia</"
 "link> per a veure més detalls."
 
@@ -4157,7 +4158,7 @@ msgstr ""
 #: C/workwithprojects.page:52
 #, fuzzy
 msgid "To toggle Safe Areas on and off, press <key>'</key>."
-msgstr "Per activar i desactivar àrees segures premeu <key>'</key>."
+msgstr "Per a activar i desactivar àrees segures premeu <key>'</key>."
 
 #~ msgid "Pixel aspect ratio vs display aspect ratio"
 #~ msgstr "Relació d'aspecte dels píxels vs relació d'aspecte de pantalla"
