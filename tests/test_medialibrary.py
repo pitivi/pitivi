@@ -192,21 +192,6 @@ class BaseTestMediaLibrary(common.TestCase):
 
 class TestMediaLibrary(BaseTestMediaLibrary):
 
-    def test_import_dialog_proxy_filter(self):
-        mock_filter = mock.Mock()
-        mock_filter.mime_type = "video/mp4"
-
-        self._custom_set_up()
-        mlib = self.medialibrary
-
-        # Test HQ Proxies are filtered
-        mock_filter.uri = "file:///home/user/Videos/video.mp4.2360382.proxy.mov"
-        self.assertFalse(mlib._filter_unsupported(mock_filter))
-
-        # Test Scaled Proxies are filtered
-        mock_filter.uri = "file:///home/user/Videos/video.mp4.2360382.300x300.scaledproxy.mov"
-        self.assertFalse(mlib._filter_unsupported(mock_filter))
-
     def stop_using_proxies(self, delete_proxies=False):
         sample_name = "30fps_numeroted_frames_red.mkv"
         self.check_import([sample_name])

@@ -892,3 +892,37 @@ AUDIO_RATES = create_model((str, int),
                                48000,
                                96000
                            )])
+
+# This whitelist is made from personal knowledge of file extensions in the wild,
+# from gst-inspect |grep demux,
+# http://en.wikipedia.org/wiki/Comparison_of_container_formats and
+# http://en.wikipedia.org/wiki/List_of_file_formats#Video
+# ...and looking at the contents of /usr/share/mime
+SUPPORTED_FILE_FORMATS = {
+    "video": ("3gpp", "3gpp2", "dv", "mp2t", "mp2t", "mp4", "mpeg", "ogg",
+              "quicktime", "webm", "x-flv", "x-matroska", "x-mng", "x-ms-asf",
+              "x-ms-wmp", "x-ms-wmv", "x-msvideo", "x-ogm+ogg", "x-theora+ogg"),
+    "application": ("mxf",),
+    "audio": ("aac", "ac3", "basic", "flac", "mp2", "mp4", "mpeg", "ogg",
+              "opus", "webm", "x-adpcm", "x-aifc", "x-aiff", "x-aiffc",
+              "x-ape", "x-flac+ogg", "x-m4b", "x-matroska", "x-ms-asx",
+              "x-ms-wma", "x-speex", "x-speex+ogg", "x-vorbis+ogg", "x-wav"),
+    "image": ("jp2", "jpeg", "png", "svg+xml")}
+
+SUPPORTED_MIMETYPES = []
+for category, mime_types in SUPPORTED_FILE_FORMATS.items():
+    for mime in mime_types:
+        SUPPORTED_MIMETYPES.append(category + "/" + mime)
+
+
+def filter_unsupported_media_files(filter_info):
+    """Returns whether the specified item should be displayed."""
+    from pitivi.utils.proxy import ProxyManager
+
+    if filter_info.mime_type not in SUPPORTED_MIMETYPES:
+        return False
+
+    if ProxyManager.is_proxy_asset(filter_info.uri):
+        return False
+
+    return True

@@ -34,6 +34,7 @@ from pitivi import configure
 from pitivi.check import MISSING_SOFT_DEPS
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import cmp
+from pitivi.utils.misc import is_pathname_valid
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import show_user_manual
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
@@ -41,6 +42,7 @@ from pitivi.utils.ui import AUDIO_CHANNELS
 from pitivi.utils.ui import AUDIO_RATES
 from pitivi.utils.ui import beautify_eta
 from pitivi.utils.ui import create_frame_rates_model
+from pitivi.utils.ui import filter_unsupported_media_files
 from pitivi.utils.ui import get_combo_value
 from pitivi.utils.ui import set_combo_value
 from pitivi.utils.widgets import GstElementSettingsDialog
@@ -814,16 +816,10 @@ class RenderDialog(Loggable):
         self._create_ui()
 
         # Directory and Filename
-        self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
         if not self.project.name:
             self._update_filename(_("Untitled"))
         else:
             self._update_filename(self.project.name)
-
-        # Add a shortcut for the project folder (if saved)
-        if self.project.uri:
-            shortcut = os.path.dirname(self.project.uri)
-            self.filebutton.add_shortcut_folder_uri(shortcut)
 
         self._setting_encoding_profile = False
 
@@ -1133,35 +1129,30 @@ class RenderDialog(Loggable):
 
     def _check_filename(self):
         """Displays a warning if the file path already exists."""
-        path = self.filebutton.get_current_folder()
-        if not path:
-            # This happens when the window is initialized.
-            return
-
-        filename = self.fileentry.get_text()
-
-        # Characters that cause pipeline failure.
-        blacklist = ["/"]
-        invalid_chars = "".join([ch for ch in blacklist if ch in filename])
-
-        warning_icon = "dialog-warning"
-        self._is_filename_valid = True
-        if not filename:
+        filepath = self.fileentry.get_text()
+        if not filepath:
             tooltip_text = _("A file name is required.")
             self._is_filename_valid = False
-        elif os.path.exists(os.path.join(path, filename)):
-            tooltip_text = _("This file already exists.\n"
-                             "If you don't want to overwrite it, choose a "
-                             "different file name or folder.")
-        elif invalid_chars:
-            tooltip_text = _("Remove invalid characters from the filename: %s") % invalid_chars
-            self._is_filename_valid = False
         else:
-            warning_icon = None
-            tooltip_text = None
+            filepath = os.path.realpath(filepath)
+            if os.path.isdir(filepath):
+                tooltip_text = _("A file name is required.")
+                self._is_filename_valid = False
+            elif os.path.exists(filepath):
+                tooltip_text = _("This file already exists.\n"
+                                 "If you don't want to overwrite it, choose a "
+                                 "different file name or folder.")
+                self._is_filename_valid = True
+            elif not is_pathname_valid(filepath):
+                tooltip_text = _("Invalid file path")
+                self._is_filename_valid = False
+            else:
+                tooltip_text = None
+                self._is_filename_valid = True
 
-        self.fileentry.set_icon_from_icon_name(1, warning_icon)
-        self.fileentry.set_icon_tooltip_text(1, tooltip_text)
+        warning_icon = "dialog-warning" if tooltip_text else None
+        self.fileentry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, warning_icon)
+        self.fileentry.set_icon_tooltip_text(Gtk.EntryIconPosition.SECONDARY, tooltip_text)
         self.__update_render_button_sensitivity()
 
     def _get_filesize_estimate(self):
@@ -1199,7 +1190,8 @@ class RenderDialog(Loggable):
             name = "%s%s%s" % (basename, os.path.extsep, extension)
         else:
             name = basename
-        self.fileentry.set_text(name)
+
+        self.fileentry.set_text(os.path.join(self.app.settings.lastExportFolder, name))
 
     def _update_valid_restriction_values(self, caps, combo, caps_template,
                                          model, combo_value,
@@ -1489,12 +1481,43 @@ class RenderDialog(Loggable):
             getattr(self.project, media_type + "_profile").set_format(caps)
         self.dialog.window.destroy()
 
+    def _select_file_clicked_cb(self, unused_button):
+        chooser = Gtk.FileChooserNative.new(
+            _("Select file path to render"),
+            self.window,
+            Gtk.FileChooserAction.SAVE,
+            None, None)
+
+        file_filter = Gtk.FileFilter()
+        file_filter.set_name(_("Supported file formats"))
+        file_filter.add_custom(Gtk.FileFilterFlags.URI | Gtk.FileFilterFlags.MIME_TYPE,
+                               filter_unsupported_media_files)
+        chooser.add_filter(file_filter)
+        chooser.set_current_folder(self.app.settings.lastExportFolder)
+        # Add a shortcut for the project folder (if saved)
+        if self.project.uri:
+            shortcut = os.path.dirname(self.project.uri)
+            chooser.add_shortcut_folder_uri(shortcut)
+
+        response = chooser.run()
+        if response == Gtk.ResponseType.DELETE_EVENT:
+            # This happens because Gtk.FileChooserNative is confused because we
+            # added a filter but since it's ignored it complains there is none.
+            # Try again without the filter.
+            chooser.remove_filter(file_filter)
+            response = chooser.run()
+
+        if response == Gtk.ResponseType.ACCEPT:
+            self.app.settings.lastExportFolder = chooser.get_current_folder()
+            self.fileentry.set_text(os.path.join(chooser.get_filename()))
+
     def _render_button_clicked_cb(self, unused_button):
         """Starts the rendering process."""
         self.__replace_proxies()
         self.__unset_effect_preview_props()
-        self.outfile = os.path.join(self.filebutton.get_uri(),
-                                    self.fileentry.get_text())
+        filename = os.path.realpath(self.fileentry.get_text())
+        self.outfile = Gst.filename_to_uri(filename)
+        self.app.settings.lastExportFolder = os.path.dirname(filename)
         self.progress = RenderingProgressDialog(self.app, self)
         # Hide the rendering settings dialog while rendering
         self.window.hide()
@@ -1513,7 +1536,6 @@ class RenderDialog(Loggable):
         self.project.pipeline.connect("position", self._update_position_cb)
         # Force writing the config now, or the path will be reset
         # if the user opens the rendering dialog again
-        self.app.settings.lastExportFolder = self.filebutton.get_current_folder()
         self.app.settings.store_settings()
 
     def _close_button_clicked_cb(self, unused_button):
@@ -1528,10 +1550,7 @@ class RenderDialog(Loggable):
     def _container_context_help_clicked_cb(self, unused_button):
         show_user_manual("codecscontainers")
 
-    def _current_folder_changed_cb(self, *unused_args):
-        self._check_filename()
-
-    def _filename_changed_cb(self, *unused_args):
+    def _fileentry_changed_cb(self, unused_entry):
         self._check_filename()
 
     # Periodic (timer) callbacks
@@ -1539,6 +1558,7 @@ class RenderDialog(Loggable):
         if self._rendering_is_paused:
             # Do nothing until we resume rendering
             return True
+
         if self._is_rendering:
             if self.current_position:
                 timediff = time.time() - self._time_started - self._time_spent_paused
@@ -1549,10 +1569,10 @@ class RenderDialog(Loggable):
                 if estimate:
                     self.progress.update_progressbar_eta(estimate)
             return True
-        else:
-            self._time_estimate_timer = None
-            self.debug("Stopping the ETA timer")
-            return False
+
+        self._time_estimate_timer = None
+        self.debug("Stopping the ETA timer")
+        return False
 
     def _update_filesize_estimate_cb(self):
         if self._rendering_is_paused:

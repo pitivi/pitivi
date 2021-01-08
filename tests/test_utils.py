@@ -30,6 +30,7 @@ from pitivi.utils.misc import fixate_caps_with_default_values
 from pitivi.utils.ui import beautify_last_updated_timestamp
 from pitivi.utils.ui import beautify_length
 from pitivi.utils.ui import create_frame_rates_model
+from pitivi.utils.ui import filter_unsupported_media_files
 from pitivi.utils.ui import format_audiochannels
 from pitivi.utils.ui import format_audiorate
 from pitivi.utils.ui import format_framerate_value
@@ -294,3 +295,18 @@ class TestCreateFramerateModel(common.TestCase):
                              (130, 1)
                              ]
         self.assertListEqual([(row[1].num, row[1].denom) for row in model], sorted_frameslist)
+
+
+class TestFiltering(common.TestCase):
+
+    def test_filter_unsupported_media_files(self):
+        mock_filter_info = mock.Mock()
+        mock_filter_info.mime_type = "video/mp4"
+
+        # Test HQ Proxies are filtered
+        mock_filter_info.uri = "file:///home/user/Videos/video.mp4.2360382.proxy.mov"
+        self.assertFalse(filter_unsupported_media_files(mock_filter_info))
+
+        # Test Scaled Proxies are filtered
+        mock_filter_info.uri = "file:///home/user/Videos/video.mp4.2360382.300x300.scaledproxy.mov"
+        self.assertFalse(filter_unsupported_media_files(mock_filter_info))

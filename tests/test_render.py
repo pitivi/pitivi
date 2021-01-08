@@ -321,11 +321,10 @@ class TestRender(BaseTestMediaLibrary):
         from pitivi.render import RenderingProgressDialog
         with tempfile.TemporaryDirectory() as temp_dir:
             # Start rendering
-            with mock.patch.object(dialog.filebutton, "get_uri",
-                                   return_value=Gst.filename_to_uri(temp_dir)):
-                with mock.patch.object(dialog.fileentry, "get_text", return_value="outfile"):
-                    with mock.patch.object(RenderingProgressDialog, "__new__"):
-                        dialog._render_button_clicked_cb(None)
+            with mock.patch.object(dialog.fileentry, "get_text",
+                                   return_value=os.path.join(temp_dir, "outfile")):
+                with mock.patch.object(RenderingProgressDialog, "__new__"):
+                    dialog._render_button_clicked_cb(None)
 
             message = dialog._pipeline.get_bus().timed_pop_filtered(
                 Gst.CLOCK_TIME_NONE,
@@ -335,10 +334,11 @@ class TestRender(BaseTestMediaLibrary):
                 dialog._pipeline, Gst.DebugGraphDetails.ALL,
                 "test_rendering_with_profile.dot")
 
-            result_file = Gst.filename_to_uri(os.path.join(temp_dir, "outfile"))
             struct = message.get_structure()
             self.assertEqual(message.type, Gst.MessageType.EOS,
                              struct.to_string() if struct else message)
+
+            result_file = Gst.filename_to_uri(os.path.join(temp_dir, "outfile"))
             asset = GES.UriClipAsset.request_sync(result_file)
             self.assertIsNotNone(asset)
 

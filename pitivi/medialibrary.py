@@ -53,10 +53,10 @@ from pitivi.utils.misc import quote_uri
 from pitivi.utils.misc import show_user_manual
 from pitivi.utils.proxy import get_proxy_target
 from pitivi.utils.proxy import ProxyingStrategy
-from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.ui import beautify_asset
 from pitivi.utils.ui import beautify_eta
 from pitivi.utils.ui import FILE_TARGET_ENTRY
+from pitivi.utils.ui import filter_unsupported_media_files
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import info_name
 from pitivi.utils.ui import LARGE_THUMB_WIDTH
@@ -102,28 +102,6 @@ class AssetStoreItem(GObject.GObject):
         self.uri = self.asset.props.id
         self.search_text = info_name(asset)
         self.thumb_decorator = thumb_decorator
-
-
-# This whitelist is made from personal knowledge of file extensions in the wild,
-# from gst-inspect |grep demux,
-# http://en.wikipedia.org/wiki/Comparison_of_container_formats and
-# http://en.wikipedia.org/wiki/List_of_file_formats#Video
-# ...and looking at the contents of /usr/share/mime
-SUPPORTED_FILE_FORMATS = {
-    "video": ("3gpp", "3gpp2", "dv", "mp2t", "mp2t", "mp4", "mpeg", "ogg",
-              "quicktime", "webm", "x-flv", "x-matroska", "x-mng", "x-ms-asf",
-              "x-ms-wmp", "x-ms-wmv", "x-msvideo", "x-ogm+ogg", "x-theora+ogg"),
-    "application": ("mxf",),
-    "audio": ("aac", "ac3", "basic", "flac", "mp2", "mp4", "mpeg", "ogg",
-              "opus", "webm", "x-adpcm", "x-aifc", "x-aiff", "x-aiffc",
-              "x-ape", "x-flac+ogg", "x-m4b", "x-matroska", "x-ms-asx",
-              "x-ms-wma", "x-speex", "x-speex+ogg", "x-vorbis+ogg", "x-wav"),
-    "image": ("jp2", "jpeg", "png", "svg+xml")}
-
-SUPPORTED_MIMETYPES = []
-for category, mime_types in SUPPORTED_FILE_FORMATS.items():
-    for mime in mime_types:
-        SUPPORTED_MIMETYPES.append(category + "/" + mime)
 
 
 class OptimizeOption(IntEnum):
@@ -760,16 +738,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         project.connect("proxying-error", self._proxying_error_cb)
         project.connect("settings-set-from-imported-asset", self.__project_settings_set_from_imported_asset_cb)
 
-    def _filter_unsupported(self, filter_info):
-        """Returns whether the specified item should be displayed."""
-        if filter_info.mime_type not in SUPPORTED_MIMETYPES:
-            return False
-
-        if ProxyManager.is_proxy_asset(filter_info.uri):
-            return False
-
-        return True
-
     def show_import_assets_dialog(self):
         """Pops up the "Import Sources" dialog box."""
         dialog = Gtk.FileChooserDialog()
@@ -794,7 +762,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         file_filter = Gtk.FileFilter()
         file_filter.set_name(_("Supported file formats"))
         file_filter.add_custom(Gtk.FileFilterFlags.URI | Gtk.FileFilterFlags.MIME_TYPE,
-                               self._filter_unsupported)
+                               filter_unsupported_media_files)
         for formatter in GES.list_assets(GES.Formatter):
             for extension in formatter.get_meta("extension").split(","):
                 if not extension:
