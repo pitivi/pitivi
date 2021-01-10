@@ -47,7 +47,7 @@ msgstr "Mario Blättermann"
 #. (itstool) path: info/desc
 #: C/about.page:14
 msgid "Current state of this user manual and call for participation."
-msgstr "Estat actual d'aquest manual d'usuari i cridada per participar."
+msgstr "Estat actual d'aquest manual d'usuari i crida per a participar."
 
 #. (itstool) path: license/p
 #: C/about.page:18 C/cheatsheet.page:12 C/codecscontainers.page:15
@@ -566,7 +566,7 @@ msgid ""
 msgstr ""
 "Per a maximitzar les capacitats de <app>Pitivi</app> i reduir les "
 "possibilitats d'errors, es recomana una versió molt recent de "
-"<app>GStreamer</app>. Això és degut a que els desenvolupadors <app>Pitivi</"
+"<app>GStreamer</app>. Això és degut al fet que els desenvolupadors <app>Pitivi</"
 "app> treballen de valent per a solucionar problemes directament a "
 "<app>GStreamer</app> en lloc de solucionar-los temporalment a <app>Pitivi</"
 "app>."
@@ -626,7 +626,7 @@ msgid ""
 msgstr ""
 "Els connectors \"Good\" són connectors d'alta qualitat sota la llicència "
 "LGPL. Aquests connectors es consideren segurs i recomanats en qualsevol "
-"moment. Per instal·lar-los, cerqueu paquets que continguin connectors "
+"moment. Per a instal·lar-los, cerqueu paquets que continguin connectors "
 "gstreamer «Good» als dipòsits de la vostra distribució."
 
 #. (itstool) path: item/p
@@ -638,7 +638,7 @@ msgid ""
 "your distribution's repositories."
 msgstr ""
 "Els connectors «Bad» són complements la qualitat del qual no és prou bona o "
-"no es considera suficientment provada. La llicència pot ser o no LGPL. Per "
+"no es considera suficientment provada. La llicència pot ser o no LGPL. Per a "
 "instal·lar-los, cerqueu paquets que continguin connectors gstreamer «Bad» "
 "als dipòsits de la vostra distribució."
 
@@ -650,7 +650,7 @@ msgid ""
 "containing gstreamer plugins ugly in your distribution's repositories."
 msgstr ""
 "Els connectors «Ugly» són connectors de bona qualitat, la llicència dels "
-"quals no és LGPL o amb problemes de llicència. Per instal·lar-los, cerqueu "
+"quals no és LGPL o amb problemes de llicència. Per a instal·lar-los, cerqueu "
 "paquets que continguin connectors gstreamer «Ugly» en els dipòsits de la "
 "vostra distribució."
 
@@ -708,8 +708,8 @@ msgstr ""
 "utilitzen algunes càmeres de vídeo HD, no es poden reproduir de forma fiable "
 "amb <app>GStreamer</app>. Com a tal, és possible que vulgueu remesclar-los "
 "en un format de contenidor diferent mitjançant <app>ffmpeg</app>. Per a "
-"convertir sense pèrdues a un contenidor MPEG4, podeu utilitzar el següent "
-"comandament:"
+"convertir sense pèrdues a un contenidor MPEG4, podeu utilitzar la següent "
+"ordre:"
 
 #. (itstool) path: page/code
 #: C/importingmpegts.page:21
@@ -809,7 +809,7 @@ msgstr "Com treballar amb un suport no compatible"
 #: C/importing.page:40
 msgid "The following media containers and formats are officially supported:"
 msgstr ""
-"Els següents contenidors i formats multimèdia són suportats oficialment"
+"Els següents contenidors i formats multimèdia són suportats oficialment:"
 
 #. (itstool) path: item/p
 #: C/importing.page:42
@@ -918,7 +918,7 @@ msgid ""
 "Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, "
 "<app>GNOME Search Tool</app>, etc.)."
 msgstr ""
-"Aprofiteu la capacitat de cerca d'un altra aplicació (com <app>GNOME Shell</"
+"Aprofiteu la capacitat de cerca d'una altra aplicació (com <app>GNOME Shell</"
 "app>, <app>Tracker</app>, <app>Diari d'activitat de GNOME</app>, <app>Eina "
 "de cerca de GNOME</app> , etc.)."
 
@@ -1587,7 +1587,7 @@ msgstr ""
 #. (itstool) path: note/title
 #: C/mainwindow.page:55
 msgid "Hovering for more information"
-msgstr "Passeu per sobre per a obtindre més informació"
+msgstr "Passeu per sobre per a obtenir més informació"
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:56
@@ -1709,7 +1709,7 @@ msgid ""
 "information on how to work with the timeline."
 msgstr ""
 "Mireu <link xref=\"layers\">Entenent les capes</link> i la pàgina <link xref="
-"\"movearoundtimeline\"> Movent la línia de temps</link> per a obtindre més "
+"\"movearoundtimeline\"> Movent la línia de temps</link> per a obtenir més "
 "informació sobre com funciona la línia de temps."
 
 #. (itstool) path: section/title
@@ -1769,9 +1769,9 @@ msgid ""
 "details). When there is no subject for the action to be performed on, it "
 "remains shaded (indicating its unavailability)."
 msgstr ""
-"Fixeu-vos que la majoria de les accions esdevenen disponibles sols quan es "
+"Fixeu-vos que la majoria de les accions esdevenen disponibles sols quan se "
 "selecciona una seqüència (mireu la pàgina <link xref=\"selectiongrouping"
-"\">Selecció i agrupament</link> per a obtindre més detalls). Quan no hi ha "
+"\">Selecció i agrupament</link> per a obtenir més detalls). Quan no hi ha "
 "cap subjecte per a rebre l'acció, continua oculta (indicant la no "
 "disponibilitat)."
 
@@ -1970,8 +1970,8 @@ msgstr ""
 "Hi ha dues maneres d'importar fitxers a la <gui>Biblioteca multimèdia</gui>. "
 "La primera manera és prémer al botó <gui>Importa</gui> a l'extrem superior "
 "esquerre. Això obrirà un selector de fitxers en el qual podreu veure els "
-"fitxers seleccionats o seleccionar diversos fitxers (mantenint premuda <key> "
-"Maj </key> o la tecla <key> Control </key>). La segona manera és arrossegar "
+"fitxers seleccionats o seleccionar diversos fitxers (mantenint premuda <key>"
+"Maj</key> o la tecla <key>Control</key>). La segona manera és arrossegar "
 "i deixar anar els fitxers des d'un navegador de fitxers a la <gui>Biblioteca "
 "multimèdia</gui>. Els <em>fitxers</em> importats a la <gui>Biblioteca "
 "multimèdia</gui> s'anomenen <em>seqüències</em>."
@@ -2098,7 +2098,7 @@ msgstr ""
 "Per a identificar quines seqüències no s'utilitzen en el vostre projecte, "
 "utilitzeu el botó <gui>Selecciona les seqüències que no s'han usat al "
 "projecte</gui> al costat esquerre de la barra de cerca. Les seqüències no "
-"utilitzades es seleccionaran a la biblioteca multimèdia."
+"utilitzades se seleccionaran a la biblioteca multimèdia."
 
 #. (itstool) path: note/p
 #: C/medialibrary.page:64
@@ -2197,7 +2197,7 @@ msgstr ""
 "La barra d'eines de la línia de temps conté moltes eines que esdevenen "
 "actives quan una seqüència ha estat seleccionada a la línia de temps. Per a "
 "seleccionar una seqüència, premeu en la seqüència desitjada a la línia de "
-"temps. Quan es seleccioni, la seqüència esdevindrà fosca i els elements de "
+"temps. Quan se seleccioni, la seqüència esdevindrà fosca i els elements de "
 "la barra d'eines línia de temps es podran prémer."
 
 #. (itstool) path: section/title
@@ -2477,7 +2477,7 @@ msgid ""
 msgstr ""
 "Premeu a la dreta del quadre combinat dels predefinits el botó "
 "<guiseq><gui>Menú</gui><gui>Nou</gui></guiseq>. Si aquesta opció està "
-"desactivada omet i ves al següent pas."
+"desactivada, omet i ves al següent pas."
 
 #. (itstool) path: item/p
 #: C/presets.page:39
@@ -2486,7 +2486,7 @@ msgid ""
 "you're done, press <key>Enter</key>."
 msgstr ""
 "Doneu al vostre predefinit un nom únic: Premeu sobre el quadre combinat per "
-"a editar el nom. Quan ho hàgeu fet, premeu <key>Retorn</key>."
+"a editar el nom. Quan ho hàgiu fet, premeu <key>Retorn</key>."
 
 #. (itstool) path: section/p
 #: C/presets.page:42
@@ -2618,7 +2618,7 @@ msgstr ""
 "desarà a la ubicació especificada. És possible que pugueu utilitzar un "
 "fitxer parcialment renderitzat, depenent del format del contenidor "
 "especificat. Una nova operació de renderització no es pot reiniciar en un "
-"fitxer parcialment renderitzar."
+"fitxer parcialment renderitzat."
 
 #. (itstool) path: note/p
 #: C/rendering.page:49
@@ -2627,7 +2627,7 @@ msgid ""
 "app> will automatically inhibit the power saving features during the render "
 "process."
 msgstr ""
-"Si l'equip està configurat per suspendre o hibernar automàticament, "
+"Si l'equip està configurat per a suspendre o hibernar automàticament, "
 "<app>Pitivi</app> inhibirà automàticament les funcions d'estalvi d'energia "
 "durant el procés de renderitzat."
 
@@ -2948,7 +2948,7 @@ msgid ""
 "See how to select clips in <link xref=\"selectiongrouping#selection"
 "\">Selection and grouping</link>."
 msgstr ""
-"Mireu com es seleccionen les seqüències a <link xref="
+"Mireu com se seleccionen les seqüències a <link xref="
 "\"selectiongrouping#selection\">Selecció i agrupament</link>."
 
 #. (itstool) path: note/title
@@ -3137,13 +3137,13 @@ msgid ""
 "Assuming that you have two overlapping clips in your timeline, you can "
 "achieve other types of transitions by following these steps:"
 msgstr ""
-"Si assumim que teniu dues seqüències que es solapen en la línia de temps, "
+"Si assumim que teniu dues seqüències que se solapen en la línia de temps, "
 "podeu aconseguir altres tipus de transicions seguint els passos següents:"
 
 #. (itstool) path: item/p
 #: C/transitions.page:38
 msgid "Select the overlapping region by clicking on it."
-msgstr "Seleccioneu la regió que es solapa prement sobre ella."
+msgstr "Seleccioneu la regió que se solapa prement sobre ella."
 
 #. (itstool) path: item/p
 #: C/transitions.page:41
@@ -3233,7 +3233,7 @@ msgstr ""
 "Podeu crear transicions apareix i esvaeix en seqüències si useu fotogrames "
 "clau que controlin l'opacitat de la seqüència. Per a tindre més informació "
 "sobre fotogrames clau mireu les <link xref=\"keyframecurves\">corbes de "
-"fotogrames clau</link>. Per entendre l'opacitat, mireu <link xref=\"layers"
+"fotogrames clau</link>. Per a entendre l'opacitat, mireu <link xref=\"layers"
 "\">Entenent les capes</link>. Les següents imatges il·lustren com esvair una "
 "seqüència a negre:"
 
@@ -3704,7 +3704,7 @@ msgid ""
 "the new clips will be inserted one after another on the longest layer of the "
 "timeline where the last clip ends."
 msgstr ""
-"Quan es segueix la segona i la tercera opció (fent clic o prement «Inser»), "
+"Quan se segueix la segona i la tercera opció (fent clic o prement «Inser»), "
 "les seqüències noves s'insereixen un darrere l'altre a la capa més llarga de "
 "la línia de temps on acaba l'última seqüència."
 
@@ -3984,7 +3984,7 @@ msgstr ""
 "tornar a configurar directament un valor constant mitjançant el giny, heu de "
 "fer clic al botó <gui>Restableix al valor predeterminat</gui>. Per a obtenir "
 "més informació sobre com utilitzar fotogrames clau, consulteu la pàgina "
-"<link xref = \"keyframecurves\"> corbes de fotogrames clau </link>."
+"<link xref = \"keyframecurves\">corbes de fotogrames clau</link>."
 
 #. (itstool) path: note/p
 #: C/usingeffects.page:34
