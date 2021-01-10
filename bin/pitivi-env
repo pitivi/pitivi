@@ -20,14 +20,14 @@ export PATH="$FLATPAK_ENVPATH/bin/:$PATH"
 # Use ptvenv for entering or running commands in the sandbox.
 alias ptvenv="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak"
 
-echo "-> Setting up the prefix for the sandbox..."
-# This builds the local flatpak repo if it is not yet built.
+echo "Setting up the build dir of the sandbox in $FLATPAK_ENVPATH/pitivi-prefix"
 ptvenv --init
+
 if [ "$?" = "0" ]
 then
     echo "Sandbox ready."
 
-    echo "Setting up aliases etc. so configuring, building takes place in the sandbox..."
+    echo "Setting up aliases so configuring, building takes place in the sandbox..."
 
     # Meson sets up the build directory where ninja works.
     # Consider using `setup` instead of `meson`, see below.
@@ -35,7 +35,7 @@ then
 
     # Normally, Pitivi's mesonbuild/ directory is created when
     # initializing or updating (recreating) the Flatpak sandbox.
-    # The initialization happens above, look for `ptvenv echo`.
+    # The initialization happens above, look for `ptvenv --init`.
     # The updating happens when you run `ptvenv --update`.
     # You can also create it manually if you deleted it by mistake.
     # This should also be used when building dependent projects
@@ -50,7 +50,7 @@ then
     alias binstall="ptvenv ninja -C mesonbuild/ install"
     alias ptvtests="ptvenv gst-validate-launcher $PITIVI_REPO_DIR/tests/ptv_testsuite.py"
 
-    # Prefer to run some binaries in the sandbox. For example "python3".
+    # Prefer to run some binaries in the sandbox.
     for i in `$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q ls /app/bin/`
     do
         alias $i="ptvenv $i"
@@ -62,8 +62,13 @@ then
     rm -f .git/hooks/pre-commit
     ln -s ../../pre-commit.hook .git/hooks/pre-commit
 
-    # Update the prompt to indicate this is the Pitivi dev env.
-    export PS1="(ptv-flatpak) $PS1"
+    # Update the prompt to indicate this is the Pitivi dev env,
+    # unless PS1 has already been modified.
+    PS1_PREFIX="(ptv-flatpak)"
+    if [[ $PS1 != *"$PS1_PREFIX"* ]]
+    then
+        export PS1="$PS1_PREFIX $PS1"
+    fi
 
     echo "===================================================================="
     echo "                   BATTLECRUISER OPERATIONAL                        "
