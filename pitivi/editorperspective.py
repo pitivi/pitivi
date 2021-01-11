@@ -128,6 +128,9 @@ class EditorPerspective(Perspective, Loggable):
             # Nothing to work with, Pitivi is starting up.
             return
 
+        if self.app.project_manager.current_project.pipeline.rendering():
+            return
+
         # Commit the timeline so its nested timelines assets are refreshed.
         ges_timeline.commit()
 
