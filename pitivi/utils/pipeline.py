@@ -225,7 +225,7 @@ class SimplePipeline(GObject.Object, Loggable):
             res, cur = self._pipeline.query_position(Gst.Format.TIME)
         except Exception as e:
             self.handle_exception(e)
-            raise PipelineError("Couldn't get position")
+            raise PipelineError("Couldn't get position") from e
 
         if res:
             self._last_position = cur
@@ -492,7 +492,7 @@ class SimplePipeline(GObject.Object, Loggable):
             res, dur = self._pipeline.query_duration(Gst.Format.TIME)
         except Exception as e:
             self.handle_exception(e)
-            raise PipelineError("Couldn't get duration: %s" % e)
+            raise PipelineError("Couldn't get duration") from e
 
         if not res:
             raise PipelineError("Couldn't get duration: Returned None")
