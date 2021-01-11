@@ -28,6 +28,7 @@ sys.path.insert(0, os.path.join(CDIR, '..'))
 # Import tests so that the module is initialized
 import tests
 # pylint: disable=import-error
+# pylint: disable=wrong-import-order
 from launcher.baseclasses import Test
 
 

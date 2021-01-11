@@ -1,11 +1,11 @@
 ---
 repos:
   - repo: https://github.com/pre-commit/pre-commit.git
-    rev: v1.20.0
+    rev: v2.9.3
     hooks:
       - id: validate_manifest
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
-    rev: v2.4.0
+    rev: v3.4.0
     hooks:
       - id: check-yaml
       # Hooks able to fix small things.
@@ -17,11 +17,14 @@ repos:
       - id: check-docstring-first
       - id: debug-statements
   - repo: https://github.com/asottile/reorder_python_imports.git
-    rev: v1.8.0
+    rev: v2.3.6
     hooks:
       - id: reorder-python-imports
+        args:
+          - --py3-plus
+          - --unclassifiable-application-module=tests
   - repo: https://github.com/pycqa/pydocstyle
-    rev: 5.0.1
+    rev: 5.1.1
     hooks:
       - id: pydocstyle
         args:
@@ -29,7 +32,7 @@ repos:
           - --ignore=D1,D203,D213,D401,D406,D407,D413
         exclude: '.*pitivi/utils/extract.py$|.*pitivi/autoaligner.py$'
   - repo: https://gitlab.com/PyCQA/flake8
-    rev: 3.7.9
+    rev: 3.8.4
     hooks:
       - id: flake8
         args:
@@ -45,7 +48,7 @@ repos:
     hooks:
       - id: pylint
         name: pylint
-        entry: python3 -m pylint.__main__ --rcfile=pylint.rc
+        entry: python3 -m pylint.__main__ --rcfile=pylint.rc -j1
         language: system
         types: [python]
         exclude: >
@@ -56,14 +59,14 @@ repos:
             bin/pitivi.in
           )$
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.20.0
+    rev: v1.25.0
     hooks:
       - id: yamllint
         args:
           - -d
           - "{extends: default, rules: {line-length: disable}}"
   - repo: https://gitlab.com/devopshq/gitlab-ci-linter
-    rev: v1.0.0
+    rev: v1.0.1
     hooks:
       - id: gitlab-ci-linter
         args:

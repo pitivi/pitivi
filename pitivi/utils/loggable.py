@@ -478,8 +478,7 @@ def do_log(level, obj, category, message, args, where=-1, file_path=None, line=N
             try:
                 handler(level, obj, category, file_path, line, message)
             except TypeError as e:
-                raise SystemError("handler %r raised a TypeError: %s" % (
-                    handler, get_exception_message(e)))
+                raise SystemError("handler %r unusable" % handler) from e
 
     return ret
 

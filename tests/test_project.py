@@ -62,7 +62,7 @@ class ProjectManagerListener():
 class TestProjectManager(common.TestCase):
 
     def setUp(self):
-        super(TestProjectManager, self).setUp()
+        super().setUp()
         self.setup_app()
 
     def setup_app(self, app=None):

@@ -367,8 +367,8 @@ class UndoableActionLog(GObject.Object, Loggable):
                 stack = self.stacks.pop(-1)
             else:
                 stack = self.stacks[-1]
-        except IndexError:
-            raise UndoWrongStateError("No transaction")
+        except IndexError as e:
+            raise UndoWrongStateError("No transaction") from e
 
         return stack
 

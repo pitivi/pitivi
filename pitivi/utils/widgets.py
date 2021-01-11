@@ -494,8 +494,8 @@ class ChoiceWidget(Gtk.Box, DynamicWidget):
     def set_widget_value(self, value):
         try:
             self.contents.set_active(self.values.index(value))
-        except ValueError:
-            raise ValueError("%r not in %r" % (value, self.values))
+        except ValueError as e:
+            raise ValueError("%r not in %r" % (value, self.values)) from e
 
     def get_widget_value(self):
         return self.values[self.contents.get_active()]
