@@ -2,7 +2,7 @@
 short-description: How to make a new release
 ...
 
-# How to make a release
+# Making a release
 
 Ideally these instructions are in line with the [GNOME releasing
 process](https://live.gnome.org/MaintainersCorner/Releasing).

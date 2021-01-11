@@ -2,7 +2,7 @@
 short-description: How to update the SDK used by the Pitivi development environment
 ...
 
-# How to update the SDK
+# Updating the SDK
 
 We use the same [Flatpak
 manifest](https://gitlab.gnome.org/GNOME/pitivi/blob/master/build/flatpak/org.pitivi.Pitivi.json)

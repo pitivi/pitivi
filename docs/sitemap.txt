@@ -26,6 +26,8 @@ index.md
 	Administrative.md
 		release.md
 		How_to_update_SDK.md
+		Updating_Python_dependencies.md
+		Precommit_hooks.md
 	Praise.md
 	Project_history.md
 	Current_events.md
