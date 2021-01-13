@@ -288,12 +288,13 @@ class ClipPropertiesTest(common.TestCase):
         self.assertEqual(len(clips), 1, clips)
         self.assertIsInstance(clips[0], GES.TitleClip)
         source, = clips[0].get_children(False)
-        return [source.get_child_property(p) for p in ("text",
-                                                       "x-absolute", "y-absolute",
-                                                       "valignment", "halignment",
-                                                       "font-desc",
-                                                       "color",
-                                                       "foreground-color")]
+        return {p: source.get_child_property(p)
+                for p in ("text",
+                          "x-absolute", "y-absolute",
+                          "valignment", "halignment",
+                          "font-desc",
+                          "color",
+                          "foreground-color")}
 
     @common.setup_timeline
     @common.setup_clipproperties
@@ -303,6 +304,8 @@ class ClipPropertiesTest(common.TestCase):
 
         self.clipproperties.create_title_clip_cb(None)
         ps1 = self._get_title_source_child_props()
+        self.assertTrue(ps1["text"][1])
+        self.assertNotEqual(ps1["text"][1], "", "Title clip does not have an initial text")
 
         self.action_log.undo()
         clips = self.layer.get_clips()
@@ -310,7 +313,34 @@ class ClipPropertiesTest(common.TestCase):
 
         self.action_log.redo()
         ps2 = self._get_title_source_child_props()
-        self.assertListEqual(ps1, ps2)
+        self.assertDictEqual(ps1, ps2)
+
+    @common.setup_timeline
+    @common.setup_clipproperties
+    def test_modify_title(self):
+        """Exercise modifying the title."""
+        self.project.pipeline.get_position = mock.Mock(return_value=0)
+
+        self.clipproperties.create_title_clip_cb(None)
+        ps1 = self._get_title_source_child_props()
+
+        # Modify the title.
+        mod_title = "Modifed Title"
+        self.clipproperties.title_expander.textbuffer.props.text = mod_title
+        self.clipproperties.title_expander.textbuffer.props.text = mod_title
+        ps2 = self._get_title_source_child_props()
+        self.assertEqual(ps2["text"][1], mod_title)
+        self.assertNotEqual(ps1["text"], ps2["text"])
+
+        # Undo modify title.
+        self.action_log.undo()
+        ps3 = self._get_title_source_child_props()
+        self.assertDictEqual(ps1, ps3)
+
+        # Redo modify title.
+        self.action_log.redo()
+        ps4 = self._get_title_source_child_props()
+        self.assertDictEqual(ps2, ps4)
 
     @common.setup_timeline
     @common.setup_clipproperties
