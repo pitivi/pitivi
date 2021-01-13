@@ -53,6 +53,8 @@ from pitivi.utils.ui import SPACING
  COL_DESC_TEXT,
  COL_TRACK_EFFECT) = list(range(6))
 
+# Translators: This is the default text of a title clip.
+DEFAULT_TEXT = _("Title Clip")
 FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White
 BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
 DEFAULT_FONT_DESCRIPTION = "Sans 36"
@@ -144,13 +146,15 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         title_clip = GES.TitleClip()
         duration = self.app.settings.titleClipLength * Gst.MSECOND
         title_clip.set_duration(duration)
-        with self.app.action_log.started("add title clip", toplevel=True):
+        with self.app.action_log.started("add title clip",
+                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                         toplevel=True):
             self.app.gui.editor.timeline_ui.insert_clips_on_first_layer([
                 title_clip])
             # Now that the clip is inserted in the timeline, it has a source which
             # can be used to set its properties.
             source = title_clip.get_children(False)[0]
-            properties = {"text": "",
+            properties = {"text": DEFAULT_TEXT,
                           "foreground-color": BACKGROUND_DEFAULT_COLOR,
                           "color": FOREGROUND_DEFAULT_COLOR,
                           "font-desc": DEFAULT_FONT_DESCRIPTION,
