@@ -797,7 +797,7 @@ msgid ""
 "When enabled, adjacent clips automatically move to fill gaps."
 msgstr ""
 "Mode sense espais\n"
-"Si s'habilita, les seqüències adjacents es mouen automàticament per omplir "
+"Si s'habilita, les seqüències adjacents es mouen automàticament per a omplir "
 "els espais."
 
 #: data/ui/timelinetoolbar.ui:125
@@ -942,7 +942,7 @@ msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
 msgstr ""
-"babilita un vigilant a la canonada GStreamer. Useu-lo per detectar errors "
+"babilita un vigilant a la canonada GStreamer. Useu-lo per a detectar errors "
 "que ocorrin en GStreamer i recupereu-los des d'ell"
 
 #: pitivi/clipproperties.py:123
@@ -970,7 +970,7 @@ msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
 msgstr ""
-"Per aplicar un efecte al clip, arrossegueu-lo des de la Biblioteca d'efectes "
+"Per a aplicar un efecte al clip, arrossegueu-lo des de la Biblioteca d'efectes "
 "o utilitzeu el botó de sota."
 
 #: pitivi/clipproperties.py:249
@@ -1131,7 +1131,7 @@ msgid ""
 "\n"
 "Pitivi does not currently support partial projects."
 msgstr ""
-"No s'ha proporcionat cap fitxer per substituir «<i>%s</i>».\n"
+"No s'ha proporcionat cap fitxer per a substituir «<i>%s</i>».\n"
 "\n"
 "El Pitivi no admet projectes parcials."
 
@@ -1269,7 +1269,7 @@ msgstr "Arrossegueu els fitxers aquí per importar-los"
 
 #: pitivi/interactiveintro.py:216
 msgid "Drag clips in the timeline to arrange them"
-msgstr "Arrossega seqüències a la línia de temps per organitzar-les"
+msgstr "Arrossega seqüències a la línia de temps per a organitzar-les"
 
 #: pitivi/interactiveintro.py:218
 msgid "Right-click anywhere to move the playhead"
@@ -1427,7 +1427,7 @@ msgstr[1] "S'han produït {0:d} errors durant la importació."
 #, python-format
 msgid "The project settings have been set to match file '%s'"
 msgstr ""
-"Els paràmetres del projecte s'han ajustat per coincidir amb el fitxer «%s»"
+"Els paràmetres del projecte s'han ajustat per a coincidir amb el fitxer «%s»"
 
 #: pitivi/medialibrary.py:1116
 msgid "The following file can not be used with Pitivi."
@@ -1526,7 +1526,7 @@ msgstr ""
 "\n"
 "Aquest és un error rar i greu. Mireu la nostra <a href=\"http://developer."
 "pitivi.org/Bug_reporting.html\">guia d'informar errors</a> i utilitzeu una "
-"mica de temps per informar de l'error! Nosaltres estarem encants de fixar "
+"mica de temps per a informar de l'error! Nosaltres estarem encants de fixar "
 "aquest error i feu que això no passi en versions futures.\n"
 "\n"
 "Abans de tancar Pitivi, podeu desar els canvis al fitxer del projecte o en "
@@ -2170,7 +2170,7 @@ msgid ""
 "for <b>%s</b> instead."
 msgstr ""
 "La combinació de tecles ja està essent utilitzada per <b>%s</b>. Premeu "
-"Reemplaça per usar-la per <b>%s</b>."
+"Reemplaça per a usar-la per <b>%s</b>."
 
 #: pitivi/dialogs/prefs.py:733
 msgid "No description available."
