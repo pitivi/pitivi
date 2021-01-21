@@ -8,6 +8,7 @@ index.md
 		Git.md
 		Coding_style_guide.md
 		Command_line_tools.md
+		Inspecting_UI.md
 	Testing.md
 		QA_Scenarios.md
 	Architecture.md
