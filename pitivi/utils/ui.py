@@ -844,13 +844,21 @@ def unset_children_state_recurse(widget, state):
             unset_children_state_recurse(child, state)
 
 
-def disable_scroll(widget):
-    """Makes sure the specified widget does not react to scroll events."""
-    def scroll_event_cb(widget, unused_event):
-        GObject.signal_stop_emission_by_name(widget, "scroll-event")
-        return False
+def disable_scroll_event_cb(widget, unused_event):
+    GObject.signal_stop_emission_by_name(widget, "scroll-event")
+    return False
 
-    widget.connect("scroll-event", scroll_event_cb)
+
+def disable_scroll(widget):
+    """Disables scrolling on the specified widget and its children recursively.
+
+    Makes sure the vulnerable widgets do not react to scroll events.
+    """
+    if isinstance(widget, Gtk.Container):
+        widget.foreach(disable_scroll)
+
+    if isinstance(widget, (Gtk.ComboBox, Gtk.Scale, Gtk.SpinButton)):
+        widget.connect("scroll-event", disable_scroll_event_cb)
 
 
 def fix_infobar(infobar):

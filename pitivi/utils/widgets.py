@@ -121,7 +121,6 @@ class TextWidget(Gtk.Box, DynamicWidget):
                 self.combo = Gtk.ComboBoxText.new_with_entry()
                 self.text = self.combo.get_child()
                 self.combo.show()
-                disable_scroll(self.combo)
                 self.pack_start(self.combo, expand=False, fill=False, padding=0)
                 for choice in choices:
                     self.combo.append_text(choice)
@@ -247,7 +246,6 @@ class NumericWidget(Gtk.Box, DynamicWidget):
                 Gtk.Orientation.HORIZONTAL, self.adjustment)
             self.pack_start(self.slider, expand=False, fill=False, padding=0)
             self.slider.show()
-            disable_scroll(self.slider)
             self.slider.set_size_request(width=100, height=-1)
             self.slider.props.draw_value = False
             # Abuse GTK3's progressbar "fill level" feature to provide
@@ -256,8 +254,6 @@ class NumericWidget(Gtk.Box, DynamicWidget):
                 self.slider.set_restrict_to_fill_level(False)
                 self.slider.set_fill_level(float(default))
                 self.slider.set_show_fill_level(True)
-
-        disable_scroll(self.spinner)
 
     def block_signals(self):
         if self.handler_id:
@@ -484,7 +480,6 @@ class ChoiceWidget(Gtk.Box, DynamicWidget):
         self.pack_start(self.contents, expand=False, fill=False, padding=0)
         self.set_choices(choices)
         self.contents.show()
-        disable_scroll(self.contents)
         cell = self.contents.get_cells()[0]
         cell.props.ellipsize = Pango.EllipsizeMode.END
 
@@ -702,6 +697,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
     def show_widget(self, widget):
         self.pack_start(widget, True, True, 0)
+        disable_scroll(widget)
         self.show_all()
 
     def map_builder(self, builder):
@@ -807,7 +803,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             grid.attach(label, 0, y, 1, 1)
             grid.attach(widget, 1, y, 1, 1)
 
-    def add_widgets(self, create_property_widget, values=None, with_reset_button=False, caps_values=None):
+    def add_widgets(self, create_property_widget_func, values=None, with_reset_button=False, caps_values=None):
         """Prepares a Gtk.Grid containing the property widgets of an element.
 
         Each property is on a separate row.
@@ -816,7 +812,8 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         If there are no properties, returns a "No properties" label.
 
         Args:
-            create_property_widget (function): The function that creates the widget for an effect property.
+            create_property_widget_func (function): The function that creates
+                the widget for an effect property.
             values (dict): The current values of the element props, by name.
                 If empty, the default values will be used.
             with_reset_button (bool): Whether to show a reset button for each
@@ -889,7 +886,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 else:
                     prop_value = values[prop.name]
 
-            prop_widget = create_property_widget(self, prop, prop_value)
+            prop_widget = create_property_widget_func(self, prop, prop_value)
             element_name = None
             if isinstance(self.element, Gst.Element):
                 element_name = self.element.get_factory().get_name()
@@ -1162,6 +1159,7 @@ class GstElementSettingsDialog(Loggable):
                                          with_reset_button=True,
                                          values=properties,
                                          caps_values=caps_values)
+        disable_scroll(self.elementsettings)
 
         # Try to avoid scrolling, whenever possible.
         screen_height = self.window.get_screen().get_height()

@@ -46,6 +46,7 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.configure import get_ui_dir
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.ui import disable_scroll
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
@@ -720,7 +721,8 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
         """Creates a widget if the `create_widget` handlers did not."""
         effect_name = effect.get_property("bin-description")
         self.log('UI is being auto-generated for "%s"', effect_name)
-        effect_widget.add_widgets(create_property_widget=self.create_property_widget, with_reset_button=True)
+        effect_widget.add_widgets(create_property_widget_func=self.create_property_widget, with_reset_button=True)
+        disable_scroll(effect_widget)
         self._post_configuration(effect, effect_widget)
 
     def do_create_property_widget(self, effect_widget, effect, prop, prop_value):

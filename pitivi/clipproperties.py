@@ -107,6 +107,8 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.helper_box = self.create_helper_box()
         self.clips_box.pack_start(self.helper_box, False, False, 0)
 
+        disable_scroll(vbox)
+
         self.transformation_expander.set_source(None)
         self.title_expander.set_source(None)
         self.color_expander.set_source(None)
@@ -841,7 +843,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
         spinbtn = self.builder.get_object(widget_name)
         handler_id = spinbtn.connect(
             "value-changed", self._on_value_changed_cb, property_name)
-        disable_scroll(spinbtn)
         self.spin_buttons[property_name] = spinbtn
         self.spin_buttons_handler_ids[property_name] = handler_id
 
