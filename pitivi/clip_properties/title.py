@@ -167,7 +167,7 @@ class TitleProperties(Gtk.Expander, Loggable):
         color = argb_to_gdk_rgba(source.get_child_property("foreground-color")[1])
         self.background_color_button.set_rgba(color)
 
-    def _text_changed_cb(self, unused_updated_obj):
+    def _text_changed_cb(self, unused_text_buffer):
         if not self.source:
             # Nothing to update.
             return
@@ -212,13 +212,14 @@ class TitleProperties(Gtk.Expander, Loggable):
             self.source.disconnect(self._children_props_handler)
             self._children_props_handler = None
 
-        self.source = source
-
         if source:
             assert isinstance(source, (GES.TextOverlay, GES.TitleSource))
             self._update_from_source(source)
-            self._children_props_handler = self.source.connect("deep-notify",
-                                                               self._source_deep_notify_cb)
+            self._children_props_handler = source.connect("deep-notify",
+                                                          self._source_deep_notify_cb)
+
+        self.source = source
+
         self.set_visible(bool(self.source))
 
     def _source_deep_notify_cb(self, source, unused_gstelement, pspec):

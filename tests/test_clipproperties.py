@@ -349,3 +349,19 @@ class ClipPropertiesTest(common.TestCase):
 
         self.assertEqual(source.get_child_property("posx").value, -width)
         self.assertEqual(source.get_child_property("posy").value, -height)
+
+    @common.setup_timeline
+    @common.setup_clipproperties
+    def test_selection_does_nothing(self):
+        """Checks de/selection do not create undoable operations."""
+        self.project.pipeline.get_position = mock.Mock(return_value=0)
+        self.clipproperties.create_title_clip_cb(None)
+        self.assertEqual(len(self.action_log.undo_stacks), 1)
+        clips = self.layer.get_clips()
+        self.assertEqual(len(clips), 1, clips)
+
+        self.timeline_container.timeline.selection.unselect(clips)
+        self.assertEqual(len(self.action_log.undo_stacks), 1)
+
+        self.timeline_container.timeline.selection.select(clips)
+        self.assertEqual(len(self.action_log.undo_stacks), 1)
