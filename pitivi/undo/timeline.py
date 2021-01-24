@@ -77,6 +77,15 @@ class TrackElementPropertyChanged(UndoableAction):
         st['value'] = GObject.Value(pspec.value_type, value)
         return st
 
+    def expand(self, action):
+        if not isinstance(action, TrackElementPropertyChanged) or \
+                not action.track_element == self.track_element or \
+                not action.property_name == self.property_name:
+            return False
+
+        self.new_value = action.new_value
+        return True
+
 
 class TimelineElementObserver(Loggable):
     """Monitors the props of an element and all its children.

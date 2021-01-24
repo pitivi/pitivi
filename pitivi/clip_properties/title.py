@@ -114,8 +114,9 @@ class TitleProperties(Gtk.Expander, Loggable):
 
         self.show_all()
 
-    def _set_child_property(self, name, value):
-        with self.app.action_log.started("Title change property",
+    def _set_child_property(self, name, value, mergeable=False):
+        with self.app.action_log.started("Title change property %s" % name,
+                                         mergeable=mergeable,
                                          toplevel=True):
             self._setting_props = True
             try:
@@ -173,7 +174,7 @@ class TitleProperties(Gtk.Expander, Loggable):
 
         escaped_text = html.escape(self.textbuffer.props.text)
         self.log("Source text updated to %s", escaped_text)
-        self._set_child_property("text", escaped_text)
+        self._set_child_property("text", escaped_text, mergeable=True)
 
     def _alignment_changed_cb(self, combo):
         """Handles changes in the h/v alignment widgets."""
@@ -201,7 +202,7 @@ class TitleProperties(Gtk.Expander, Loggable):
         else:
             prop_name = "y-absolute"
         value = spin.get_value()
-        self._set_child_property(prop_name, value)
+        self._set_child_property(prop_name, value, mergeable=True)
 
     def _update_absolute_alignment_widgets_visibility(self):
         visible = self.valignment_combo.get_active_id() == "absolute"

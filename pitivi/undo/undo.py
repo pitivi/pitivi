@@ -121,26 +121,57 @@ class UndoableActionStack(UndoableAction, Loggable):
         action_group_name (str): The name of the operation.
         done_actions (List[UndoableAction]): The UndoableActions pushed in
             the stack.
+        mergeable (bool): Whether this stack accepts merges with other
+            compatible stacks.
         finalizing_action (FinalizingAction): The action to be performed
             at the end of undoing or redoing the stacked actions.
     """
 
-    def __init__(self, action_group_name, finalizing_action=None):
+    def __init__(self, action_group_name, mergeable, finalizing_action=None):
         UndoableAction.__init__(self)
         Loggable.__init__(self)
         self.action_group_name = action_group_name
         self.done_actions = []
+        self.mergeable = mergeable
         self.finalizing_action = finalizing_action
+
+    def __len__(self):
+        return len(self.done_actions)
 
     def __repr__(self):
         return "%s: %s" % (self.action_group_name, self.done_actions)
 
+    def attempt_merge(self, stack, action):
+        """Merges the action into the previous one if possible.
+
+        Returns:
+            bool: Whether the merge has been done.
+        """
+        if not self.mergeable:
+            return False
+
+        if not self.done_actions:
+            return False
+
+        if not self.action_group_name == stack.action_group_name:
+            return False
+
+        return self.attempt_expand_action(action)
+
+    def attempt_expand_action(self, action):
+        """Expands the last action with the specified action if possible."""
+        if not self.done_actions:
+            return False
+
+        last_action = self.done_actions[-1]
+        return last_action.expand(action)
+
     def push(self, action):
-        if self.done_actions:
-            last_action = self.done_actions[-1]
-            if last_action.expand(action):
-                # The action has been included in the previous one.
-                return
+        """Adds an action unless it's possible to expand the previous."""
+        if self.attempt_expand_action(action):
+            # The action has been merged into the last one.
+            return
+
         self.done_actions.append(action)
 
     def _run_action(self, actions, method_name):
@@ -202,7 +233,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         else:
             self.commit(action_group_name)
 
-    def begin(self, action_group_name, finalizing_action=None, toplevel=False):
+    def begin(self, action_group_name, finalizing_action=None, mergeable=False, toplevel=False):
         """Starts recording a high-level operation which later can be undone.
 
         The recording can be stopped by calling the `commit` method or
@@ -218,14 +249,14 @@ class UndoableActionLog(GObject.Object, Loggable):
         if toplevel and self.is_in_transaction():
             raise UndoWrongStateError("Toplevel operation started as suboperation", self.stacks)
 
-        stack = UndoableActionStack(action_group_name, finalizing_action)
+        stack = UndoableActionStack(action_group_name, mergeable, finalizing_action)
         self.stacks.append(stack)
         self.debug("begin action group %s, nested %s",
                    stack.action_group_name, len(self.stacks))
         self.emit("begin", stack)
 
     def push(self, action):
-        """Reports a change.
+        """Records a change noticed by the monitoring system.
 
         Args:
             action (Action): The action representing the change.
@@ -249,11 +280,24 @@ class UndoableActionLog(GObject.Object, Loggable):
         try:
             stack = self._get_last_stack()
         except UndoWrongStateError as e:
-            self.warning("Failed pushing '%s' because: %s", action, e)
+            self.warning("Failed pushing '%s' because no transaction started: %s", action, e)
             return
-        stack.push(action)
-        self.debug("push action %s in action group %s",
-                   action, stack.action_group_name)
+
+        merged = False
+        if stack.mergeable and len(self.stacks[0]) == 0 and self.undo_stacks:
+            # The current undoable operation is empty, this is the first action.
+            # Check if it can be merged with the previous operation.
+            previous_operation = self.undo_stacks[-1]
+            if previous_operation.attempt_merge(stack, action):
+                self.debug("Merging undoable operations")
+                self.stacks = [self.undo_stacks.pop()]
+                merged = True
+
+        if not merged:
+            stack.push(action)
+            self.debug("push action %s in action group %s",
+                       action, stack.action_group_name)
+
         self.emit("push", stack, action)
 
     def rollback(self, undo=True):
@@ -299,9 +343,11 @@ class UndoableActionLog(GObject.Object, Loggable):
         stack = self._get_last_stack(pop=True)
         if action_group_name != stack.action_group_name:
             raise UndoWrongStateError("Unexpected commit", action_group_name, stack, self.stacks)
+
         if not stack.done_actions:
             self.debug("Ignore empty stack %s", stack.action_group_name)
             return
+
         if not self.stacks:
             self.undo_stacks.append(stack)
             stack.finish_operation()
@@ -461,6 +507,7 @@ class PropertyChangedAction(UndoableAutomaticObjectAction):
                 self.auto_object != action.auto_object or \
                 self.field_name != action.field_name:
             return False
+
         self.new_value = action.new_value
         return True
 

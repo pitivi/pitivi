@@ -46,7 +46,7 @@ class TestUndoableActionStack(common.TestCase):
             def undo(self):
                 state["actions"] -= 1
 
-        stack = UndoableActionStack("meh")
+        stack = UndoableActionStack("meh", mergeable=False)
         action1 = Action()
         action2 = Action()
         stack.push(action1)
@@ -60,7 +60,7 @@ class TestUndoableActionStack(common.TestCase):
 
     def test_undo_error(self):
         """Checks undo a stack containing a failing action."""
-        stack = UndoableActionStack("meh")
+        stack = UndoableActionStack("meh", mergeable=False)
         action1 = mock.Mock(spec=UndoableAction)
         action1.expand.return_value = False
         action2 = mock.Mock(spec=UndoableAction)
@@ -414,6 +414,37 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
 
+    def test_merging(self):
+        with self.log.started("one", mergeable=False):
+            action = mock.Mock(spec=UndoableAction)
+            action.expand.side_effect = Exception("should not have been called")
+            self.log.push(action)
+        self.assertEqual(len(self.log.undo_stacks), 1)
+
+        with self.log.started("one", mergeable=True):
+            action = mock.Mock(spec=UndoableAction)
+            action.expand.return_value = False
+            self.log.push(action)
+        self.assertEqual(len(self.log.undo_stacks), 2)
+
+        with self.log.started("one", mergeable=True):
+            action = mock.Mock(spec=UndoableAction)
+            action.expand.return_value = True
+            self.log.push(action)
+        self.assertEqual(len(self.log.undo_stacks), 3)
+
+        with self.log.started("one", mergeable=True):
+            action = mock.Mock(spec=UndoableAction)
+            action.expand.return_value = True
+            self.log.push(action)
+        self.assertEqual(len(self.log.undo_stacks), 3)
+
+        with self.log.started("one", mergeable=False):
+            action = mock.Mock(spec=UndoableAction)
+            action.expand.side_effect = Exception("should not have been called")
+            self.log.push(action)
+        self.assertEqual(len(self.log.undo_stacks), 4)
+
 
 class TestRollback(common.TestCase):
 
@@ -473,7 +504,7 @@ class TestGObjectObserver(common.TestCase):
 class TestPropertyChangedAction(common.TestCase):
 
     def test_expand(self):
-        stack = UndoableActionStack("good one!")
+        stack = UndoableActionStack("good one!", mergeable=False)
         gobject = mock.Mock()
         stack.push(PropertyChangedAction(gobject, "field", 5, 7))
         stack.push(PropertyChangedAction(gobject, "field", 11, 13))
