@@ -59,7 +59,6 @@ class TitleProperties(Gtk.Expander, Loggable):
         self.set_label(_("Title"))
         self.set_expanded(True)
         self.app = app
-        self.settings = {}
         self.source = None
         self._setting_props = False
         self._children_props_handler = None
@@ -95,21 +94,23 @@ class TitleProperties(Gtk.Expander, Loggable):
         self.background_color_picker.add(self.color_picker_background_widget)
         self.color_picker_background_widget.connect("value-changed", self._color_picker_value_changed_cb, self.background_color_button, "foreground-color")
 
-        for widget_id in ("valignment", "halignment", "x-absolute", "y-absolute"):
-            self.settings[widget_id] = builder.get_object(widget_id)
+        self.valignment_combo = builder.get_object("valignment")
+        self.halignment_combo = builder.get_object("halignment")
+        self.x_absolute_spin = builder.get_object("x-absolute")
+        self.y_absolute_spin = builder.get_object("y-absolute")
 
         for value_id, text in (("absolute", _("Absolute")),
                                ("top", _("Top")),
                                ("center", _("Center")),
                                ("bottom", _("Bottom")),
                                ("baseline", _("Baseline"))):
-            self.settings["valignment"].append(value_id, text)
+            self.valignment_combo.append(value_id, text)
 
         for value_id, text in (("absolute", _("Absolute")),
                                ("left", _("Left")),
                                ("center", _("Center")),
                                ("right", _("Right"))):
-            self.settings["halignment"].append(value_id, text)
+            self.halignment_combo.append(value_id, text)
 
         self.show_all()
 
@@ -149,13 +150,11 @@ class TitleProperties(Gtk.Expander, Loggable):
 
     def _update_from_source(self, source):
         self.textbuffer.props.text = html.unescape(source.get_child_property("text")[1] or "")
-        self.settings["x-absolute"].set_value(source.get_child_property("x-absolute")[1])
-        self.settings["y-absolute"].set_value(source.get_child_property("y-absolute")[1])
-        self.settings["valignment"].set_active_id(
-            source.get_child_property("valignment")[1].value_name)
-        self.settings["halignment"].set_active_id(
-            source.get_child_property("halignment")[1].value_name)
-        self._update_widgets_visibility()
+        self.x_absolute_spin.set_value(source.get_child_property("x-absolute")[1])
+        self.y_absolute_spin.set_value(source.get_child_property("y-absolute")[1])
+        self.valignment_combo.set_active_id(source.get_child_property("valignment")[1].value_name)
+        self.halignment_combo.set_active_id(source.get_child_property("halignment")[1].value_name)
+        self._update_absolute_alignment_widgets_visibility()
 
         font_desc = Pango.FontDescription.from_string(
             source.get_child_property("font-desc")[1])
@@ -176,30 +175,39 @@ class TitleProperties(Gtk.Expander, Loggable):
         self.log("Source text updated to %s", escaped_text)
         self._set_child_property("text", escaped_text)
 
-    def _update_source_cb(self, updated_obj):
-        """Handles changes in the advanced property widgets at the bottom."""
+    def _alignment_changed_cb(self, combo):
+        """Handles changes in the h/v alignment widgets."""
         if not self.source:
             # Nothing to update.
             return
 
-        for name, obj in list(self.settings.items()):
-            if obj == updated_obj:
-                if name == "valignment":
-                    value = obj.get_active_id()
-                    self._update_widgets_visibility()
-                elif name == "halignment":
-                    value = obj.get_active_id()
-                    self._update_widgets_visibility()
-                else:
-                    value = obj.get_value()
-                self._set_child_property(name, value)
-                return
+        if combo == self.valignment_combo:
+            prop_name = "valignment"
+        else:
+            prop_name = "halignment"
+        value = combo.get_active_id()
+        self._set_child_property(prop_name, value)
 
-    def _update_widgets_visibility(self):
-        visible = self.settings["valignment"].get_active_id() == "absolute"
-        self.settings["y-absolute"].set_visible(visible)
-        visible = self.settings["halignment"].get_active_id() == "absolute"
-        self.settings["x-absolute"].set_visible(visible)
+        self._update_absolute_alignment_widgets_visibility()
+
+    def _absolute_alignment_value_changed_cb(self, spin):
+        """Handles changes in the absolute alignment widgets."""
+        if not self.source:
+            # Nothing to update.
+            return
+
+        if spin == self.x_absolute_spin:
+            prop_name = "x-absolute"
+        else:
+            prop_name = "y-absolute"
+        value = spin.get_value()
+        self._set_child_property(prop_name, value)
+
+    def _update_absolute_alignment_widgets_visibility(self):
+        visible = self.valignment_combo.get_active_id() == "absolute"
+        self.y_absolute_spin.set_visible(visible)
+        visible = self.halignment_combo.get_active_id() == "absolute"
+        self.x_absolute_spin.set_visible(visible)
 
     def set_source(self, source):
         """Sets the clip to be edited with this editor.
@@ -234,43 +242,41 @@ class TitleProperties(Gtk.Expander, Loggable):
                        pspec.name)
             return
 
+        res, value = self.source.get_child_property(pspec.name)
+        assert res, pspec.name
         if pspec.name == "text":
-            res, escaped_text = self.source.get_child_property(pspec.name)
-            assert res, pspec.name
-            text = html.unescape(escaped_text)
+            text = html.unescape(value)
             if self.textbuffer.props.text == text or "":
                 return
             self.textbuffer.props.text = text
         elif pspec.name in ["x-absolute", "y-absolute"]:
-            res, value = self.source.get_child_property(pspec.name)
-            assert res, pspec.name
-            if self.settings[pspec.name].get_value() == value:
+            if pspec.name == "x-absolute":
+                widget = self.x_absolute_spin
+            else:
+                widget = self.y_absolute_spin
+            if widget.get_value() == value:
                 return
-            self.settings[pspec.name].set_value(value)
+            widget.set_value(value)
         elif pspec.name in ["valignment", "halignment"]:
-            res, value = self.source.get_child_property(pspec.name)
-            assert res, pspec.name
+            if pspec.name == "valignment":
+                widget = self.valignment_combo
+            else:
+                widget = self.halignment_combo
             value = value.value_name
-            if self.settings[pspec.name].get_active_id() == value:
+            if widget.get_active_id() == value:
                 return
-            self.settings[pspec.name].set_active_id(value)
+            widget.set_active_id(value)
         elif pspec.name == "font-desc":
-            res, value = self.source.get_child_property(pspec.name)
-            assert res, pspec.name
             if self.font_button.get_font_desc() == value:
                 return
             font_desc = Pango.FontDescription.from_string(value)
             self.font_button.set_font_desc(font_desc)
         elif pspec.name == "color":
-            res, value = self.source.get_child_property(pspec.name)
-            assert res, pspec.name
             color = argb_to_gdk_rgba(value)
             if color == self.foreground_color_button.get_rgba():
                 return
             self.foreground_color_button.set_rgba(color)
         elif pspec.name == "foreground-color":
-            res, value = self.source.get_child_property(pspec.name)
-            assert res, pspec.name
             color = argb_to_gdk_rgba(value)
             if color == self.background_color_button.get_rgba():
                 return
