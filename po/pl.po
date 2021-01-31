@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-01-19 21:07+0000\n"
-"PO-Revision-Date: 2021-01-24 13:39+0100\n"
+"POT-Creation-Date: 2021-01-27 21:09+0000\n"
+"PO-Revision-Date: 2021-01-31 10:24+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -521,7 +521,7 @@ msgstr "Liczba klatek na sekundę:"
 
 #. The title of the section with the video settings
 #: data/ui/projectsettings.ui:385 data/ui/renderingdialog.ui:752
-#: pitivi/effects.py:245
+#: pitivi/effects.py:246
 msgid "Video"
 msgstr "Wideo"
 
@@ -535,7 +535,7 @@ msgstr "Częstotliwość próbki:"
 
 #. The title of the section with the audio settings
 #: data/ui/projectsettings.ui:566 data/ui/renderingdialog.ui:527
-#: pitivi/effects.py:121 pitivi/effects.py:245
+#: pitivi/effects.py:122 pitivi/effects.py:246
 msgid "Audio"
 msgstr "Dźwięk"
 
@@ -926,7 +926,12 @@ msgstr ""
 "włącza watchdoga w potoku biblioteki GStreamer. Używane do wykrywania błędów "
 "występujących w bibliotece GStreamer i naprawiania ich"
 
-#: pitivi/clipproperties.py:123
+#. Translators: This is the default text of a title clip.
+#: pitivi/clipproperties.py:57
+msgid "Title Clip"
+msgstr "Klip tytułowy"
+
+#: pitivi/clipproperties.py:127
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
@@ -934,19 +939,19 @@ msgstr ""
 "Proszę wybrać klip na osi czasu, aby skonfigurować jego właściwości i efekty "
 "lub utworzyć nowy klip:"
 
-#: pitivi/clipproperties.py:129
+#: pitivi/clipproperties.py:133
 msgid "Create a title clip"
 msgstr "Utwórz klip tytułowy"
 
-#: pitivi/clipproperties.py:134
+#: pitivi/clipproperties.py:138
 msgid "Create a color clip"
 msgstr "Utwórz klip kolorowy"
 
-#: pitivi/clipproperties.py:224
+#: pitivi/clipproperties.py:230
 msgid "Effects"
 msgstr "Efekty"
 
-#: pitivi/clipproperties.py:241
+#: pitivi/clipproperties.py:247
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
@@ -954,23 +959,23 @@ msgstr ""
 "Aby zastosować efekt na klipie, należy przeciągnąć go z kolekcji efektów lub "
 "kliknąć przycisk poniżej."
 
-#: pitivi/clipproperties.py:249
+#: pitivi/clipproperties.py:255
 msgid "Add Effect"
 msgstr "Dodaj efekt"
 
-#: pitivi/clipproperties.py:554
+#: pitivi/clipproperties.py:560
 msgid "Transformation"
 msgstr "Przekształcenie"
 
-#: pitivi/clipproperties.py:670
+#: pitivi/clipproperties.py:676
 msgid "Show keyframes"
 msgstr "Wyświetla klatki kluczowe"
 
-#: pitivi/clipproperties.py:673
+#: pitivi/clipproperties.py:679
 msgid "Activate keyframes"
 msgstr "Aktywuje klatki kluczowe"
 
-#: pitivi/clipproperties.py:678
+#: pitivi/clipproperties.py:684
 msgid "Hide keyframes"
 msgstr "Ukrywa klatki kluczowe"
 
@@ -994,31 +999,31 @@ msgstr ""
 msgid "Title"
 msgstr "Tytuł"
 
-#: pitivi/clip_properties/title.py:101 pitivi/clip_properties/title.py:108
+#: pitivi/clip_properties/title.py:102 pitivi/clip_properties/title.py:109
 msgid "Absolute"
 msgstr "Bezwzględne"
 
-#: pitivi/clip_properties/title.py:102
+#: pitivi/clip_properties/title.py:103
 msgid "Top"
 msgstr "Góra"
 
-#: pitivi/clip_properties/title.py:103 pitivi/clip_properties/title.py:110
+#: pitivi/clip_properties/title.py:104 pitivi/clip_properties/title.py:111
 msgid "Center"
 msgstr "Środek"
 
-#: pitivi/clip_properties/title.py:104
+#: pitivi/clip_properties/title.py:105
 msgid "Bottom"
 msgstr "Dół"
 
-#: pitivi/clip_properties/title.py:105
+#: pitivi/clip_properties/title.py:106
 msgid "Baseline"
 msgstr "Linia podstawowa"
 
-#: pitivi/clip_properties/title.py:109
+#: pitivi/clip_properties/title.py:110
 msgid "Left"
 msgstr "Lewo"
 
-#: pitivi/clip_properties/title.py:111
+#: pitivi/clip_properties/title.py:112
 msgid "Right"
 msgstr "Prawo"
 
@@ -1148,48 +1153,48 @@ msgstr "Obraz JPEG"
 msgid "Preview"
 msgstr "Podgląd"
 
-#: pitivi/effects.py:60
+#: pitivi/effects.py:61
 msgid "Colors"
 msgstr "Kolory"
 
-#: pitivi/effects.py:76
+#: pitivi/effects.py:77
 msgid "Compositing"
 msgstr "Składanie"
 
-#: pitivi/effects.py:83
+#: pitivi/effects.py:84
 msgid "Noise & blur"
 msgstr "Szum i rozmycie"
 
-#: pitivi/effects.py:88
+#: pitivi/effects.py:89
 msgid "Analysis"
 msgstr "Analiza"
 
-#: pitivi/effects.py:95
+#: pitivi/effects.py:96
 msgid "Geometry"
 msgstr "Geometria"
 
-#: pitivi/effects.py:106
+#: pitivi/effects.py:107
 msgid "Fancy"
 msgstr "Dekoracje"
 
-#: pitivi/effects.py:117
+#: pitivi/effects.py:118
 msgid "Time"
 msgstr "Czas"
 
-#: pitivi/effects.py:245
+#: pitivi/effects.py:246
 msgid "effect"
 msgstr "efekt"
 
 #. Add Uncategorized only if there are other categories defined.
-#: pitivi/effects.py:336 pitivi/effects.py:350
+#: pitivi/effects.py:337 pitivi/effects.py:351
 msgid "Uncategorized"
 msgstr "Bez kategorii"
 
-#: pitivi/effects.py:392 pitivi/effects.py:659
+#: pitivi/effects.py:393 pitivi/effects.py:660
 msgid "No effects"
 msgstr "Brak efektów"
 
-#: pitivi/effects.py:480
+#: pitivi/effects.py:481
 msgid "Add to Favourites"
 msgstr "Dodaje do ulubionych"
 
@@ -2092,7 +2097,7 @@ msgstr "Pliki pośrednie"
 msgid "Other"
 msgstr "Inne"
 
-#: pitivi/dialogs/prefs.py:285 pitivi/utils/widgets.py:979
+#: pitivi/dialogs/prefs.py:285 pitivi/utils/widgets.py:976
 msgid "Reset to default value"
 msgstr "Przywraca domyślną wartość"
 
@@ -2351,40 +2356,40 @@ msgstr[2] "Około %d lat temu"
 msgid "Implement Me"
 msgstr "Niezaimplementowane"
 
-#: pitivi/utils/widgets.py:804
+#: pitivi/utils/widgets.py:800
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: pitivi/utils/widgets.py:839
+#: pitivi/utils/widgets.py:836
 msgid "No properties."
 msgstr "Brak właściwości."
 
 #. Avoid the ugly selection outline
-#: pitivi/utils/widgets.py:964
+#: pitivi/utils/widgets.py:961
 msgid "Show keyframes for this value"
 msgstr "Wyświetlanie klatek kluczowych dla tej wartości"
 
-#: pitivi/utils/widgets.py:1148
+#: pitivi/utils/widgets.py:1145
 #, python-format
 msgid "Properties for %s"
 msgstr "Właściwości dla „%s”"
 
-#: pitivi/utils/widgets.py:1230
+#: pitivi/utils/widgets.py:1228
 msgid "Zoom Fit"
 msgstr "Dopasowanie"
 
-#: pitivi/utils/widgets.py:1235
+#: pitivi/utils/widgets.py:1233
 msgid "Zoom"
 msgstr "Powiększenie"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: pitivi/utils/widgets.py:1311
+#: pitivi/utils/widgets.py:1309
 #, python-format
 msgid "%s displayed"
 msgstr "Wyświetlone: %s"
 
-#: pitivi/utils/widgets.py:1315
+#: pitivi/utils/widgets.py:1313
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Wyświetlone: %d ns"
