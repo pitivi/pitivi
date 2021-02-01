@@ -41,6 +41,15 @@
   <developer_name>The Pitivi Team</developer_name>
 
   <releases>
+    <release version="2021.01" date="2021-01-31">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>The Render dialog has been further simplified.</li>
+          <li>Lots of bugfixes.</li>
+        </ul>
+      </description>
+    </release>
     <release version="2020.09" date="2020-09-30">
       <description>
         <p>This release adds the following features:</p>
