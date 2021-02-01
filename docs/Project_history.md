@@ -1,9 +1,9 @@
 # Project history
 
-* [Wikipedia's page] is currently more complete than this page. The goal
+*[Wikipedia's page] is currently more complete than this page. The goal
 here is to explain, eventually, some events and design decisions
 (without needing to cite everything). You can see the overall project
-activity throughout the years [on Ohloh].*
+activity throughout the years [on Open Hub].*
 
 PiTiVi was started in 2004 as an “end of studies” project by Edward
 Hervey and his classmates at the French computer engineering school
@@ -40,11 +40,11 @@ To this day, the project lives on, thanks to the continued efforts of
 [many dedicated people].
 
   [Wikipedia's page]: http://en.wikipedia.org/wiki/PiTiVi
-  [on Ohloh]: https://www.ohloh.net/p/pitivi
+  [on Open Hub]: https://www.openhub.net/p/pitivi
   [explanation]: http://blogs.gnome.org/edwardrv/2007/07/01/is-that-a-video-editor/
   [2008 Architectural Redesign]: design/2008_design/2008_Architectural_Redesign.md
   [announced]: http://blogs.gnome.org/uraeus/2008/10/09/supporting-pitivi/
   [additional developers]: http://blogs.gnome.org/uraeus/2008/12/02/new-team-member/
   [GES]: GES.md
   [changed]: https://bugzilla.gnome.org/show_bug.cgi?id=705756
-  [many dedicated people]: https://www.ohloh.net/p/pitivi/contributors/summary
+  [many dedicated people]: https://www.openhub.net/p/pitivi/contributors/summary

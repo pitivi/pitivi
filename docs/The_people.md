@@ -41,7 +41,7 @@ A lot of [Google Summer of Code students](Past_GSoCs.md) have
 been contributed to Pitivi and GES.
 
 Occasional community members and contributors include many other people.
-See also <http://ohloh.net/p/pitivi/contributors> to get a historic
+See also <https://www.openhub.net/p/pitivi/contributors> to get a historic
 sense of scale.
 
 -   Add your name here!
