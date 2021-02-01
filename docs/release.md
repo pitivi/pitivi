@@ -88,6 +88,7 @@ If there are new maintainers.
 
 6. Create a tag and push it to the official repository. The TAG must always include the micro. This means when doing a regular release with version number YYYY.MM, the TAG is YYYY.MM.0. When doing a bug-fix release, the version number already includes a micro, so it's all fine.
    ```
+   $ git push origin master
    $ git tag -a <TAG> -m "Release <version-number>"
    $ git push origin <TAG>
    ```
@@ -116,6 +117,10 @@ If there are new maintainers.
 
 10. Bump the Z in the version number in
     [meson.build](https://gitlab.gnome.org/GNOME/pitivi/blob/master/meson.build),
-    for example if it was a regular release: 2020.09 -> 2020.09.1 or if it was a
-    bug-fix release: 2020.09.1 -> 2020.09.2, and `$ commit -a -m "Back to
-    development"`
+    for example if it was a regular release: `2020.09` -> `2020.09.1` or if it was a
+    bug-fix release: `2020.09.1` -> `2020.09.2`.
+    Push to the official repo:
+    ```
+    $ commit -a -m "Back to development"
+    $ git push origin master
+    ```
