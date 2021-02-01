@@ -87,8 +87,7 @@ and run `thread apply all bt` to get the backtraces for all the threads.
 
 ### When running in the development environment
 
-1. Make sure you have the GNOME Sdk and Debug symbols installed,
-see below.
+1. Install the GNOME SDK Debug symbols and update them, see below.
 
 2. Enter the sandbox:
 
@@ -104,16 +103,13 @@ gdb python3 -ex "run $PITIVI_REPO_DIR/bin/pitivi"
 
 ### When running with Flatpak
 
-1. Make sure you have the GNOME Sdk and Debug symbols installed:
+1. Install the GNOME SDK and its Debug symbols and update them:
 
 ```
-GNOME_REPO=$(flatpak info org.gnome.Platform//3.38 | grep Origin | awk '{ print $2 }')
-for i in $(flatpak list | grep org.pitivi.Pitivi/ | awk '{ print $1 }'); do
-  flatpak install --user $GNOME_REPO $(flatpak info $i |grep Runtime |awk '{ print $2 }' |sed s/Platform/Sdk/)
-  flatpak update --user $(flatpak info $i |grep Runtime |awk '{ print $2 }' |sed s/Platform/Sdk/)
-  flatpak install --user $GNOME_REPO $(flatpak info $i |grep Runtime |awk '{ print $2 }' |sed s/Platform/Sdk.Debug/)
-  flatpak update --user $(flatpak info $i |grep Runtime |awk '{ print $2 }' |sed s/Platform/Sdk.Debug/)
-done
+flatpak --user install flathub org.gnome.Sdk/x86_64/3.38
+flatpak --user install flathub org.gnome.Sdk.Debug/x86_64/3.38
+flatpak --user update          org.gnome.Sdk/x86_64/3.38
+flatpak --user update          org.gnome.Sdk.Debug/x86_64/3.38
 ```
 
 2. Start a shell in the Pitivi flatpak sandbox:
