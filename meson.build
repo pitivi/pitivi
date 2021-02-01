@@ -1,4 +1,4 @@
-project('pitivi', 'c', version : '2021.01', meson_version : '>= 0.46.0')
+project('pitivi', 'c', version : '2021.01.1', meson_version : '>= 0.46.0')
 host_system = host_machine.system()
 
 pymod = import('python')
