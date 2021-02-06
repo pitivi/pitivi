@@ -4,12 +4,36 @@ short-description: GSoC project ideas we like
 
 # GSoC Project Ideas
 
-These ideas shall be used as a base for writing a detailed project proposal if
-you want to apply for a [GSoC internship](Google_Summer_of_Code.md). You are
-welcome to come up with your own ideas.
+To apply for a [GSoC internship] you need to make a project proposal. The scope
+of your GSoC project will probably cover only Pitivi, but it could very well
+span multiple codebases:
 
-To create a detailed proposal, use our [GSoC application
-template](GSoC_Application.md).
+-   [Pitivi], which is the user interface. Written in Python. *For those
+    who love design and graphical user interaction.*
+-   [GES], the high-level video editing GStreamer library that powers
+    Pitivi and other applications. Written in C. *For those who wish to
+    improve an easy to use, powerful and flexible library for
+    audio/video editing.*
+-   GStreamer, for low-level work, such as improving filters/effects,
+    codecs, hardware decoding/encoding acceleration, analysis, etc.
+    Written in C. *For those seeking a challenging audio and video
+    experience where optimization is key.*
+
+We'd love to see GSoC proposals originating from an itch you need to scratch.
+You are welcome to ask around and **bring your own ideas**. If you're not sure
+where you can be most useful, have a look at our list of ideas below. These
+shall be used as a base for writing a detailed project proposal.
+
+See [Past GSoCs] for details on what the previous GSoC students did.
+
+To create a detailed proposal, use our [GSoC application template].
+Deadlines for applying are approaching fast, hurry up!
+
+  [Pitivi]: http://www.pitivi.org/manual/mainwindow.html
+  [GES]: GES.md
+  [Past GSoCs]: Past_GSoCs.md
+  [GSoC internship]: Google_Summer_of_Code.md
+  [GSoC application template]: GSoC_Application.md
 
 
 ## Cut perspective
@@ -21,8 +45,8 @@ will offer a [second timeline
 representation](https://gitlab.gnome.org/GNOME/pitivi/issues/2381) above the
 timeline, that is always zoom-fitted.
 
-Requirements: Python. Minimal experience contributing to Pitivi including unit
-tests.
+**Requirements**: Python. Minimal experience contributing to Pitivi including
+unit tests.
 
 
 ## Timeline enhancements
@@ -31,19 +55,19 @@ Fixing timeline issues and making small enhancements would improve a lot the
 timeline usability, making it a delight to use Pitivi. See
 [GitLab](https://gitlab.gnome.org/GNOME/pitivi/-/issues?label_name%5B%5D=6.+Component%3A+Timeline).
 
-Requirements: Python. Minimal experience contributing to Pitivi including unit
-tests.
+**Requirements**: Python. Minimal experience contributing to Pitivi including
+unit tests.
 
 
 ## Focus on the music
 
 Often people want to pick a nice tune and then sync their weekend clips on it.
-To make this easy, Pitivi can detect the beats using a 3rd party library, and
-allow aligning and cutting the clips to the beat. It might sound easy, but the
-entire experience should be super-polished so it works nice and everybody can do
-it.
+To make this easy, Pitivi can detect the beats using a 3rd party library such as
+[librosa](https://librosa.org/) and allow aligning and cutting the clips to the
+beat. It might sound easy, but the entire experience should be super-polished so
+it works nice and everybody can do it.
 
-Requirements: Python, C. Minimal experience contributing to Pitivi including
+**Requirements**: Python, C. Minimal experience contributing to Pitivi including
 unit tests.
 
 
@@ -61,8 +85,8 @@ clip. You'd have to extend the UI with a new
 [perspective](https://gitlab.gnome.org/GNOME/pitivi/blob/master/pitivi/perspective.py)
 for managing the closing credits HTML, and the corresponding video files.
 
-Requirements: Python. Minimal experience contributing to Pitivi including unit
-tests.
+**Requirements**: Python. Minimal experience contributing to Pitivi including
+unit tests.
 
 
 ## Fix GPU support in Pitivi
@@ -74,5 +98,15 @@ enabling GL plugins for compositing and rendering, and fixing any issue that
 shows up. The second part would be about making sure hardware accelerated
 decoders can be used in the pipelines.
 
-Requirements: C. Experience with GStreamer is mandatory. Minimal experience
+**Requirements**: C. Experience with GStreamer is mandatory. Minimal experience
 contributing to Pitivi including unit tests. Experience with OpenGL is a plus.
+
+
+## GTK 4
+
+Initially the development environment should be migrated onto a GTK 4 runtime
+and then the app should be ported following the [migration guide from GTK 3 to
+GTK 4](https://developer.gnome.org/gtk4/unstable/gtk-migrating-3-to-4.html).
+
+**Requirements**: Python. Minimal experience contributing to Pitivi including
+unit tests. Experience developing GTK apps is a plus.
