@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-01-27 21:09+0000\n"
-"PO-Revision-Date: 2021-02-13 12:42+0100\n"
+"POT-Creation-Date: 2021-02-14 17:10+0000\n"
+"PO-Revision-Date: 2021-02-15 14:59+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -926,11 +926,11 @@ msgstr ""
 "GStreamer och att återhämta sig från dem"
 
 #. Translators: This is the default text of a title clip.
-#: pitivi/clipproperties.py:57
+#: pitivi/clipproperties.py:63
 msgid "Title Clip"
 msgstr "Titelklipp"
 
-#: pitivi/clipproperties.py:127
+#: pitivi/clipproperties.py:142
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
@@ -938,19 +938,39 @@ msgstr ""
 "Välj ett klipp i tidslinjen för att konfigurera dess egenskaper och effekter "
 "eller skapa ett nytt klipp:"
 
-#: pitivi/clipproperties.py:133
+#: pitivi/clipproperties.py:148
 msgid "Create a title clip"
 msgstr "Skapa ett titelklipp"
 
-#: pitivi/clipproperties.py:138
+#: pitivi/clipproperties.py:153
 msgid "Create a color clip"
 msgstr "Skapa ett färgklipp"
 
-#: pitivi/clipproperties.py:230
+#: pitivi/clipproperties.py:256 pitivi/effects.py:118
+msgid "Time"
+msgstr "Tid"
+
+#: pitivi/clipproperties.py:299
+msgid "Speed"
+msgstr "Hastighet"
+
+# I think this shoudln't be translated.. or ?
+# See https://phabricator.freedesktop.org/T7349
+#: pitivi/clipproperties.py:314 pitivi/utils/widgets.py:800
+#, python-format
+msgid "%(preference_label)s:"
+msgstr "%(preference_label)s:"
+
+#: pitivi/clipproperties.py:317 pitivi/dialogs/prefs.py:285
+#: pitivi/utils/widgets.py:976
+msgid "Reset to default value"
+msgstr "Återställ till standardvärde"
+
+#: pitivi/clipproperties.py:538
 msgid "Effects"
 msgstr "Effekter"
 
-#: pitivi/clipproperties.py:247
+#: pitivi/clipproperties.py:555
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
@@ -958,23 +978,23 @@ msgstr ""
 "För att tillämpa en effekt på klippet, dra den från effektbiblioteket eller "
 "använd knappen nedan."
 
-#: pitivi/clipproperties.py:255
+#: pitivi/clipproperties.py:563
 msgid "Add Effect"
 msgstr "Lägg till effekt"
 
-#: pitivi/clipproperties.py:560
+#: pitivi/clipproperties.py:887
 msgid "Transformation"
 msgstr "Transformering"
 
-#: pitivi/clipproperties.py:676
+#: pitivi/clipproperties.py:1003
 msgid "Show keyframes"
 msgstr "Visa nyckelbilder"
 
-#: pitivi/clipproperties.py:679
+#: pitivi/clipproperties.py:1006
 msgid "Activate keyframes"
 msgstr "Aktivera nyckelbilder"
 
-#: pitivi/clipproperties.py:684
+#: pitivi/clipproperties.py:1011
 msgid "Hide keyframes"
 msgstr "Göm nyckelbilder"
 
@@ -1173,10 +1193,6 @@ msgstr "Geometri"
 #: pitivi/effects.py:107
 msgid "Fancy"
 msgstr "Vacker"
-
-#: pitivi/effects.py:118
-msgid "Time"
-msgstr "Tid"
 
 #: pitivi/effects.py:246
 msgid "effect"
@@ -2075,10 +2091,6 @@ msgstr "Proxyfiler"
 msgid "Other"
 msgstr "Annat"
 
-#: pitivi/dialogs/prefs.py:285 pitivi/utils/widgets.py:976
-msgid "Reset to default value"
-msgstr "Återställ till standardvärde"
-
 #: pitivi/dialogs/prefs.py:331
 msgid ""
 "This resolution will be used as the default target resolution for new "
@@ -2325,13 +2337,6 @@ msgstr[1] "Ungefär %d år sedan"
 #: pitivi/utils/widgets.py:74
 msgid "Implement Me"
 msgstr "Implementera mig"
-
-# I think this shoudln't be translated.. or ?
-# See https://phabricator.freedesktop.org/T7349
-#: pitivi/utils/widgets.py:800
-#, python-format
-msgid "%(preference_label)s:"
-msgstr "%(preference_label)s:"
 
 #: pitivi/utils/widgets.py:836
 msgid "No properties."
