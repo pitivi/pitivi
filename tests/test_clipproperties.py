@@ -522,6 +522,27 @@ class SpeedPropertiesTest(common.TestCase):
     def test_clip_speed_v(self):
         self._check_clip_speed(video=True)
 
+    @common.setup_project_with_clips(assets_names=["mp3_sample.mp3", "30fps_numeroted_frames_blue.webm"])
+    @common.setup_clipproperties
+    def test_widgets_updated_when_switching_clips(self):
+        clip1, clip2 = self.layer.get_clips()
+        clip1_duration = clip1.props.duration
+        clip2_duration = clip2.props.duration
+
+        self.timeline_container.timeline.selection.select([clip1])
+        self.assertIs(self.speed_box._clip, clip1)
+        self.assert_applied_rate(0, 1.0, clip1_duration)
+
+        self.speed_box._speed_adjustment.props.value = 2.0
+        self.assert_applied_rate(1, 2.0, clip1_duration / 2)
+
+        self.timeline_container.timeline.selection.select([clip2])
+        self.assertIs(self.speed_box._clip, clip2)
+        self.assert_applied_rate(0, 1.0, clip2_duration)
+
+        self.timeline_container.timeline.selection.select([clip1])
+        self.assert_applied_rate(1, 2.0, clip1_duration / 2)
+
     @common.setup_project_with_clips
     @common.setup_clipproperties
     def test_load_project_clip_speed(self):

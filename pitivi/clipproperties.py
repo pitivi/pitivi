@@ -362,6 +362,10 @@ class TimeProperties(Gtk.Expander, Loggable):
     @rate.setter  # type: ignore
     def rate(self, value: float) -> None:
         self._set_rate(value)
+        # We assume the "rate" has been set as an effect of the binding between
+        # the self._speed_adjustment and the "rate" property.
+        # Signal the "rate_linear" property is updated so
+        # self._speed_scale_adjustment is also updated.
         self.notify("rate_linear")
 
     @GObject.Property(type=float)
@@ -373,6 +377,10 @@ class TimeProperties(Gtk.Expander, Loggable):
     def rate_linear(self, linear: float) -> None:
         value = self._linear_to_rate(linear)
         self._set_rate(value)
+        # We assume the "rate_linear" has been set as an effect of the binding
+        # between the self._speed_scale_adjustment and the "rate" property.
+        # Signal the "rate" property is updated so the self._speed_adjustment
+        # is also updated.
         self.notify("rate")
 
     def _set_rate(self, value: float):
@@ -475,6 +483,11 @@ class TimeProperties(Gtk.Expander, Loggable):
         self._time_effects = self.__get_time_effects(self._clip)
 
         if self._clip:
+            # Signal the properties changed so the Adjustments bound to them
+            # and the widgets using these are updated.
+            self.notify("rate")
+            self.notify("rate_linear")
+
             self._clip.connect("deep-notify", self.__child_property_changed_cb)
             self.show_all()
         else:
