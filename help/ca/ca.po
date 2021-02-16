@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "POT-Creation-Date: 2020-10-25 16:18+0000\n"
-"PO-Revision-Date: 2017-08-27 20:44+0200\n"
-"Last-Translator: Carles Ferrando Garcia <carles.ferrando@gmail.com>\n"
+"PO-Revision-Date: 2021-02-16 22:56+0000\n"
+"Last-Translator: Jordi Mas <jmas@softcatala.org>\n"
 "Language-Team: Catalan <info@softcatala.org>\n"
 "Language: ca\n"
 "MIME-Version: 1.0\n"
@@ -316,7 +316,7 @@ msgid ""
 "What is the difference between OGG and Vorbis? AVI and DivX? x264 and H.264? "
 "Learn about codecs and container formats here."
 msgstr ""
-"Quina és la diferència entre OGG i Vorbis ? AVI i DivX ? x264 i H.264? "
+"Quina és la diferència entre OGG i Vorbis? AVI i DivX? x264 i H.264? "
 "Apreneu sobre els còdecs i els contenidors de formats aquí."
 
 #. (itstool) path: page/title
@@ -440,7 +440,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/effects.page:26
 msgid "Adding and removing effects to clips"
-msgstr "Afegit i supressió d'efectes a les seqüències"
+msgstr "Afegir i suprimir efectes a les seqüències"
 
 #. (itstool) path: section/p
 #: C/effects.page:27
@@ -574,7 +574,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/gstreamer.page:40
 msgid "A word about editing-friendly codecs"
-msgstr "Unes paraules sobre còdecs d'edició-amigables"
+msgstr "Unes paraules sobre còdecs que permeten l'edició"
 
 #. (itstool) path: section/p
 #: C/gstreamer.page:41
@@ -624,7 +624,7 @@ msgid ""
 "search for packages containing gstreamer plugins good in your distribution's "
 "repositories."
 msgstr ""
-"Els connectors \"Good\" són connectors d'alta qualitat sota la llicència "
+"Els connectors «Good» són connectors d'alta qualitat sota la llicència "
 "LGPL. Aquests connectors es consideren segurs i recomanats en qualsevol "
 "moment. Per a instal·lar-los, cerqueu paquets que continguin connectors "
 "gstreamer «Good» als dipòsits de la vostra distribució."
@@ -893,7 +893,7 @@ msgid ""
 "<app>Rhythmbox</app> or <app>Totem</app>)."
 msgstr ""
 "Importar fàcilment seqüències de música o vídeo des de reproductors "
-"multimèdia ( com <app>Rhythmbox</app> o <app>Totem</app>)."
+"multimèdia (com <app>Rhythmbox</app> o <app>Totem</app>)."
 
 #. (itstool) path: item/p
 #: C/importing.page:60
@@ -1032,7 +1032,7 @@ msgid ""
 msgstr ""
 "En usar corbes de fotograma clau, podeu canviar el valor d'una propietat al "
 "llarg del temps, encara que tingui un valor fixat per la duració sencera "
-"d'una seqüència. Això es pot gastar per a canviar l'opacitat o el volum "
+"d'una seqüència. Això es pot usar per a canviar l'opacitat o el volum "
 "igual que si es canviessin les propietats de l'efecte en qualsevol punt de "
 "la durada de la seqüència."
 
@@ -1133,7 +1133,7 @@ msgstr ""
 "final dels punts de la seqüència i no es pot suprimir. La corba entre "
 "aquests dos fotogrames clau és inicialment una línia horitzontal plana, que "
 "indica que el valor de la propietat controlada és el mateix en cada punt del "
-"temps durant la duració de la seqüència. Per a canviar el valor ( i la "
+"temps durant la duració de la seqüència. Per a canviar el valor (i la "
 "velocitat d'aquest canvi) en cada punt, podeu afegir un o més fotogrames "
 "clau a la seqüència i arrossegar-los a les posicions verticals apropiades "
 "que representen els seus valors."
@@ -1231,7 +1231,7 @@ msgid ""
 "Visually, an opacity of 100% means you cannot see the clips below that layer "
 "or clip, and an opacity of 50% means you can partly see them."
 msgstr ""
-"Cada capa ( i cada seqüència) té la seva pròpia transparència. Per a "
+"Cada capa (i cada seqüència) té la seva pròpia transparència. Per a "
 "continuar amb la metàfora de la pintura sobre vidre, si la pintura és prou "
 "fina es pot veure a través d'ella. Visualment una opacitat del 100% "
 "significa que no podeu veure les seqüències sota la capa o la seqüència, i "
@@ -1641,7 +1641,7 @@ msgid ""
 msgstr ""
 "La regla juga un rol crucial en interaccionar amb la línia de temps. Primer, "
 "representa una escala de temps que proporciona mesures del temps (en segons) "
-"per orientar-se de forma general. Segon, constitueix la superfície primària "
+"per a orientar-se de forma general. Segon, constitueix la superfície primària "
 "en la qual podeu moure el punt de reproducció (i així, canviar la posició "
 "durant el temps). Per a moure la posició, premeu en qualsevol posició sobre "
 "la regla. Podeu també <em>netejar</em> la línia de temps prement sobre la "
@@ -2004,7 +2004,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/medialibrary.page:38
 msgid "Filtering search"
-msgstr "Cerca amb filtres"
+msgstr "Cercar amb filtres"
 
 #. (itstool) path: section/p
 #: C/medialibrary.page:39
@@ -2295,7 +2295,7 @@ msgid ""
 "Holding the <key>Alt</key> key while using the mousewheel over the timeline, "
 "to keep the playhead in view"
 msgstr ""
-"Mantenir premuda la tecla <key>Alt</key> mentre s'usa la roda del ratolí "
+"Manteniu premuda la tecla <key>Alt</key> mentre s'usa la roda del ratolí "
 "sobre la línia de temps per a mantenir el punt de reproducció en la "
 "visualització"
 
@@ -2314,7 +2314,7 @@ msgid ""
 msgstr ""
 "Usant les dreceres del teclat com <keyseq><key>Ctrl</key><key>-</key></"
 "keyseq> per a ampliar o <keyseq><key>Ctrl</key><key>=</key></keyseq> "
-"(<keyseq><key>Ctrl</key><key>+</key></keyseq> sobre el teclat numèric ) per "
+"(<keyseq><key>Ctrl</key><key>+</key></keyseq> sobre el teclat numèric) per "
 "a ampliar"
 
 #. (itstool) path: section/p
@@ -2374,7 +2374,7 @@ msgid ""
 "the timecode with a plain number of the desired frame."
 msgstr ""
 "Podeu saltar a una posició exacta en la línia de temps editant el valor del "
-"temps mostrat en la barra d'eines de reproducció ( mireu la descripció de "
+"temps mostrat en la barra d'eines de reproducció (mireu la descripció de "
 "<link xref=\"mainwindow\">La finestra principal</link>). Per a editar-ho "
 "premeu sobre el giny, sobreescriviu el valor i premeu <key>Retorn</key>. El "
 "valor pot representar un codi de temps o un número de fotograma. El codi de "
@@ -3046,7 +3046,7 @@ msgstr ""
 "Tanmateix, és possible utilitzar versions de baixa qualitat del vostre "
 "material durant l'edició i utilitzar les versions d'alta qualitat quan es "
 "produeixi la sortida final, de manera que es pugui evitar les limitacions de "
-"maquinari en certa mesura. Això s'anomena <em>edició amb servidor "
+"maquinari en certa manera. Això s'anomena <em>edició amb servidor "
 "intermediari</em>. Aquesta característica, tanmateix, no està disponible "
 "encara a <app>Pitivi</app>."
 
@@ -3092,7 +3092,7 @@ msgstr "Transicions"
 #. (itstool) path: section/title
 #: C/transitions.page:27
 msgid "Crossfading clips"
-msgstr "seqüències amb esvaïments creuats"
+msgstr "Seqüències amb esvaïments creuats"
 
 #. (itstool) path: section/p
 #: C/transitions.page:28
@@ -3266,7 +3266,7 @@ msgstr ""
 #. (itstool) path: figure/title
 #: C/transitions.page:72
 msgid "Adding a new keyframe"
-msgstr "Afegit d'un fotograma clau nou"
+msgstr "Afegir un fotograma clau nou"
 
 #. (itstool) path: figure/desc
 #: C/transitions.page:73
