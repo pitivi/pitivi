@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-01-27 21:09+0000\n"
-"PO-Revision-Date: 2021-01-29 18:41+0200\n"
+"POT-Creation-Date: 2021-02-14 17:10+0000\n"
+"PO-Revision-Date: 2021-02-23 06:43+0200\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: српски <gnome-sr@googlegroups.org>\n"
 "Language: sr\n"
@@ -23,7 +23,6 @@ msgid "Pitivi video project (legacy)"
 msgstr "Видео пројекат Питиви (старо)"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:12
-#| msgid "Save project"
 msgid "Pitivi/GES video project"
 msgstr "Видео пројекат Питиви/ГЕС"
 
@@ -120,7 +119,6 @@ msgid "Estimating..."
 msgstr "Приближно..."
 
 #: data/ui/clipcolor.ui:21
-#| msgid "Pick a text color"
 msgid "Pick the clip color"
 msgstr "Изаберите боју снимка"
 
@@ -137,12 +135,10 @@ msgid "_Apply to project"
 msgstr "_Примени на пројекат"
 
 #: data/ui/clipmediaprops.ui:124
-#| msgid "Size (pixels):"
 msgid "Size (pixels)"
 msgstr "Величина (пиксела)"
 
 #: data/ui/clipmediaprops.ui:139
-#| msgid "Frame rate:"
 msgid "Frame rate"
 msgstr "Проток кадрова"
 
@@ -156,12 +152,10 @@ msgid "Video:"
 msgstr "Видео:"
 
 #: data/ui/clipmediaprops.ui:249
-#| msgid "Sample rate:"
 msgid "Sample rate"
 msgstr "Проток узорка"
 
 #: data/ui/clipmediaprops.ui:264
-#| msgid "Channels:"
 msgid "Channels"
 msgstr "Број канала"
 
@@ -182,17 +176,14 @@ msgid "X:"
 msgstr "X:"
 
 #: data/ui/cliptransformation.ui:161
-#| msgid "_Previous Keyframe"
 msgid "Previous keyframe"
 msgstr "Претходни кључни кадар"
 
 #: data/ui/cliptransformation.ui:177
-#| msgid "_Next Keyframe"
 msgid "Next keyframe"
 msgstr "Следећи кључни кадар"
 
 #: data/ui/cliptransformation.ui:207
-#| msgid "Reset to default value"
 msgid "Reset to default values"
 msgstr "Вратите на основне вредности"
 
@@ -225,7 +216,6 @@ msgid "Target chroma key:"
 msgstr "Кључ циљне хроматичности:"
 
 #: data/ui/customwidgets/alpha.ui:362
-#| msgid "Redo"
 msgid "Red"
 msgstr "Црвена"
 
@@ -234,7 +224,6 @@ msgid "Green"
 msgstr "Зелена"
 
 #: data/ui/customwidgets/alpha.ui:395
-#| msgid "Text color"
 msgid "Select a color"
 msgstr "Изаберите боју"
 
@@ -263,12 +252,10 @@ msgid "Midtones"
 msgstr "Средњи делови"
 
 #: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:442
-#| msgid "Height"
 msgid "Highlights"
 msgstr "Светли делови"
 
 #: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:481
-#| msgid "Preview"
 msgid "Split preview"
 msgstr "Подели претпреглед"
 
@@ -281,17 +268,14 @@ msgid "Shape:"
 msgstr "Облик:"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:336
-#| msgid "Width:"
 msgid "width"
 msgstr "ширина"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:347
-#| msgid "Height"
 msgid "height"
 msgstr "висина"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:358
-#| msgid "Duration"
 msgid "Operation:"
 msgstr "Поступак:"
 
@@ -329,7 +313,6 @@ msgid "OK"
 msgstr "У реду"
 
 #: data/ui/greeter.ui:40
-#| msgid "Projects"
 msgid "Recent Projects"
 msgstr "Скорашњи пројекти"
 
@@ -342,7 +325,6 @@ msgid "Remove"
 msgstr "Уклони"
 
 #: data/ui/greeter.ui:230
-#| msgid "Close Pitivi"
 msgid "Welcome to Pitivi"
 msgstr "Добродошли у Питиви"
 
@@ -415,7 +397,6 @@ msgid "Interactive Intro"
 msgstr "Међудејствени увод"
 
 #: data/ui/mainmenubutton.ui:213
-#| msgid "Close Pitivi"
 msgid "About Pitivi"
 msgstr "О Питивију"
 
@@ -523,7 +504,6 @@ msgid "Constrain proportions"
 msgstr "Ограничи пропорције"
 
 #: data/ui/projectsettings.ui:301
-#| msgid "Display aspect ratio"
 msgid "Maintain aspect ratio"
 msgstr "Задржи однос размере"
 
@@ -581,12 +561,10 @@ msgid "Proxy"
 msgstr "Посредник"
 
 #: data/ui/projectsettings.ui:865
-#| msgid "Title"
 msgid "Title:"
 msgstr "Наслов:"
 
 #: data/ui/projectsettings.ui:882
-#| msgid "Section"
 msgid "Action:"
 msgstr "Радња:"
 
@@ -600,7 +578,6 @@ msgid "Render"
 msgstr "Генерисање"
 
 #: data/ui/renderingdialog.ui:116
-#| msgid "Opacity:"
 msgid "Quality:"
 msgstr "Квалитет:"
 
@@ -686,17 +663,14 @@ msgid "Framerate"
 msgstr "Проток кадрова"
 
 #: data/ui/renderingdialog.ui:781
-#| msgid "Advanced..."
 msgid "Advanced"
 msgstr "Напредно"
 
 #: data/ui/renderingdialog.ui:792
-#| msgid "All files"
 msgid "Select file"
 msgstr "Изабери датотеку"
 
 #: data/ui/renderingdialog.ui:809
-#| msgid "File name:"
 msgid "File path:"
 msgstr "Путања датотеке:"
 
@@ -714,7 +688,6 @@ msgid "Play"
 msgstr "Пусти"
 
 #: data/ui/renderingprogress.ui:70
-#| msgid "Folder"
 msgid "Open Folder"
 msgstr "Отворите фасциклу"
 
@@ -781,7 +754,6 @@ msgid "Paste clips"
 msgstr "Убаци снимке"
 
 #: data/ui/timelinetoolbar.ui:93
-#| msgid "Paste clips"
 msgid "Paste"
 msgstr "Убаци"
 
@@ -830,7 +802,6 @@ msgid "Vertical:"
 msgstr "Усправно:"
 
 #: pitivi/action_search_bar.py:46
-#| msgid "Section"
 msgid "Search Action"
 msgstr "Радња претраге"
 
@@ -869,14 +840,12 @@ msgstr "— „%s“ издање %s је инсталиран али Питив
 #. Translators: %s is a Python module name or another os component
 #: pitivi/check.py:186
 #, python-format
-#| msgid "- %s not found on the system"
 msgid "- %s GStreamer plug-in not found on the system"
 msgstr "— нисам нашао „%s“ Гстример прикључак на систему"
 
 #. Translators: %s is a Python module name or another os component
 #: pitivi/check.py:189
 #, python-format
-#| msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgid ""
 "- %s Gstreamer plug-in version %s is installed but Pitivi requires at least "
 "version %s"
@@ -945,13 +914,11 @@ msgstr ""
 "Гстримеру и за њихово исправљање"
 
 #. Translators: This is the default text of a title clip.
-#: pitivi/clipproperties.py:57
-#| msgid "Title"
+#: pitivi/clipproperties.py:63
 msgid "Title Clip"
 msgstr "Снимак наслова"
 
-#: pitivi/clipproperties.py:127
-#| msgid "Select a clip on the timeline to configure its associated effects"
+#: pitivi/clipproperties.py:142
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
@@ -959,20 +926,37 @@ msgstr ""
 "Изаберите снимак на временској линији да подесите његова својства и ефекте "
 "или направите нови снимак:"
 
-#: pitivi/clipproperties.py:133
-#| msgid "Create a new preset"
+#: pitivi/clipproperties.py:148
 msgid "Create a title clip"
 msgstr "Направите снимак наслова"
 
-#: pitivi/clipproperties.py:138
+#: pitivi/clipproperties.py:153
 msgid "Create a color clip"
 msgstr "Направите снимак боје"
 
-#: pitivi/clipproperties.py:230
+#: pitivi/clipproperties.py:256 pitivi/effects.py:118
+msgid "Time"
+msgstr "Време"
+
+#: pitivi/clipproperties.py:299
+msgid "Speed"
+msgstr "Брзина"
+
+#: pitivi/clipproperties.py:314 pitivi/utils/widgets.py:800
+#, python-format
+msgid "%(preference_label)s:"
+msgstr "%(preference_label)s:"
+
+#: pitivi/clipproperties.py:317 pitivi/dialogs/prefs.py:285
+#: pitivi/utils/widgets.py:976
+msgid "Reset to default value"
+msgstr "Вратите на основне вредности"
+
+#: pitivi/clipproperties.py:538
 msgid "Effects"
 msgstr "Ефекти"
 
-#: pitivi/clipproperties.py:247
+#: pitivi/clipproperties.py:555
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
@@ -980,32 +964,27 @@ msgstr ""
 "Да примените ефекат на снимак, превуците га из библиотеке ефеката или "
 "користите дугме испод."
 
-#: pitivi/clipproperties.py:255
-#| msgid "Effects"
+#: pitivi/clipproperties.py:563
 msgid "Add Effect"
 msgstr "Додај ефекат"
 
-#: pitivi/clipproperties.py:560
+#: pitivi/clipproperties.py:887
 msgid "Transformation"
 msgstr "Преображај"
 
-#: pitivi/clipproperties.py:676
-#| msgid "Show keyframes for this value"
+#: pitivi/clipproperties.py:1003
 msgid "Show keyframes"
 msgstr "Прикажите кључне кадрове"
 
-#: pitivi/clipproperties.py:679
-#| msgid "Add a keyframe"
+#: pitivi/clipproperties.py:1006
 msgid "Activate keyframes"
 msgstr "Покрените кључне кадрове"
 
-#: pitivi/clipproperties.py:684
-#| msgid "Add a keyframe"
+#: pitivi/clipproperties.py:1011
 msgid "Hide keyframes"
 msgstr "Сакријте кључне кадрове"
 
 #: pitivi/clip_properties/color.py:53 plugins/console/console.py:125
-#| msgid "Colors"
 msgid "Color"
 msgstr "Боје"
 
@@ -1201,10 +1180,6 @@ msgstr "Геометрија"
 msgid "Fancy"
 msgstr "Кичерај"
 
-#: pitivi/effects.py:118
-msgid "Time"
-msgstr "Време"
-
 #: pitivi/effects.py:246
 msgid "effect"
 msgstr "дејство"
@@ -1215,7 +1190,6 @@ msgid "Uncategorized"
 msgstr "Некатегорисано"
 
 #: pitivi/effects.py:393 pitivi/effects.py:660
-#| msgid "All effects"
 msgid "No effects"
 msgstr "Без ефеката"
 
@@ -1232,7 +1206,6 @@ msgid "Create a new project"
 msgstr "Направите нови пројекат"
 
 #: pitivi/greeterperspective.py:232
-#| msgid "Open"
 msgid "Open…"
 msgstr "Отвори…"
 
@@ -1249,7 +1222,6 @@ msgid "Click an item to select"
 msgstr "Кликните на ставку да је изаберете"
 
 #: pitivi/greeterperspective.py:276
-#| msgid "New Project"
 msgid "Select a Project"
 msgstr "Изаберите пројекат"
 
@@ -1276,7 +1248,6 @@ msgid "Start Overview"
 msgstr "Покрени претпреглед"
 
 #: pitivi/interactiveintro.py:212
-#| msgid "Close Pitivi"
 msgid "Welcome to Pitivi!"
 msgstr "Добродошли у Питиви!"
 
@@ -1297,12 +1268,10 @@ msgid "Preview with the play button"
 msgstr "Прикажите преглед са дугметом пуштања"
 
 #: pitivi/interactiveintro.py:222
-#| msgid "Export your project as a finished movie"
 msgid "Export your project to share it"
 msgstr "Извезите ваш пројекат да га делите"
 
 #: pitivi/interactiveintro.py:224
-#| msgid "Keyboard shortcuts"
 msgid "See all the keyboard shortcuts"
 msgstr "Видите све пречице тастатуре"
 
@@ -1376,7 +1345,6 @@ msgid "Optimize:"
 msgstr "Прилагоди:"
 
 #: pitivi/medialibrary.py:131
-#| msgid "Unsupported"
 msgid "Unsupported assets"
 msgstr "Неподржана добра"
 
@@ -1468,13 +1436,10 @@ msgid "Open containing folder"
 msgstr "Отвори садржајну фасциклу"
 
 #: pitivi/medialibrary.py:1167
-#| msgid "_Edit"
 msgid "Edit"
 msgstr "Уреди"
 
 #: pitivi/medialibrary.py:1196
-#| msgid "Do not use proxy for selected asset"
-#| msgid_plural "Do not use proxies for selected assets"
 msgid "Do not use Optimised Proxy for selected asset"
 msgid_plural "Do not use Optimised Proxies for selected assets"
 msgstr[0] "Не користи прилагођеног посредника за изабрано добро"
@@ -1492,8 +1457,6 @@ msgstr[2] "Обриши одговарајуће датотеке посредн
 msgstr[3] "Обриши одговарајућу датотеку посредника"
 
 #: pitivi/medialibrary.py:1218
-#| msgid "Do not use proxy for selected asset"
-#| msgid_plural "Do not use proxies for selected assets"
 msgid "Do not use Proxy for selected asset"
 msgid_plural "Do not use Proxies for selected assets"
 msgstr[0] "Не користи посредника за изабрано добро"
@@ -1502,8 +1465,6 @@ msgstr[2] "Не користи посреднике за изабрана доб
 msgstr[3] "Не користи посредника за изабрано добро"
 
 #: pitivi/medialibrary.py:1240
-#| msgid "Do not use proxy for selected asset"
-#| msgid_plural "Do not use proxies for selected assets"
 msgid "Do not use Scaled Proxy for selected asset"
 msgid_plural "Do not use Scaled Proxies for selected assets"
 msgstr[0] "Не користи скалираног посредника за изабрано добро"
@@ -1512,8 +1473,6 @@ msgstr[2] "Не користи скалиране посреднике за из
 msgstr[3] "Не користи скалираног посредника за изабрано добро"
 
 #: pitivi/medialibrary.py:1262
-#| msgid "Use proxy for selected asset"
-#| msgid_plural "Use proxies for selected assets"
 msgid "Use Optimised Proxy for selected asset"
 msgid_plural "Use Optimised Proxies for selected assets"
 msgstr[0] "Користи прилагођеног посредника за изабрано добро"
@@ -1522,8 +1481,6 @@ msgstr[2] "Користи прилагођене посреднике за из�
 msgstr[3] "Користи прилагођеног посредника за изабрано добро"
 
 #: pitivi/medialibrary.py:1272
-#| msgid "Use proxy for selected asset"
-#| msgid_plural "Use proxies for selected assets"
 msgid "Use Scaled Proxy for selected asset"
 msgid_plural "Use Scaled Proxies for selected assets"
 msgstr[0] "Користи скалираног посредника за изабрано добро"
@@ -1721,16 +1678,10 @@ msgstr ""
 "\n"
 
 #: pitivi/render.py:1322
-#| msgid "An error occurred while importing."
-#| msgid_plural "{0:d} errors occurred while importing."
 msgid "An error occurred while trying to render your project."
 msgstr "Дошло је до грешке приликом покушаја стварања вашег пројекта."
 
 #: pitivi/render.py:1324
-#| msgid ""
-#| "An error occurred while trying to render your project. You might want to "
-#| "check our troubleshooting guide or file a bug report. The GStreamer error "
-#| "was:"
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1796,7 +1747,6 @@ msgid "3 by 3"
 msgstr "3 са 3"
 
 #: pitivi/viewer/guidelines.py:60
-#| msgid "Horizontal:"
 msgid "Vertical/Horizontal"
 msgstr "Усправно/Водоравно"
 
@@ -1805,7 +1755,6 @@ msgid "Diagonals"
 msgstr "Дијагонално"
 
 #: pitivi/viewer/guidelines.py:92
-#| msgid "Compositing"
 msgid "Composition Guidelines"
 msgstr "Вођице слагања"
 
@@ -1850,8 +1799,6 @@ msgstr ""
 "Можете поново да га прикачите затварањем новог прозора."
 
 #: pitivi/viewer/viewer.py:337
-#| msgid "View error"
-#| msgid_plural "View errors"
 msgid "Viewer"
 msgstr "Прегледач"
 
@@ -1924,7 +1871,6 @@ msgid "Markers"
 msgstr "Обилеживачи"
 
 #: pitivi/timeline/markers.py:141
-#| msgid "Add a keyframe"
 msgid "Add a marker"
 msgstr "Додајте обележивач"
 
@@ -1968,7 +1914,6 @@ msgstr ""
 "снимке."
 
 #: pitivi/timeline/timeline.py:339 pitivi/timeline/timeline.py:1764
-#| msgid "Add a Keyframe"
 msgid "Add layer"
 msgstr "Додајте слој"
 
@@ -1985,7 +1930,6 @@ msgid "Delete selected clips"
 msgstr "Уклоните изабране снимке"
 
 #: pitivi/timeline/timeline.py:1729
-#| msgid "Delete selected clips"
 msgid "Delete selected clips and shift following ones"
 msgstr "Обришите изабране снимке и промените оне пратеће"
 
@@ -2014,7 +1958,6 @@ msgid "Seeks to the first clip edge before the playhead."
 msgstr "Премотајте на ивицу првог снимка пре главе пуштања."
 
 #: pitivi/timeline/timeline.py:1785
-#| msgid "Render only the selected clips"
 msgid "Add an effect to the selected clip"
 msgstr "Додајте ефекат изабраном снимку"
 
@@ -2091,7 +2034,6 @@ msgstr ""
 "http://prevod.org — превод на српски језик"
 
 #: pitivi/dialogs/browseprojects.py:34
-#| msgid "Open a project"
 msgid "Open Project…"
 msgstr "Отвори пројекат…"
 
@@ -2156,10 +2098,6 @@ msgstr "Посредници"
 #: pitivi/dialogs/prefs.py:64
 msgid "Other"
 msgstr "Друго"
-
-#: pitivi/dialogs/prefs.py:285 pitivi/utils/widgets.py:976
-msgid "Reset to default value"
-msgstr "Вратите на основне вредности"
 
 #: pitivi/dialogs/prefs.py:331
 msgid ""
@@ -2241,7 +2179,6 @@ msgstr "Не могу да учитам прикључак „{module_name}“"
 #. We could use Gtk.ListBox.set_placeholder, but it
 #. appears bad inside the list widget.
 #: pitivi/dialogs/prefs.py:928
-#| msgid "Pitivi %s is available."
 msgid "No plugins available"
 msgstr "Нема доступних прикључака"
 
@@ -2255,9 +2192,6 @@ msgstr ""
 "href='{dir_url}'>директоријуму прикључака</a>."
 
 #: pitivi/utils/misc.py:278
-#| msgid ""
-#| "Failed to open the user manual. Make sure to have either the `yelp` "
-#| "GNOME  documentation viewer or a web browser installed"
 msgid ""
 "Failed to open the user manual. Make sure to have either the `yelp` GNOME "
 "documentation viewer or a web browser installed"
@@ -2308,7 +2242,6 @@ msgid "Stereo"
 msgstr "Стерео"
 
 #: pitivi/utils/ui.py:381
-#| msgid "6 Channels (5.1)"
 msgid "6 (5.1)"
 msgstr "6 (5.1)"
 
@@ -2347,7 +2280,6 @@ msgstr[3] "<b>Аудио:</b> %d канал при %d <i>Hz</i> (%d <i>бита<
 
 #: pitivi/utils/ui.py:588
 #, python-format
-#| msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
 msgstr "<b>Видео:</b> %d×%d <i>пиксела</i> при %s <i>к/с</i>"
 
@@ -2414,7 +2346,6 @@ msgstr "Око пре једне године"
 
 #: pitivi/utils/ui.py:732
 #, python-format
-#| msgid "About %s left"
 msgid "About %d year ago"
 msgid_plural "About %d years ago"
 msgstr[0] "Око пре %d године"
@@ -2425,11 +2356,6 @@ msgstr[3] "Око пре %d године"
 #: pitivi/utils/widgets.py:74
 msgid "Implement Me"
 msgstr "Реализуј ме"
-
-#: pitivi/utils/widgets.py:800
-#, python-format
-msgid "%(preference_label)s:"
-msgstr "%(preference_label)s:"
 
 #: pitivi/utils/widgets.py:836
 msgid "No properties."
@@ -2483,12 +2409,10 @@ msgid "Font"
 msgstr "Слова"
 
 #: plugins/console/console.py:146 plugins/console/console.py:164
-#| msgid "Development version: %s"
 msgid "Developer Console"
 msgstr "Програмерска конзола"
 
 #: plugins/console/console.py:188
-#| msgid "Pitivi encoding profile"
 msgid "Pitivi Console"
 msgstr "Конзола Питивија"
 
