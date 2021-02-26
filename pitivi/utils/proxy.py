@@ -27,12 +27,15 @@ from gi.repository import Gst
 from gi.repository import GstPbutils
 from gi.repository import GstTranscoder
 
+from pitivi.check import GstDependency
 from pitivi.configure import get_gstpresets_dir
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import ASSET_DURATION_META
 from pitivi.utils.misc import asset_get_duration
+# Remove check when we depend on Gst >= 1.20
+HAS_GST_1_19 = GstDependency("Gst", apiversion="1.0", version_required="1.19").check()
 
 # Make sure gst knowns about our own GstPresets
 Gst.preset_set_app_dir(get_gstpresets_dir())
@@ -503,13 +506,13 @@ class ProxyManager(GObject.Object, Loggable):
             self.emit("proxy-ready", asset, proxy)
             self.__emit_progress(proxy, 100)
 
-    def __transcoder_error_cb(self, transcoder, error, unused_details, asset):
+    def __transcoder_error_cb(self, _, error, unused_details, asset, transcoder):
         self.emit("error-preparing-asset", asset, None, error)
 
-    def __transcoder_done_cb(self, transcoder, asset):
-        transcoder.disconnect_by_func(self.__proxying_position_changed_cb)
-        transcoder.disconnect_by_func(self.__transcoder_done_cb)
-        transcoder.disconnect_by_func(self.__transcoder_error_cb)
+    def __transcoder_done_cb(self, emitter, asset, transcoder):
+        emitter.disconnect_by_func(self.__proxying_position_changed_cb)
+        emitter.disconnect_by_func(self.__transcoder_done_cb)
+        emitter.disconnect_by_func(self.__transcoder_error_cb)
 
         self.debug("Transcoder done with %s", asset.get_id())
 
@@ -566,7 +569,7 @@ class ProxyManager(GObject.Object, Loggable):
         asset.creation_progress = creation_progress
         self.emit("progress", asset, asset.creation_progress, estimated_time)
 
-    def __proxying_position_changed_cb(self, transcoder, position, asset):
+    def __proxying_position_changed_cb(self, _, position, asset, transcoder):
         if transcoder not in self.__running_transcoders:
             self.info("Position changed after job cancelled!")
             return
@@ -663,15 +666,18 @@ class ProxyManager(GObject.Object, Loggable):
                 project.scaled_proxy_width = w
                 project.scaled_proxy_height = h
             width, height = self._scale_asset_resolution(asset, w, h)
-
-        dispatcher = GstTranscoder.TranscoderGMainContextSignalDispatcher.new()
-
         enc_profile = self.__get_encoding_profile(self.__encoding_target_file,
                                                   asset, width, height)
 
-        transcoder = GstTranscoder.Transcoder.new_full(
-            asset_uri, proxy_uri + ProxyManager.part_suffix, enc_profile,
-            dispatcher)
+        if HAS_GST_1_19:
+            transcoder = GstTranscoder.Transcoder.new_full(
+                asset_uri, proxy_uri + ProxyManager.part_suffix, enc_profile)
+            signals_emitter = transcoder.get_signal_adapter(None)
+        else:
+            dispatcher = GstTranscoder.TranscoderGMainContextSignalDispatcher.new()
+            signals_emitter = transcoder = GstTranscoder.Transcoder.new_full(
+                asset_uri, proxy_uri + ProxyManager.part_suffix, enc_profile,
+                dispatcher)
 
         if shadow:
             # Used to identify shadow transcoder
@@ -692,12 +698,12 @@ class ProxyManager(GObject.Object, Loggable):
             transcoder.props.pipeline.props.audio_filter = waveformbin
 
         transcoder.set_cpu_usage(self.app.settings.max_cpu_usage)
-        transcoder.connect("position-updated",
-                           self.__proxying_position_changed_cb,
-                           asset)
+        signals_emitter.connect("position-updated",
+                                self.__proxying_position_changed_cb,
+                                asset, transcoder)
 
-        transcoder.connect("done", self.__transcoder_done_cb, asset)
-        transcoder.connect("error", self.__transcoder_error_cb, asset)
+        signals_emitter.connect("done", self.__transcoder_done_cb, asset, transcoder)
+        signals_emitter.connect("error", self.__transcoder_error_cb, asset, transcoder)
 
         if len(self.__running_transcoders) < self.app.settings.num_transcoding_jobs:
             self.__start_transcoder(transcoder)

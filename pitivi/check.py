@@ -60,6 +60,9 @@ class Dependency:
         """Checks whether the dependency is satisfied.
 
         Sets the `satisfied` field to True or False.
+
+        Returns:
+            True if the requirement is satisfied, False otherwise
         """
         self.component = self._try_importing_component()
 
@@ -74,6 +77,8 @@ class Dependency:
 
                 if formatted_version >= _string_to_list(self.version_required):
                     self.satisfied = True
+
+        return self.satisfied
 
     def _try_importing_component(self):
         """Performs the check.
@@ -301,8 +306,7 @@ def check_requirements():
         print(dependency)
 
     for dependency in SOFT_DEPENDENCIES:
-        dependency.check()
-        if not dependency.satisfied:
+        if not dependency.check():
             MISSING_SOFT_DEPS[dependency.modulename] = dependency
             print(_("Missing soft dependency:"))
             print(dependency)
@@ -422,7 +426,7 @@ def initialize_modules():
 # a specific version requirement, they have the "None" value.
 
 GST_API_VERSION = "1.0"
-GST_VERSION = "1.17.90"
+GST_VERSION = "1.17.90"  # FIXME Remove check in proxy.py once we bump to > 1.19
 GTK_API_VERSION = "3.0"
 GLIB_API_VERSION = "2.0"
 HARD_DEPENDENCIES = [GICheck(version_required="3.20.0"),
