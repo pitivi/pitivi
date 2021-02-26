@@ -2588,7 +2588,7 @@ msgid ""
 "containers</link> page for details."
 msgstr ""
 "Trieu un contenidor. Mireu la pàgina <link xref=\"codecscontainers\">còdecs "
-"and contenidors</link> per a trobar més detalls."
+"i contenidors</link> per a trobar més detalls."
 
 #. (itstool) path: item/p
 #: C/rendering.page:41
