@@ -3,20 +3,19 @@
 # This file is distributed under the same license as the pitivi package.
 #
 # lxlalexlxl <pilipchukap@rambler.ru>, 2011.
-# Yuri Chornoivan <yurchor@ukr.net>, 2020.
+# Yuri Chornoivan <yurchor@ukr.net>, 2020, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2020-12-13 21:38+0000\n"
-"PO-Revision-Date: 2020-12-14 10:12+0200\n"
+"POT-Creation-Date: 2021-03-04 20:52+0000\n"
+"PO-Revision-Date: 2021-03-05 16:23+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
-"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 20.11.70\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
@@ -1118,10 +1117,13 @@ msgstr "Вилучити ключовий кадр, двічі клацнувш�
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:63
-msgid "Adjust the time and value of a keyframe by moving it with the mouse."
+msgid ""
+"Adjust the time and value of a keyframe by moving it with the mouse. When "
+"moving the keyframe, hold down <key>Ctrl</key> to lock the keyframe "
+"horizontally or vertically."
 msgstr ""
 "Скоригувати час і значення ключового кадру пересуванням його за допомогою "
-"вказівника миші."
+"вказівника миші. При пересування ключового кадру утримуйте натиснутою клавішу <key>Ctrl</key>, щоб заблокувати ключовий кадр у горизонтальному або вертикальному напрямку."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:66
@@ -2744,7 +2746,6 @@ msgstr "звукові дані та відеодані у кліпи і"
 
 #. (itstool) path: item/p
 #: C/selectiongrouping.page:60
-#| msgid "Select multiple clips in the timeline."
 msgid "multiple clips into groups."
 msgstr "декілька кліпів у групи."
 
@@ -2756,11 +2757,11 @@ msgid ""
 "ungroup audio and video tracks within clips, and also how to group and "
 "ungroup multiple clips together."
 msgstr ""
-"Це означає, що ви можете редагувати декілька фрагментів мультимедійних даних"
-" разом, зокрема пересувати їх разом монтажним столом. У цьому розділі"
-" наведено настанови щодо того, як групувати звукові доріжки на відеодоріжки у"
-" кліпах і скасовувати групування, а також групувати кліпи і скасовувати"
-" групування кліпів."
+"Це означає, що ви можете редагувати декілька фрагментів мультимедійних даних "
+"разом, зокрема пересувати їх разом монтажним столом. У цьому розділі "
+"наведено настанови щодо того, як групувати звукові доріжки на відеодоріжки у "
+"кліпах і скасовувати групування, а також групувати кліпи і скасовувати "
+"групування кліпів."
 
 #. (itstool) path: section/p
 #: C/selectiongrouping.page:63
@@ -4056,6 +4057,11 @@ msgstr ""
 msgid "To toggle Safe Areas on and off, press <key>'</key>."
 msgstr ""
 "Для вмикання і вимикання безпечних областей натисніть клавішу <key>'</key>."
+
+#~ msgid "Adjust the time and value of a keyframe by moving it with the mouse."
+#~ msgstr ""
+#~ "Скоригувати час і значення ключового кадру пересуванням його за допомогою "
+#~ "вказівника миші."
 
 #~ msgid ""
 #~ "The grouping and ungrouping functions are useful when you want to add or "
