@@ -1,14 +1,14 @@
 # Swedish translation for pitivi documentation.
-# Copyright © 2015-2020 pitivi's COPYRIGHT HOLDER
+# Copyright © 2015-2021 pitivi's COPYRIGHT HOLDER
 # This file is distributed under the same license as the pitivi package.
 # Josef Andersson <josef.andersson@fripost.org>, 2015, 2016.
-# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2019, 2020.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2019, 2020, 2021.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2020-12-13 21:38+0000\n"
-"PO-Revision-Date: 2020-12-15 21:09+0100\n"
+"POT-Creation-Date: 2021-03-04 20:52+0000\n"
+"PO-Revision-Date: 2021-03-05 22:31+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -1104,9 +1104,14 @@ msgstr "Ta bort en nyckelbild genom att dubbelklicka på den."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:63
-msgid "Adjust the time and value of a keyframe by moving it with the mouse."
+msgid ""
+"Adjust the time and value of a keyframe by moving it with the mouse. When "
+"moving the keyframe, hold down <key>Ctrl</key> to lock the keyframe "
+"horizontally or vertically."
 msgstr ""
-"Justera tiden och värdet av en nyckelbild genom att flytta den med musen."
+"Justera tiden och värdet för en nyckelbild genom att flytta den med musen. "
+"Håll nere <key>Ctrl</key> då nyckelbilden flyttas för att låsa nyckelbilden "
+"horisontellt eller vertikalt."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:66
@@ -3829,7 +3834,7 @@ msgstr ""
 "egenskapsvärdet direkt att inaktiveras. För att ta bort nyckelbilderna och "
 "åter direkt kunna ange ett konstant värde med komponenten måste du klicka på "
 "knappen <gui>Återställ till standardvärde</gui>. För mer information om hur "
-"nyckelrutor används, se sidan <link xref=\"keyframecurves"
+"nyckelbilder används, se sidan <link xref=\"keyframecurves"
 "\">Nyckelbildskurvor</link>."
 
 #. (itstool) path: note/p
@@ -3994,6 +3999,10 @@ msgstr ""
 #: C/workwithprojects.page:52
 msgid "To toggle Safe Areas on and off, press <key>'</key>."
 msgstr "För att slå på/av säkra områden, tryck <key>'</key>."
+
+#~ msgid "Adjust the time and value of a keyframe by moving it with the mouse."
+#~ msgstr ""
+#~ "Justera tiden och värdet av en nyckelbild genom att flytta den med musen."
 
 #~ msgid ""
 #~ "The grouping and ungrouping functions are useful when you want to add or "
