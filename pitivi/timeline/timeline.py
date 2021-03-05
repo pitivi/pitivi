@@ -2065,7 +2065,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.timeline.scroll_to_playhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def __add_effect_cb(self, unused_action, unused_parameter):
-        clip = self.timeline.selection.getSingleClip()
+        clip = self.timeline.selection.get_single_clip()
         if clip:
             self.effects_popover.set_relative_to(clip.ui)
             self.effects_popover.popup()
