@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-03-01 20:58+0000\n"
-"PO-Revision-Date: 2021-03-02 09:13+0200\n"
+"POT-Creation-Date: 2021-03-05 22:47+0000\n"
+"PO-Revision-Date: 2021-03-06 09:59+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -417,7 +417,6 @@ msgid "Clip properties..."
 msgstr "Властивості кліпу…"
 
 #: data/ui/medialibrary.ui:59
-#| msgid "Paste selected clips"
 msgid "Show tags associated with selected clips"
 msgstr "Показати мітки, які пов'язано із позначеними кліпами"
 
@@ -1456,13 +1455,11 @@ msgstr[3] "Вказаний нижче файл не можна використ
 
 #: pitivi/medialibrary.py:1167
 msgid "Tag as:"
-msgstr ""
-"Мітка:"
+msgstr "Мітка:"
 
 #: pitivi/medialibrary.py:1205
 msgid "Enter tag"
-msgstr ""
-"Введіть мітку"
+msgstr "Введіть мітку"
 
 #: pitivi/medialibrary.py:1364
 msgid "Open containing folder"
@@ -1856,7 +1853,7 @@ msgstr "Вийти з повноекранного режиму"
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:417
+#: pitivi/timeline/elements.py:438
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1867,12 +1864,12 @@ msgstr ""
 "Мітка часу: %s\n"
 "Значення: %s"
 
-#: pitivi/timeline/elements.py:592
+#: pitivi/timeline/elements.py:626
 #, python-format
 msgid "Timestamp: %s"
 msgstr "Часова позначка: %s"
 
-#: pitivi/timeline/elements.py:1509
+#: pitivi/timeline/elements.py:1543
 msgid "Audio crossfade"
 msgstr "Перехресний перехід звуку"
 
@@ -1901,13 +1898,23 @@ msgstr "Вилучити шар"
 msgid "Layer %d"
 msgstr "Шар %d"
 
-#: pitivi/timeline/markers.py:135
+#: pitivi/timeline/markers.py:136
 msgid "Markers"
 msgstr "Позначки"
 
-#: pitivi/timeline/markers.py:141
+#: pitivi/timeline/markers.py:143
 msgid "Add a marker"
 msgstr "Додати позначку"
+
+#: pitivi/timeline/markers.py:150
+#| msgid "Seeks to the first clip edge before the playhead."
+msgid "Seek to the first marker before the playhead"
+msgstr "Позиціювання на першій позначці до позиції відтворення."
+
+#: pitivi/timeline/markers.py:157
+#| msgid "Seeks to the first clip edge after the playhead."
+msgid "Seek to the first marker after the playhead"
+msgstr "Позиціювання на першій позначці після позиції відтворення."
 
 #: pitivi/timeline/ruler.py:233
 #, python-format
@@ -1985,12 +1992,14 @@ msgid "Paste selected clips"
 msgstr "Вставити позначені кліпи"
 
 #: pitivi/timeline/timeline.py:1771
-msgid "Seeks to the first clip edge after the playhead."
-msgstr "Позиціювання на першому краю кліпу після позиції відтворення."
+#| msgid "Seeks to the first clip edge after the playhead."
+msgid "Seek to the first clip edge after the playhead"
+msgstr "Позиціювання на першому краю кліпу після позиції відтворення"
 
 #: pitivi/timeline/timeline.py:1778
-msgid "Seeks to the first clip edge before the playhead."
-msgstr "Позиціювання на першому краю кліпу до позиції відтворення."
+#| msgid "Seeks to the first clip edge before the playhead."
+msgid "Seek to the first clip edge before the playhead"
+msgstr "Позиціювання на першому краю кліпу до позиції відтворення"
 
 #: pitivi/timeline/timeline.py:1785
 msgid "Add an effect to the selected clip"
