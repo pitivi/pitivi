@@ -274,7 +274,7 @@ class TransformationPropertiesTest(common.TestCase):
             self.assertEqual(value, source.ui.default_position[prop])
 
 
-class ClipPropertiesTest(common.TestCase):
+class TitlePropertiesTest(common.TestCase):
     """Tests for the TitleProperties class."""
 
     def _get_title_source_child_props(self):
@@ -321,7 +321,6 @@ class ClipPropertiesTest(common.TestCase):
         # Modify the title.
         mod_title = "Modifed Title"
         self.clipproperties.title_expander.textbuffer.props.text = mod_title
-        self.clipproperties.title_expander.textbuffer.props.text = mod_title
         ps2 = self._get_title_source_child_props()
         self.assertEqual(ps2["text"][1], mod_title)
         self.assertNotEqual(ps1["text"], ps2["text"])
@@ -335,6 +334,63 @@ class ClipPropertiesTest(common.TestCase):
         self.action_log.redo()
         ps4 = self._get_title_source_child_props()
         self.assertDictEqual(ps2, ps4)
+
+    @common.setup_timeline
+    @common.setup_clipproperties
+    def test_selection_does_nothing(self):
+        """Checks de/selection do not create undoable operations."""
+        self.project.pipeline.get_position = mock.Mock(return_value=0)
+        self.clipproperties.create_title_clip_cb(None)
+        self.assertEqual(len(self.action_log.undo_stacks), 1)
+        clips = self.layer.get_clips()
+        self.assertEqual(len(clips), 1, clips)
+
+        self.timeline_container.timeline.selection.unselect(clips)
+        self.assertEqual(len(self.action_log.undo_stacks), 1)
+
+        self.timeline_container.timeline.selection.select(clips)
+        self.assertEqual(len(self.action_log.undo_stacks), 1)
+
+    @common.setup_timeline
+    @common.setup_clipproperties
+    def test_xxx(self):
+        """Exercise creating a title clip."""
+        self.project.pipeline.get_position = mock.Mock(return_value=0)
+
+        # Create the first clip.
+        self.clipproperties.create_title_clip_cb(None)
+        clip1, = self.layer.get_clips()
+        source1, = clip1.get_children(False)
+        self.clipproperties.title_expander.textbuffer.props.text = "TC1"
+        self.assertEqual(source1.get_child_property("text"), (True, "TC1"))
+
+        # Make place for the second clip at the beginning of the layer.
+        clip1.props.start = clip1.props.duration
+
+        # Create the second clip.
+        self.clipproperties.create_title_clip_cb(None)
+        clip2, clip1_ = self.layer.get_clips()
+        self.assertIs(clip1_, clip1)
+        source2, = clip2.get_children(False)
+        self.clipproperties.title_expander.textbuffer.props.text = "TC2"
+        self.assertEqual(source2.get_child_property("text"), (True, "TC2"))
+
+        self.assertEqual(source2.get_child_property("text"), (True, "TC2"))
+        self.assertEqual(source1.get_child_property("text"), (True, "TC1"))
+
+        # Switch back to clip1.
+        self.timeline_container.timeline.selection.select([clip1])
+        self.assertEqual(source1.get_child_property("text"), (True, "TC1"))
+        self.assertEqual(source2.get_child_property("text"), (True, "TC2"))
+
+        # Switch back to clip2.
+        self.timeline_container.timeline.selection.select([clip2])
+        self.assertEqual(source1.get_child_property("text"), (True, "TC1"))
+        self.assertEqual(source2.get_child_property("text"), (True, "TC2"))
+
+
+class ClipPropertiesTest(common.TestCase):
+    """Tests for the ClipProperties class."""
 
     @common.setup_timeline
     @common.setup_clipproperties
@@ -373,22 +429,6 @@ class ClipPropertiesTest(common.TestCase):
 
         self.assertEqual(source.get_child_property("posx").value, -width)
         self.assertEqual(source.get_child_property("posy").value, -height)
-
-    @common.setup_timeline
-    @common.setup_clipproperties
-    def test_selection_does_nothing(self):
-        """Checks de/selection do not create undoable operations."""
-        self.project.pipeline.get_position = mock.Mock(return_value=0)
-        self.clipproperties.create_title_clip_cb(None)
-        self.assertEqual(len(self.action_log.undo_stacks), 1)
-        clips = self.layer.get_clips()
-        self.assertEqual(len(clips), 1, clips)
-
-        self.timeline_container.timeline.selection.unselect(clips)
-        self.assertEqual(len(self.action_log.undo_stacks), 1)
-
-        self.timeline_container.timeline.selection.select(clips)
-        self.assertEqual(len(self.action_log.undo_stacks), 1)
 
 
 class SpeedPropertiesTest(common.TestCase):

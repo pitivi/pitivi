@@ -221,13 +221,14 @@ class TitleProperties(Gtk.Expander, Loggable):
             self.source.disconnect(self._children_props_handler)
             self._children_props_handler = None
 
+        self.source = None
+
         if source:
             assert isinstance(source, (GES.TextOverlay, GES.TitleSource))
             self._update_from_source(source)
             self._children_props_handler = source.connect("deep-notify",
                                                           self._source_deep_notify_cb)
-
-        self.source = source
+            self.source = source
 
         self.set_visible(bool(self.source))
 
