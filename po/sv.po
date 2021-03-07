@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-03-01 20:58+0000\n"
-"PO-Revision-Date: 2021-03-02 22:27+0100\n"
+"POT-Creation-Date: 2021-03-05 22:47+0000\n"
+"PO-Revision-Date: 2021-03-07 21:17+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -1825,7 +1825,7 @@ msgstr "Avsluta helskärmsläge"
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:417
+#: pitivi/timeline/elements.py:438
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1836,12 +1836,12 @@ msgstr ""
 "Tidsstämpel: %s\n"
 "Värde: %s"
 
-#: pitivi/timeline/elements.py:592
+#: pitivi/timeline/elements.py:626
 #, python-format
 msgid "Timestamp: %s"
 msgstr "Tidsstämpel: %s"
 
-#: pitivi/timeline/elements.py:1509
+#: pitivi/timeline/elements.py:1543
 msgid "Audio crossfade"
 msgstr "Ljudövertona"
 
@@ -1870,13 +1870,21 @@ msgstr "Ta bort lager"
 msgid "Layer %d"
 msgstr "Lager %d"
 
-#: pitivi/timeline/markers.py:135
+#: pitivi/timeline/markers.py:136
 msgid "Markers"
 msgstr "Markörer"
 
-#: pitivi/timeline/markers.py:141
+#: pitivi/timeline/markers.py:143
 msgid "Add a marker"
 msgstr "Lägg till en markör"
+
+#: pitivi/timeline/markers.py:150
+msgid "Seek to the first marker before the playhead"
+msgstr "Spola till den första markören innan uppspelningshuvudet"
+
+#: pitivi/timeline/markers.py:157
+msgid "Seek to the first marker after the playhead"
+msgstr "Spola till den första markören efter uppspelningshuvudet"
 
 #: pitivi/timeline/ruler.py:233
 #, python-format
@@ -1954,12 +1962,12 @@ msgid "Paste selected clips"
 msgstr "Klistra in markerade klipp"
 
 #: pitivi/timeline/timeline.py:1771
-msgid "Seeks to the first clip edge after the playhead."
-msgstr "Spolar till den första klippkanten efter uppspelningshuvudet."
+msgid "Seek to the first clip edge after the playhead"
+msgstr "Spola till den första klippkanten efter uppspelningshuvudet"
 
 #: pitivi/timeline/timeline.py:1778
-msgid "Seeks to the first clip edge before the playhead."
-msgstr "Spolar till den första klippkanten innan uppspelningshuvudet."
+msgid "Seek to the first clip edge before the playhead"
+msgstr "Spola till den första klippkanten innan uppspelningshuvudet"
 
 #: pitivi/timeline/timeline.py:1785
 msgid "Add an effect to the selected clip"
