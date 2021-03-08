@@ -110,3 +110,17 @@ GTK 4](https://developer.gnome.org/gtk4/unstable/gtk-migrating-3-to-4.html).
 
 **Requirements**: Python. Minimal experience contributing to Pitivi including
 unit tests. Experience developing GTK apps is a plus.
+
+
+## External audio editing integration
+
+The audio editing features in Pitivi are likely to stay at a basic level so we
+can focus on the video editing functionality. Once a video segment is finished,
+it would be great to be able to export the entire audio and work on it with an
+audio editor such as [Audacity](https://www.audacityteam.org). See for example
+how the experimental Blender-Audacity integration
+[works](https://www.youtube.com/watch?v=f61Zvb8AipA) and its
+[Python implementation](https://github.com/tin2tin/audacity_tools_for_blender).
+
+**Requirements**: Python. Minimal experience contributing to Pitivi including
+unit tests. Experience developing GTK apps is a plus.
