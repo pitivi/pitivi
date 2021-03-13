@@ -105,37 +105,39 @@ with `binstall`. See "Switching locales" below.
 
 ## Hacking on Pitivi dependencies (Meson)
 
-If you have to work on say, [GStreamer Editing Services](https://gstreamer.freedesktop.org/modules/gst-editing-services.html)
+If you have to work on say, [GStreamer Editing
+Services](https://gstreamer.freedesktop.org/modules/gst-editing-services.html)
 which is built using the Meson build system, first clone it into your
 `pitivi-dev` folder:
 ```
-(ptv-flatpak) $ git clone git://anongit.freedesktop.org/gstreamer/gst-editing-services
+(ptv-flatpak) $ cd pitivi-dev
+(ptv-flatpak) $ git clone git@gitlab.freedesktop.org:gstreamer/gst-editing-services.git
 ```
 
-Prepare its build directory (Once it has been set up, you won't have to
-run `meson` again for this build directory):
+Prepare its build directory using the `setup` alias which runs `meson`. This has
+to be done only once:
 ```
-(ptv-flatpak) $ cd gst-editing-services && setup
+(ptv-flatpak) $ cd pitivi-dev/gst-editing-services
+(ptv-flatpak) $ setup
 Using Pitivi prefix in /.../pitivi-dev/pitivi-prefix
 Running in sandbox: meson mesonbuild/ --prefix=/app --libdir=lib -Ddisable_gtkdoc=true -Ddisable_doc=true
 ```
 
 Build and install it in the sandbox:
 ```
+(ptv-flatpak) $ cd pitivi-dev/gst-editing-services
 (ptv-flatpak) $ ninja -C mesonbuild/ install
 Using Pitivi prefix in /.../pitivi-dev/pitivi-prefix
 Running in sandbox: ninja -C mesonbuild/ install
 ```
 
-In the `(ptv-flatpak)` development environment `meson` and `ninja` are
-aliases which run meson and ninja in the flatpak sandbox.
+In the `(ptv-flatpak)` development environment `meson` and `ninja` are aliases
+which run meson and ninja in the flatpak sandbox.
 
-NOTE: When updating the environment with `ptvenv --update`,
-it will use your local dependencies repositories it finds in the
-`pitivi-dev` folder, instead of the default remote repositories.
-This means you have to update them yourself.
-Also beware that it will not take into account not committed
-changes.
+NOTE: When updating the environment with `ptvenv --update`, it will use your
+local dependencies repositories it finds in the `pitivi-dev` folder, instead of
+the default remote repositories. This means you have to update them yourself.
+Also beware that it only takes into account committed changes.
 
 
 ## Hacking on Pitivi dependencies (Autotools, Make, etc)

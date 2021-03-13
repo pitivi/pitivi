@@ -107,14 +107,14 @@ Save the file and restart your shell.
 
 The bootstrap will fail if git config is not set up. Do the following:
 
-`$ git config --global user.email `“`you@example.com`”\
+`$ git config --global user.email you@example.com`
 `$ git config --global user.name `“`Your`` ``Name`”
 
 # Compile
 
 ### Checkout cerbero
 
-`$ git clone `[`git://anongit.freedesktop.org/gstreamer/cerbero`](git://anongit.freedesktop.org/gstreamer/cerbero)
+`$ git clone git@gitlab.freedesktop.org:gstreamer/cerbero.git`
 
 ## Install dependencies
 
