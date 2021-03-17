@@ -24,6 +24,7 @@ import time
 import uuid
 from gettext import gettext as _
 from hashlib import md5
+from typing import Optional
 from urllib.parse import unquote
 
 from gi.repository import GdkPixbuf
@@ -1491,11 +1492,11 @@ class Project(Loggable, GES.Project):
 
         self._load_encoder_settings(profiles)
 
-    def set_container_profile(self, container_profile):
-        """Sets @container_profile as new profile if usable.
+    def set_container_profile(self, container_profile: GstPbutils.EncodingContainerProfile) -> bool:
+        """Sets the specified container profile as new profile if usable.
 
-        Args:
-            container_profile (GstPbutils.EncodingContainerProfile): The profile to use.
+        Returns:
+            True if it has been set successfully.
         """
         if container_profile == self.container_profile:
             return True
@@ -1505,10 +1506,10 @@ class Project(Loggable, GES.Project):
             muxer = Encoders().default_muxer
         container_profile.set_preset_name(muxer)
 
-        video_profile = None
-        audio_profile = None
-        vencoder = None
-        aencoder = None
+        video_profile: Optional[GstPbutils.EncodingVideoProfile] = None
+        audio_profile: Optional[GstPbutils.EncodingAudioProfile] = None
+        vencoder: Optional[str] = None
+        aencoder: Optional[str] = None
         for profile in container_profile.get_profiles():
             if isinstance(profile, GstPbutils.EncodingVideoProfile):
                 video_profile = profile

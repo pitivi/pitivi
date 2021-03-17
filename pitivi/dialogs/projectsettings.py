@@ -27,7 +27,7 @@ from pitivi.preset import AudioPresetManager
 from pitivi.preset import VideoPresetManager
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import AUDIO_CHANNELS
-from pitivi.utils.ui import AUDIO_RATES
+from pitivi.utils.ui import create_audio_rates_model
 from pitivi.utils.ui import create_frame_rates_model
 from pitivi.utils.ui import get_combo_value
 from pitivi.utils.ui import set_combo_value
@@ -101,10 +101,6 @@ class ProjectSettingsDialog:
         self.frame_rate_fraction_widget = FractionWidget()
         frame_rate_box.pack_end(self.frame_rate_fraction_widget, True, True, 0)
         self.frame_rate_fraction_widget.show()
-
-        # Populate comboboxes.
-        self.channels_combo.set_model(AUDIO_CHANNELS)
-        self.sample_rate_combo.set_model(AUDIO_RATES)
 
         # Behavior.
         self.widgets_group = RippleUpdateGroup()
@@ -203,7 +199,8 @@ class ProjectSettingsDialog:
         fr_datum = (widget_value.num, widget_value.denom)
         model = create_frame_rates_model(fr_datum)
         self.frame_rate_combo.set_model(model)
-        set_combo_value(combo_widget, widget_value)
+        res = set_combo_value(combo_widget, widget_value)
+        assert res, widget_value
 
     def __video_preset_loaded_cb(self, unused_mgr):
         self.sar = self.get_sar()
@@ -264,9 +261,12 @@ class ProjectSettingsDialog:
             self.video_presets_combo.set_active_id(matching_video_preset)
 
         # Audio
+        self.channels_combo.set_model(AUDIO_CHANNELS)
         res = set_combo_value(self.channels_combo, self.project.audiochannels)
         assert res, self.project.audiochannels
 
+        audio_rates_model = create_audio_rates_model(self.project.audiorate)
+        self.sample_rate_combo.set_model(audio_rates_model)
         res = set_combo_value(self.sample_rate_combo, self.project.audiorate)
         assert res, self.project.audiorate
 

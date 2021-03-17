@@ -40,8 +40,8 @@ from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import show_user_manual
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import AUDIO_CHANNELS
-from pitivi.utils.ui import AUDIO_RATES
 from pitivi.utils.ui import beautify_eta
+from pitivi.utils.ui import create_audio_rates_model
 from pitivi.utils.ui import create_frame_rates_model
 from pitivi.utils.ui import filter_unsupported_media_files
 from pitivi.utils.ui import get_combo_value
@@ -831,10 +831,6 @@ class RenderDialog(Loggable):
         self.preferred_aencoder = self.project.aencoder
         self.__replaced_assets = {}
 
-        self.channels_combo.set_model(AUDIO_CHANNELS)
-        self.sample_rate_combo.set_model(AUDIO_RATES)
-        self.__initialize_muxers_model()
-        self._display_settings()
         self._display_render_settings()
 
         self.window.connect("delete-event", self._delete_event_cb)
@@ -842,7 +838,7 @@ class RenderDialog(Loggable):
 
         self.presets_manager.connect("profile-updated", self._presets_manager_profile_updated_cb)
 
-        preset_item = self.presets_manager.initial_preset()
+        preset_item: PresetItem = self.presets_manager.initial_preset()
         if preset_item:
             if self.apply_preset(preset_item):
                 self.apply_vcodecsettings_quality(Quality.MEDIUM)
@@ -1018,7 +1014,7 @@ class RenderDialog(Loggable):
 
             self.preset_popover.hide()
 
-    def apply_preset(self, preset_item):
+    def apply_preset(self, preset_item: PresetItem):
         old_profile = self.project.container_profile
         profile = preset_item.profile.copy()
         if not self._set_encoding_profile(profile):
@@ -1037,11 +1033,6 @@ class RenderDialog(Loggable):
     def _project_video_size_changed_cb(self, project):
         """Handles Project metadata changes."""
         self.update_resolution()
-
-    def __initialize_muxers_model(self):
-        # By default show only supported muxers and encoders.
-        model = self.create_combobox_model(Encoders().muxers)
-        self.muxer_combo.set_model(model)
 
     def create_combobox_model(self, factories):
         """Creates a model for a combobox showing factories.
@@ -1118,6 +1109,8 @@ class RenderDialog(Loggable):
         self.scale_spinbutton.set_value(self.project.render_scale)
 
         # Muxer settings
+        model = self.create_combobox_model(Encoders().muxers)
+        self.muxer_combo.set_model(model)
         # This will trigger an update of the codec comboboxes.
         muxer = Encoders().factories_by_name.get(self.project.muxer)
         if muxer:
@@ -1206,8 +1199,13 @@ class RenderDialog(Loggable):
         reduced_model = Gtk.ListStore(*model_headers)
         reduced = []
         for name, value in dict(model).items():
-            ecaps = Gst.Caps(caps_template_expander(caps_template, value))
-            if not caps.intersect(ecaps).is_empty():
+            caps_raw = caps_template_expander(caps_template, value)
+            ecaps = Gst.Caps(caps_raw)
+            if caps.intersect(ecaps).is_empty():
+                self.warning(
+                    "Ignoring value because not supported by the encoder: %s",
+                    caps_raw)
+            else:
                 reduced.append((name, value))
 
         for value in sorted(reduced, key=lambda v: float(v[1])):
@@ -1224,9 +1222,10 @@ class RenderDialog(Loggable):
                     if t.direction == Gst.PadDirection.SINK][0]
 
         caps = template.static_caps.get()
+        model = create_audio_rates_model(self.project.audiorate)
         self._update_valid_restriction_values(caps, self.sample_rate_combo,
                                               "audio/x-raw,rate=(int)%d",
-                                              AUDIO_RATES,
+                                              model,
                                               self.project.audiorate)
 
         self._update_valid_restriction_values(caps, self.channels_combo,
@@ -1241,10 +1240,10 @@ class RenderDialog(Loggable):
         template = [t for t in factory.get_static_pad_templates()
                     if t.direction == Gst.PadDirection.SINK][0]
 
+        caps = template.static_caps.get()
+
         fr_datum = (self.project.videorate.num, self.project.videorate.denom)
         model = create_frame_rates_model(fr_datum)
-
-        caps = template.static_caps.get()
         self._update_valid_restriction_values(
             caps, self.frame_rate_combo,
             "video/x-raw,framerate=(GstFraction)%d/%d", model,

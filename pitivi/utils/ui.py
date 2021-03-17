@@ -23,6 +23,8 @@ import urllib.parse
 import urllib.request
 from gettext import gettext as _
 from gettext import ngettext
+from typing import Optional
+from typing import Tuple
 
 import cairo
 from gi.repository import Gdk
@@ -763,32 +765,41 @@ def clear_styles(widget):
         style.remove_class(css_class)
 
 
-def create_model(columns, data):
-    ret = Gtk.ListStore(*columns)
+def create_model(columns, data) -> Gtk.ListStore:
+    model = Gtk.ListStore(*columns)
     for datum in data:
-        ret.append(datum)
-    return ret
+        model.append(datum)
+    return model
 
 
-def create_frame_rates_model(*extra_frames):
-    """Create a framerate model from the list of standard frames list and extra frames(if any).
+def create_frame_rates_model(extra_rate: Optional[Tuple[int, int]] = None) -> Gtk.ListStore:
+    """Creates a framerate model based on our list of standard frame rates.
 
     Args:
-        extra_frames (tuple): extra frames to include in model.
+        extra_rate: An extra frame rate to include in model.
     """
-    final_list = list(standard_frames_list)
-    for frame in extra_frames:
-        if frame not in final_list:
-            final_list.append(frame)
-    final_list.sort(key=lambda x: x[0] / x[1])
+    rates = list(FRAME_RATES)
+    if extra_rate and extra_rate not in rates:
+        rates.append(extra_rate)
+    rates.sort(key=lambda x: x[0] / x[1])
 
     items = []
-    for fps in final_list:
+    for fps in rates:
         fraction = Gst.Fraction(*fps)
         item = (format_framerate(fraction), fraction)
         items.append(item)
 
     return create_model((str, object), items)
+
+
+def create_audio_rates_model(extra_rate: Optional[int] = None):
+    rates = list(AUDIO_RATES)
+    if extra_rate and extra_rate not in rates:
+        rates.append(extra_rate)
+    rates.sort()
+
+    return create_model((str, int),
+                        [(format_audiorate(rate), rate) for rate in rates])
 
 
 def set_combo_value(combo, value):
@@ -874,32 +885,28 @@ AUDIO_CHANNELS = create_model((str, int),
                               [(format_audiochannels(ch), ch)
                                for ch in (8, 6, 4, 2, 1)])
 
-standard_frames_list = [(12, 1),
-                        (15, 1),
-                        (20, 1),
-                        (24000, 1001),
-                        (24, 1),
-                        (25, 1),
-                        (30000, 1001),
-                        (30, 1),
-                        (50, 1),
-                        (60000, 1001),
-                        (60, 1),
-                        (120, 1)
-                        ]
+FRAME_RATES = [(12, 1),
+               (15, 1),
+               (20, 1),
+               (24000, 1001),
+               (24, 1),
+               (25, 1),
+               (30000, 1001),
+               (30, 1),
+               (50, 1),
+               (60000, 1001),
+               (60, 1),
+               (120, 1)]
 
-AUDIO_RATES = create_model((str, int),
-                           [(format_audiorate(rate), rate) for rate in (
-                               8000,
-                               11025,
-                               12000,
-                               16000,
-                               22050,
-                               24000,
-                               44100,
-                               48000,
-                               96000
-                           )])
+AUDIO_RATES = [8000,
+               11025,
+               12000,
+               16000,
+               22050,
+               24000,
+               44100,
+               48000,
+               96000]
 
 # This whitelist is made from personal knowledge of file extensions in the wild,
 # from gst-inspect |grep demux,

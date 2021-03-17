@@ -278,7 +278,7 @@ class TestColors(common.TestCase):
 class TestCreateFramerateModel(common.TestCase):
 
     def test_create_framerate_model(self):
-        model = create_frame_rates_model((25, 2), (130, 1))
+        model = create_frame_rates_model((25, 2))
         sorted_frameslist = [(12, 1),
                              (25, 2),
                              (15, 1),
@@ -292,7 +292,6 @@ class TestCreateFramerateModel(common.TestCase):
                              (60000, 1001),
                              (60, 1),
                              (120, 1),
-                             (130, 1)
                              ]
         self.assertListEqual([(row[1].num, row[1].denom) for row in model], sorted_frameslist)
 
