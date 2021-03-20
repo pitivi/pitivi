@@ -455,7 +455,8 @@ class SpeedPropertiesTest(common.TestCase):
 
         clip, = self.layer.get_clips()
 
-        self.project.ges_timeline.props.snapping_distance = Gst.SECOND
+        duration = self.project.ges_timeline.get_frame_time(self.project.ges_timeline.get_frame_at(Gst.SECOND))
+        self.project.ges_timeline.props.snapping_distance = duration
         self.assertEqual(self.speed_box._sources, {})
         self.assertEqual(self.speed_box._time_effects, {})
 
@@ -464,36 +465,36 @@ class SpeedPropertiesTest(common.TestCase):
         self.assertEqual(len(self.speed_box._sources), sources_count, self.speed_box._sources)
         self.assertEqual(self.speed_box._time_effects, {})
 
-        clip.props.duration = Gst.SECOND
-        self.assertEqual(self.speed_box._clip.props.duration, Gst.SECOND)
+        clip.props.duration = duration
+        self.assertEqual(self.speed_box._clip.props.duration, duration)
 
         self.speed_box._speed_adjustment.props.value = 2.0
-        self.assert_applied_rate(sources_count, 2.0, Gst.SECOND / 2)
+        self.assert_applied_rate(sources_count, 2.0, int(duration / 2))
 
         self.speed_box._speed_adjustment.props.value = 0.5
-        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND * 2)
+        self.assert_applied_rate(sources_count, 0.5, int(duration / 2) * 4)
 
         self.action_log.undo()
-        self.assert_applied_rate(sources_count, 2.0, Gst.SECOND / 2)
+        self.assert_applied_rate(sources_count, 2.0, int(duration / 2))
 
         self.action_log.undo()
-        self.assert_applied_rate(sources_count, 1.0, Gst.SECOND)
+        self.assert_applied_rate(sources_count, 1.0, duration)
 
         self.action_log.redo()
-        self.assert_applied_rate(sources_count, 2.0, Gst.SECOND / 2)
+        self.assert_applied_rate(sources_count, 2.0, int(duration / 2))
 
         self.action_log.redo()
-        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND * 2)
+        self.assert_applied_rate(sources_count, 0.5, int(duration / 2) * 4)
 
         self.timeline_container.timeline.selection.select([])
         self.assertEqual(self.speed_box._sources, {})
         self.assertEqual(self.speed_box._time_effects, {})
 
         self.timeline_container.timeline.selection.select([clip])
-        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND * 2)
+        self.assert_applied_rate(sources_count, 0.5, int(duration / 2) * 4)
 
         self.action_log.undo()
-        self.assert_applied_rate(sources_count, 2.0, Gst.SECOND / 2)
+        self.assert_applied_rate(sources_count, 2.0, int(duration / 2))
 
         self.timeline_container.timeline.selection.select([])
         self.assertEqual(self.speed_box._sources, {})
@@ -509,23 +510,24 @@ class SpeedPropertiesTest(common.TestCase):
         self.assert_clip_speed_child_props(clip, audio, video, 0.5)
 
         self.timeline_container.timeline.selection.select([clip])
-        self.project.pipeline.get_position = mock.Mock(return_value=Gst.SECOND)
+        total_duration = clip.props.duration
+        self.project.pipeline.get_position = mock.Mock(return_value=duration)
         self.timeline_container.split_action.emit("activate", None)
 
         clip1, clip2 = self.layer.get_clips()
         self.assertEqual(clip1.props.start, 0)
-        self.assertEqual(clip1.props.duration, Gst.SECOND)
-        self.assertEqual(clip2.props.start, Gst.SECOND)
-        self.assertEqual(clip2.props.duration, Gst.SECOND)
-        self.assertEqual(self.project.ges_timeline.props.snapping_distance, Gst.SECOND)
+        self.assertEqual(clip1.props.duration, duration)
+        self.assertEqual(clip2.props.start, duration)
+        self.assertEqual(clip2.props.duration, total_duration - duration)
+        self.assertEqual(self.project.ges_timeline.props.snapping_distance, duration)
 
         # 0.1 would lead to clip1 totally overlapping clip2, ensure it is a noop
         self.speed_box._speed_adjustment.props.value = 0.1
-        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND)
-        self.assertEqual(self.project.ges_timeline.props.snapping_distance, Gst.SECOND)
+        self.assert_applied_rate(sources_count, 0.5, duration)
+        self.assertEqual(self.project.ges_timeline.props.snapping_distance, duration)
 
         self.action_log.undo()
-        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND * 2)
+        self.assert_applied_rate(sources_count, 0.5, int(duration / 2) * 4)
 
         # Undoing should undo the split
         clip1, = self.layer.get_clips()
@@ -534,14 +536,14 @@ class SpeedPropertiesTest(common.TestCase):
         self.action_log.redo()
         clip1, clip2 = self.layer.get_clips()
         self.assertEqual(self.speed_box._clip, clip1)
-        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND)
-        self.assertEqual(self.project.ges_timeline.props.snapping_distance, Gst.SECOND)
+        self.assert_applied_rate(sources_count, 0.5, duration)
+        self.assertEqual(self.project.ges_timeline.props.snapping_distance, duration)
 
         self.speed_box._speed_adjustment.props.value = 1.0
-        self.assert_applied_rate(sources_count, 1.0, Gst.SECOND / 2)
+        self.assert_applied_rate(sources_count, 1.0, int(duration / 2))
 
         self.speed_box._speed_adjustment.props.value = 0.5
-        self.assert_applied_rate(sources_count, 0.5, Gst.SECOND)
+        self.assert_applied_rate(sources_count, 0.5, int(duration / 2) * 2)
 
         self.speed_box.set_clip(None)
         self.assertEqual(self.speed_box._sources, {})

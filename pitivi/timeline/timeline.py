@@ -2105,6 +2105,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 clips.extend(layer.get_clips())
 
         position = self._project.pipeline.get_position()
+        position = self.ges_timeline.get_frame_time(self.ges_timeline.get_frame_at(position))
         splitted = False
 
         with self._project.pipeline.commit_timeline_after():

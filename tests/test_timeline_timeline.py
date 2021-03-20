@@ -376,11 +376,12 @@ class TestGrouping(common.TestCase):
             self.assertIsNone(clip.get_parent())
 
     def test_group_splitted_clip_and_select_group(self):
-        position = 5
 
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         clips = self.add_clips_simple(timeline, 1)
+        clips[0].props.duration = timeline.ges_timeline.get_frame_time(4)
+        position = timeline.ges_timeline.get_frame_time(2)
         self.toggle_clip_selection(clips[0], expect_selected=True)
 
         timeline.ges_timeline.get_asset().pipeline.get_position = mock.Mock(return_value=position)
