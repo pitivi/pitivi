@@ -1163,18 +1163,19 @@ class RenderDialog(Loggable):
 
         current_filesize = os.stat(path_from_uri(self.outfile)).st_size
         length = self.project.ges_timeline.props.duration
-        estimated_size = float(
-            current_filesize * float(length) / self.current_position)
+        estimated_size = current_filesize * length / self.current_position
         # Now let's make it human-readable (instead of octets).
         # If it's in the giga range (10⁹) instead of mega (10⁶), use 2 decimals
-        if estimated_size > 10e8:
-            gigabytes = estimated_size / (10 ** 9)
+        gigabytes = estimated_size / (10 ** 9)
+        if gigabytes >= 1:
             return _("%.2f GB") % gigabytes
-        else:
-            megabytes = int(estimated_size / (10 ** 6))
-            if megabytes > 30:
-                megabytes = int(round(megabytes, -1))  # -1 means round to 10
-            return _("%d MB") % megabytes
+
+        megabytes = int(estimated_size / (10 ** 6))
+        if megabytes == 0:
+            return None
+        elif megabytes > 30:
+            megabytes = int(round(megabytes, -1))  # -1 means round to 10
+        return _("%d MB") % megabytes
 
     def _update_filename(self, basename):
         """Updates the filename UI element to show the specified file name."""

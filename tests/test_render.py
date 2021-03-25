@@ -653,3 +653,13 @@ class TestRender(BaseTestMediaLibrary):
         # The audio rate is changed because the default render preset
         # has an audio encoder which does not support 44100.
         self.assertEqual(project.audiorate, 48000)
+
+    def test__get_filesize_estimate(self):
+        project = self.create_simple_project()
+        dialog = self.create_rendering_dialog(project)
+        dialog.current_position = 1
+        from pitivi import render
+        with mock.patch.object(render, "path_from_uri"):
+            with mock.patch("pitivi.render.os.stat") as os_stat:
+                os_stat.return_value.st_size = 0
+                self.assertIsNone(dialog._get_filesize_estimate())
