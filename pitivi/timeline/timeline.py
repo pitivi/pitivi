@@ -2004,6 +2004,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             if not pasted_group:
                 self.info("The paste is not possible at position: %s", position)
                 return
+
+            # Need to save this as the .ungroup() below changes the duration.
+            duration = pasted_group.duration
             self.timeline.selection.select(pasted_group.children)
             try:
                 # We need to recreate the copied group as pasting destroys it.
@@ -2011,6 +2014,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 self.__copied_group.props.serialize = False
             finally:
                 pasted_group.ungroup(recursive=False)
+        # Seek to the end of the pasted clip(s) for convenience.
+        self._project.pipeline.simple_seek(position + duration)
 
     def __add_layer_cb(self, unused_action, unused_parameter):
         with self.app.action_log.started("add layer",
