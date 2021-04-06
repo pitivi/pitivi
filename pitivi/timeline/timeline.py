@@ -2000,16 +2000,17 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         with self.app.action_log.started("paste",
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                          toplevel=True):
-            copied_group_shallow_copy = self.__copied_group.paste(position)
-            if not copied_group_shallow_copy:
+            pasted_group = self.__copied_group.paste(position)
+            if not pasted_group:
                 self.info("The paste is not possible at position: %s", position)
                 return
-
+            self.timeline.selection.select(pasted_group.children)
             try:
-                self.__copied_group = copied_group_shallow_copy.copy(True)
+                # We need to recreate the copied group as pasting destroys it.
+                self.__copied_group = pasted_group.copy(True)
                 self.__copied_group.props.serialize = False
             finally:
-                copied_group_shallow_copy.ungroup(recursive=False)
+                pasted_group.ungroup(recursive=False)
 
     def __add_layer_cb(self, unused_action, unused_parameter):
         with self.app.action_log.started("add layer",

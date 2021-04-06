@@ -559,6 +559,34 @@ class TestCopyPaste(common.TestCase):
         timeline_container.paste_action.emit("activate", None)
         self.assertEqual(len(layer.get_clips()), 1)
 
+    def test_paste_selection(self):
+        timeline_container = self.copy_clips(1)
+        timeline = timeline_container.timeline
+        layer = timeline.ges_timeline.get_layers()[0]
+        project = timeline.ges_timeline.get_asset()
+
+        # Paste a single clip.
+        clips = layer.get_clips()
+        self.assertEqual(len(clips), 1)
+        position = 10
+        project.pipeline.get_position = mock.Mock(return_value=position)
+        timeline_container.paste_action.emit("activate", None)
+
+        clips = layer.get_clips()
+        self.assertListEqual([bool(clip.selected) for clip in clips], [False, True])
+
+        # The copy_clips() above simulates CTRL button press, so this will add 1st clip to the selection.
+        self.toggle_clip_selection(clips[0], True)
+        timeline_container.copy_action.emit("activate", None)
+
+        # Paste two clips.
+        position = 20
+        project.pipeline.get_position = mock.Mock(return_value=position)
+        timeline_container.paste_action.emit("activate", None)
+
+        clips = layer.get_clips()
+        self.assertListEqual([bool(clip.selected) for clip in clips], [False, False, True, True])
+
 
 class TestEditing(common.TestCase):
 
