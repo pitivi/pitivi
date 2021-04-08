@@ -329,7 +329,7 @@ class TestGrouping(common.TestCase):
 
             self.assertEqual(clips[0].get_parent(), clip.get_parent())
             self.assertTrue(bool(clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED))
-            self.assertTrue(clip.selected.selected)
+            self.assertTrue(clip.selected)
 
         group = clips[0].get_parent()
         self.assertEqual(len(group.get_children(False)), len(clips))
@@ -356,7 +356,7 @@ class TestGrouping(common.TestCase):
         # Make sure all the clips have been deselected
         for clip in clips:
             self.assertFalse(bool(clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED))
-            self.assertFalse(clip.selected.selected)
+            self.assertFalse(clip.selected)
 
     def test_group_ungroup(self):
         num_clips = 2
@@ -394,8 +394,8 @@ class TestGrouping(common.TestCase):
 
         # Only the first clip is selected so select the
         # second one
-        self.assertTrue(clips[0].selected.selected)
-        self.assertFalse(clips[1].selected.selected)
+        self.assertTrue(clips[0].selected)
+        self.assertFalse(clips[1].selected)
 
         event = mock.Mock()
         event.keyval = Gdk.KEY_Control_L
@@ -406,7 +406,7 @@ class TestGrouping(common.TestCase):
         timeline_container.do_key_release_event(event)
 
         for clip in clips:
-            self.assertTrue(clip.selected.selected)
+            self.assertTrue(clip.selected)
 
         # Group the two parts
         timeline_container.group_action.emit("activate", None)

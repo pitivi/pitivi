@@ -51,9 +51,9 @@ class TestSelectionResetWhenRemovingClip(common.TestCase):
         self.assertSetEqual(set(self.timeline_container.timeline.selection), set(expected_selected_clips))
         for clip in self.get_timeline_clips():
             if clip in expected_selected_clips:
-                self.assertTrue(clip.selected.selected)
+                self.assertTrue(clip.selected)
             else:
-                self.assertFalse(clip.selected.selected)
+                self.assertFalse(clip.selected)
 
     @common.setup_timeline
     def test_redo_delete_when_selected(self):
