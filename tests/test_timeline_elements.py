@@ -412,7 +412,7 @@ class TestVideoSource(common.TestCase):
         self.assertEqual(width, 960)
         self.assertEqual(height, 400)
 
-    @common.setup_project_with_clips
+    @common.setup_project_with_clips(assets_names=["1sec_simpsons_trailer.mp4"])
     @common.setup_clipproperties
     def test_change_set_project_size(self):
         """Checks the size of the scaled clips after project settings changes."""

@@ -585,7 +585,7 @@ class SpeedPropertiesTest(common.TestCase):
         self.timeline_container.timeline.selection.select([clip1])
         self.assert_applied_rate(1, 2.0, clip1_duration / 2)
 
-    @common.setup_project_with_clips
+    @common.setup_project_with_clips(assets_names=["1sec_simpsons_trailer.mp4"])
     @common.setup_clipproperties
     def test_load_project_clip_speed(self):
         sources_count = 2

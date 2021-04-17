@@ -27,6 +27,7 @@ import sys
 import tempfile
 import traceback
 import unittest
+from typing import List
 from unittest import mock
 
 from gi.repository import Gdk
@@ -188,13 +189,13 @@ class CheckedOperationDuration:
         signal.alarm(0)
 
 
-def setup_project_with_clips(assets_names=None):  # pylint: disable=unused-argument
+def setup_project_with_clips(assets_names: List[str]):
     """Sets up a Pitivi instance with the specified assets on the timeline."""
+    # Ensure this method is not being used directly as a decorator.
+    assert isinstance(assets_names, list)
 
     def decorator(func):
         nonlocal assets_names
-        if assets_names is None:
-            assets_names = ["1sec_simpsons_trailer.mp4"]
 
         def wrapper(self):
             with cloned_sample(*assets_names):
