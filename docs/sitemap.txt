@@ -9,6 +9,7 @@ index.md
 		Coding_style_guide.md
 		Command_line_tools.md
 		Inspecting_UI.md
+		Debugging.md
 	Testing.md
 		QA_Scenarios.md
 	Architecture.md

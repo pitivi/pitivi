@@ -65,7 +65,7 @@ Hack away, and check the effect of your changes by simply running:
 ```
 
 
-### Updating the development environment
+## Updating the development environment
 
 To update the dependencies installed in the sandbox, run:
 ```
@@ -103,7 +103,7 @@ to be built with `build`, to regenerate the corresponding `.py` files.
 with `binstall`. See "Switching locales" below.
 
 
-### Hacking on Pitivi dependencies (Meson)
+## Hacking on Pitivi dependencies (Meson)
 
 If you have to work on say, [GStreamer Editing Services](https://gstreamer.freedesktop.org/modules/gst-editing-services.html)
 which is built using the Meson build system, first clone it into your
@@ -138,7 +138,7 @@ Also beware that it will not take into account not committed
 changes.
 
 
-### Hacking on Pitivi dependencies (Autotools, Make, etc)
+## Hacking on Pitivi dependencies (Autotools, Make, etc)
 
 If the project you are working on is built with other tools, make sure
 they are run in the sandbox by using `ptvenv`. For example:
