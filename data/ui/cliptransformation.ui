@@ -9,6 +9,11 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkImage" id="aspect_ratio_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">chain-connected-symbolic</property>
+  </object>
   <object class="GtkImage" id="icon_reset1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -42,7 +47,7 @@
     <property name="margin_bottom">6</property>
     <property name="row_spacing">6</property>
     <property name="column_spacing">6</property>
-    <property name="row_homogeneous">True</property>
+    <property name="row_homogeneous">False</property>
     <child>
       <object class="GtkLabel" id="label11">
         <property name="visible">True</property>
@@ -69,7 +74,6 @@
       <packing>
         <property name="left_attach">1</property>
         <property name="top_attach">0</property>
-        <property name="width">3</property>
       </packing>
     </child>
     <child>
@@ -85,7 +89,6 @@
       <packing>
         <property name="left_attach">1</property>
         <property name="top_attach">1</property>
-        <property name="width">3</property>
       </packing>
     </child>
     <child>
@@ -114,7 +117,6 @@
       <packing>
         <property name="left_attach">1</property>
         <property name="top_attach">2</property>
-        <property name="width">3</property>
       </packing>
     </child>
     <child>
@@ -129,7 +131,22 @@
       <packing>
         <property name="left_attach">1</property>
         <property name="top_attach">3</property>
-        <property name="width">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkButton" id="aspect_ratio_button">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="focus_on_click">True</property>
+        <property name="tooltip_text" translatable="yes">Constrain Proportions</property>
+        <property name="receives_default">True</property>
+        <property name="image">aspect_ratio_image</property>
+        <property name="relief">none</property>
+      </object>
+      <packing>
+        <property name="left_attach">2</property>
+        <property name="top_attach">2</property>
+        <property name="height">2</property>
       </packing>
     </child>
     <child>

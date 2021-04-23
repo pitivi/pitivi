@@ -59,6 +59,54 @@ class TransformationPropertiesTest(common.TestCase):
 
     @common.setup_timeline
     @common.setup_clipproperties
+    def test_clip_size_aspect_ratio_lock(self):
+        """Checks if aspect ratio is maintained when clip size is linked."""
+        # Add a clip and select it
+        clip = self.add_clips_simple(self.timeline_container.timeline, 1)[0]
+        self.timeline_container.timeline.selection.select([clip])
+        source = self.transformation_box.source
+        self.assertIsNotNone(source)
+
+        self._check_aspect_ratio_constraining(source, initial_size=(960, 400), width=1440, height=None, expected_width=None, expected_height=600)
+        self._check_aspect_ratio_constraining(source, initial_size=(320, 240), width=None, height=720, expected_width=960, expected_height=None)
+        self._check_aspect_ratio_constraining(source, initial_size=(100, 100), width=25, height=None, expected_width=None, expected_height=25)
+
+    def _check_aspect_ratio_constraining(self, source, initial_size, width, height, expected_width, expected_height):
+        width_spin = self.transformation_box.spin_buttons["width"]
+        height_spin = self.transformation_box.spin_buttons["height"]
+        width_spin.set_value(initial_size[0])
+        height_spin.set_value(initial_size[1])
+
+        # Lock the aspect ratio.
+        self.clipproperties.transformation_expander._aspect_ratio_button_clicked_cb(None)
+        self.assertIsNotNone(self.clipproperties.transformation_expander._aspect_ratio)
+
+        # Make a change to one of the spin button's value.
+        if width is not None:
+            width_spin.set_value(width)
+            expected_width = width
+        if height is not None:
+            height_spin.set_value(height)
+            expected_height = height
+        self.assertEqual(source.get_child_property("width"), (True, expected_width))
+        self.assertEqual(source.get_child_property("height"), (True, expected_height))
+
+        # Unlock the aspect ratio.
+        self.clipproperties.transformation_expander._aspect_ratio_button_clicked_cb(None)
+        self.assertIsNone(self.clipproperties.transformation_expander._aspect_ratio)
+
+        # Change the width independently.
+        width_spin.set_value(expected_width * 2)
+        self.assertEqual(source.get_child_property("width"), (True, expected_width * 2))
+        self.assertEqual(source.get_child_property("height"), (True, expected_height))
+
+        # Change the height independently.
+        height_spin.set_value(expected_height * 4)
+        self.assertEqual(source.get_child_property("width"), (True, expected_width * 2))
+        self.assertEqual(source.get_child_property("height"), (True, expected_height * 4))
+
+    @common.setup_timeline
+    @common.setup_clipproperties
     def test_spin_buttons_write(self):
         """Checks the spin buttons changing updates the source properties."""
         timeline = self.transformation_box.app.gui.editor.timeline_ui.timeline

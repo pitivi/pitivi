@@ -905,6 +905,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.spin_buttons_handler_ids = {}
         self.set_label(_("Transformation"))
         self.set_expanded(True)
+        self._aspect_ratio: Optional[Gst.Fraction] = None
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(),
@@ -950,6 +951,14 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self.__set_prop("posx", x)
             self.__set_prop("posy", y)
 
+    def _update_aspect_ratio_button_image(self):
+        image = self.builder.get_object("aspect_ratio_image")
+        if self._aspect_ratio is not None:
+            icon_name = "chain-connected-symbolic"
+        else:
+            icon_name = "chain-broken-symbolic"
+        image.props.icon_name = icon_name
+
     def _init_buttons(self):
         clear_button = self.builder.get_object("clear_button")
         clear_button.connect("clicked", self._default_values_cb)
@@ -976,6 +985,10 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
         self.__setup_spin_button("width_spinbtn", "width")
         self.__setup_spin_button("height_spinbtn", "height")
+
+        self.aspect_ratio_button = self.builder.get_object("aspect_ratio_button")
+        self.aspect_ratio_button.connect("clicked", self._aspect_ratio_button_clicked_cb)
+        self._update_aspect_ratio_button_image()
 
     def __get_keyframes_timestamps(self):
         keyframes_ts = []
@@ -1196,12 +1209,22 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.spin_buttons[property_name] = spinbtn
         self.spin_buttons_handler_ids[property_name] = handler_id
 
+    def _aspect_ratio_button_clicked_cb(self, aspect_ratio_button):
+        if self._aspect_ratio is None:
+            res, width = self.__get_source_property("width")
+            assert res
+            res, height = self.__get_source_property("height")
+            assert res
+            self._aspect_ratio = Gst.Fraction(width, height)
+        else:
+            self._aspect_ratio = None
+        self._update_aspect_ratio_button_image()
+
     def _on_value_changed_cb(self, spinbtn, prop):
         if not self.source:
             return
 
-        value = spinbtn.get_value()
-
+        value = int(spinbtn.get_value())
         res, cvalue = self.__get_source_property(prop)
         if not res:
             return
@@ -1211,6 +1234,15 @@ class TransformationProperties(Gtk.Expander, Loggable):
                                              finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                              toplevel=True):
                 self.__set_prop(prop, value)
+                if self._aspect_ratio is not None:
+                    if prop == "width":
+                        fraction = value / self._aspect_ratio
+                        height = int(fraction.num / fraction.denom)
+                        self.__set_prop("height", height)
+                    if prop == "height":
+                        fraction = value * self._aspect_ratio
+                        width = int(fraction.num / fraction.denom)
+                        self.__set_prop("width", width)
             self.app.gui.editor.viewer.overlay_stack.update(self.source)
 
     def set_source(self, source):
