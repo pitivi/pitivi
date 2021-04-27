@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.38.2 -->
 <interface>
-  <requires lib="gtk+" version="3.10"/>
-  <object class="GtkActionGroup" id="actiongroup1"/>
+  <requires lib="gtk+" version="3.20"/>
   <object class="GtkAdjustment" id="fade_in_adjustment">
     <property name="upper">1</property>
-    <property name="step-increment">0.01</property>
-    <property name="page-increment">10</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">5</property>
+    <signal name="value-changed" handler="_fade_in_adjustment_value_changed_cb" swapped="no"/>
   </object>
   <object class="GtkAdjustment" id="fade_out_adjustment">
     <property name="upper">1</property>
-    <property name="step-increment">0.01</property>
-    <property name="page-increment">10</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">5</property>
+    <signal name="value-changed" handler="_fade_out_adjustment_value_changed_cb" swapped="no"/>
   </object>
   <object class="GtkImage" id="icon_reset1">
     <property name="visible">True</property>
@@ -23,22 +24,20 @@
     <property name="can-focus">False</property>
     <property name="icon-name">edit-clear-all-symbolic</property>
   </object>
-  <!-- n-columns=5 n-rows=2 -->
+  <!-- n-columns=5 n-rows=3 -->
   <object class="GtkGrid" id="compositing_box">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="halign">start</property>
     <property name="valign">start</property>
-    <property name="margin-left">12</property>
-    <property name="margin-top">6</property>
-    <property name="margin-bottom">6</property>
-    <property name="row-spacing">6</property>
+    <property name="border-width">10</property>
+    <property name="row-spacing">10</property>
     <property name="column-spacing">6</property>
     <child>
       <object class="GtkLabel" id="label10">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
-        <property name="halign">start</property>
+        <property name="halign">end</property>
         <property name="hexpand">True</property>
         <property name="label" translatable="yes">Fade-in:</property>
         <property name="xalign">0</property>
@@ -93,7 +92,7 @@
       <object class="GtkLabel" id="label11">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
-        <property name="halign">start</property>
+        <property name="halign">end</property>
         <property name="hexpand">True</property>
         <property name="label" translatable="yes">Fade-out:</property>
         <property name="xalign">0</property>
@@ -151,6 +150,7 @@
         <property name="tooltip-text" translatable="yes">Reset fade-in</property>
         <property name="image">icon_reset1</property>
         <property name="relief">none</property>
+        <signal name="clicked" handler="_reset_fade_in_clicked_cb" swapped="no"/>
       </object>
       <packing>
         <property name="left-attach">4</property>
@@ -166,11 +166,40 @@
         <property name="tooltip-text" translatable="yes">Reset fade-out</property>
         <property name="image">icon_reset2</property>
         <property name="relief">none</property>
+        <signal name="clicked" handler="_reset_fade_out_clicked_cb" swapped="no"/>
       </object>
       <packing>
         <property name="left-attach">4</property>
         <property name="top-attach">1</property>
       </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="halign">end</property>
+        <property name="label" translatable="yes">Blending:</property>
+      </object>
+      <packing>
+        <property name="left-attach">0</property>
+        <property name="top-attach">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBoxText" id="blending_mode">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="halign">start</property>
+        <signal name="changed" handler="_blending_property_changed_cb" swapped="no"/>
+      </object>
+      <packing>
+        <property name="left-attach">1</property>
+        <property name="top-attach">2</property>
+        <property name="width">3</property>
+      </packing>
+    </child>
+    <child>
+      <placeholder/>
     </child>
   </object>
 </interface>

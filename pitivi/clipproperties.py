@@ -74,6 +74,7 @@ DEFAULT_FONT_DESCRIPTION = "Sans 36"
 DEFAULT_VALIGNMENT = "absolute"
 DEFAULT_HALIGNMENT = "absolute"
 DEFAULT_DROP_SHADOW = True
+DEFAULT_BLENDING = "over"
 
 # Max speed rate we allow to be applied to clips.
 # The minimum is 1 / MAX_RATE.

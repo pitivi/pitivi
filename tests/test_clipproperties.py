@@ -321,6 +321,42 @@ class TransformationPropertiesTest(common.TestCase):
             self.assertTrue(ret)
             self.assertEqual(value, source.ui.default_position[prop])
 
+    @common.setup_timeline
+    @common.setup_clipproperties
+    def test_operator(self):
+        timeline = self.app.gui.editor.timeline_ui.timeline
+
+        clip, = self.add_clips_simple(timeline, 1)
+        timeline.selection.select([clip])
+        source = self.compositing_box._video_source
+        self.assertIsNotNone(source)
+        ret, value = source.get_child_property("operator")
+        self.assertEqual((ret, value.value_nick), (True, "over"))
+
+        self.compositing_box.blending_combo.set_active_id("source")
+        ret, value = source.get_child_property("operator")
+        self.assertEqual((ret, value.value_nick), (True, "source"))
+
+        self.compositing_box.blending_combo.set_active_id("over")
+        ret, value = source.get_child_property("operator")
+        self.assertEqual((ret, value.value_nick), (True, "over"))
+
+        self.app.action_log.undo()
+        ret, value = source.get_child_property("operator")
+        self.assertEqual((ret, value.value_nick), (True, "source"))
+
+        self.app.action_log.undo()
+        ret, value = source.get_child_property("operator")
+        self.assertEqual((ret, value.value_nick), (True, "over"))
+
+        self.app.action_log.redo()
+        ret, value = source.get_child_property("operator")
+        self.assertEqual((ret, value.value_nick), (True, "source"))
+
+        self.app.action_log.redo()
+        ret, value = source.get_child_property("operator")
+        self.assertEqual((ret, value.value_nick), (True, "over"))
+
 
 class TitlePropertiesTest(common.TestCase):
     """Tests for the TitleProperties class."""

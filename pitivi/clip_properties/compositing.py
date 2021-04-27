@@ -3,6 +3,9 @@
 # Copyright (c) 2021, Tyler Senne <tsenne2@huskers.unl.edu>
 # Copyright (c) 2021, Michael Ervin <michael.ervin@huskers.unl.edu>
 # Copyright (c) 2021, Aaron Friesen <afriesen4@huskers.unl.edu>
+# Copyright (c) 2021, Andres Ruiz <andres.ruiz3210@gmail.com>
+# Copyright (c) 2021, Dalton Hulett <hulettdalton@gmail.com>
+# Copyright (c) 2021, Reed Lawrence <reed.lawrence@zenofchem.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -22,6 +25,7 @@ from typing import Iterable
 from typing import Optional
 
 from gi.repository import GES
+from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import GstController
 from gi.repository import Gtk
@@ -37,7 +41,7 @@ FADE_OPACITY_THRESHOLD = 0.9
 
 
 class CompositingProperties(Gtk.Expander, Loggable):
-    """Widget for setting the opacity-related properties of a clip.
+    """Widget for setting the opacity and compositing properties of a clip.
 
     Attributes:
         app (Pitivi): The app.
@@ -54,12 +58,11 @@ class CompositingProperties(Gtk.Expander, Loggable):
 
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "clipcompositing.ui"))
+        builder.connect_signals(self)
 
-        self.add(builder.get_object("compositing_box"))
+        compositing_box = builder.get_object("compositing_box")
         self._fade_in_adjustment = builder.get_object("fade_in_adjustment")
         self._fade_out_adjustment = builder.get_object("fade_out_adjustment")
-        reset_fade_in_button = builder.get_object("reset_fade_in_button")
-        reset_fade_out_button = builder.get_object("reset_fade_out_button")
 
         self._video_source: Optional[GES.VideoSource] = None
         self._control_source: Optional[Gst.ControlSource] = None
@@ -70,14 +73,25 @@ class CompositingProperties(Gtk.Expander, Loggable):
         self._applying_fade: bool = False
         self._updating_adjustments: bool = False
 
-        self._fade_in_adjustment.connect("value-changed", self.__fade_in_adjustment_changed_cb)
-        self._fade_out_adjustment.connect("value-changed", self.__fade_out_adjustment_changed_cb)
-        reset_fade_in_button.connect("pressed", self.__reset_fade_in_cb)
-        reset_fade_out_button.connect("pressed", self.__reset_fade_out_cb)
+        self.blending_combo = builder.get_object("blending_mode")
+        # Translators: These are compositing operators.
+        # See https://www.cairographics.org/operators/ for explanation and
+        # visualizations.
+        for value_id, text in (("source", _("Source")),
+                               ("over", _("Over")),
+                               # TODO: Add back when https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1199 is fixed
+                               # ("add", _("Add")),
+                               ):
+            self.blending_combo.append(value_id, text)
+
+        self.add(compositing_box)
+        compositing_box.show_all()
 
     def set_source(self, video_source: GES.VideoSource) -> None:
+        self.debug("Source set to %s", video_source)
         if self._control_source:
             disconnect_all_by_func(self._control_source, self.__keyframe_changed_cb)
+            self._video_source.disconnect_by_func(self._source_deep_notify_cb)
             self._video_source.disconnect_by_func(self.__keyframe_changed_cb)
             self._control_source = None
 
@@ -89,16 +103,16 @@ class CompositingProperties(Gtk.Expander, Loggable):
             control_binding = self._video_source.get_control_binding("alpha")
             assert control_binding
             self._control_source = control_binding.props.control_source
-
             self._control_source.connect("value-added", self.__keyframe_changed_cb)
             self._control_source.connect("value-changed", self.__keyframe_changed_cb)
             self._control_source.connect("value-removed", self.__keyframe_changed_cb)
             self._video_source.connect("notify::duration", self.__keyframe_changed_cb)
-
             self._update_adjustments()
-            self.show_all()
-        else:
-            self.hide()
+
+            self._video_source.connect("deep-notify", self._source_deep_notify_cb)
+            self._update_blending()
+
+        self.props.visible = bool(self._video_source)
 
     @property
     def _duration(self) -> int:
@@ -138,22 +152,22 @@ class CompositingProperties(Gtk.Expander, Loggable):
         self._fade_in_adjustment.props.upper = (self._duration - self._fade_out) / Gst.SECOND
         self._fade_out_adjustment.props.upper = (self._duration - self._fade_in) / Gst.SECOND
 
-    def __fade_in_adjustment_changed_cb(self, adjustment: Gtk.Adjustment) -> None:
+    def _fade_in_adjustment_value_changed_cb(self, adjustment: Gtk.Adjustment) -> None:
         if not self._updating_adjustments:
             fade_timestamp: int = int(self._fade_in_adjustment.props.value * Gst.SECOND)
             self._move_keyframe(self._fade_in, fade_timestamp, 0, self._duration - self._fade_out)
             self._update_adjustments()
 
-    def __fade_out_adjustment_changed_cb(self, adjustment: Gtk.Adjustment) -> None:
+    def _fade_out_adjustment_value_changed_cb(self, adjustment: Gtk.Adjustment) -> None:
         if not self._updating_adjustments:
             fade_timestamp: int = self._duration - int(self._fade_out_adjustment.props.value * Gst.SECOND)
             self._move_keyframe(self._duration - self._fade_out, fade_timestamp, self._duration, self._fade_in)
             self._update_adjustments()
 
-    def __reset_fade_in_cb(self, button: Gtk.Button) -> None:
+    def _reset_fade_in_clicked_cb(self, button: Gtk.Button) -> None:
         self._fade_in_adjustment.props.value = 0
 
-    def __reset_fade_out_cb(self, button: Gtk.Button) -> None:
+    def _reset_fade_out_clicked_cb(self, button: Gtk.Button) -> None:
         self._fade_out_adjustment.props.value = 0
 
     def __keyframe_changed_cb(self, control_source: GstController.TimedValueControlSource, timed_value: GstController.ControlPoint) -> None:
@@ -219,3 +233,26 @@ class CompositingProperties(Gtk.Expander, Loggable):
                     self._control_source.set(edge_timestamp, 0)
             finally:
                 self._applying_fade = False
+
+    def _update_blending(self) -> None:
+        res, value = self._video_source.get_child_property("operator")
+        assert res
+        self.blending_combo.handler_block_by_func(self._blending_property_changed_cb)
+        try:
+            self.blending_combo.set_active_id(value.value_nick)
+        finally:
+            self.blending_combo.handler_unblock_by_func(self._blending_property_changed_cb)
+
+    def _source_deep_notify_cb(self, element: GES.TimelineElement, obj: GObject.Object, prop: GObject.ParamSpec) -> None:
+        self._update_blending()
+
+    def _blending_property_changed_cb(self, combo: Gtk.ComboBox) -> None:
+        pipeline = self.app.project_manager.current_project.pipeline
+        with self.app.action_log.started("set operator",
+                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         toplevel=True):
+            self._video_source.handler_block_by_func(self._source_deep_notify_cb)
+            try:
+                self._video_source.set_child_property("operator", self.blending_combo.get_active_id())
+            finally:
+                self._video_source.handler_unblock_by_func(self._source_deep_notify_cb)
