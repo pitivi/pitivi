@@ -183,43 +183,6 @@ class TestLayers(common.TestCase):
             ges_layers.append(ges_layer)
         self.check_priorities_and_positions(timeline, ges_layers, expected_priorities)
 
-    def check_priorities_and_positions(self, timeline, ges_layers,
-                                       expected_priorities):
-        layers_vbox = timeline.layout.layers_vbox
-
-        # Check the layers priorities.
-        priorities = [ges_layer.props.priority for ges_layer in ges_layers]
-        self.assertListEqual(priorities, expected_priorities)
-
-        # Check the positions of the Layer widgets.
-        positions = [layers_vbox.child_get_property(ges_layer.ui, "position")
-                     for ges_layer in ges_layers]
-        expected_positions = [priority * 2 + 1
-                              for priority in expected_priorities]
-        self.assertListEqual(positions, expected_positions, layers_vbox.get_children())
-
-        # Check the positions of the LayerControl widgets.
-        controls_vbox = timeline._layers_controls_vbox
-        positions = [controls_vbox.child_get_property(ges_layer.control_ui, "position")
-                     for ges_layer in ges_layers]
-        self.assertListEqual(positions, expected_positions)
-
-        # Check the number of the separators.
-        count = len(ges_layers) + 1
-        self.assertEqual(len(timeline._separators), count)
-        controls_separators, layers_separators = list(zip(*timeline._separators))
-
-        # Check the positions of the LayerControl separators.
-        expected_positions = [2 * index for index in range(count)]
-        positions = [layers_vbox.child_get_property(separator, "position")
-                     for separator in layers_separators]
-        self.assertListEqual(positions, expected_positions)
-
-        # Check the positions of the Layer separators.
-        positions = [controls_vbox.child_get_property(separator, "position")
-                     for separator in controls_separators]
-        self.assertListEqual(positions, expected_positions)
-
     def test_remove_layer(self):
         self.check_remove_layer([0, 0, 0])
         self.check_remove_layer([0, 0, 1])

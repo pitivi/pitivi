@@ -32,6 +32,7 @@ from gi.repository import Gtk
 
 from pitivi import configure
 from pitivi.check import MISSING_SOFT_DEPS
+from pitivi.dialogs.projectsettings import ProjectSettingsDialog
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import cmp
 from pitivi.utils.misc import is_pathname_valid
@@ -1681,7 +1682,6 @@ class RenderDialog(Loggable):
         self.resolution_label.set_text("%d×%d" % (width, height))
 
     def _project_settings_button_clicked_cb(self, unused_button):
-        from pitivi.project import ProjectSettingsDialog
         dialog = ProjectSettingsDialog(self.window, self.project, self.app)
         dialog.window.run()
         self._display_settings()

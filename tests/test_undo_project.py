@@ -17,7 +17,7 @@
 from gi.repository import GES
 from gi.repository import Gtk
 
-from pitivi.project import ProjectSettingsDialog
+from pitivi.dialogs.projectsettings import ProjectSettingsDialog
 from tests import common
 
 

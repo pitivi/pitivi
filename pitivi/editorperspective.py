@@ -28,13 +28,13 @@ from pitivi.clipproperties import ClipProperties
 from pitivi.configure import APPNAME
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.missingasset import MissingAssetDialog
+from pitivi.dialogs.projectsettings import ProjectSettingsDialog
 from pitivi.editorstate import EditorState
 from pitivi.effects import EffectListWidget
 from pitivi.interactiveintro import InteractiveIntro
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
 from pitivi.perspective import Perspective
-from pitivi.project import ProjectSettingsDialog
 from pitivi.settings import GlobalSettings
 from pitivi.tabsmanager import BaseTabs
 from pitivi.timeline.previewers import ThumbnailCache
