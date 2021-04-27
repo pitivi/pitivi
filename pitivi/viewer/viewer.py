@@ -106,10 +106,10 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def _project_manager_project_closed_cb(self, unused_project_manager, project):
         if self.project == project:
-            project.disconnect_by_func(self._project_rendering_settings_changed_cb)
+            project.disconnect_by_func(self._project_video_size_changed_cb)
         self.project = None
 
-    def _project_rendering_settings_changed_cb(self, project, unused_item):
+    def _project_video_size_changed_cb(self, project):
         """Handles Project metadata changes."""
         self._reset_viewer_aspect_ratio(project)
 
@@ -144,8 +144,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         # appears in a separate window.
         project.pipeline.pause()
 
-        project.connect("rendering-settings-changed",
-                        self._project_rendering_settings_changed_cb)
+        project.connect("video-size-changed", self._project_video_size_changed_cb)
 
     def __create_new_viewer(self):
         _, sink_widget = self.project.pipeline.create_sink()
