@@ -633,8 +633,6 @@ class Project(Loggable, GES.Project):
                            (object,)),
         "start-importing": (GObject.SignalFlags.RUN_LAST, None, ()),
         "project-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
-        "rendering-settings-changed": (GObject.SignalFlags.RUN_LAST, None,
-                                       (GObject.TYPE_PYOBJECT,)),
         "settings-set-from-imported-asset": (GObject.SignalFlags.RUN_LAST, None,
                                              (GES.Asset,)),
         "video-size-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
@@ -1010,7 +1008,7 @@ class Project(Loggable, GES.Project):
     def videowidth(self, value):
         if self._set_video_restriction("width", int(value)):
             self.update_restriction_caps()
-            self._emit_change("width")
+            self.set_modification_state(True)
 
     @property
     def videoheight(self):
@@ -1020,7 +1018,7 @@ class Project(Loggable, GES.Project):
     def videoheight(self, value):
         if self._set_video_restriction("height", int(value)):
             self.update_restriction_caps()
-            self._emit_change("height")
+            self.set_modification_state(True)
 
     @property
     def videorate(self):
@@ -1030,7 +1028,7 @@ class Project(Loggable, GES.Project):
     def videorate(self, value):
         if self._set_video_restriction("framerate", value):
             self.update_restriction_caps()
-            self._emit_change("videorate")
+            self.set_modification_state(True)
 
     def set_video_properties(self, width, height, framerate):
         """Sets the video properties in one operation.
@@ -1048,6 +1046,7 @@ class Project(Loggable, GES.Project):
                        self._set_video_restriction("framerate", framerate)])
         if changed:
             self.update_restriction_caps()
+            self.set_modification_state(True)
 
     @property
     def audiochannels(self):
@@ -1056,7 +1055,7 @@ class Project(Loggable, GES.Project):
     @audiochannels.setter
     def audiochannels(self, value):
         if self._set_audio_restriction("channels", int(value)):
-            self._emit_change("channels")
+            self.set_modification_state(True)
 
     @property
     def audiorate(self):
@@ -1068,7 +1067,7 @@ class Project(Loggable, GES.Project):
     @audiorate.setter
     def audiorate(self, value):
         if self._set_audio_restriction("rate", int(value)):
-            self._emit_change("rate")
+            self.set_modification_state(True)
 
     @property
     def aencoder(self):
@@ -1077,7 +1076,7 @@ class Project(Loggable, GES.Project):
     @aencoder.setter
     def aencoder(self, preset_factory_name):
         if self._update_encoding_profile(self.audio_profile, preset_factory_name):
-            self._emit_change("aencoder")
+            self.set_modification_state(True)
 
     @property
     def vencoder(self):
@@ -1086,7 +1085,7 @@ class Project(Loggable, GES.Project):
     @vencoder.setter
     def vencoder(self, preset_factory_name):
         if self._update_encoding_profile(self.video_profile, preset_factory_name):
-            self._emit_change("vencoder")
+            self.set_modification_state(True)
 
     @property
     def muxer(self):
@@ -1095,7 +1094,7 @@ class Project(Loggable, GES.Project):
     @muxer.setter
     def muxer(self, preset_factory_name):
         if self._update_encoding_profile(self.container_profile, preset_factory_name):
-            self._emit_change("muxer")
+            self.set_modification_state(True)
 
     def _update_encoding_profile(self, profile, preset_factory_name):
         """Updates the specified encoding profile.
@@ -2134,10 +2133,6 @@ class Project(Loggable, GES.Project):
             emit = True
         if emit:
             self.emit("settings-set-from-imported-asset", asset)
-
-    def _emit_change(self, key):
-        self.emit("rendering-settings-changed", key)
-        self.set_modification_state(True)
 
     def get_element_factory_name(self, profile):
         """Finds a factory for an element compatible with the specified profile.

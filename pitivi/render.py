@@ -838,8 +838,7 @@ class RenderDialog(Loggable):
         self._display_render_settings()
 
         self.window.connect("delete-event", self._delete_event_cb)
-        self.project.connect("rendering-settings-changed",
-                             self._rendering_settings_changed_cb)
+        self.project.connect("video-size-changed", self._project_video_size_changed_cb)
 
         self.presets_manager.connect("profile-updated", self._presets_manager_profile_updated_cb)
 
@@ -1035,7 +1034,7 @@ class RenderDialog(Loggable):
     def _preset_selection_menubutton_clicked_cb(self, button):
         self.preset_popover.show_all()
 
-    def _rendering_settings_changed_cb(self, unused_project, unused_item):
+    def _project_video_size_changed_cb(self, project):
         """Handles Project metadata changes."""
         self.update_resolution()
 
