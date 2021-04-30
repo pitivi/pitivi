@@ -189,9 +189,8 @@ class CheckedOperationDuration:
         signal.alarm(0)
 
 
-def setup_project_with_clips(assets_names: List[str]):
-    """Sets up a Pitivi instance with the specified assets on the timeline."""
-    # Ensure this method is not being used directly as a decorator.
+def setup_project(assets_names: List[str]):
+    """Sets up a Pitivi instance with no assets on the timeline."""
     assert isinstance(assets_names, list)
 
     def decorator(func):
@@ -241,9 +240,6 @@ def setup_project_with_clips(assets_names: List[str]):
                 project.disconnect_by_func(project_loaded_cb)
                 project.disconnect_by_func(progress_cb)
 
-                assets = project.list_assets(GES.UriClip)
-                self.timeline_container.insert_assets(assets, self.timeline.props.duration)
-
                 func(self)
 
             del self.app
@@ -252,6 +248,26 @@ def setup_project_with_clips(assets_names: List[str]):
             del self.layer
             del self.action_log
             del self.timeline_container
+
+        return wrapper
+
+    return decorator
+
+
+def setup_project_with_clips(assets_names: List[str]):
+    """Sets up a Pitivi instance with the specified assets on the timeline."""
+    # Ensure this method is not being used directly as a decorator.
+    assert isinstance(assets_names, list)
+
+    def decorator(func):
+        nonlocal assets_names
+
+        @setup_project(assets_names)
+        def wrapper(self):
+            assets = self.app.project_manager.current_project.list_assets(GES.UriClip)
+            self.timeline_container.insert_assets(assets, self.timeline.props.duration)
+
+            func(self)
 
         return wrapper
 

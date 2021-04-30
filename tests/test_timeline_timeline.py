@@ -869,3 +869,78 @@ class TestDragFromOutside(common.TestCase):
         # Use same asset to mimic dragging multiple assets
         self.check_drag_assets_to_timeline(self.ges_timeline.ui, [asset, asset])
         self.assertEqual(layer.get_clips(), clips)
+
+
+class TestKeyboardShiftClips(common.TestCase):
+
+    def check_frame_shift_clips(self, *ges_clips):
+        """Checks that clips shifted forwards then backwards work properly."""
+        clip_original_starts = [clip.start for clip in ges_clips]
+        delta = self.timeline.get_frame_time(1)
+
+        event = mock.Mock()
+        event.keyval = Gdk.KEY_Control_L
+        self.timeline_container.do_key_press_event(event)
+        for clip in ges_clips:
+            self.toggle_clip_selection(clip, expect_selected=True)
+        self.timeline_container.do_key_release_event(event)
+
+        self.timeline_container.shift_forward_action.emit("activate", None)
+        self.assertListEqual([clip.start - delta for clip in ges_clips], clip_original_starts)
+
+        self.timeline_container.shift_backward_action.emit("activate", None)
+        self.assertListEqual([clip.start for clip in ges_clips], clip_original_starts)
+
+    @common.setup_project(["tears_of_steel.webm"])
+    def test_clip_shift(self):
+        """Checks that shift methods change position of a single clip by one frame."""
+        ges_clip1 = self.add_clip(self.layer, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
+        self.check_frame_shift_clips(ges_clip1)
+
+    @common.setup_project(["tears_of_steel.webm"])
+    def test_shift_disjoint_clips(self):
+        """Checks that disjoint clips are able to be shifted."""
+        ges_clip1 = self.add_clip(self.layer, 5 * Gst.SECOND, duration=1 * Gst.SECOND)
+        ges_clip2 = self.add_clip(self.layer, 9 * Gst.SECOND, duration=1 * Gst.SECOND)
+        self.check_frame_shift_clips(ges_clip1, ges_clip2)
+
+    @common.setup_project(["tears_of_steel.webm"])
+    def test_shift_adjacent_clips(self):
+        """Checks that adjacent clips are able to be shifted as well."""
+        ges_clip1 = self.add_clip(self.layer, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip2 = self.add_clip(self.layer, 7 * Gst.SECOND, duration=2 * Gst.SECOND)
+        self.check_frame_shift_clips(ges_clip1, ges_clip2)
+
+    @common.setup_project(["tears_of_steel.webm"])
+    def test_triple_overlap_causes_rollback(self):
+        """Checks that rollback works properly in the event of triple overlap."""
+        ges_clip1 = self.add_clip(self.layer, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip2 = self.add_clip(self.layer, 10 * Gst.SECOND, duration=2 * Gst.SECOND)
+        self.add_clip(self.layer, start=11 * Gst.SECOND, duration=2 * Gst.SECOND)
+        self.add_clip(self.layer, start=12 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip3 = self.add_clip(self.layer, 13 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip4 = self.add_clip(self.layer, 15 * Gst.SECOND, duration=2 * Gst.SECOND)
+
+        event = mock.Mock()
+        event.keyval = Gdk.KEY_Control_L
+        self.timeline_container.do_key_press_event(event)
+        self.toggle_clip_selection(ges_clip1, expect_selected=True)
+        self.toggle_clip_selection(ges_clip2, expect_selected=True)
+        self.toggle_clip_selection(ges_clip3, expect_selected=True)
+        self.toggle_clip_selection(ges_clip4, expect_selected=True)
+
+        self.timeline_container.do_key_release_event(event)
+
+        self.timeline_container.shift_forward_action.emit("activate", None)
+
+        self.assertEqual(5 * Gst.SECOND, ges_clip1.start)
+        self.assertEqual(10 * Gst.SECOND, ges_clip2.start)
+        self.assertEqual(13 * Gst.SECOND, ges_clip3.start)
+        self.assertEqual(15 * Gst.SECOND, ges_clip4.start)
+
+        self.timeline_container.shift_backward_action.emit("activate", None)
+
+        self.assertEqual(5 * Gst.SECOND, ges_clip1.start)
+        self.assertEqual(10 * Gst.SECOND, ges_clip2.start)
+        self.assertEqual(13 * Gst.SECOND, ges_clip3.start)
+        self.assertEqual(15 * Gst.SECOND, ges_clip4.start)

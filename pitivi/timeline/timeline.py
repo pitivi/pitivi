@@ -16,6 +16,7 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 import os
 from gettext import gettext as _
+from typing import Optional
 
 from gi.repository import Gdk
 from gi.repository import GES
@@ -1777,6 +1778,20 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                self.seek_backward_clip_action,
                                _("Seek to the first clip edge before the playhead"))
 
+        self.shift_forward_action = Gio.SimpleAction.new("shift-forward", None)
+        self.shift_forward_action.connect("activate", self._shift_forward_cb)
+        group.add_action(self.shift_forward_action)
+        self.app.shortcuts.add("timeline.shift-forward", ["<Primary><Shift>Right"],
+                               self.shift_forward_action,
+                               _("Shift selected clips one frame forward"))
+
+        self.shift_backward_action = Gio.SimpleAction.new("shift-backward", None)
+        self.shift_backward_action.connect("activate", self._shift_backward_cb)
+        group.add_action(self.shift_backward_action)
+        self.app.shortcuts.add("timeline.shift-backward", ["<Primary><Shift>Left"],
+                               self.shift_backward_action,
+                               _("Shift selected clips one frame backward"))
+
         self.add_effect_action = Gio.SimpleAction.new("add-effect", None)
         self.add_effect_action.connect("activate", self.__add_effect_cb)
         group.add_action(self.add_effect_action)
@@ -2188,6 +2203,34 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self._project.pipeline.step_frame(1)
         self.timeline.scroll_to_playhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+
+    def _shift_forward_cb(self, action: Gio.SimpleAction, parameter: Optional[GLib.Variant]) -> None:
+        self._shift_clips(1)
+
+    def _shift_backward_cb(self, action: Gio.SimpleAction, parameter: Optional[GLib.Variant]) -> None:
+        self._shift_clips(-1)
+
+    def _shift_clips(self, delta_frames):
+        """Shifts the selected clips position with the specified number of frames."""
+        if not self.ges_timeline:
+            return
+
+        previous_snapping_distance = self.ges_timeline.get_snapping_distance()
+        self.ges_timeline.set_snapping_distance(0)
+        try:
+            clips = list(self.timeline.selection.selected)
+            clips.sort(key=lambda candidate_clip: candidate_clip.start, reverse=delta_frames > 0)
+            # We must use delta * frame_time because getting negative frame time is not possible.
+            clip_delta = delta_frames * self.ges_timeline.get_frame_time(1)
+            self.app.action_log.begin("Shift clip delta frames")
+
+            for clip in clips:
+                if not clip.set_start(clip.start + clip_delta):
+                    self.app.action_log.rollback()
+                    return
+        finally:
+            self.ges_timeline.set_snapping_distance(previous_snapping_distance)
+        self.app.action_log.commit("Shift clip delta frames")
 
     def do_focus_in_event(self, unused_event):
         self.log("Timeline has grabbed focus")
