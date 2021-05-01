@@ -16,6 +16,7 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 import os
 from gettext import gettext as _
+from typing import List
 from typing import Optional
 
 from gi.repository import Gdk
@@ -1446,7 +1447,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         Gtk.Grid.__init__(self)
         Loggable.__init__(self)
 
-        self.app = app
+        self.app: Gtk.Application = app
         self.editor_state = editor_state
         self._settings = self.app.settings
         self.shift_mask = False
@@ -1792,6 +1793,20 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                self.shift_backward_action,
                                _("Shift selected clips one frame backward"))
 
+        self.snap_clips_forward_action = Gio.SimpleAction.new("snap-clips-forward", None)
+        self.snap_clips_forward_action.connect("activate", self._snap_clips_forward_cb)
+        group.add_action(self.snap_clips_forward_action)
+        self.app.shortcuts.add("timeline.snap-clips-forward", ["<Alt>s"],
+                               self.snap_clips_forward_action,
+                               _("Snap selected clips to the next clip"))
+
+        self.snap_clips_backward_action = Gio.SimpleAction.new("snap-clips-backward", None)
+        self.snap_clips_backward_action.connect("activate", self._snap_clips_backward_cb)
+        group.add_action(self.snap_clips_backward_action)
+        self.app.shortcuts.add("timeline.snap-clips-backward", ["<Alt>a"],
+                               self.snap_clips_backward_action,
+                               _("Snap selected clips to the previous clip"))
+
         self.add_effect_action = Gio.SimpleAction.new("add-effect", None)
         self.add_effect_action.connect("activate", self.__add_effect_cb)
         group.add_action(self.add_effect_action)
@@ -2039,7 +2054,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             priority = len(self.ges_timeline.get_layers())
             self.timeline.create_layer(priority)
 
-    def first_clip_edge(self, before=None, after=None):
+    def first_clip_edge(self, layers: Optional[List[GES.Layer]] = None, before: Optional[int] = None, after: Optional[int] = None) -> Optional[int]:
         assert (after is not None) != (before is not None)
 
         if after is not None:
@@ -2054,7 +2069,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if start >= end:
             return None
 
-        for layer in self.ges_timeline.layers:
+        if not layers:
+            layers = self.ges_timeline.layers
+        for layer in layers:
             clips = layer.get_clips_in_interval(start, end)
             for clip in clips:
                 if clip.start > start:
@@ -2231,6 +2248,30 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         finally:
             self.ges_timeline.set_snapping_distance(previous_snapping_distance)
         self.app.action_log.commit("Shift clip delta frames")
+
+    def _snap_clips_forward_cb(self, action, parameter):
+        self.snap_clips(forward=True)
+
+    def _snap_clips_backward_cb(self, action, parameter):
+        self.snap_clips(forward=False)
+
+    def snap_clips(self, forward: bool):
+        """Snap clips to next or previous clip."""
+        clips = list(self.timeline.selection.selected)
+        clips.sort(key=lambda clip: clip.start, reverse=forward)
+        with self.app.action_log.started("Snaps to closest clip",
+                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                         toplevel=True):
+            for clip in clips:
+                layer = clip.props.layer
+                if not forward:
+                    position = self.first_clip_edge(layers=[layer], before=clip.start)
+                else:
+                    position = self.first_clip_edge(layers=[layer], after=clip.start + clip.duration)
+                    if position is not None:
+                        position -= clip.duration
+                if position is not None:
+                    clip.set_start(position)
 
     def do_focus_in_event(self, unused_event):
         self.log("Timeline has grabbed focus")

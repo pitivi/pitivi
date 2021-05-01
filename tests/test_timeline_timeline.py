@@ -944,3 +944,82 @@ class TestKeyboardShiftClips(common.TestCase):
         self.assertEqual(10 * Gst.SECOND, ges_clip2.start)
         self.assertEqual(13 * Gst.SECOND, ges_clip3.start)
         self.assertEqual(15 * Gst.SECOND, ges_clip4.start)
+
+
+class TestSnapClips(common.TestCase):
+
+    @common.setup_timeline
+    def test_snap_clip_single_layer_single_clip(self):
+        """Test whether a single clip is able to snap right, and left to an adjacent clip."""
+        ges_clip1 = self.add_clip(self.layer, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip2 = self.add_clip(self.layer, 9 * Gst.SECOND, duration=2 * Gst.SECOND)
+
+        self.toggle_clip_selection(ges_clip1, expect_selected=True)
+
+        self.timeline_container.snap_clips_forward_action.emit("activate", None)
+        self.assertEqual(ges_clip1.start, ges_clip2.start - ges_clip1.duration)
+
+        self.timeline_container.snap_clips_backward_action.emit("activate", None)
+        self.assertEqual(ges_clip1.start, 0)
+
+    @common.setup_timeline
+    def test_snap_single_layer_multiple_clips_adjacent(self):
+        """Tests whether a single clip can snap to multiple adjacent clips."""
+        ges_clip1 = self.add_clip(self.layer, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip2 = self.add_clip(self.layer, 7 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip3 = self.add_clip(self.layer, 11 * Gst.SECOND, duration=2 * Gst.SECOND)
+
+        event = mock.Mock()
+        event.keyval = Gdk.KEY_Control_L
+        self.timeline_container.do_key_press_event(event)
+        self.toggle_clip_selection(ges_clip1, expect_selected=True)
+        self.toggle_clip_selection(ges_clip2, expect_selected=True)
+
+        self.timeline_container.snap_clips_forward_action.emit("activate", None)
+        self.assertEqual(ges_clip2.start, ges_clip3.start - ges_clip2.duration)
+        self.assertEqual(ges_clip1.start, ges_clip2.start - ges_clip1.duration)
+
+        self.timeline_container.snap_clips_backward_action.emit("activate", None)
+        self.assertEqual(ges_clip1.start, 0)
+        self.assertEqual(ges_clip2.start, ges_clip1.start + ges_clip1.duration)
+
+    @common.setup_timeline
+    def test_snap_multiple_layers_not_affected_by_other_layer(self):
+        """Tests whether a clip snap is affected by a clip in another layer."""
+        layer2 = self.timeline.append_layer()
+        self.add_clip(self.layer, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
+        self.add_clip(self.layer, 7 * Gst.SECOND, duration=2 * Gst.SECOND)
+        self.add_clip(self.layer, 11 * Gst.SECOND, duration=2 * Gst.SECOND)
+        clip = self.add_clip(layer2, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
+        end_clip = self.add_clip(layer2, 30 * Gst.SECOND, duration=2 * Gst.SECOND)
+
+        self.toggle_clip_selection(clip, expect_selected=True)
+
+        self.timeline_container.snap_clips_forward_action.emit("activate", None)
+        self.assertEqual(clip.start, end_clip.start - clip.duration)
+
+        self.timeline_container.snap_clips_backward_action.emit("activate", None)
+        self.assertEqual(clip.start, 0)
+
+    @common.setup_timeline
+    def test_single_clip_snap_right_does_nothing(self):
+        """Tests whether the last clip snapped forward remains in place."""
+        ges_clip = self.add_clip(self.layer, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
+        clip_start = ges_clip.start
+
+        self.toggle_clip_selection(ges_clip, expect_selected=True)
+
+        self.timeline_container.snap_clips_forward_action.emit("activate", None)
+        self.assertEqual(ges_clip.start, clip_start)
+
+    @common.setup_timeline
+    def test_clip_snaps_to_timeline_duration(self):
+        """Tests whether a clip snaps to the timeline duration."""
+        layer2 = self.timeline.append_layer()
+        self.add_clip(self.layer, 30 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip = self.add_clip(layer2, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
+
+        self.toggle_clip_selection(ges_clip, expect_selected=True)
+
+        self.timeline_container.snap_clips_forward_action.emit("activate", None)
+        self.assertEqual(ges_clip.start, self.timeline.get_duration() - ges_clip.duration)

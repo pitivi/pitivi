@@ -44,7 +44,9 @@ repos:
     rev: 'v0.800'
     hooks:
       - id: mypy
-        files: '.*pitivi/clipproperties.py$'
+        files: '^pitivi/(clipproperties.py|timeline/timeline.py)$'
+        args:
+          - --no-strict-optional
   - repo: local
     hooks:
       - id: pylint
