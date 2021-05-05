@@ -7,16 +7,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-03-05 22:47+0000\n"
-"PO-Revision-Date: 2021-03-06 09:59+0200\n"
+"POT-Creation-Date: 2021-05-04 16:15+0000\n"
+"PO-Revision-Date: 2021-05-05 15:03+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Lokalize 20.11.70\n"
+"Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
+"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Lokalize 20.12.0\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
 msgid "Pitivi video project (legacy)"
@@ -116,7 +117,7 @@ msgstr "Розпочинаємо автовирівнювання"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Виконання автовирівнювання</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1648
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1647
 msgid "Estimating..."
 msgstr "Визначення оцінки…"
 
@@ -322,7 +323,7 @@ msgstr "Нещодавні проєкти"
 msgid "Updated"
 msgstr "Оновлено"
 
-#: data/ui/greeter.ui:190 pitivi/preset.py:107 pitivi/render.py:219
+#: data/ui/greeter.ui:190 pitivi/preset.py:107 pitivi/render.py:220
 msgid "Remove"
 msgstr "Вилучити"
 
@@ -590,7 +591,7 @@ msgstr "Обробити"
 msgid "Quality:"
 msgstr "Якість:"
 
-#: data/ui/renderingdialog.ui:179 pitivi/render.py:73
+#: data/ui/renderingdialog.ui:179 pitivi/render.py:74
 msgid "Custom"
 msgstr "Нетиповий"
 
@@ -688,12 +689,12 @@ msgstr "Шлях до файла:"
 msgid "Rendering"
 msgstr "Обробка"
 
-#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:775
+#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:774
 msgid "Pause"
 msgstr "Пауза"
 
-#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:767
-#: pitivi/timeline/timeline.py:1840
+#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:766
+#: pitivi/timeline/timeline.py:1855
 msgid "Play"
 msgstr "Пуск"
 
@@ -1073,8 +1074,8 @@ msgstr "Скасувати"
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/editorperspective.py:323 pitivi/editorperspective.py:536
 #: pitivi/editorperspective.py:680 pitivi/editorperspective.py:728
-#: pitivi/editorperspective.py:781 pitivi/preset.py:113 pitivi/project.py:200
-#: pitivi/render.py:225
+#: pitivi/editorperspective.py:781 pitivi/preset.py:113 pitivi/project.py:188
+#: pitivi/render.py:226
 msgid "Save"
 msgstr "Зберегти"
 
@@ -1099,7 +1100,7 @@ msgstr "Короткі вступні зауваження щодо Pitivi"
 msgid "Unable to save project \"%s\""
 msgstr "Не вдалося зберегти проєкт «%s»"
 
-#: pitivi/editorperspective.py:538 pitivi/project.py:199
+#: pitivi/editorperspective.py:538 pitivi/project.py:187
 msgid "Save as..."
 msgstr "Зберегти як…"
 
@@ -1159,7 +1160,7 @@ msgid "Detect automatically"
 msgstr "Визначити автоматично"
 
 #: pitivi/editorperspective.py:737 pitivi/editorperspective.py:784
-#: pitivi/project.py:72 pitivi/render.py:820
+#: pitivi/project.py:60 pitivi/render.py:821
 msgid "Untitled"
 msgstr "Без назви"
 
@@ -1216,7 +1217,7 @@ msgstr "Немає ефектів"
 msgid "Add to Favourites"
 msgstr "Додати до улюблених"
 
-#: pitivi/greeterperspective.py:228 pitivi/preset.py:101 pitivi/render.py:213
+#: pitivi/greeterperspective.py:228 pitivi/preset.py:101 pitivi/render.py:214
 msgid "New"
 msgstr "Новий"
 
@@ -1398,7 +1399,7 @@ msgstr "Виберіть один або декілька файлів"
 msgid "Add"
 msgstr "Додати"
 
-#: pitivi/medialibrary.py:799 pitivi/render.py:1492
+#: pitivi/medialibrary.py:799 pitivi/render.py:1491
 msgid "Supported file formats"
 msgstr "Підтримувані формати файлів"
 
@@ -1475,7 +1476,8 @@ msgid_plural "Do not use Optimised Proxies for selected assets"
 msgstr[0] "Не використовувати оптимізовані проміжні кліпи для позначених даних"
 msgstr[1] "Не використовувати оптимізовані проміжні кліпи для позначених даних"
 msgstr[2] "Не використовувати оптимізовані проміжні кліпи для позначених даних"
-msgstr[3] "Не використовувати оптимізований проміжний кліп для позначених даних"
+msgstr[3] ""
+"Не використовувати оптимізований проміжний кліп для позначених даних"
 
 #: pitivi/medialibrary.py:1411 pitivi/medialibrary.py:1433
 #: pitivi/medialibrary.py:1455
@@ -1500,7 +1502,8 @@ msgid_plural "Do not use Scaled Proxies for selected assets"
 msgstr[0] "Не використовувати масштабовані проміжні кліпи для позначених даних"
 msgstr[1] "Не використовувати масштабовані проміжні кліпи для позначених даних"
 msgstr[2] "Не використовувати масштабовані проміжні кліпи для позначених даних"
-msgstr[3] "Не використовувати масштабований проміжний кліп для позначених даних"
+msgstr[3] ""
+"Не використовувати масштабований проміжний кліп для позначених даних"
 
 #: pitivi/medialibrary.py:1466
 msgid "Use Optimised Proxy for selected asset"
@@ -1537,11 +1540,11 @@ msgstr "Новий шаблон %d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:183 pitivi/render.py:1320
+#: pitivi/project.py:171 pitivi/render.py:1320
 msgid "Sorry, something didn’t work right."
 msgstr "Вибачте, щось пішло не так."
 
-#: pitivi/project.py:186
+#: pitivi/project.py:174
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1569,11 +1572,11 @@ msgstr ""
 "Перш ніж закривати вікно Pitivi, ви можете зберегти зміни до наявного файла "
 "проєкту або записати їх до нового файла проєкту."
 
-#: pitivi/project.py:201
+#: pitivi/project.py:189
 msgid "Close Pitivi"
 msgstr "Закрити Pitivi"
 
-#: pitivi/project.py:271
+#: pitivi/project.py:259
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1583,15 +1586,15 @@ msgstr ""
 "Якщо ви хочете додати до вашого проєкту якийсь мультимедійний файл, краще "
 "скористайтеся кнопкою «Імпортувати»."
 
-#: pitivi/project.py:293
+#: pitivi/project.py:281
 msgid "Ignore backup"
 msgstr "Ігнорувати резервну копію"
 
-#: pitivi/project.py:295
+#: pitivi/project.py:283
 msgid "Restore from backup"
 msgstr "Відновлення з резервної копії"
 
-#: pitivi/project.py:306
+#: pitivi/project.py:294
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1604,39 +1607,39 @@ msgstr ""
 "\n"
 "Хочете завантажити автоматично збережену версію?"
 
-#: pitivi/project.py:379
+#: pitivi/project.py:367
 msgid "You do not have permissions to write to this folder."
 msgstr "У вас немає прав доступу для запису до цієї теки."
 
 #. Save the project to a temporary file.
-#: pitivi/project.py:412
+#: pitivi/project.py:400
 msgid "project"
 msgstr "проєкт"
 
-#: pitivi/project.py:714
+#: pitivi/project.py:700
 msgid "Pitivi encoding profile"
 msgstr "Профіль кодування Pitivi"
 
-#: pitivi/render.py:114
+#: pitivi/render.py:115
 msgid "YouTube"
 msgstr "YouTube"
 
-#: pitivi/render.py:115
+#: pitivi/render.py:116
 msgid "DVD"
 msgstr "DVD"
 
 #. Translators: This must contain exclusively low case alphanum and '-'
-#: pitivi/render.py:316
+#: pitivi/render.py:317
 msgid "new-profile"
 msgstr "новий-профіль"
 
 #. Translators: This must contain exclusively low case alphanum and '-'
-#: pitivi/render.py:320
+#: pitivi/render.py:321
 #, python-format
 msgid "new-profile-%d"
 msgstr "новий-профіль-%d"
 
-#: pitivi/render.py:723
+#: pitivi/render.py:724
 #, python-format
 msgid "Rendering — %d%% complete"
 msgstr "Обробка — виконано на %d%%"
@@ -1647,12 +1650,12 @@ msgstr "Обробка — виконано на %d%%"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals).
-#: pitivi/render.py:732
+#: pitivi/render.py:733
 #, python-format
 msgid "About %s left"
 msgstr "Залишилося близько %s"
 
-#: pitivi/render.py:780
+#: pitivi/render.py:781
 msgid "Currently rendering"
 msgstr "Триває обробка"
 
@@ -1721,15 +1724,15 @@ msgstr ""
 "Вам варто ознайомитися з нашими настановами щодо усування вад або повідомити "
 "розробникам про ваду у програмі. Повідомлення про помилку GStreamer:"
 
-#: pitivi/render.py:1486
+#: pitivi/render.py:1485
 msgid "Select file path to render"
 msgstr "Виберіть шлях до файла для обробки"
 
-#: pitivi/render.py:1596 pitivi/render.py:1597 pitivi/render.py:1603
+#: pitivi/render.py:1595 pitivi/render.py:1596 pitivi/render.py:1602
 msgid "Render complete"
 msgstr "Обробку завершено"
 
-#: pitivi/render.py:1601
+#: pitivi/render.py:1600
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "Обробку «%s» завершено."
@@ -1754,23 +1757,23 @@ msgstr ""
 "Створити перехід накладанням двох сусідніх кліпів у одному шарі. Натисніть "
 "пункт переходу на монтажному столі, щоб змінити тип переходу."
 
-#: pitivi/transitions.py:232
+#: pitivi/transitions.py:229
 msgid "Slow"
 msgstr "Повільно"
 
-#: pitivi/transitions.py:234
+#: pitivi/transitions.py:231
 msgid "Fast"
 msgstr "Швидко"
 
-#: pitivi/transitions.py:236
+#: pitivi/transitions.py:233
 msgid "Epileptic"
 msgstr "Епілепсія"
 
-#: pitivi/transitions.py:240
+#: pitivi/transitions.py:237
 msgid "Sharp"
 msgstr "Зробити різкішим"
 
-#: pitivi/transitions.py:242
+#: pitivi/transitions.py:239
 msgid "Smooth"
 msgstr "Згладити"
 
@@ -1794,27 +1797,27 @@ msgstr "Напрямні композиції"
 msgid "Currently playing"
 msgstr "Триває відтворення"
 
-#: pitivi/viewer/viewer.py:253
+#: pitivi/viewer/viewer.py:252
 msgid "Select composition guidelines"
 msgstr "Виберіть напрямні композиції"
 
-#: pitivi/viewer/viewer.py:261
+#: pitivi/viewer/viewer.py:260
 msgid "Go to the beginning of the timeline"
 msgstr "Перейти до початку запису на монтажному столі"
 
-#: pitivi/viewer/viewer.py:270
+#: pitivi/viewer/viewer.py:269
 msgid "Go back one second"
 msgstr "Повернутися на одну секунду"
 
-#: pitivi/viewer/viewer.py:283
+#: pitivi/viewer/viewer.py:282
 msgid "Go forward one second"
 msgstr "Вперед на одну секунду"
 
-#: pitivi/viewer/viewer.py:292
+#: pitivi/viewer/viewer.py:291
 msgid "Go to the end of the timeline"
 msgstr "Перейти в кінець запису на монтажному столі"
 
-#: pitivi/viewer/viewer.py:299
+#: pitivi/viewer/viewer.py:298
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1822,7 +1825,7 @@ msgstr ""
 "Введіть значення часової позначки або номер кадру\n"
 "і натисніть клавішу Enter, щоб перейти до відповідної позиції"
 
-#: pitivi/viewer/viewer.py:310
+#: pitivi/viewer/viewer.py:309
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1830,23 +1833,23 @@ msgstr ""
 "Від’єднати вікно перегляду\n"
 "Повернути його в основне вікно можна закриттям новоствореного вікна."
 
-#: pitivi/viewer/viewer.py:337
+#: pitivi/viewer/viewer.py:336
 msgid "Viewer"
 msgstr "Переглядач"
 
-#: pitivi/viewer/viewer.py:345
+#: pitivi/viewer/viewer.py:344
 msgid "Toggle the currently selected composition guidelines"
 msgstr "Увімкнути або вимкнути вибрані напрямні композиції"
 
-#: pitivi/viewer/viewer.py:353
+#: pitivi/viewer/viewer.py:352
 msgid "Toggle safe areas on viewer"
 msgstr "Перемкнути безпечні області у перегляді"
 
-#: pitivi/viewer/viewer.py:479 pitivi/viewer/viewer.py:537
+#: pitivi/viewer/viewer.py:478 pitivi/viewer/viewer.py:536
 msgid "Show this window in fullscreen"
 msgstr "Розтягти це вікно на весь екран"
 
-#: pitivi/viewer/viewer.py:534
+#: pitivi/viewer/viewer.py:533
 msgid "Exit fullscreen mode"
 msgstr "Вийти з повноекранного режиму"
 
@@ -1907,12 +1910,10 @@ msgid "Add a marker"
 msgstr "Додати позначку"
 
 #: pitivi/timeline/markers.py:150
-#| msgid "Seeks to the first clip edge before the playhead."
 msgid "Seek to the first marker before the playhead"
 msgstr "Позиціювання на першій позначці до позиції відтворення."
 
 #: pitivi/timeline/markers.py:157
-#| msgid "Seeks to the first clip edge after the playhead."
 msgid "Seek to the first marker after the playhead"
 msgstr "Позиціювання на першій позначці після позиції відтворення."
 
@@ -1921,11 +1922,11 @@ msgstr "Позиціювання на першій позначці після �
 msgid "Frame #%d"
 msgstr "Кадр %d"
 
-#: pitivi/timeline/timeline.py:81
+#: pitivi/timeline/timeline.py:82
 msgid "Snap distance"
 msgstr "Відстань прилипання"
 
-#: pitivi/timeline/timeline.py:82
+#: pitivi/timeline/timeline.py:83
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1933,11 +1934,11 @@ msgstr ""
 "Порогове відстань (у пікселях), за якої два кліпи злипатимуться під час "
 "перетягування або обрізання."
 
-#: pitivi/timeline/timeline.py:94
+#: pitivi/timeline/timeline.py:95
 msgid "Image clip duration"
 msgstr "Тривалість кліпу із зображенням"
 
-#: pitivi/timeline/timeline.py:96
+#: pitivi/timeline/timeline.py:97
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
@@ -1945,103 +1946,109 @@ msgstr ""
 "Типова тривалість (у мілісекундах) кліпу із зображенням при додаванні на "
 "монтажний стіл."
 
-#: pitivi/timeline/timeline.py:107
+#: pitivi/timeline/timeline.py:108
 msgid "Left click also seeks"
 msgstr "Клацання лівою також позиціювання"
 
-#: pitivi/timeline/timeline.py:109
+#: pitivi/timeline/timeline.py:110
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
 "Визначає, чи буде клацання лівою використано для позиціювання, окрім "
 "позначення та редагування кліпів."
 
-#: pitivi/timeline/timeline.py:339 pitivi/timeline/timeline.py:1764
+#: pitivi/timeline/timeline.py:340 pitivi/timeline/timeline.py:1765
 msgid "Add layer"
 msgstr "Додати шар"
 
-#: pitivi/timeline/timeline.py:1707 pitivi/dialogs/prefs.py:60
+#: pitivi/timeline/timeline.py:1708 pitivi/dialogs/prefs.py:60
 msgid "Timeline"
 msgstr "Монтажний стіл"
 
-#: pitivi/timeline/timeline.py:1714
+#: pitivi/timeline/timeline.py:1715
 msgid "Action Search"
 msgstr "Пошук дії"
 
-#: pitivi/timeline/timeline.py:1722
+#: pitivi/timeline/timeline.py:1723
 msgid "Delete selected clips"
 msgstr "Вилучити позначені кліпи"
 
-#: pitivi/timeline/timeline.py:1729
+#: pitivi/timeline/timeline.py:1730
 msgid "Delete selected clips and shift following ones"
 msgstr "Вилучити позначені кліпи і посунути наступні"
 
-#: pitivi/timeline/timeline.py:1736
+#: pitivi/timeline/timeline.py:1737
 msgid "Group selected clips together"
 msgstr "Згрупувати позначені кліпи"
 
-#: pitivi/timeline/timeline.py:1743
+#: pitivi/timeline/timeline.py:1744
 msgid "Ungroup selected clips"
 msgstr "Розгрупувати позначені кліпи"
 
-#: pitivi/timeline/timeline.py:1750
+#: pitivi/timeline/timeline.py:1751
 msgid "Copy selected clips"
 msgstr "Скопіювати позначені кліпи"
 
-#: pitivi/timeline/timeline.py:1757
+#: pitivi/timeline/timeline.py:1758
 msgid "Paste selected clips"
 msgstr "Вставити позначені кліпи"
 
-#: pitivi/timeline/timeline.py:1771
-#| msgid "Seeks to the first clip edge after the playhead."
+#: pitivi/timeline/timeline.py:1772
 msgid "Seek to the first clip edge after the playhead"
 msgstr "Позиціювання на першому краю кліпу після позиції відтворення"
 
-#: pitivi/timeline/timeline.py:1778
-#| msgid "Seeks to the first clip edge before the playhead."
+#: pitivi/timeline/timeline.py:1779
 msgid "Seek to the first clip edge before the playhead"
 msgstr "Позиціювання на першому краю кліпу до позиції відтворення"
 
-#: pitivi/timeline/timeline.py:1785
+#: pitivi/timeline/timeline.py:1786
+msgid "Shift selected clips one frame forward"
+msgstr "Пересунути позначені кліпи на один кадр вперед"
+
+#: pitivi/timeline/timeline.py:1793
+msgid "Shift selected clips one frame backward"
+msgstr "Пересунути позначені кліпи на один кадр назад"
+
+#: pitivi/timeline/timeline.py:1800
 msgid "Add an effect to the selected clip"
 msgstr "Додати ефект до позначеного кліпу"
 
-#: pitivi/timeline/timeline.py:1798
+#: pitivi/timeline/timeline.py:1813
 msgid "Split the clip at the position"
 msgstr "Розділити кліп за поточною позицією"
 
-#: pitivi/timeline/timeline.py:1805
+#: pitivi/timeline/timeline.py:1820
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Додати ключовий кадр до кривої ключових кадрів позначеного кліпу"
 
-#: pitivi/timeline/timeline.py:1810
+#: pitivi/timeline/timeline.py:1825
 msgid "Timeline Navigation"
 msgstr "Навігація монтажним столом"
 
-#: pitivi/timeline/timeline.py:1818
+#: pitivi/timeline/timeline.py:1833
 msgid "Zoom in"
 msgstr "Збільшити"
 
-#: pitivi/timeline/timeline.py:1826
+#: pitivi/timeline/timeline.py:1841
 msgid "Zoom out"
 msgstr "Зменшити"
 
-#: pitivi/timeline/timeline.py:1834
+#: pitivi/timeline/timeline.py:1849
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Скоригувати масштаб так, щоб проєкт вміщався у вікні"
 
-#: pitivi/timeline/timeline.py:1847
+#: pitivi/timeline/timeline.py:1862
 msgid "Seek backward one frame"
 msgstr "Назад на один кадр"
 
-#: pitivi/timeline/timeline.py:1854
+#: pitivi/timeline/timeline.py:1869
 msgid "Seek forward one frame"
 msgstr "Вперед на один кадр"
 
-#: pitivi/timeline/timeline.py:1862
+#: pitivi/timeline/timeline.py:1877
 msgid "Seek backward one second"
 msgstr "Назад на одну секунду"
 
-#: pitivi/timeline/timeline.py:1870
+#: pitivi/timeline/timeline.py:1885
 msgid "Seek forward one second"
 msgstr "Вперед на одну секунду"
 
