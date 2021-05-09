@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-05-04 16:15+0000\n"
-"PO-Revision-Date: 2021-05-04 21:06+0200\n"
+"POT-Creation-Date: 2021-05-09 20:17+0000\n"
+"PO-Revision-Date: 2021-05-10 01:21+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -697,7 +697,7 @@ msgid "Pause"
 msgstr "Pausa"
 
 #: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:766
-#: pitivi/timeline/timeline.py:1855
+#: pitivi/timeline/timeline.py:1870
 msgid "Play"
 msgstr "Spela upp"
 
@@ -1891,11 +1891,11 @@ msgstr "Spola till den första markören efter uppspelningshuvudet"
 msgid "Frame #%d"
 msgstr "Bildruta #%d"
 
-#: pitivi/timeline/timeline.py:82
+#: pitivi/timeline/timeline.py:83
 msgid "Snap distance"
 msgstr "Fästavstånd"
 
-#: pitivi/timeline/timeline.py:83
+#: pitivi/timeline/timeline.py:84
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1903,11 +1903,11 @@ msgstr ""
 "Tröskelvärde (i bildpunkter) med vilket två klipp ska fästas tillsammans när "
 "de dras eller finjusteras."
 
-#: pitivi/timeline/timeline.py:95
+#: pitivi/timeline/timeline.py:96
 msgid "Image clip duration"
 msgstr "Bildklippsvaraktighet"
 
-#: pitivi/timeline/timeline.py:97
+#: pitivi/timeline/timeline.py:98
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
@@ -1915,109 +1915,117 @@ msgstr ""
 "Standardlängd för videoklipp (i millisekunder) för bilder vid infogande på "
 "tidslinjen."
 
-#: pitivi/timeline/timeline.py:108
+#: pitivi/timeline/timeline.py:109
 msgid "Left click also seeks"
 msgstr "Vänsterklick spolar också"
 
-#: pitivi/timeline/timeline.py:110
+#: pitivi/timeline/timeline.py:111
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
 "Huruvida vänsterklickande också spolar förutom att välja och redigera "
 "videoklipp."
 
-#: pitivi/timeline/timeline.py:340 pitivi/timeline/timeline.py:1765
+#: pitivi/timeline/timeline.py:341 pitivi/timeline/timeline.py:1766
 msgid "Add layer"
 msgstr "Lägg till lager"
 
-#: pitivi/timeline/timeline.py:1708 pitivi/dialogs/prefs.py:60
+#: pitivi/timeline/timeline.py:1709 pitivi/dialogs/prefs.py:60
 msgid "Timeline"
 msgstr "Tidslinje"
 
-#: pitivi/timeline/timeline.py:1715
+#: pitivi/timeline/timeline.py:1716
 msgid "Action Search"
 msgstr "Åtgärdssökning"
 
-#: pitivi/timeline/timeline.py:1723
+#: pitivi/timeline/timeline.py:1724
 msgid "Delete selected clips"
 msgstr "Ta bort markerade klipp"
 
-#: pitivi/timeline/timeline.py:1730
+#: pitivi/timeline/timeline.py:1731
 msgid "Delete selected clips and shift following ones"
 msgstr "Ta bort markerade klipp och skifta efterföljande"
 
-#: pitivi/timeline/timeline.py:1737
+#: pitivi/timeline/timeline.py:1738
 msgid "Group selected clips together"
 msgstr "Gruppera markerade klipp tillsammans"
 
-#: pitivi/timeline/timeline.py:1744
+#: pitivi/timeline/timeline.py:1745
 msgid "Ungroup selected clips"
 msgstr "Avgruppera markerade klipp"
 
-#: pitivi/timeline/timeline.py:1751
+#: pitivi/timeline/timeline.py:1752
 msgid "Copy selected clips"
 msgstr "Kopiera markerade klipp"
 
-#: pitivi/timeline/timeline.py:1758
+#: pitivi/timeline/timeline.py:1759
 msgid "Paste selected clips"
 msgstr "Klistra in markerade klipp"
 
-#: pitivi/timeline/timeline.py:1772
+#: pitivi/timeline/timeline.py:1773
 msgid "Seek to the first clip edge after the playhead"
 msgstr "Spola till den första klippkanten efter uppspelningshuvudet"
 
-#: pitivi/timeline/timeline.py:1779
+#: pitivi/timeline/timeline.py:1780
 msgid "Seek to the first clip edge before the playhead"
 msgstr "Spola till den första klippkanten innan uppspelningshuvudet"
 
-#: pitivi/timeline/timeline.py:1786
+#: pitivi/timeline/timeline.py:1787
 msgid "Shift selected clips one frame forward"
 msgstr "Skifta markerade klipp en bildruta framåt"
 
-#: pitivi/timeline/timeline.py:1793
+#: pitivi/timeline/timeline.py:1794
 msgid "Shift selected clips one frame backward"
 msgstr "Skifta markerade klipp en bildruta bakåt"
 
-#: pitivi/timeline/timeline.py:1800
+#: pitivi/timeline/timeline.py:1801
+msgid "Snap selected clips to the next clip"
+msgstr "Fäst markerade klipp till nästa klipp"
+
+#: pitivi/timeline/timeline.py:1808
+msgid "Snap selected clips to the previous clip"
+msgstr "Fäst markerade klipp till föregående klipp"
+
+#: pitivi/timeline/timeline.py:1815
 msgid "Add an effect to the selected clip"
 msgstr "Lägg till en effekt till det markerade klippet"
 
-#: pitivi/timeline/timeline.py:1813
+#: pitivi/timeline/timeline.py:1828
 msgid "Split the clip at the position"
 msgstr "Dela upp klipp vid positionen"
 
-#: pitivi/timeline/timeline.py:1820
+#: pitivi/timeline/timeline.py:1835
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Lägg till nyckelbildruta till nyckelbildskurvan för valt klipp"
 
-#: pitivi/timeline/timeline.py:1825
+#: pitivi/timeline/timeline.py:1840
 msgid "Timeline Navigation"
 msgstr "Tidslinjenavigering"
 
-#: pitivi/timeline/timeline.py:1833
+#: pitivi/timeline/timeline.py:1848
 msgid "Zoom in"
 msgstr "Zooma in"
 
-#: pitivi/timeline/timeline.py:1841
+#: pitivi/timeline/timeline.py:1856
 msgid "Zoom out"
 msgstr "Zooma ut"
 
-#: pitivi/timeline/timeline.py:1849
+#: pitivi/timeline/timeline.py:1864
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Justera zoom för att anpassa projektet till fönstret"
 
-#: pitivi/timeline/timeline.py:1862
+#: pitivi/timeline/timeline.py:1877
 msgid "Seek backward one frame"
 msgstr "Spola bakåt en bildruta"
 
-#: pitivi/timeline/timeline.py:1869
+#: pitivi/timeline/timeline.py:1884
 msgid "Seek forward one frame"
 msgstr "Spola framåt en bildruta"
 
-#: pitivi/timeline/timeline.py:1877
+#: pitivi/timeline/timeline.py:1892
 msgid "Seek backward one second"
 msgstr "Spola bakåt en sekund"
 
-#: pitivi/timeline/timeline.py:1885
+#: pitivi/timeline/timeline.py:1900
 msgid "Seek forward one second"
 msgstr "Spola framåt en sekund"
 
