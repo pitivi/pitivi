@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-05-04 16:15+0000\n"
-"PO-Revision-Date: 2021-05-05 11:04+0200\n"
+"POT-Creation-Date: 2021-05-09 20:17+0000\n"
+"PO-Revision-Date: 2021-05-12 11:28+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -419,7 +419,6 @@ msgid "Clip properties..."
 msgstr "Propiedades del vídeo…"
 
 #: data/ui/medialibrary.ui:59
-#| msgid "Paste selected clips"
 msgid "Show tags associated with selected clips"
 msgstr "Mostrar etiquetas asociadas a los vídeos seleccionados"
 
@@ -695,7 +694,7 @@ msgid "Pause"
 msgstr "Pausar"
 
 #: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:766
-#: pitivi/timeline/timeline.py:1855
+#: pitivi/timeline/timeline.py:1870
 msgid "Play"
 msgstr "Reproducir"
 
@@ -1878,12 +1877,10 @@ msgid "Add a marker"
 msgstr "Añadir un marcador"
 
 #: pitivi/timeline/markers.py:150
-#| msgid "Seeks to the first clip edge before the playhead."
 msgid "Seek to the first marker before the playhead"
 msgstr "Buscar el primer marcador antes de la posición actual"
 
 #: pitivi/timeline/markers.py:157
-#| msgid "Seeks to the first clip edge after the playhead."
 msgid "Seek to the first marker after the playhead"
 msgstr "Buscar el primer marcador después de la posición actual"
 
@@ -1892,11 +1889,11 @@ msgstr "Buscar el primer marcador después de la posición actual"
 msgid "Frame #%d"
 msgstr "Fotograma nº %d"
 
-#: pitivi/timeline/timeline.py:82
+#: pitivi/timeline/timeline.py:83
 msgid "Snap distance"
 msgstr "Ajustar distancia"
 
-#: pitivi/timeline/timeline.py:83
+#: pitivi/timeline/timeline.py:84
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1904,11 +1901,11 @@ msgstr ""
 "Umbral (en píxeles) en el que dos vídeos se juntarán al arrastrarlos o "
 "recortarlos."
 
-#: pitivi/timeline/timeline.py:95
+#: pitivi/timeline/timeline.py:96
 msgid "Image clip duration"
 msgstr "Duración del vídeo de imagen"
 
-#: pitivi/timeline/timeline.py:97
+#: pitivi/timeline/timeline.py:98
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
@@ -1916,111 +1913,119 @@ msgstr ""
 "Duración predeterminada (el milisegundos) del vídeo de imágenes al "
 "insertarlo en la línea de tiempo."
 
-#: pitivi/timeline/timeline.py:108
+#: pitivi/timeline/timeline.py:109
 msgid "Left click also seeks"
 msgstr "La pulsación izquierda también busca"
 
-#: pitivi/timeline/timeline.py:110
+#: pitivi/timeline/timeline.py:111
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
 "Indica si la pulsación izquierda también busca más allá de seleccionar y "
 "editar vídeos."
 
-#: pitivi/timeline/timeline.py:340 pitivi/timeline/timeline.py:1765
+#: pitivi/timeline/timeline.py:341 pitivi/timeline/timeline.py:1766
 msgid "Add layer"
 msgstr "Añadir capa"
 
-#: pitivi/timeline/timeline.py:1708 pitivi/dialogs/prefs.py:60
+#: pitivi/timeline/timeline.py:1709 pitivi/dialogs/prefs.py:60
 msgid "Timeline"
 msgstr "Línea de tiempo"
 
-#: pitivi/timeline/timeline.py:1715
+#: pitivi/timeline/timeline.py:1716
 msgid "Action Search"
 msgstr "Acción de búsqueda"
 
-#: pitivi/timeline/timeline.py:1723
+#: pitivi/timeline/timeline.py:1724
 msgid "Delete selected clips"
 msgstr "Eliminar los vídeos seleccionados"
 
-#: pitivi/timeline/timeline.py:1730
+#: pitivi/timeline/timeline.py:1731
 msgid "Delete selected clips and shift following ones"
 msgstr "Eliminar los vídeos seleccionados y desplazar los siguientes"
 
-#: pitivi/timeline/timeline.py:1737
+#: pitivi/timeline/timeline.py:1738
 msgid "Group selected clips together"
 msgstr "Agrupar juntos los vídeos seleccionados"
 
-#: pitivi/timeline/timeline.py:1744
+#: pitivi/timeline/timeline.py:1745
 msgid "Ungroup selected clips"
 msgstr "Desagrupar vídeos seleccionados"
 
-#: pitivi/timeline/timeline.py:1751
+#: pitivi/timeline/timeline.py:1752
 msgid "Copy selected clips"
 msgstr "Copiar vídeos seleccionados"
 
-#: pitivi/timeline/timeline.py:1758
+#: pitivi/timeline/timeline.py:1759
 msgid "Paste selected clips"
 msgstr "Pegar vídeos seleccionados"
 
-#: pitivi/timeline/timeline.py:1772
-#| msgid "Seeks to the first clip edge after the playhead."
+#: pitivi/timeline/timeline.py:1773
 msgid "Seek to the first clip edge after the playhead"
 msgstr "Buscar el borde del primer vídeo después de la posición actual"
 
-#: pitivi/timeline/timeline.py:1779
-#| msgid "Seeks to the first clip edge before the playhead."
+#: pitivi/timeline/timeline.py:1780
 msgid "Seek to the first clip edge before the playhead"
 msgstr "Buscar el borde del primer vídeo antes de la posición actual"
 
-#: pitivi/timeline/timeline.py:1786
+#: pitivi/timeline/timeline.py:1787
 msgid "Shift selected clips one frame forward"
 msgstr "Desplazar los vídeos seleccionados un marco hacia adelante"
 
-#: pitivi/timeline/timeline.py:1793
+#: pitivi/timeline/timeline.py:1794
 msgid "Shift selected clips one frame backward"
 msgstr "Desplazar los vídeos seleccionados un marco hacia atrás"
 
-#: pitivi/timeline/timeline.py:1800
+#: pitivi/timeline/timeline.py:1801
+#| msgid "Group selected clips together"
+msgid "Snap selected clips to the next clip"
+msgstr "Ajustar los vídeos seleccionados al siguiente vídeo"
+
+#: pitivi/timeline/timeline.py:1808
+#| msgid "Remove selected clips from the project"
+msgid "Snap selected clips to the previous clip"
+msgstr "Ajustar los vídeos seleccionados al vídeo anterior"
+
+#: pitivi/timeline/timeline.py:1815
 msgid "Add an effect to the selected clip"
 msgstr "Añadir un efecto al vídeo seleccionado"
 
-#: pitivi/timeline/timeline.py:1813
+#: pitivi/timeline/timeline.py:1828
 msgid "Split the clip at the position"
 msgstr "Cortar el vídeo en la posición"
 
-#: pitivi/timeline/timeline.py:1820
+#: pitivi/timeline/timeline.py:1835
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Añadir fotograma a la curva de fotogramas del vídeo seleccionado"
 
-#: pitivi/timeline/timeline.py:1825
+#: pitivi/timeline/timeline.py:1840
 msgid "Timeline Navigation"
 msgstr "Navegación por la línea de tiempo"
 
-#: pitivi/timeline/timeline.py:1833
+#: pitivi/timeline/timeline.py:1848
 msgid "Zoom in"
 msgstr "Acercar"
 
-#: pitivi/timeline/timeline.py:1841
+#: pitivi/timeline/timeline.py:1856
 msgid "Zoom out"
 msgstr "Alejar"
 
-#: pitivi/timeline/timeline.py:1849
+#: pitivi/timeline/timeline.py:1864
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Ajustar nivel de ampliación para coincidir con la ventana"
 
-#: pitivi/timeline/timeline.py:1862
+#: pitivi/timeline/timeline.py:1877
 msgid "Seek backward one frame"
 msgstr "Retroceder un fotograma"
 
-#: pitivi/timeline/timeline.py:1869
+#: pitivi/timeline/timeline.py:1884
 msgid "Seek forward one frame"
 msgstr "Avanzar un fotograma"
 
-#: pitivi/timeline/timeline.py:1877
+#: pitivi/timeline/timeline.py:1892
 msgid "Seek backward one second"
 msgstr "Retroceder un segundo"
 
-#: pitivi/timeline/timeline.py:1885
+#: pitivi/timeline/timeline.py:1900
 msgid "Seek forward one second"
 msgstr "Avanzar un segundo"
 
