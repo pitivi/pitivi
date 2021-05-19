@@ -1584,9 +1584,14 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             self.timeline.update_snapping_distance()
             self.markers.markers_container = project.ges_timeline.get_marker_list("markers")
+            self.editor_state.set_project(project)
+            self.restore_state()
 
     def restore_state(self):
         if self.state_restored:
+            return
+
+        if not self._project or not self.get_realized():
             return
 
         # One attempt is enough.
@@ -1613,6 +1618,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if scroll:
             # TODO: Figure out why self.scroll_to_pixel(scroll) which calls _scroll_to_pixel directly does not work.
             GLib.idle_add(self._scroll_to_pixel, scroll)
+
+    def do_realize(self):
+        Gtk.Widget.do_realize(self)
+        self.restore_state()
 
     def update_actions(self):
         selection = self.timeline.selection

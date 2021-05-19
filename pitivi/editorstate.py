@@ -44,9 +44,6 @@ class EditorState(Loggable):
         self._editor_state = {}
         self.__state_saving_handle = 0
 
-        self.project_manager.connect("new-project-loaded",
-                                     self._new_project_loaded_cb)
-
     def get_value(self, key):
         """Get a value from the loaded editor state."""
         return self._editor_state.get(key)
@@ -65,7 +62,7 @@ class EditorState(Loggable):
         self.__state_saving_handle = 0
         self.save_editor_state()
 
-    def _new_project_loaded_cb(self, project_manager, project):
+    def set_project(self, project):
         self.project = project
         self.conf_file_path = os.path.join(self.conf_folder_path, self.project.get_project_id() + ".conf")
         self.load_editor_state()
