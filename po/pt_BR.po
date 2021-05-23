@@ -13,24 +13,24 @@
 # Gabriel F. Vilar <cogumm@gmail.com>, 2015.
 # Freire de Almeida <laudivan@riseup.net>, 2016.
 # Bruno Lopes da Silva <brunolopesbldsb@gmail.com>, 2018.
-# Rafael Fontenelle <rafaelff@gnome.org>, 2013-2020.
 # Rodrigo Costa <rodrigo.costa@outlook.it>, 2021.
 # Enrico Nicoletto <liverig@gmail.com>, 2013-2014, 2017-2018, 2020-2021.
+# Rafael Fontenelle <rafaelff@gnome.org>, 2013-2021.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-05-04 16:15+0000\n"
-"PO-Revision-Date: 2021-05-07 21:54-0300\n"
-"Last-Translator: Enrico Nicoletto <liverig@gmail.com>\n"
+"POT-Creation-Date: 2021-05-09 20:17+0000\n"
+"PO-Revision-Date: 2021-05-23 16:49-0300\n"
+"Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"X-Generator: Gtranslator 40.0\n"
 "X-Project-Style: gnome\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
@@ -709,7 +709,7 @@ msgid "Pause"
 msgstr "Pausar"
 
 #: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:766
-#: pitivi/timeline/timeline.py:1855
+#: pitivi/timeline/timeline.py:1870
 msgid "Play"
 msgstr "Reproduzir"
 
@@ -1905,11 +1905,11 @@ msgstr "Procura o primeiro marcador após o indicador de reprodução"
 msgid "Frame #%d"
 msgstr "Quadro nº %d"
 
-#: pitivi/timeline/timeline.py:82
+#: pitivi/timeline/timeline.py:83
 msgid "Snap distance"
 msgstr "Distância de encaixe"
 
-#: pitivi/timeline/timeline.py:83
+#: pitivi/timeline/timeline.py:84
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1917,11 +1917,11 @@ msgstr ""
 "Limiar (em pixels) com que dois clipes serão encaixados ao arrastar ou "
 "aparar."
 
-#: pitivi/timeline/timeline.py:95
+#: pitivi/timeline/timeline.py:96
 msgid "Image clip duration"
 msgstr "Duração do clipe de imagem"
 
-#: pitivi/timeline/timeline.py:97
+#: pitivi/timeline/timeline.py:98
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
@@ -1929,110 +1929,120 @@ msgstr ""
 "Comprimento padrão do clipe (em milissegundos) de uma imagem quando inserida "
 "na linha de tempo."
 
-#: pitivi/timeline/timeline.py:108
+#: pitivi/timeline/timeline.py:109
 msgid "Left click also seeks"
 msgstr "Clique com botão esquerdo também busca"
 
-#: pitivi/timeline/timeline.py:110
+#: pitivi/timeline/timeline.py:111
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
 "Se clique com botão esquerdo do mouse também busca, além de selecionar e "
 "editar clipes."
 
-#: pitivi/timeline/timeline.py:340 pitivi/timeline/timeline.py:1765
+#: pitivi/timeline/timeline.py:341 pitivi/timeline/timeline.py:1766
 msgid "Add layer"
 msgstr "Adicionar camada"
 
-#: pitivi/timeline/timeline.py:1708 pitivi/dialogs/prefs.py:60
+#: pitivi/timeline/timeline.py:1709 pitivi/dialogs/prefs.py:60
 msgid "Timeline"
 msgstr "Linha de tempo"
 
-#: pitivi/timeline/timeline.py:1715
+#: pitivi/timeline/timeline.py:1716
 msgid "Action Search"
 msgstr "Pesquisar ação"
 
-#: pitivi/timeline/timeline.py:1723
+#: pitivi/timeline/timeline.py:1724
 msgid "Delete selected clips"
 msgstr "Excluir selecionados"
 
-#: pitivi/timeline/timeline.py:1730
+#: pitivi/timeline/timeline.py:1731
 msgid "Delete selected clips and shift following ones"
 msgstr "Exclui os clipes selecionados e mude os seguintes"
 
-#: pitivi/timeline/timeline.py:1737
+#: pitivi/timeline/timeline.py:1738
 msgid "Group selected clips together"
 msgstr "Agrupar clipes selecionados em conjunto"
 
-#: pitivi/timeline/timeline.py:1744
+#: pitivi/timeline/timeline.py:1745
 msgid "Ungroup selected clips"
 msgstr "Desagrupar clipes selecionados"
 
-#: pitivi/timeline/timeline.py:1751
+#: pitivi/timeline/timeline.py:1752
 msgid "Copy selected clips"
 msgstr "Copiar clipes selecionados"
 
-#: pitivi/timeline/timeline.py:1758
+#: pitivi/timeline/timeline.py:1759
 msgid "Paste selected clips"
 msgstr "Colar clipes selecionados"
 
-#: pitivi/timeline/timeline.py:1772
+#: pitivi/timeline/timeline.py:1773
 msgid "Seek to the first clip edge after the playhead"
 msgstr "Procura o limite do primeiro clipe após o indicador de reprodução"
 
-#: pitivi/timeline/timeline.py:1779
+#: pitivi/timeline/timeline.py:1780
 msgid "Seek to the first clip edge before the playhead"
 msgstr "Procura o limite do primeiro clipe antes do indicador de reprodução"
 
-#: pitivi/timeline/timeline.py:1786
+#: pitivi/timeline/timeline.py:1787
 msgid "Shift selected clips one frame forward"
 msgstr "Muda os clipes selecionados um quadro para a frente"
 
-#: pitivi/timeline/timeline.py:1793
+#: pitivi/timeline/timeline.py:1794
 msgid "Shift selected clips one frame backward"
 msgstr "Muda os clipes selecionados um quadro para trás"
 
-#: pitivi/timeline/timeline.py:1800
+#: pitivi/timeline/timeline.py:1801
+#| msgid "Group selected clips together"
+msgid "Snap selected clips to the next clip"
+msgstr "Encaixa os clipes selecionados no próximo clipe"
+
+#: pitivi/timeline/timeline.py:1808
+#| msgid "Remove selected clips from the project"
+msgid "Snap selected clips to the previous clip"
+msgstr "Encaixa os clipes selecionados no clipe anterior"
+
+#: pitivi/timeline/timeline.py:1815
 msgid "Add an effect to the selected clip"
 msgstr "Adiciona um efeito ao clipe selecionado"
 
-#: pitivi/timeline/timeline.py:1813
+#: pitivi/timeline/timeline.py:1828
 msgid "Split the clip at the position"
 msgstr "Dividir clipes na posição indicada"
 
-#: pitivi/timeline/timeline.py:1820
+#: pitivi/timeline/timeline.py:1835
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr ""
 "Adicionar quadro-chave para a curva de quadro-chave do clipe selecionado"
 
-#: pitivi/timeline/timeline.py:1825
+#: pitivi/timeline/timeline.py:1840
 msgid "Timeline Navigation"
 msgstr "Navegação pela linha do tempo"
 
-#: pitivi/timeline/timeline.py:1833
+#: pitivi/timeline/timeline.py:1848
 msgid "Zoom in"
 msgstr "Ampliar"
 
-#: pitivi/timeline/timeline.py:1841
+#: pitivi/timeline/timeline.py:1856
 msgid "Zoom out"
 msgstr "Reduzir"
 
-#: pitivi/timeline/timeline.py:1849
+#: pitivi/timeline/timeline.py:1864
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Ajustar o zoom para caber o projeto na janela"
 
-#: pitivi/timeline/timeline.py:1862
+#: pitivi/timeline/timeline.py:1877
 msgid "Seek backward one frame"
 msgstr "Buscar para trás um quadro"
 
-#: pitivi/timeline/timeline.py:1869
+#: pitivi/timeline/timeline.py:1884
 msgid "Seek forward one frame"
 msgstr "Buscar para frente um quadro"
 
-#: pitivi/timeline/timeline.py:1877
+#: pitivi/timeline/timeline.py:1892
 msgid "Seek backward one second"
 msgstr "Buscar para trás um segundo"
 
-#: pitivi/timeline/timeline.py:1885
+#: pitivi/timeline/timeline.py:1900
 msgid "Seek forward one second"
 msgstr "Buscar para frente um segundo"
 
