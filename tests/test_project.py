@@ -533,19 +533,26 @@ class TestProjectSettings(common.TestCase):
 
     def test_audio(self):
         project = common.create_project()
-        project.audiochannels = 2
-        self.assertEqual(2, project.audiochannels)
+        self.assertEqual(project.audiochannels, 2)
+        self.assertEqual(project.audiorate, 96000)
+
+        project.audiochannels = 6
+        self.assertEqual(project.audiochannels, 6)
         project.audiorate = 44100
-        self.assertEqual(44100, project.audiorate)
+        self.assertEqual(project.audiorate, 44100)
 
     def test_video(self):
         project = common.create_project()
-        project.videowidth = 1920
-        self.assertEqual(1920, project.videowidth)
-        project.videoheight = 1080
-        self.assertEqual(1080, project.videoheight)
+        self.assertEqual(project.videowidth, 1920)
+        self.assertEqual(project.videoheight, 1080)
+        self.assertEqual(project.videorate, Gst.Fraction(30, 1))
+
+        project.videowidth = 3840
+        self.assertEqual(project.videowidth, 3840)
+        project.videoheight = 2160
+        self.assertEqual(project.videoheight, 2160)
         project.videorate = Gst.Fraction(50, 7)
-        self.assertEqual(Gst.Fraction(50, 7), project.videorate)
+        self.assertEqual(project.videorate, Gst.Fraction(50, 7))
 
     def test_set_audio_prop(self):
         timeline = common.create_timeline_container()

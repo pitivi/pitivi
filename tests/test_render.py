@@ -641,3 +641,15 @@ class TestRender(BaseTestMediaLibrary):
                                   vencoder="x264enc", vcodecsettings=None,
                                   preset="youtube",
                                   sensitive=True, value=Quality.MEDIUM)
+
+    def test_project_audiorate(self):
+        """Checks the project audiorate when opening the Render dialog."""
+        project = self.create_simple_project()
+        # This is the audiorate from tears_of_steel.webm.
+        self.assertEqual(project.audiorate, 44100)
+
+        unused_dialog = self.create_rendering_dialog(project)
+
+        # The audio rate is changed because the default render preset
+        # has an audio encoder which does not support 44100.
+        self.assertEqual(project.audiorate, 48000)

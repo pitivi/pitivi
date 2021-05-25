@@ -77,8 +77,13 @@ for i in range(2, GLib.MAXINT):
 # Properties of encoders that should be ignored when saving/loading
 # a project.
 IGNORED_PROPS = ["name", "parent"]
+
+# Caps used as the default project settings.
 DEFAULT_VIDEO_SETTINGS = "video/x-raw,width=1920,height=1080,framerate=(GstFraction)30/1"
-DEFAULT_AUDIO_SETTINGS = "audio/x-raw,channels=2,rate=48000"
+DEFAULT_AUDIO_SETTINGS = "audio/x-raw,channels=2,rate=96000"
+
+# The minimum value for a decent audio rate.
+DECENT_AUDIORATE = 44100
 
 # Default values for the safe areas.
 DEFAULT_TITLE_AREA_VERTICAL = 0.8
@@ -710,7 +715,11 @@ class Project(Loggable, GES.Project):
             Gst.Caps("audio/x-vorbis"), None, Gst.Caps(asettings), 0)
         self.container_profile.add_profile(self.video_profile)
         self.container_profile.add_profile(self.audio_profile)
-        self.add_encoding_profile(self.container_profile)
+
+        # Add the container profile to the project so it is saved
+        # as part of the project.
+        res = self.add_encoding_profile(self.container_profile)
+        assert res
 
         self.muxer = Encoders().default_muxer
         self.vencoder = Encoders().default_video_encoder
@@ -988,6 +997,7 @@ class Project(Loggable, GES.Project):
         return True
 
     def _set_video_restriction(self, name, value):
+        """Updates the video profile and the corresponding project settings."""
         res = Project._set_restriction(self.video_profile, name, value)
         if res:
             self.emit("video-size-changed")
@@ -995,6 +1005,7 @@ class Project(Loggable, GES.Project):
         return res
 
     def _set_audio_restriction(self, name, value):
+        """Updates the audio profile and the corresponding project settings."""
         res = Project._set_restriction(self.audio_profile, name, value)
         if res:
             self._has_default_audio_settings = False
@@ -1800,10 +1811,15 @@ class Project(Loggable, GES.Project):
         return True
 
     def update_restriction_caps(self):
+        """Syncs the project settings from the render profile.
+
+        The project settings reside in the restriction caps of the audio and
+        video tracks of the timeline. They are updated to match the render
+        profile stored as the first (and only) encoding profile of the project.
+        """
+        videocaps = Gst.Caps.new_empty_simple("video/x-raw")
         # Get the height/width without rendering settings applied
         width, height = self.get_video_width_and_height()
-        videocaps = Gst.Caps.new_empty_simple("video/x-raw")
-
         videocaps.set_value("width", width)
         videocaps.set_value("height", height)
         videocaps.set_value("framerate", self.videorate)
@@ -2128,10 +2144,11 @@ class Project(Loggable, GES.Project):
         audio_streams = info.get_audio_streams()
         if audio_streams and self._has_default_audio_settings:
             audio = audio_streams[0]
-            self.audiochannels = audio.get_channels()
-            self.audiorate = audio.get_sample_rate()
-            self._has_default_audio_settings = False
-            emit = True
+            if audio.get_sample_rate() >= DECENT_AUDIORATE:
+                self.audiochannels = audio.get_channels()
+                self.audiorate = audio.get_sample_rate()
+                self._has_default_audio_settings = False
+                emit = True
         if emit:
             self.emit("settings-set-from-imported-asset", asset)
 
