@@ -23,11 +23,8 @@ from gi.repository import Gtk
 
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
-from pitivi.preset import AudioPresetManager
 from pitivi.preset import VideoPresetManager
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
-from pitivi.utils.ui import AUDIO_CHANNELS
-from pitivi.utils.ui import create_audio_rates_model
 from pitivi.utils.ui import create_frame_rates_model
 from pitivi.utils.ui import get_combo_value
 from pitivi.utils.ui import set_combo_value
@@ -45,7 +42,6 @@ class ProjectSettingsDialog:
     def __init__(self, parent_window, project, app):
         self.app = app
         self.project = project
-        self.audio_presets = AudioPresetManager(app.system)
         self.video_presets = VideoPresetManager(app.system)
 
         self.sar = 0
@@ -65,13 +61,10 @@ class ProjectSettingsDialog:
 
         self.window = self.builder.get_object("project-settings-dialog")
         self.frame_rate_combo = self.builder.get_object("frame_rate_combo")
-        self.channels_combo = self.builder.get_object("channels_combo")
-        self.sample_rate_combo = self.builder.get_object("sample_rate_combo")
         self.year_spinbutton = self.builder.get_object("year_spinbutton")
         self.author_entry = self.builder.get_object("author_entry")
         self.width_spinbutton = self.builder.get_object("width_spinbutton")
         self.height_spinbutton = self.builder.get_object("height_spinbutton")
-        self.audio_presets_combo = self.builder.get_object("audio_presets_combo")
         self.video_presets_combo = self.builder.get_object("video_presets_combo")
         self.constrain_sar_button = self.builder.get_object("constrain_sar_button")
         self.select_dar_radiobutton = self.builder.get_object("select_dar_radiobutton")
@@ -81,9 +74,6 @@ class ProjectSettingsDialog:
         self.video_presets.setup_ui(self.video_presets_combo,
                                     self.video_preset_menubutton)
         self.video_presets.connect("preset-loaded", self.__video_preset_loaded_cb)
-        self.audio_preset_menubutton = self.builder.get_object("audio_preset_menubutton")
-        self.audio_presets.setup_ui(self.audio_presets_combo,
-                                    self.audio_preset_menubutton)
 
         self.scaled_proxy_width_spin = self.builder.get_object("scaled_proxy_width")
         self.scaled_proxy_height_spin = self.builder.get_object("scaled_proxy_height")
@@ -114,14 +104,9 @@ class ProjectSettingsDialog:
                                       update_func_args=(self.frame_rate_combo,))
         self.widgets_group.add_vertex(self.width_spinbutton, signal="value-changed")
         self.widgets_group.add_vertex(self.height_spinbutton, signal="value-changed")
-        self.widgets_group.add_vertex(self.audio_preset_menubutton,
-                                      update_func=self._update_preset_menu_button_func,
-                                      update_func_args=(self.audio_presets,))
         self.widgets_group.add_vertex(self.video_preset_menubutton,
                                       update_func=self._update_preset_menu_button_func,
                                       update_func_args=(self.video_presets,))
-        self.widgets_group.add_vertex(self.channels_combo, signal="changed")
-        self.widgets_group.add_vertex(self.sample_rate_combo, signal="changed")
         self.widgets_group.add_vertex(self.scaled_proxy_width_spin, signal="value-changed")
         self.widgets_group.add_vertex(self.scaled_proxy_height_spin, signal="value-changed")
 
@@ -148,7 +133,6 @@ class ProjectSettingsDialog:
             self.frame_rate_combo, self.frame_rate_fraction_widget)
 
         # Presets.
-        self.audio_presets.load_all()
         self.video_presets.load_all()
 
         # Bind the widgets in the Video tab to the Video Presets Manager.
@@ -157,17 +141,10 @@ class ProjectSettingsDialog:
         self.bind_fraction_widget(
             self.video_presets, "frame-rate", self.frame_rate_fraction_widget)
 
-        # Bind the widgets in the Audio tab to the Audio Presets Manager.
-        self.bind_combo(self.audio_presets, "channels", self.channels_combo)
-        self.bind_combo(self.audio_presets, "sample-rate", self.sample_rate_combo)
-
         self.widgets_group.add_edge(
             self.frame_rate_fraction_widget, self.video_preset_menubutton)
         self.widgets_group.add_edge(self.width_spinbutton, self.video_preset_menubutton)
         self.widgets_group.add_edge(self.height_spinbutton, self.video_preset_menubutton)
-
-        self.widgets_group.add_edge(self.channels_combo, self.audio_preset_menubutton)
-        self.widgets_group.add_edge(self.sample_rate_combo, self.audio_preset_menubutton)
 
     def bind_fraction_widget(self, mgr, name, widget):
         mgr.bind_widget(name, widget.set_widget_value, widget.get_widget_value)
@@ -260,20 +237,6 @@ class ProjectSettingsDialog:
         if matching_video_preset:
             self.video_presets_combo.set_active_id(matching_video_preset)
 
-        # Audio
-        self.channels_combo.set_model(AUDIO_CHANNELS)
-        res = set_combo_value(self.channels_combo, self.project.audiochannels)
-        assert res, self.project.audiochannels
-
-        audio_rates_model = create_audio_rates_model(self.project.audiorate)
-        self.sample_rate_combo.set_model(audio_rates_model)
-        res = set_combo_value(self.sample_rate_combo, self.project.audiorate)
-        assert res, self.project.audiorate
-
-        matching_audio_preset = self.audio_presets.matching_preset(self.project)
-        if matching_audio_preset:
-            self.audio_presets_combo.set_active_id(matching_audio_preset)
-
         # Safe Areas
         self.title_vertical_spinbutton.set_value(self.project.title_safe_area_vertical * 100)
         self.title_horizontal_spinbutton.set_value(self.project.title_safe_area_horizontal * 100)
@@ -307,9 +270,6 @@ class ProjectSettingsDialog:
                                               int(self.title_vertical_spinbutton.get_value()) / 100,
                                               int(self.action_horizontal_spinbutton.get_value()) / 100,
                                               int(self.action_vertical_spinbutton.get_value()) / 100)
-
-            self.project.audiochannels = get_combo_value(self.channels_combo)
-            self.project.audiorate = get_combo_value(self.sample_rate_combo)
 
             proxy_width = int(self.scaled_proxy_width_spin.get_value())
             proxy_height = int(self.scaled_proxy_height_spin.get_value())
