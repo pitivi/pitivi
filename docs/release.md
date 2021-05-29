@@ -52,8 +52,11 @@ been increased. If doing a regular release, update the version number with the
 current year and month and remove the micro, if any. Normally this is the
 same as the name of the GitLab milestone you just archived.
      * [NEWS](https://gitlab.gnome.org/GNOME/pitivi/blob/master/NEWS):
-Copy the exec summary of changes also here. This ends up in the `.news` file at [download.gnome.org/sources/pitivi](https://download.gnome.org/sources/pitivi/).
-     * [data/org.pitivi.Pitivi.appdata.xml.in](https://gitlab.gnome.org/GNOME/pitivi/blob/master/data/org.pitivi.Pitivi.appdata.xml.in): Run `appstream-util news-to-appdata NEWS` and copy the new content to the appdata.xml file.
+Compose the exec summary of changes, at the top. This ends up in the `.news`
+file at [download.gnome.org/sources/pitivi](https://download.gnome.org/sources/pitivi/).
+     * [data/org.pitivi.Pitivi.appdata.xml.in](https://gitlab.gnome.org/GNOME/pitivi/blob/master/data/org.pitivi.Pitivi.appdata.xml.in):
+Run `appstream-util news-to-appdata NEWS` and copy the generated content into
+the appdata template.
      * [AUTHORS](https://gitlab.gnome.org/GNOME/pitivi/blob/master/AUTHORS):
 If there are new maintainers.
 
@@ -78,8 +81,8 @@ If there are new maintainers.
    $ cd /tmp/pitivi/repos/community-x86_64/
    $ cp .../pitivi-YYYY.MM.Z.tar.xz .
    $ vim PKGBUILD
-   ... Update "pkgver",
-   ... Make sure "source" ends in .tar.xz
+   ... Update "pkgver"
+   ... Make sure the filename at the end of "source" matches the copied file
    ... Update "sha256sums"
    $ makepkg
    $ makepkg -i

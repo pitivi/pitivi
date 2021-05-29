@@ -1,3 +1,12 @@
+Version 2021.05
+~~~~~~~~~~~~~~~
+Released: 2021-05-30
+
+New Features:
+ - Clips in the Media Library can be tagged.
+ - Drag a keyframe vertically or horizontally by pressing Ctrl.
+ - Keyboard shortcuts to seek to the previous/next marker.
+
 Version 2021.01
 ~~~~~~~~~~~~~~~
 Released: 2021-01-31

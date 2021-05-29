@@ -41,6 +41,16 @@
   <developer_name>The Pitivi Team</developer_name>
 
   <releases>
+    <release version="2021.05" date="2021-05-30">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>Clips in the Media Library can be tagged.</li>
+          <li>Drag a keyframe vertically or horizontally by pressing Ctrl.</li>
+          <li>Keyboard shortcuts to seek to the previous/next marker.</li>
+        </ul>
+      </description>
+    </release>
     <release version="2021.01" date="2021-01-31">
       <description>
         <p>This release adds the following features:</p>
