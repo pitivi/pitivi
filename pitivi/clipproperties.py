@@ -38,6 +38,7 @@ from pitivi.clip_properties.color import ColorProperties
 from pitivi.clip_properties.title import TitleProperties
 from pitivi.configure import get_pixmap_dir
 from pitivi.configure import get_ui_dir
+from pitivi.configure import in_devel
 from pitivi.effects import EffectsPopover
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
@@ -106,7 +107,8 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
 
         self.speed_expander = TimeProperties(app)
         self.speed_expander.set_vexpand(False)
-        vbox.pack_start(self.speed_expander, False, False, 0)
+        if in_devel():
+            vbox.pack_start(self.speed_expander, False, False, 0)
 
         self.title_expander = TitleProperties(app)
         self.title_expander.set_vexpand(False)
@@ -232,7 +234,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
 
 
 def is_time_effect(effect):
-    return bool(effect.get_meta(TimeProperties.TIME_EFFECT_META))
+    return bool(effect.get_meta(TimeProperties.TIME_EFFECT_META)) and in_devel()
 
 
 class TimeProperties(Gtk.Expander, Loggable):
