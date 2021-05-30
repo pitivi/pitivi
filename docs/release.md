@@ -104,10 +104,10 @@ If there are new maintainers.
 7. Publish the archive on Gnome:
    ```
    $ scp mesonbuild/meson-dist/pitivi-YYYY.MM.tar.xz GNOME-USER@master.gnome.org:
-   $ ssh GNOME-USER@master.gnome.org -t ftpadmin install pitivi-YYYY.MM.Z.tar.xz
+   $ ssh GNOME-USER@master.gnome.org -t ftpadmin install pitivi-YYYY.MM.tar.xz
    ```
    The tarball will appear on
-   https://download.gnome.org/sources/pitivi/YYYY.MM/pitivi-YYYY.MM.Z.tar.xz
+   https://download.gnome.org/sources/pitivi/YYYY.MM/pitivi-YYYY.MM.tar.xz
 
 8. Spread the word about the release
     * Send an [email](https://lists.freedesktop.org/archives/gstreamer-devel/2017-September/065566.html) to gstreamer-devel@lists.freedesktop.org
@@ -124,6 +124,6 @@ If there are new maintainers.
     bug-fix release: `2020.09.1` -> `2020.09.2`.
     Push to the official repo:
     ```
-    $ commit -a -m "Back to development"
+    $ git commit -a -m "Back to development"
     $ git push origin master
     ```
