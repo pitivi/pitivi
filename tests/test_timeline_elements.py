@@ -29,6 +29,7 @@ from matplotlib.backend_bases import MouseEvent
 from pitivi.timeline.elements import GES_TYPE_UI_TYPE
 from pitivi.undo.undo import UndoableActionLog
 from pitivi.utils.timeline import SELECT
+from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import LAYER_HEIGHT
 from tests import common
@@ -513,3 +514,18 @@ class TestClip(common.TestCase):
             ges_object = GObject.new(gtype)
             widget = widget_class(ges_layer.ui, ges_object)
             self.assertEqual(ges_object.ui, widget, widget_class)
+
+    def test_mini_selection(self):
+        """Checks whether both ui and mini_ui gets selected."""
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+
+        clip1, = self.add_clips_simple(timeline, 1)
+
+        timeline.selection.set_selection([clip1], SELECT)
+        self.assertTrue(clip1.ui.get_state_flags() & Gtk.StateFlags.SELECTED)
+        self.assertTrue(clip1.mini_ui.get_state_flags() & Gtk.StateFlags.SELECTED)
+
+        timeline.selection.set_selection([clip1], UNSELECT)
+        self.assertFalse(clip1.ui.get_state_flags() & Gtk.StateFlags.SELECTED)
+        self.assertFalse(clip1.mini_ui.get_state_flags() & Gtk.StateFlags.SELECTED)

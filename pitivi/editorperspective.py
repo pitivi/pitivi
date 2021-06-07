@@ -232,8 +232,16 @@ class EditorPerspective(Perspective, Loggable):
         self.mainhpaned.pack2(self.viewer, resize=True, shrink=False)
 
         # Now, the lower part: the timeline
+        self.timelinepaned = Gtk.Paned(orientation=Gtk.Orientation.VERTICAL)
+
         self.timeline_ui = TimelineContainer(self.app, self.editor_state)
-        self.toplevel_widget.pack2(self.timeline_ui, resize=True, shrink=False)
+        self.mini_timeline_ui = self.timeline_ui.timeline.mini_layout_container
+
+        self.timelinepaned.pack1(self.mini_timeline_ui, resize=False, shrink=False)
+        self.timelinepaned.pack2(self.timeline_ui, resize=False, shrink=False)
+        self.timelinepaned.show_all()
+
+        self.toplevel_widget.pack2(self.timelinepaned, resize=True, shrink=False)
 
         self.intro = InteractiveIntro(self.app)
         self.headerbar.pack_end(self.intro.intro_button)

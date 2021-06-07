@@ -57,6 +57,7 @@ PLAYHEAD_COLOR = (255, 0, 0)
 SNAPBAR_WIDTH = 5
 SNAPBAR_COLOR = (127, 153, 204)
 LAYER_HEIGHT = 130
+MINI_LAYER_HEIGHT = 25
 # The space between two layers.
 SEPARATOR_HEIGHT = 1
 
@@ -239,6 +240,7 @@ EDITOR_PERSPECTIVE_CSS = """
 
     .VideoPreviewer:selected,
     .AudioPreviewer:selected,
+    .MiniPreviewer:selected,
     .TitlePreviewer:selected {
         opacity: 0.15;
     }

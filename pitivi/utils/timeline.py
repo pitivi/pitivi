@@ -115,11 +115,13 @@ class Selection(GObject.Object, Loggable):
             old_selection = self._clips
             self._clips = selection
 
+            from pitivi.utils.ui import set_state_flags_recurse
             for obj, selected in self.__get_selection_changes(old_selection):
                 obj.selected.selected = selected
                 if obj.ui:
-                    from pitivi.utils.ui import set_state_flags_recurse
                     set_state_flags_recurse(obj.ui, Gtk.StateFlags.SELECTED, are_set=selected)
+                if obj.mini_ui:
+                    set_state_flags_recurse(obj.mini_ui, Gtk.StateFlags.SELECTED, are_set=selected)
 
                 for element in obj.get_children(False):
                     if isinstance(obj, (GES.BaseEffect, GES.TextOverlay)):
@@ -457,19 +459,20 @@ class Zoomable:
              cls.zoom_range) ** (1.0 / 3.0)) * cls.zoom_steps)
 
     @classmethod
-    def pixel_to_ns(cls, pixel):
+    def pixel_to_ns(cls, pixel, zoomratio=None):
         """Returns the duration equivalent of the specified pixel."""
-        return int(pixel * Gst.SECOND / cls.zoomratio)
+        zoomratio = cls.zoomratio if zoomratio is None else zoomratio
+        return int(pixel * Gst.SECOND / zoomratio)
 
     @classmethod
-    def ns_to_pixel(cls, duration):
+    def ns_to_pixel(cls, duration, zoomratio=None):
         """Returns the pixel equivalent of the specified duration."""
         # Here, a long time ago (206f3a05), a pissed programmer said:
         # DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!
+        zoomratio = cls.zoomratio if zoomratio is None else zoomratio
         if duration == Gst.CLOCK_TIME_NONE:
             return 0
-
-        return int((float(duration) / Gst.SECOND) * cls.zoomratio)
+        return int((float(duration) / Gst.SECOND) * zoomratio)
 
     @classmethod
     def ns_to_pixel_accurate(cls, duration):

@@ -25,7 +25,7 @@ from gi.repository import Gst
 from gi.repository import GstController
 from gi.repository import Gtk
 
-from pitivi.timeline.layer import Layer
+from pitivi.timeline.layer import FullLayer
 from pitivi.undo.base import PropertyChangedAction
 from pitivi.undo.project import AssetAddedAction
 from pitivi.undo.timeline import ClipAdded
@@ -320,7 +320,7 @@ class TestLayerObserver(common.TestCase):
 
     @common.setup_timeline
     def test_layer_renamed(self):
-        layer = Layer(self.layer, timeline=mock.Mock())
+        layer = FullLayer(self.layer, timeline=mock.Mock())
         self.assertIsNone(layer._name_if_set())
 
         with self.app.action_log.started("change layer name"):

@@ -40,6 +40,7 @@ from pitivi.timeline.markers import ClipMarkersBox
 from pitivi.timeline.markers import Marker
 from pitivi.timeline.previewers import AudioPreviewer
 from pitivi.timeline.previewers import ImagePreviewer
+from pitivi.timeline.previewers import MiniPreview
 from pitivi.timeline.previewers import TitlePreviewer
 from pitivi.timeline.previewers import VideoPreviewer
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
@@ -1166,13 +1167,12 @@ class TrimHandle(Gtk.EventBox, Loggable):
             self.props.window.set_cursor(NORMAL_CURSOR)
 
 
-class Clip(Gtk.EventBox, Zoomable, Loggable):
+class Clip(Gtk.EventBox, Loggable):
 
     __gtype_name__ = "PitiviClip"
 
     def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
         Gtk.EventBox.__init__(self)
-        Zoomable.__init__(self)
         Loggable.__init__(self)
 
         name = ges_clip.get_name()
@@ -1188,7 +1188,6 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.app = layer.app
 
         self.ges_clip = ges_clip
-        self.ges_clip.ui = self
         self.ges_clip.selected = Selected()
         self.ges_clip.selected.selected = self.ges_clip in self.timeline.selection
 
@@ -1196,11 +1195,10 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.video_widget = None
 
         self._setup_widget()
-        self.__force_position_update = True
+        self._force_position_update = True
 
         for ges_timeline_element in self.ges_clip.get_children(False):
             self._add_child(ges_timeline_element)
-            self.__connect_to_child(ges_timeline_element)
 
         set_state_flags_recurse(self, Gtk.StateFlags.SELECTED, are_set=self.ges_clip.selected)
 
@@ -1220,11 +1218,6 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         # To be able to receive effects dragged on clips.
         self.drag_dest_set(0, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
         self.connect("drag-drop", self.__drag_drop_cb)
-
-    @property
-    def layer(self):
-        ges_layer = self.ges_clip.props.layer
-        return ges_layer.ui if ges_layer else None
 
     def __drag_drop_cb(self, widget, context, x, y, timestamp):
         success = False
@@ -1276,61 +1269,11 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
                 return effect
         return None
 
+    def _add_child(self, ges_timeline_element):
+        """Initializes added Clip's ges_timeline_element."""
+
     def update_position(self):
-        layer = self.layer
-        if not layer or layer != self.get_parent():
-            # Things are not settled yet.
-            return
-
-        start = self.ges_clip.props.start
-        duration = self.ges_clip.props.duration
-        x = self.ns_to_pixel(start)
-        # The calculation of the width assumes that the start is always
-        # int(pixels_float). In that case, the rounding can add up and a pixel
-        # might be lost if we ignore the start of the clip.
-        width = self.ns_to_pixel(start + duration) - x
-
-        parent_height = layer.props.height_request
-        y = 0
-        height = parent_height
-        has_video = self.ges_clip.find_track_elements(None, GES.TrackType.VIDEO, GObject.TYPE_NONE)
-        has_audio = self.ges_clip.find_track_elements(None, GES.TrackType.AUDIO, GObject.TYPE_NONE)
-        if not has_video or not has_audio:
-            if layer.media_types == (GES.TrackType.AUDIO | GES.TrackType.VIDEO):
-                height = parent_height / 2
-                if not has_video:
-                    y = height
-
-        if self.__force_position_update or \
-                x != self._current_x or \
-                y != self._current_y or \
-                width != self._current_width or \
-                parent_height != self._current_parent_height or \
-                layer != self._current_parent:
-
-            offset_px = self.ns_to_pixel(self.ges_clip.props.in_point)
-
-            for ges_timeline_element in self.ges_clip.get_children(False):
-                if not ges_timeline_element.ui:
-                    continue
-
-                if ges_timeline_element.ui.markers:
-                    ges_timeline_element.ui.markers.offset = offset_px
-
-            layer.move(self, x, y)
-            self.set_size_request(width, height)
-
-            elements = self._elements_container.get_children()
-            for child in elements:
-                child.set_size(width, height / len(elements))
-
-            self.__force_position_update = False
-            # pylint: disable=attribute-defined-outside-init
-            self._current_x = x
-            self._current_y = y
-            self._current_width = width
-            self._current_parent_height = parent_height
-            self._current_parent = layer
+        """Updates the UI of the clip."""
 
     def _setup_widget(self):
         pass
@@ -1395,22 +1338,12 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         return False
 
     def release(self):
-        for child in self.ges_clip.get_children(True):
-            self.__disconnect_from_child(child)
 
         disconnect_all_by_func(self.ges_clip, self._start_changed_cb)
         disconnect_all_by_func(self.ges_clip, self._duration_changed_cb)
         disconnect_all_by_func(self.ges_clip, self._layer_changed_cb)
         disconnect_all_by_func(self.ges_clip, self._child_added_cb)
         disconnect_all_by_func(self.ges_clip, self._child_removed_cb)
-
-    def __show_handles(self):
-        for handle in self.handles:
-            handle.show()
-
-    def __hide_handles(self):
-        for handle in self.handles:
-            handle.hide()
 
     def _event_cb(self, element, event):
         prelight = None
@@ -1440,14 +1373,178 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
     def _layer_changed_cb(self, ges_clip, pspec):
         self.update_position()
 
-    def __disconnect_from_child(self, child):
-        if child.ui:
-            child.ui.release()
+    def _child_added_cb(self, ges_clip, ges_timeline_element: GES.TimelineElement):
+        self._force_position_update = True
+        self._add_child(ges_timeline_element)
+        self.update_position()
 
-    def __connect_to_child(self, child):
-        if child.ui:
-            child.ui.connect("curve-enter", self.__curve_enter_cb)
-            child.ui.connect("curve-leave", self.__curve_leave_cb)
+    def _remove_child(self, ges_timeline_element):
+        pass
+
+    def _child_removed_cb(self, unused_ges_clip, ges_timeline_element: GES.TimelineElement):
+        self._force_position_update = True
+        self._remove_child(ges_timeline_element)
+        self.update_position()
+
+
+class FullClip(Clip, Zoomable):
+    """Full version of Clip(ui)."""
+
+    def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
+        Zoomable.__init__(self)
+        Clip.__init__(self, layer, ges_clip)
+
+        self.ges_clip.ui = self
+
+    def _add_child(self, ges_timeline_element):
+        ges_timeline_element.selected = Selected()
+        ges_timeline_element.selected.selected = self.ges_clip.selected.selected
+        ges_timeline_element.ui = None
+
+    def update_position(self):
+        ges_layer = self.ges_clip.props.layer
+        layer = ges_layer.ui
+        if not layer or layer != self.get_parent():
+            # Things are not settled yet.
+            return
+
+        start = self.ges_clip.props.start
+        duration = self.ges_clip.props.duration
+        x = self.ns_to_pixel(start)
+        # The calculation of the width assumes that the start is always
+        # int(pixels_float). In that case, the rounding can add up and a pixel
+        # might be lost if we ignore the start of the clip.
+        width = self.ns_to_pixel(start + duration) - x
+
+        parent_height = layer.props.height_request
+        y = 0
+        height = parent_height
+        has_video = self.ges_clip.find_track_elements(None, GES.TrackType.VIDEO, GObject.TYPE_NONE)
+        has_audio = self.ges_clip.find_track_elements(None, GES.TrackType.AUDIO, GObject.TYPE_NONE)
+        if not has_video or not has_audio:
+            if layer.media_types == (GES.TrackType.AUDIO | GES.TrackType.VIDEO):
+                height = parent_height / 2
+                if not has_video:
+                    y = height
+
+        if self._force_position_update or \
+                x != self._current_x or \
+                y != self._current_y or \
+                width != self._current_width or \
+                parent_height != self._current_parent_height or \
+                layer != self._current_parent:
+
+            offset_px = self.ns_to_pixel(self.ges_clip.props.in_point)
+
+            for ges_timeline_element in self.ges_clip.get_children(False):
+                if not ges_timeline_element.ui:
+                    continue
+
+                if ges_timeline_element.ui.markers:
+                    ges_timeline_element.ui.markers.offset = offset_px
+
+            layer.move(self, x, y)
+            self.set_size_request(width, height)
+
+            elements = self._elements_container.get_children()
+            for child in elements:
+                child.set_size(width, height / len(elements))
+
+            self._force_position_update = False
+            # pylint: disable=attribute-defined-outside-init
+            self._current_x = x
+            self._current_y = y
+            self._current_width = width
+            self._current_parent_height = parent_height
+            self._current_parent = layer
+
+
+class MiniClip(Clip):
+    """Mini version of Clip(mini_ui)."""
+
+    __gtype_name__ = "PitiviMiniClip"
+
+    def __init__(self, layer, ges_clip):
+        Clip.__init__(self, layer, ges_clip)
+
+        self.ges_clip.mini_ui = self
+
+    def _add_child(self, ges_timeline_element):
+        ges_timeline_element.mini_ui = None
+
+    def update_position(self):
+        ges_layer = self.ges_clip.props.layer
+        layer = ges_layer.mini_ui
+        if not layer or layer != self.get_parent():
+            # Things are not settled yet.
+            return
+
+        start = self.ges_clip.props.start
+        duration = self.ges_clip.props.duration
+        ratio = self.timeline.calc_best_zoom_ratio()
+        x = Zoomable.ns_to_pixel(start, zoomratio=ratio)
+        # The calculation of the width assumes that the start is always
+        # int(pixels_float). In that case, the rounding can add up and a pixel
+        # might be lost if we ignore the start of the clip.
+        width = Zoomable.ns_to_pixel(start + duration, zoomratio=ratio) - x
+
+        parent_height = layer.props.height_request
+        y = 0
+
+        if self._force_position_update or \
+                x != self._current_x or \
+                y != self._current_y or \
+                width != self._current_width or \
+                parent_height != self._current_parent_height or \
+                layer != self._current_parent:
+
+            layer.move(self, x, y)
+            self.set_size_request(width, parent_height)
+
+            self._force_position_update = False
+            # pylint: disable=attribute-defined-outside-init
+            self._current_x = x
+            self._current_y = y
+            self._current_width = width
+            self._current_parent_height = parent_height
+            self._current_parent = layer
+
+
+class SourceClip():
+    __gtype_name__ = "PitiviSourceClip"
+
+    def _setup_widget(self):
+        self._add_trim_handles()
+
+        self.get_style_context().add_class("Clip")
+
+    def _remove_child(self, ges_timeline_element):
+        if ges_timeline_element.ui:
+            ges_timeline_element.ui.release()
+            self._elements_container.remove(ges_timeline_element.ui)
+            ges_timeline_element.ui = None
+
+        if ges_timeline_element.mini_ui:
+            self._elements_container.remove(ges_timeline_element.mini_ui)
+            ges_timeline_element.mini_ui = None
+
+    def _create_child_widget(self, ges_source: GES.Source) -> Optional[Gtk.Widget]:
+        raise NotImplementedError()
+
+
+class FullSourceClip(SourceClip, FullClip):
+    __gtype_name__ = "PitiviFullSourceClip"
+
+    def __init__(self, layer, ges_clip):
+        FullClip.__init__(self, layer, ges_clip)
+
+    def __show_handles(self):
+        for handle in self.handles:
+            handle.show()
+
+    def __hide_handles(self):
+        for handle in self.handles:
+            handle.hide()
 
     def __curve_enter_cb(self, unused_keyframe_curve):
         self.__hide_handles()
@@ -1455,40 +1552,15 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
     def __curve_leave_cb(self, unused_keyframe_curve):
         self.__show_handles()
 
-    def _add_child(self, ges_timeline_element: GES.TimelineElement):
-        ges_timeline_element.selected = Selected()
-        ges_timeline_element.selected.selected = self.ges_clip.selected.selected
-        ges_timeline_element.ui = None
+    def _connect_to_child_ui(self, ges_timeline_element: GES.TimelineElement):
+        ges_timeline_element.ui.connect("curve-enter", self.__curve_enter_cb)
+        ges_timeline_element.ui.connect("curve-leave", self.__curve_leave_cb)
 
-    def _child_added_cb(self, ges_clip, ges_timeline_element: GES.TimelineElement):
-        self.__force_position_update = True
-        self._add_child(ges_timeline_element)
-        self.__connect_to_child(ges_timeline_element)
-        self.update_position()
-
-    def _remove_child(self, ges_timeline_element):
-        pass
-
-    def _child_removed_cb(self, unused_ges_clip, ges_timeline_element: GES.TimelineElement):
-        self.__force_position_update = True
-        self.__disconnect_from_child(ges_timeline_element)
-        self._remove_child(ges_timeline_element)
-        self.update_position()
-
-
-class SourceClip(Clip):
-    __gtype_name__ = "PitiviSourceClip"
-
-    def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
-        Clip.__init__(self, layer, ges_clip)
-
-    def _setup_widget(self):
-        self._add_trim_handles()
-
-        self.get_style_context().add_class("Clip")
+    def _disconnect_from_child_ui(self, ges_timeline_element: GES.TimelineElement):
+        ges_timeline_element.ui.release()
 
     def _add_child(self, ges_timeline_element: GES.TimelineElement):
-        Clip._add_child(self, ges_timeline_element)
+        FullClip._add_child(self, ges_timeline_element)
 
         # In some cases a GESEffect is added here,
         # so we have to limit the markers initialization to GESSources.
@@ -1505,26 +1577,72 @@ class SourceClip(Clip):
             return
 
         ges_source.ui = widget
+
+        self._connect_to_child_ui(ges_source)
+
         if ges_source.get_track_type() == GES.TrackType.VIDEO:
             self._elements_container.pack_start(widget, expand=True, fill=False, padding=0)
         else:
             self._elements_container.pack_end(widget, expand=True, fill=False, padding=0)
         widget.set_visible(True)
 
+    def release(self):
+        for child in self.ges_clip.get_children(True):
+            if child.ui:
+                self._disconnect_from_child_ui(child)
+        super().release()
+
     def _create_child_widget(self, ges_source: GES.Source) -> Optional[Gtk.Widget]:
         raise NotImplementedError()
 
-    def _remove_child(self, ges_timeline_element):
-        if ges_timeline_element.ui:
-            self._elements_container.remove(ges_timeline_element.ui)
-            ges_timeline_element.ui = None
+
+class MiniSourceClip(SourceClip, MiniClip):
+    __gtype_name__ = "PitiviMiniSourceClip"
+
+    def __init__(self, layer, ges_clip):
+        MiniClip.__init__(self, layer, ges_clip)
+
+    def _add_child(self, ges_timeline_element):
+        MiniClip._add_child(self, ges_timeline_element)
+
+        ges_source: GES.Source = ges_timeline_element
+
+        widget = self._create_child_widget(ges_source)
+        if not widget:
+            return
+
+        ges_source.mini_ui = widget
+        self._elements_container.pack_start(widget, expand=True, fill=False, padding=0)
+        widget.set_visible(True)
+
+    def _create_child_widget(self, ges_source: GES.Source) -> Optional[Gtk.Widget]:
+        raise NotImplementedError()
 
 
-class UriClip(SourceClip):
+class SimpleClip(MiniSourceClip):
+    __gtype_name__ = "PitiviSimpleClip"
+
+    def __init__(self, layer, ges_clip):
+        MiniSourceClip.__init__(self, layer, ges_clip)
+        self.get_style_context().add_class("SimpleClip")
+
+    def do_query_tooltip(self, x, y, keyboard_mode, tooltip):
+        tooltip.set_markup(filename_from_uri(
+            self.ges_clip.get_asset().props.id))
+
+        return True
+
+    def _create_child_widget(self, ges_source: GES.Source) -> Optional[Gtk.Widget]:
+        color, tooltip = GES_TYPE_COLOR_TOOLTIP.get(self.ges_clip.__gtype__, None)
+        self.props.has_tooltip = tooltip
+        return MiniPreview(color)
+
+
+class UriClip(FullSourceClip):
     __gtype_name__ = "PitiviUriClip"
 
     def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
-        SourceClip.__init__(self, layer, ges_clip)
+        FullSourceClip.__init__(self, layer, ges_clip)
         self.get_style_context().add_class("UriClip")
         self.props.has_tooltip = True
 
@@ -1545,11 +1663,11 @@ class UriClip(SourceClip):
         return None
 
 
-class TestClip(SourceClip):
+class TestClip(FullSourceClip):
     __gtype_name__ = "PitiviTestClip"
 
     def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
-        SourceClip.__init__(self, layer, ges_clip)
+        FullSourceClip.__init__(self, layer, ges_clip)
         self.get_style_context().add_class("TestClip")
 
     def _create_child_widget(self, ges_source: GES.Source) -> Optional[Gtk.Widget]:
@@ -1560,11 +1678,11 @@ class TestClip(SourceClip):
         return None
 
 
-class TitleClip(SourceClip):
+class TitleClip(FullSourceClip):
     __gtype_name__ = "PitiviTitleClip"
 
     def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
-        SourceClip.__init__(self, layer, ges_clip)
+        FullSourceClip.__init__(self, layer, ges_clip)
         self.get_style_context().add_class("TitleClip")
 
     def _create_child_widget(self, ges_source: GES.Source) -> Optional[Gtk.Widget]:
@@ -1575,14 +1693,12 @@ class TitleClip(SourceClip):
         return None
 
 
-class TransitionClip(Clip):
+class TransitionClip():
 
     __gtype_name__ = "PitiviTransitionClip"
 
-    def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
+    def __init__(self):
         self.__has_video = False
-
-        Clip.__init__(self, layer, ges_clip)
 
         if self.__has_video:
             self.z_order = 1
@@ -1606,8 +1722,6 @@ class TransitionClip(Clip):
         return True
 
     def _add_child(self, ges_timeline_element):
-        Clip._add_child(self, ges_timeline_element)
-
         if not isinstance(ges_timeline_element, GES.VideoTransition):
             return
 
@@ -1623,9 +1737,48 @@ class TransitionClip(Clip):
             self.app.gui.editor.trans_list.deactivate()
 
 
+class FullTransitionClip(TransitionClip, FullClip):
+
+    __gtype_name__ = "PitiviFullTransitionClip"
+
+    def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
+        FullClip.__init__(self, layer, ges_clip)
+        TransitionClip.__init__(self)
+
+    def _add_child(self, ges_timeline_element):
+        FullClip._add_child(self, ges_timeline_element)
+        TransitionClip._add_child(self, ges_timeline_element)
+
+
+class MiniTransitionClip(TransitionClip, MiniClip):
+
+    __gtype_name__ = "PitiviMiniTransitionClip"
+
+    def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
+        MiniClip.__init__(self, layer, ges_clip)
+        TransitionClip.__init__(self)
+
+    def _add_child(self, ges_timeline_element):
+        MiniClip._add_child(self, ges_timeline_element)
+        TransitionClip._add_child(self, ges_timeline_element)
+
+
 GES_TYPE_UI_TYPE = {
     GES.UriClip.__gtype__: UriClip,
     GES.TitleClip.__gtype__: TitleClip,
-    GES.TransitionClip.__gtype__: TransitionClip,
+    GES.TransitionClip.__gtype__: FullTransitionClip,
     GES.TestClip.__gtype__: TestClip
+}
+
+GES_TYPE_COLOR_TOOLTIP = {
+    GES.UriClip.__gtype__: ((0.214, 0.50, 0.39), True),
+    GES.TitleClip.__gtype__: ((0.819, 0.20, 0.267), False),
+    GES.TestClip.__gtype__: ((0.619, 0.670, 0.067), False)
+}
+
+GES_TYPE_MINI_UI_TYPE = {
+    GES.UriClip.__gtype__: SimpleClip,
+    GES.TitleClip.__gtype__: SimpleClip,
+    GES.TransitionClip.__gtype__: MiniTransitionClip,
+    GES.TestClip.__gtype__: SimpleClip
 }

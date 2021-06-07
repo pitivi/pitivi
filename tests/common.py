@@ -538,17 +538,24 @@ class TestCase(unittest.TestCase, Loggable):
     def check_priorities_and_positions(self, timeline, ges_layers,
                                        expected_priorities):
         layers_vbox = timeline.layout.layers_vbox
+        mini_layers_vbox = timeline.mini_layout.layers_vbox
 
         # Check the layers priorities.
         priorities = [ges_layer.props.priority for ges_layer in ges_layers]
         self.assertListEqual(priorities, expected_priorities)
 
+        expected_positions = [priority * 2 + 1
+                              for priority in expected_priorities]
+
         # Check the positions of the Layer widgets.
         positions = [layers_vbox.child_get_property(ges_layer.ui, "position")
                      for ges_layer in ges_layers]
-        expected_positions = [priority * 2 + 1
-                              for priority in expected_priorities]
         self.assertListEqual(positions, expected_positions, layers_vbox.get_children())
+
+        # Check the positions of the MiniLayer widgets.
+        positions = [mini_layers_vbox.child_get_property(ges_layer.mini_ui, "position")
+                     for ges_layer in ges_layers]
+        self.assertListEqual(positions, expected_positions, mini_layers_vbox.get_children())
 
         # Check the positions of the LayerControl widgets.
         controls_vbox = timeline._layers_controls_vbox
@@ -559,15 +566,21 @@ class TestCase(unittest.TestCase, Loggable):
         # Check the number of the separators.
         count = len(ges_layers) + 1
         self.assertEqual(len(timeline._separators), count)
-        controls_separators, layers_separators = list(zip(*timeline._separators))
 
-        # Check the positions of the LayerControl separators.
         expected_positions = [2 * index for index in range(count)]
+        controls_separators, layers_separators, mini_layers_separators = list(zip(*timeline._separators))
+
+        # Check the positions of the Layer separators.
         positions = [layers_vbox.child_get_property(separator, "position")
                      for separator in layers_separators]
         self.assertListEqual(positions, expected_positions)
 
-        # Check the positions of the Layer separators.
+        # Check the positions of the MiniLayer separators.
+        positions = [mini_layers_vbox.child_get_property(separator, "position")
+                     for separator in mini_layers_separators]
+        self.assertListEqual(positions, expected_positions)
+
+        # Check the positions of the LayerControl separators.
         positions = [controls_vbox.child_get_property(separator, "position")
                      for separator in controls_separators]
         self.assertListEqual(positions, expected_positions)
@@ -687,4 +700,5 @@ def create_test_clip(clip_type):
     clip = clip_type()
     clip.selected = Selected()
     clip.ui = None
+    clip.mini_ui = None
     return clip

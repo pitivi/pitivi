@@ -20,7 +20,7 @@ from unittest import mock
 from gi.repository import GES
 
 from pitivi.timeline.layer import AUDIO_ICONS
-from pitivi.timeline.layer import Layer
+from pitivi.timeline.layer import FullLayer
 from pitivi.timeline.layer import VIDEO_ICONS
 from pitivi.utils.ui import LAYER_HEIGHT
 from tests import common
@@ -31,7 +31,7 @@ class TestLayerControl(common.TestCase):
     def test_name(self):
         timeline = mock.MagicMock()
         ges_layer = GES.Layer()
-        layer = Layer(ges_layer, timeline)
+        layer = FullLayer(ges_layer, timeline)
         self.assertEqual(layer.get_name(), "Layer 0", "Default name generation failed")
 
         ges_layer.set_meta("audio::name", "a")
@@ -46,7 +46,7 @@ class TestLayerControl(common.TestCase):
     def test_name_meaningful(self):
         timeline = mock.MagicMock()
         ges_layer = GES.Layer()
-        layer = Layer(ges_layer, timeline)
+        layer = FullLayer(ges_layer, timeline)
         layer.set_name("Layer 0x")
         self.assertEqual(layer.get_name(), "Layer 0x")
 
@@ -160,7 +160,7 @@ class TestLayer(common.TestCase):
         # the layer will use check_media_types which updates the
         # height of layer.control_ui, which now it should not be set.
         self.assertFalse(hasattr(ges_layer, "control_ui"))
-        unused_layer = Layer(ges_layer, timeline)
+        unused_layer = FullLayer(ges_layer, timeline)
 
     @common.setup_timeline
     def test_layer_heights(self):

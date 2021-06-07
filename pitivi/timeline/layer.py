@@ -27,6 +27,7 @@ from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import LAYER_HEIGHT
+from pitivi.utils.ui import MINI_LAYER_HEIGHT
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SEPARATOR_HEIGHT
 
@@ -292,18 +293,16 @@ class LayerControls(Gtk.EventBox, Loggable):
             self.__icon = icon
 
 
-class Layer(Gtk.Layout, Zoomable, Loggable):
+class Layer(Gtk.Layout, Loggable):
     """Container for the clips widgets of a layer."""
 
     __gtype_name__ = "PitiviLayer"
 
     def __init__(self, ges_layer, timeline):
         Gtk.Layout.__init__(self)
-        Zoomable.__init__(self)
         Loggable.__init__(self)
 
         self.ges_layer = ges_layer
-        self.ges_layer.ui = self
         self.timeline = timeline
         self.app = timeline.app
 
@@ -318,9 +317,7 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
         self.props.valign = Gtk.Align.START
 
         self.media_types = GES.TrackType(0)
-        for ges_clip in ges_layer.get_clips():
-            self._add_clip(ges_clip)
-        self.check_media_types()
+        self.old_media_types = GES.TrackType(0)
 
     def set_name(self, name):
         self.ges_layer.set_meta("video::name", name)
@@ -351,12 +348,13 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
         self.ges_layer.disconnect_by_func(self._clip_added_cb)
         self.ges_layer.disconnect_by_func(self._clip_removed_cb)
 
-    def check_media_types(self):
+    def _check_media_types(self):
         if self.timeline.editing_context:
-            self.info("Not updating media types as we are editing the timeline")
+            self.info("Not updating media types as"
+                      " we are editing the timeline")
             return
 
-        old_media_types = self.media_types
+        self.old_media_types = self.media_types
         self.media_types: GES.TrackType = GES.TrackType(0)
         ges_clips = self.ges_layer.get_clips()
         for ges_clip in ges_clips:
@@ -364,18 +362,6 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
             if self.media_types & GES.TrackType.AUDIO and self.media_types & GES.TrackType.VIDEO:
                 # Cannot find more types than these.
                 break
-
-        if self.media_types & GES.TrackType.AUDIO and self.media_types & GES.TrackType.VIDEO:
-            self.props.height_request = LAYER_HEIGHT
-        else:
-            # If the layer is empty, set layer's height to default height.
-            self.props.height_request = LAYER_HEIGHT // 2
-
-        if hasattr(self.ges_layer, "control_ui") and self.ges_layer.control_ui:
-            self.ges_layer.control_ui.update(self.media_types)
-
-        if old_media_types != self.media_types:
-            self.update_position()
 
     def _clip_child_added_cb(self, ges_clip, child):
         self.check_media_types()
@@ -387,19 +373,13 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
         self._add_clip(ges_clip)
         self.check_media_types()
 
-    def _add_clip(self, ges_clip):
-        ui_type = elements.GES_TYPE_UI_TYPE.get(ges_clip.__gtype__, None)
-        if ui_type is None:
-            self.error("Implement UI for type %s?", ges_clip.__gtype__)
-            return
-
-        widget = ui_type(self, ges_clip)
-        self._children.append(widget)
+    def _add_clip_ui(self, ges_clip, clip_ui):
+        self._children.append(clip_ui)
         self._children.sort(key=lambda clip: clip.z_order)
-        self.put(widget, self.ns_to_pixel(ges_clip.props.start), 0)
-        widget.update_position()
+
+        clip_ui.update_position()
         self._changed = True
-        widget.show_all()
+        clip_ui.show_all()
 
         ges_clip.connect_after("child-added", self._clip_child_added_cb)
         ges_clip.connect_after("child-removed", self._clip_child_removed_cb)
@@ -408,28 +388,18 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
         self._remove_clip(ges_clip)
         self.check_media_types()
 
-    def _remove_clip(self, ges_clip):
-        if not ges_clip.ui:
-            return
-
-        ui_type = elements.GES_TYPE_UI_TYPE.get(ges_clip.__gtype__, None)
-        if ui_type is None:
-            self.error("Implement UI for type %s?", ges_clip.__gtype__)
-            return
-
-        self.remove(ges_clip.ui)
-        self._children.remove(ges_clip.ui)
+    def _remove_clip_ui(self, ges_clip, clip_ui):
+        self.remove(clip_ui)
+        self._children.remove(clip_ui)
         self._changed = True
-        ges_clip.ui.release()
-        ges_clip.ui = None
+        clip_ui.release()
+        clip_ui = None
 
         ges_clip.disconnect_by_func(self._clip_child_added_cb)
         ges_clip.disconnect_by_func(self._clip_child_removed_cb)
 
     def update_position(self):
-        for ges_clip in self.ges_layer.get_clips():
-            if hasattr(ges_clip, "ui"):
-                ges_clip.ui.update_position()
+        pass
 
     def do_draw(self, cr):
         if self._changed:
@@ -442,3 +412,116 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
 
         for child in self._children:
             self.propagate_draw(child, cr)
+
+
+class FullLayer(Layer, Zoomable):
+    """Container for the Full clips."""
+
+    __gtype_name__ = "PitiviFullLayer"
+
+    def __init__(self, ges_layer, timeline):
+        Layer.__init__(self, ges_layer, timeline)
+        Zoomable.__init__(self)
+
+        self.ges_layer.ui = self
+        for ges_clip in ges_layer.get_clips():
+            self._add_clip(ges_clip)
+        self.check_media_types()
+
+    def check_media_types(self):
+        Layer._check_media_types(self)
+
+        if self.media_types & GES.TrackType.AUDIO and self.media_types & GES.TrackType.VIDEO:
+            self.props.height_request = LAYER_HEIGHT
+        else:
+            # If the layer is empty, set layer's height to default height.
+            self.props.height_request = LAYER_HEIGHT // 2
+
+        if hasattr(self.ges_layer, "control_ui") and self.ges_layer.control_ui:
+            self.ges_layer.control_ui.update(self.media_types)
+
+        if self.old_media_types != self.media_types:
+            self.update_position()
+
+    def _add_clip(self, ges_clip):
+        ui_type = elements.GES_TYPE_UI_TYPE.get(ges_clip.__gtype__, None)
+        if ui_type is None:
+            self.error("Implement UI for type %s?", ges_clip.__gtype__)
+            return
+
+        widget = ui_type(self, ges_clip)
+        self.put(widget, self.ns_to_pixel(ges_clip.props.start), 0)
+        Layer._add_clip_ui(self, ges_clip, widget)
+
+    def _remove_clip(self, ges_clip):
+        if not ges_clip.ui:
+            return
+
+        ui_type = elements.GES_TYPE_UI_TYPE.get(ges_clip.__gtype__, None)
+        if ui_type is None:
+            self.error("Implement UI for type %s?", ges_clip.__gtype__)
+            return
+
+        Layer._remove_clip_ui(self, ges_clip, ges_clip.ui)
+
+    def update_position(self):
+        for ges_clip in self.ges_layer.get_clips():
+            if hasattr(ges_clip, 'ui') and ges_clip.ui:
+                ges_clip.ui.update_position()
+
+
+class MiniLayer(Layer):
+    """Container for the Mini clips."""
+
+    __gtype_name__ = "PitiviMiniLayer"
+
+    def __init__(self, ges_layer, timeline):
+        Layer.__init__(self, ges_layer, timeline)
+
+        self.ges_layer.mini_ui = self
+        for ges_clip in ges_layer.get_clips():
+            self._add_clip(ges_clip)
+        self.check_media_types()
+
+    def check_media_types(self):
+        if self.timeline.editing_context:
+            self.info("Not updating media types as"
+                      " we are editing the timeline")
+            return
+
+        self.props.height_request = MINI_LAYER_HEIGHT
+
+    def _add_clip(self, ges_clip):
+        ui_type = elements.GES_TYPE_MINI_UI_TYPE.get(ges_clip.__gtype__, None)
+        if ui_type is None:
+            self.error("Implement Mini UI for type %s?", ges_clip.__gtype__)
+            return
+
+        widget = ui_type(self, ges_clip)
+        ratio = self.timeline.calc_best_zoom_ratio()
+        x = Zoomable.ns_to_pixel(ges_clip.props.start, zoomratio=ratio)
+        self.put(widget, x, 0)
+        Layer._add_clip_ui(self, ges_clip, widget)
+
+    def _remove_clip(self, ges_clip):
+        if not ges_clip.mini_ui:
+            return
+
+        ui_type = elements.GES_TYPE_MINI_UI_TYPE.get(ges_clip.__gtype__, None)
+        if ui_type is None:
+            self.error("Implement Mini UI for type %s?", ges_clip.__gtype__)
+            return
+
+        Layer._remove_clip_ui(self, ges_clip, ges_clip.mini_ui)
+
+    def update_position(self):
+        pass
+
+    def do_draw(self, context):
+        Layer.do_draw(self, context)
+
+        for layer in self.timeline.ges_timeline.get_layers():
+            # pylint: disable=W0212
+            for child in layer.mini_ui._children:
+                child.update_position()
+        self.timeline.mini_layout.queue_draw()

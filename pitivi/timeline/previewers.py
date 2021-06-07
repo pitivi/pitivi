@@ -47,6 +47,7 @@ from pitivi.utils.system import CPUUsageTracker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import CLIP_BORDER_WIDTH
 from pitivi.utils.ui import EXPANDED_SIZE
+from pitivi.utils.ui import MINI_LAYER_HEIGHT
 
 # Our C module optimizing waveforms rendering
 try:
@@ -1488,3 +1489,19 @@ class TitlePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
     def release(self):
         # Nothing to release
         pass
+
+
+class MiniPreview(Gtk.Layout):
+    """Mini Clip previewer to draw color filled mini clips."""
+
+    def __init__(self, color):
+        Gtk.Layout.__init__(self)
+        self.get_style_context().add_class("MiniPreviewer")
+        self.color = color
+        self.props.height_request = MINI_LAYER_HEIGHT
+
+    def do_draw(self, context):
+        rect = Gdk.cairo_get_clip_rectangle(context)[1]
+        context.set_source_rgb(*self.color)
+        context.rectangle(0, 0, rect.width, rect.height)
+        context.fill()
