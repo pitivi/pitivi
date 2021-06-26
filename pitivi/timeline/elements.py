@@ -321,6 +321,9 @@ class KeyframeCurve(FigureCanvasGTK3Cairo, Loggable):
                 self.handling_motion = True
             return
 
+        if event.guiEvent.type != Gdk.EventType.BUTTON_PRESS:
+            return
+
         result = self.__line.contains(event)
         if result[0]:
             # The line has been clicked.
