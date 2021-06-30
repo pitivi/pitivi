@@ -27,7 +27,7 @@ patches you’ve made, the more chances you have.
 
   [Google “Summer of Code” program]: https://summerofcode.withgoogle.com/
   [Rules]: https://summerofcode.withgoogle.com/rules/
-  [contributing page]: http://www.pitivi.org/?go=contributing
+  [contributing page]: https://www.pitivi.org/contribute
 
 ## Who we are looking for
 

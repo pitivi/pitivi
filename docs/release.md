@@ -116,7 +116,9 @@ If there are new maintainers.
     * [Debian](https://packages.debian.org/pitivi), click the "unstable" Debian version and look for "maintainer".
     * [Fedora](https://apps.fedoraproject.org/packages/pitivi), look for Point of Contact.
 
-9. Update http://www.pitivi.org/releases.txt for the app's update notification feature
+9. Update the [releases.txt](https://www.pitivi.org/releases.txt) file for the
+   app's update notification feature in
+   [pitivi-web](https://gitlab.gnome.org/Infrastructure/pitivi-web/-/blob/master/static/releases.txt).
 
 10. Bump the Z in the version number in
     [meson.build](https://gitlab.gnome.org/GNOME/pitivi/blob/master/meson.build),

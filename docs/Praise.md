@@ -319,9 +319,9 @@ February 24, 2014
     simplicidade. Recomendo! \#linux \#softwarelivre (Sun May 30 2010
     13:02:41 (EDT) via web)
 -   **yaxu** Loving Pitivi for simple video editing
-    <http://www.pitivi.org/> (Thu May 27 2010 11:10:50 (EDT) via web)
+    <https://www.pitivi.org/> (Thu May 27 2010 11:10:50 (EDT) via web)
 -   **MacoLabels** Just installed Pitivi Movie Editor (
-    <http://www.pitivi.org/> )on Ubuntu. Can't believe it's free. (Tue
+    <https://www.pitivi.org/> )on Ubuntu. Can't believe it's free. (Tue
     May 25 2010 12:12:58 (EDT) via web)
 -   **RaiHS**
     <http://blog.narendrasisodiya.com/2010/05/kids-says-linux-is-easy.html>
@@ -364,7 +364,7 @@ February 24, 2014
     impressed. Thought that project had been abandoned. Still doesn't do
     everything I need, tho (2:55 PM Mar 11th via web)
 -   **thezub** I've been experimenting with video editors. Really loving
-    Pitivi. <http://www.pitivi.org/> \#gnu \#linux \#Pitivi \#gstreamer
+    Pitivi. <https://www.pitivi.org/> \#gnu \#linux \#Pitivi \#gstreamer
     \#freesoftware (9:54 AM Mar 7th via web)
 -   **acruiz** I'm finally managing to put together my first screencast
     with \#Pitivi and \#gtk-recordmydesktop! (12:14 PM Feb 20th from
@@ -377,7 +377,7 @@ February 24, 2014
     box. And it's open source for linux. Pitivi (8:05 PM Feb 14th from
     web)
 -   **bercolax** Pitivi rocks in editing screencasts... Tried it in
-    Ubuntu <http://www.pitivi.org/> (9:49 PM Feb 5th from web)
+    Ubuntu <https://www.pitivi.org/> (9:49 PM Feb 5th from web)
 -   **yibble** Having some fun with Pitivi... Finally, simple video
     editing for GNU/Linux that doesn't require any actual pro' courses
     before using. (2:12 PM Jan 25th from HootSuite)

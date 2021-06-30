@@ -29,7 +29,7 @@ See [Past GSoCs] for details on what the previous GSoC students did.
 To create a detailed proposal, use our [GSoC application template].
 Deadlines for applying are approaching fast, hurry up!
 
-  [Pitivi]: http://www.pitivi.org/manual/mainwindow.html
+  [Pitivi]: https://www.pitivi.org/manual/mainwindow.html
   [GES]: GES.md
   [Past GSoCs]: Past_GSoCs.md
   [GSoC internship]: Google_Summer_of_Code.md

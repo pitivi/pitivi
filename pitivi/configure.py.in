@@ -38,9 +38,9 @@ PKGDATADIR = '@DATADIR@/@PACKAGE@'
 GITVERSION = '@GITVERSION@'
 VERSION = '@VERSION@'
 APPNAME = '@PACKAGE_NAME@'
-APPURL = 'http://www.pitivi.org/'
-RELEASES_URL = 'http://pitivi.org/releases.txt'
-APPMANUALURL_ONLINE = 'http://www.pitivi.org/manual'
+APPURL = 'https://www.pitivi.org/'
+RELEASES_URL = 'https://www.pitivi.org/releases.txt'
+APPMANUALURL_ONLINE = 'https://www.pitivi.org/manual/'
 BUILDDIR = '@BUILDDIR@'
 
 

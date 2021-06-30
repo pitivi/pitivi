@@ -10,7 +10,7 @@ What keeps us busy in general?
 -   **Fixing bugs**. Improving reliability and ease of use is never
     “done”. We have
     [tons](https://gitlab.gnome.org/GNOME/pitivi/issues) of work.
-    [Help](http://www.Pitivi.org/?go=contributing) is very welcome!
+    [Help](https://www.pitivi.org/contribute) is very welcome!
 -   **Improving GStreamer**. This benefits not only Pitivi, but other
     multimedia applications as well.
 -   **Working on features**. With you!

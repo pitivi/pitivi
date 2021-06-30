@@ -54,7 +54,11 @@ Start Pitivi, activate the plugin in Preferences > Plugins, and notice "Hello Wo
 
 ## API
 
-There is no API really. Plugins have full access to the entire app. Needless to say, they will break sooner or later, as we refactor parts of the app. Use them to have fun and try things out. If you think more people would be interested in them, [talk with us](http://www.pitivi.org/?go=contact) to see what we can do to help them survive.
+There is no API really. Plugins have full access to the entire app. Needless to
+say, they will break sooner or later, as we refactor parts of the app. Use them
+to have fun and try things out. If you think more people would be interested in
+them, [talk with us](https://www.pitivi.org/contact/) to see what we can do to
+help them survive.
 
 The entire Pitivi instance is provided through `self.object.app` in the `do_activate` method:
 

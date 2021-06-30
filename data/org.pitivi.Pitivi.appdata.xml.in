@@ -21,13 +21,13 @@
   </description>
   <screenshots>
     <screenshot type="default">
-      <image>http://www.pitivi.org/i/screenshots/software_center_main.jpg</image>
+      <image>https://www.pitivi.org/i/screenshots/2020.05.png</image>
     </screenshot>
   </screenshots>
-  <url type="homepage">http://www.pitivi.org</url>
+  <url type="homepage">https://www.pitivi.org</url>
   <url type="bugtracker">https://gitlab.gnome.org/GNOME/pitivi/</url>
-  <url type="donation">http://www.pitivi.org/?go=donators</url>
-  <url type="help">http://www.pitivi.org/manual/</url>
+  <url type="donation">https://www.pitivi.org/donators/</url>
+  <url type="help">https://www.pitivi.org/manual/</url>
   <url type="translate">https://wiki.gnome.org/TranslationProject#How_can_I_help.3F</url>
   <kudos>
     <kudo>HiDpiIcon</kudo>

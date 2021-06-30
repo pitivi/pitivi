@@ -5,5 +5,5 @@ Loader=Python3
 Description=Add a developer console to Pitivi.
 Authors=Fabian Orccon <cfoch.fabian@gmail.com>
 Copyright=Copyright © 2017 Fabian Orccon
-Website=http://pitivi.org
-Help=http://developer.pitivi.org
+Website=https://www.pitivi.org/
+Help=https://developer.pitivi.org/

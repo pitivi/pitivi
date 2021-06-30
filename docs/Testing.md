@@ -65,8 +65,8 @@ the UI.
 
 If you're curious about our unit tests, the best way to get to know them
 is to write a few Pitivi unit tests and have us review them. Check out
-[how to set up your dev env](HACKING.md) and come in our [IRC channel or
-Matrix room](http://www.pitivi.org/?go=contact)!
+[how to set up your dev env](HACKING.md) and come in our [chat
+room](https://www.pitivi.org/contact/)!
 
 ## Integration tests
 

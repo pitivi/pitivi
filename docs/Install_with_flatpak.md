@@ -8,7 +8,7 @@ own [flatpak](http://flatpak.org/) repository. The repository contains only
 64-bit builds.
 
 Please [file an issue](Bug_reporting.md) if you have exact steps to reproduce
-the bug. Feel free to [contact us](http://www.pitivi.org/?go=contact) if you see
+the bug. Feel free to [contact us](https://www.pitivi.org/contact/) if you see
 any problems.
 
 ## Getting Flatpak

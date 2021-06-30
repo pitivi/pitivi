@@ -76,7 +76,7 @@ class PathWalkerTest(common.TestCase):
         valid_uri = common.get_sample_uri("tears_of_steel.webm")
         uris = self._scan([valid_uri,
                            common.get_sample_uri("missing.webm"),
-                           "http://pitivi.org/very_real.webm"])
+                           "https://pitivi.org/very_real.webm"])
         self.assertEqual(len(uris), 1, uris)
         self.assertIn(valid_uri, uris)
 

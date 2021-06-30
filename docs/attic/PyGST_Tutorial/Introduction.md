@@ -31,7 +31,7 @@ GObject concepts of *signals* and *properties*.
 
 This material is evolving, and I encourage readers to send feedback to.
 You can write me at brandon\_lewis AT alum dot berkeley dot edu. I am
-also in `#pitivi` channel on the <em>freenode</em> irc network.
+also in `#pitivi` channel on IRC.
 
 ## Running the Examples
 

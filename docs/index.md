@@ -12,13 +12,13 @@ for documentation on how to *use* Pitivi, check out our [User's Manual]
 To edit the website edit the markdown files in our git repo in the
 `docs/` and follow our [developer instructions].
 
-  [Pitivi]: http://www.pitivi.org
-  [User's Manual]: http://pitivi.org/manual/
+  [Pitivi]: https://www.pitivi.org/
+  [User's Manual]: https://www.pitivi.org/manual/
   [developer instructions]: HACKING.md
 
 # We need your help
 
-See the [Contributing](http://www.pitivi.org/?go=contributing) page
+See the [Contributing](https://www.pitivi.org/contribute/) page
 on the website for what you can contribute, and “Why contribute to
 Pitivi?”.
 
@@ -38,16 +38,14 @@ Pitivi?”.
 ## Ways to communicate
 
 -   [Reporting bugs](Bug_reporting.md)
--   IRC: [\#pitivi](irc://irc.freenode.net/pitivi) on irc.freenode.net
--   Our [Twitter](https://twitter.com/pitivi) account. Do *not* report bugs
-    there, use our bug tracker instead!
+-   [Chat room](https://www.pitivi.org/contact/)
 -   [The people](The_people.md) (who does what)
 
 # Random stuff
 
 -   [Project history](Project_history.md) ― how did we get here
 -   [Current events](Current_events.md) ― releases, meetings,
-    talks ... See also the [planet](http://www.pitivi.org/planet) for
+    talks ... See also the [planet](https://www.pitivi.org/planet/) for
     news about the project.
 -   [Why Python?](design/Why_python.md)
 -   [Praise](Praise.md) ― Some of the praises and positive feedback

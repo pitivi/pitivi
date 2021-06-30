@@ -2,8 +2,8 @@
 
 *This page is about general principles that govern our project. To learn
 about our global mission and how we plan to achieve it, read the
-[frontpage](http://pitivi.org) of the Pitivi website. You can also take
-a look at the [tour](http://pitivi.org/?go=tour) page to find out about
+[frontpage](https://www.pitivi.org/) of the Pitivi website. You can also take
+a look at the [tour](https://www.pitivi.org/tour/) page to find out about
 cool features.*
 
 [The people](The_people.md) of Pitivi have been part of the
@@ -79,5 +79,5 @@ You should probably take a look at our [Roadmap](Roadmap.md)
 page for a rough plan of the “big picture” features we want to tackle
 soon. Roadmaps are just rough estimates and objectives, and since Pitivi
 is purely a community-driven project,
-[contributing](http://pitivi.org/?go=contributing) is the best way to
+[contributing](https://www.pitivi.org/contribute) is the best way to
 move what matters to you forward!

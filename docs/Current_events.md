@@ -11,7 +11,7 @@ For long term plans, see the [Roadmap](Roadmap.md).
 # Talks
 
 See the Pitivi website's [showcase
-page](http://www.pitivi.org/?go=showcase) for video recordings and
+page](https://www.pitivi.org/showcase/) for video recordings and
 slides of some of these talks.
 
 -   2014 July 27th: GUADEC (Pitivi)

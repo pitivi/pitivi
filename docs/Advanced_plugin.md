@@ -66,7 +66,7 @@ Finally, we can add some cleanup logic when the plugin is deactivated, because w
 
 The plugin can be improved by:
 - Associating the action with a keyboard shortcut.
-- Checking whether the clips are [grouped](http://www.pitivi.org/manual/selectiongrouping.html), because the entire group moves when a clip in the group is moved, so they should be dealt with somehow.
+- Checking whether the clips are [grouped](https://www.pitivi.org/manual/selectiongrouping.html), because the entire group moves when a clip in the group is moved, so they should be dealt with somehow.
 - Making the operation undoable by wrapping it in a `with self.app.action_log.started("add clip", toplevel=True):`.
 - Disabling the button automatically when `timeline.selection` contains less than two clips.
 - Making it work for the entire timeline in case there is no selection.

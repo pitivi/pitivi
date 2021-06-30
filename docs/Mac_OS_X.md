@@ -17,7 +17,7 @@ Besides fixing bugs, we need to also prepare a DMG to distribute Pitivi
 easily to Mac users.
 
 Any help is welcome! If you are interested to help please [get in
-touch](http://www.pitivi.org/?go=contact)!
+touch](https://www.pitivi.org/?contact/)!
 
 
 ## Building

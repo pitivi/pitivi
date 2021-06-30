@@ -20,8 +20,8 @@ entire project.
 
 To get involved, start with issues tagged
 [4. Newcomers](https://gitlab.gnome.org/GNOME/pitivi/issues?label_name%5B%5D=4.+Newcomers).
-It's best to get in touch with us on our IRC channel `#pitivi` on
-Freenode, to see if it's still meaningful, etc.
+It's best to get in touch with us in our [chat
+room](https://www.pitivi.org/contact/), to see if it's still meaningful, etc.
 
 Once you decide, add a comment on the issue saying you're working on it.
 
