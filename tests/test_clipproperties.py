@@ -288,7 +288,9 @@ class TitlePropertiesTest(common.TestCase):
                           "valignment", "halignment",
                           "font-desc",
                           "color",
-                          "foreground-color")}
+                          "foreground-color",
+                          "outline-color",
+                          "draw-shadow")}
 
     @common.setup_timeline
     @common.setup_clipproperties
@@ -297,17 +299,17 @@ class TitlePropertiesTest(common.TestCase):
         self.project.pipeline.get_position = mock.Mock(return_value=0)
 
         self.clipproperties.create_title_clip_cb(None)
-        ps1 = self._get_title_source_child_props()
-        self.assertTrue(ps1["text"][1])
-        self.assertNotEqual(ps1["text"][1], "", "Title clip does not have an initial text")
+        properties1 = self._get_title_source_child_props()
+        self.assertTrue(properties1["text"][0])
+        self.assertNotEqual(properties1["text"][1], "", "Title clip does not have an initial text")
 
         self.action_log.undo()
         clips = self.layer.get_clips()
         self.assertEqual(len(clips), 0, clips)
 
         self.action_log.redo()
-        ps2 = self._get_title_source_child_props()
-        self.assertDictEqual(ps1, ps2)
+        properties2 = self._get_title_source_child_props()
+        self.assertDictEqual(properties1, properties2)
 
     @common.setup_timeline
     @common.setup_clipproperties
@@ -316,24 +318,82 @@ class TitlePropertiesTest(common.TestCase):
         self.project.pipeline.get_position = mock.Mock(return_value=0)
 
         self.clipproperties.create_title_clip_cb(None)
-        ps1 = self._get_title_source_child_props()
+        properties1 = self._get_title_source_child_props()
 
         # Modify the title.
         mod_title = "Modifed Title"
         self.clipproperties.title_expander.textbuffer.props.text = mod_title
-        ps2 = self._get_title_source_child_props()
-        self.assertEqual(ps2["text"][1], mod_title)
-        self.assertNotEqual(ps1["text"], ps2["text"])
+        properties2 = self._get_title_source_child_props()
+        self.assertEqual(properties2["text"], (True, mod_title))
+        self.assertNotEqual(properties1["text"], properties2["text"])
 
         # Undo modify title.
         self.action_log.undo()
-        ps3 = self._get_title_source_child_props()
-        self.assertDictEqual(ps1, ps3)
+        properties3 = self._get_title_source_child_props()
+        self.assertDictEqual(properties1, properties3)
 
         # Redo modify title.
         self.action_log.redo()
-        ps4 = self._get_title_source_child_props()
-        self.assertDictEqual(ps2, ps4)
+        properties4 = self._get_title_source_child_props()
+        self.assertDictEqual(properties2, properties4)
+
+    @common.setup_timeline
+    @common.setup_clipproperties
+    def test_modify_outline_color(self):
+        """Exercise modifying the outline color."""
+        self.project.pipeline.get_position = mock.Mock(return_value=0)
+
+        self.clipproperties.create_title_clip_cb(None)
+        properties1 = self._get_title_source_child_props()
+
+        # Modify the outline color.
+        mod_outline_color = 0xFFFFFFFF
+        color_button_mock = mock.Mock()
+        color_picker_mock = mock.Mock()
+        color_picker_mock.calculate_argb.return_value = mod_outline_color
+        self.clipproperties.title_expander._color_picker_value_changed_cb(color_picker_mock, color_button_mock, "outline-color")
+        properties2 = self._get_title_source_child_props()
+        self.assertEqual(properties2["outline-color"], (True, mod_outline_color))
+        self.assertNotEqual(properties1["outline-color"], properties2["outline-color"])
+
+        # Undo modify outline color.
+        self.action_log.undo()
+        properties3 = self._get_title_source_child_props()
+        self.assertDictEqual(properties1, properties3)
+
+        # Redo modify outline color.
+        self.action_log.redo()
+        properties4 = self._get_title_source_child_props()
+        self.assertDictEqual(properties2, properties4)
+
+    @common.setup_timeline
+    @common.setup_clipproperties
+    def test_modify_drop_shadow(self):
+        """Exercise modifying the drop shadow."""
+        self.project.pipeline.get_position = mock.Mock(return_value=0)
+
+        self.clipproperties.create_title_clip_cb(None)
+        properties1 = self._get_title_source_child_props()
+
+        # Modify the drop shadow.
+        drop_shadow = False
+        drop_shadow_checkbox_mock = mock.Mock()
+        drop_shadow_checkbox_mock.get_active.return_value = drop_shadow
+        self.clipproperties.title_expander._drop_shadow_checkbox_cb(drop_shadow_checkbox_mock)
+
+        properties2 = self._get_title_source_child_props()
+        self.assertEqual(properties2["draw-shadow"], (True, drop_shadow))
+        self.assertNotEqual(properties1["draw-shadow"], properties2["draw-shadow"])
+
+        # Undo modify drop shadow.
+        self.action_log.undo()
+        properties3 = self._get_title_source_child_props()
+        self.assertDictEqual(properties1, properties3)
+
+        # Redo modify drop shadow.
+        self.action_log.redo()
+        properties4 = self._get_title_source_child_props()
+        self.assertDictEqual(properties2, properties4)
 
     @common.setup_timeline
     @common.setup_clipproperties

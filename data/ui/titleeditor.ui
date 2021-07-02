@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkAdjustment" id="position_x_adj">
@@ -147,11 +147,62 @@
                     <property name="position">4</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkColorButton" id="outline_color">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="margin_left">5</property>
+                    <property name="use_alpha">True</property>
+                    <property name="title" translatable="yes">Pick an outline color</property>
+                    <property name="rgba">rgba(0,0,0,0)</property>
+                    <signal name="color-set" handler="_front_text_outline_color_button_cb" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkAspectFrame" id="color_picker_outline">
+                    <property name="name">picker3</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">none</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">6</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="check_drop_shadow">
+                <property name="label" translatable="yes">Drop Shadow</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="margin_top">10</property>
+                <property name="draw_indicator">True</property>
+                <property name="halign">start</property>
+                <signal name="toggled" handler="_drop_shadow_checkbox_cb" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -169,7 +220,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -263,7 +314,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>

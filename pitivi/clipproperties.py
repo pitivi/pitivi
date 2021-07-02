@@ -64,9 +64,11 @@ from pitivi.utils.ui import SPACING
 DEFAULT_TEXT = _("Title Clip")
 FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White
 BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
+OUTLINE_DEFAULT_COLOR = 0xFF000000  # Black
 DEFAULT_FONT_DESCRIPTION = "Sans 36"
 DEFAULT_VALIGNMENT = "absolute"
 DEFAULT_HALIGNMENT = "absolute"
+DEFAULT_DROP_SHADOW = True
 
 # Max speed rate we allow to be applied to clips.
 # The minimum is 1 / MAX_RATE.
@@ -174,9 +176,11 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
             properties = {"text": DEFAULT_TEXT,
                           "foreground-color": BACKGROUND_DEFAULT_COLOR,
                           "color": FOREGROUND_DEFAULT_COLOR,
+                          "outline-color": OUTLINE_DEFAULT_COLOR,
                           "font-desc": DEFAULT_FONT_DESCRIPTION,
                           "valignment": DEFAULT_VALIGNMENT,
-                          "halignment": DEFAULT_HALIGNMENT}
+                          "halignment": DEFAULT_HALIGNMENT,
+                          "draw-shadow": DEFAULT_DROP_SHADOW}
             for prop, value in properties.items():
                 res = source.set_child_property(prop, value)
                 assert res, prop

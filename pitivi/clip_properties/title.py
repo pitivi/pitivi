@@ -81,6 +81,7 @@ class TitleProperties(Gtk.Expander, Loggable):
         self.font_button = builder.get_object("fontbutton1")
         self.foreground_color_button = builder.get_object("fore_text_color")
         self.background_color_button = builder.get_object("back_color")
+        self.outline_color_button = builder.get_object("outline_color")
 
         self.color_picker_foreground_widget = ColorPickerButton()
         self.color_picker_foreground_widget.show()
@@ -93,6 +94,14 @@ class TitleProperties(Gtk.Expander, Loggable):
         self.background_color_picker = builder.get_object("color_picker_background")
         self.background_color_picker.add(self.color_picker_background_widget)
         self.color_picker_background_widget.connect("value-changed", self._color_picker_value_changed_cb, self.background_color_button, "foreground-color")
+
+        self.color_picker_outline_widget = ColorPickerButton()
+        self.color_picker_outline_widget.show()
+        self.outline_color_picker = builder.get_object("color_picker_outline")
+        self.outline_color_picker.add(self.color_picker_outline_widget)
+        self.color_picker_outline_widget.connect("value-changed", self._color_picker_value_changed_cb, self.outline_color_button, "outline-color")
+
+        self.drop_shadow_checkbox = builder.get_object("check_drop_shadow")
 
         self.valignment_combo = builder.get_object("valignment")
         self.halignment_combo = builder.get_object("halignment")
@@ -125,6 +134,15 @@ class TitleProperties(Gtk.Expander, Loggable):
             finally:
                 self._setting_props = False
 
+    def _drop_shadow_checkbox_cb(self, checkbox):
+        if not self.source:
+            # Nothing to update.
+            return
+
+        active = checkbox.get_active()
+        self.debug("Setting drop shadow checkbox to %s", active)
+        self._set_child_property("draw-shadow", active)
+
     def _color_picker_value_changed_cb(self, widget, color_button, color_layer):
         argb = widget.calculate_argb()
         self.debug("Setting text %s to %x", color_layer, argb)
@@ -144,28 +162,62 @@ class TitleProperties(Gtk.Expander, Loggable):
         # TitleClips
         self._set_child_property("color", color)
 
+    def _front_text_outline_color_button_cb(self, widget):
+        color = gdk_rgba_to_argb(widget.get_rgba())
+        self.debug("Setting title outline color to %x", color)
+        self._set_child_property("outline-color", color)
+
     def _font_button_cb(self, widget):
         font_desc = widget.get_font_desc().to_string()
         self.debug("Setting font desc to %s", font_desc)
         self._set_child_property("font-desc", font_desc)
 
     def _update_from_source(self, source):
-        self.textbuffer.props.text = html.unescape(source.get_child_property("text")[1] or "")
-        self.x_absolute_spin.set_value(source.get_child_property("x-absolute")[1])
-        self.y_absolute_spin.set_value(source.get_child_property("y-absolute")[1])
-        self.valignment_combo.set_active_id(source.get_child_property("valignment")[1].value_name)
-        self.halignment_combo.set_active_id(source.get_child_property("halignment")[1].value_name)
+        res, text = source.get_child_property("text")
+        assert res
+        self.textbuffer.props.text = html.unescape(text or "")
+
+        res, x_absolute = source.get_child_property("x-absolute")
+        assert res
+        self.x_absolute_spin.set_value(x_absolute)
+
+        res, y_absolute = source.get_child_property("y-absolute")
+        assert res
+        self.y_absolute_spin.set_value(y_absolute)
+
+        res, valignment = source.get_child_property("valignment")
+        assert res
+        self.valignment_combo.set_active_id(valignment.value_name)
+
+        res, halignment = source.get_child_property("halignment")
+        assert res
+        self.halignment_combo.set_active_id(halignment.value_name)
+
         self._update_absolute_alignment_widgets_visibility()
 
-        font_desc = Pango.FontDescription.from_string(
-            source.get_child_property("font-desc")[1])
+        res, font = source.get_child_property("font-desc")
+        assert res
+        font_desc = Pango.FontDescription.from_string(font)
         self.font_button.set_font_desc(font_desc)
 
-        color = argb_to_gdk_rgba(source.get_child_property("color")[1])
+        res, argb = source.get_child_property("color")
+        assert res
+        color = argb_to_gdk_rgba(argb)
         self.foreground_color_button.set_rgba(color)
 
-        color = argb_to_gdk_rgba(source.get_child_property("foreground-color")[1])
+        res, argb = source.get_child_property("foreground-color")
+        assert res
+        color = argb_to_gdk_rgba(argb)
         self.background_color_button.set_rgba(color)
+
+        res, draw_shadow = source.get_child_property("draw-shadow")
+        assert res
+        self.drop_shadow_checkbox.set_active(draw_shadow)
+
+        res, argb = source.get_child_property("outline-color")
+        assert res
+        color = argb_to_gdk_rgba(argb)
+        self.outline_color_button.set_rgba(color)
 
     def _text_changed_cb(self, unused_text_buffer):
         if not self.source:
@@ -283,5 +335,12 @@ class TitleProperties(Gtk.Expander, Loggable):
             if color == self.background_color_button.get_rgba():
                 return
             self.background_color_button.set_rgba(color)
+        elif pspec.name == "outline-color":
+            color = argb_to_gdk_rgba(value)
+            if color == self.outline_color_button.get_rgba():
+                return
+            self.outline_color_button.set_rgba(color)
+        elif pspec.name == "draw-shadow":
+            self.drop_shadow_checkbox.set_active(value)
 
         self.app.project_manager.current_project.pipeline.commit_timeline()
