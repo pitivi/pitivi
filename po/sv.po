@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-05-09 20:17+0000\n"
-"PO-Revision-Date: 2021-05-10 01:21+0200\n"
+"POT-Creation-Date: 2021-07-02 07:58+0000\n"
+"PO-Revision-Date: 2021-07-02 11:46+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -121,7 +121,7 @@ msgstr "Startar automatisk justering"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Genomför automatisk justering</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1647
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1646
 msgid "Estimating..."
 msgstr "Uppskattar…"
 
@@ -315,7 +315,7 @@ msgstr "Sök…"
 msgid "Reset all"
 msgstr "Återställ allt"
 
-#: data/ui/elementsettingsdialog.ui:39 data/ui/projectsettings.ui:94
+#: data/ui/elementsettingsdialog.ui:39 data/ui/projectsettings.ui:91
 msgid "OK"
 msgstr "OK"
 
@@ -489,7 +489,7 @@ msgstr "Stäng"
 msgid "Some changes will not take effect until you restart Pitivi"
 msgstr "Vissa ändringar kommer inte att gälla förrän du har startat om Pitivi"
 
-#: data/ui/projectsettings.ui:81 data/ui/renderingprogress.ui:41
+#: data/ui/projectsettings.ui:78 data/ui/renderingprogress.ui:41
 #: pitivi/editorperspective.py:544 pitivi/editorperspective.py:679
 #: pitivi/editorperspective.py:727 pitivi/editorperspective.py:780
 #: pitivi/greeterperspective.py:241 pitivi/medialibrary.py:783
@@ -497,91 +497,76 @@ msgstr "Vissa ändringar kommer inte att gälla förrän du har startat om Pitiv
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: data/ui/projectsettings.ui:148 data/ui/projectsettings.ui:422
-#: data/ui/renderingdialog.ui:131
+#: data/ui/projectsettings.ui:146 data/ui/renderingdialog.ui:131
 msgid "Preset:"
 msgstr "Förval:"
 
-#: data/ui/projectsettings.ui:220
+#: data/ui/projectsettings.ui:218
 msgid "Size:"
 msgstr "Storlek:"
 
-#: data/ui/projectsettings.ui:280 data/ui/projectsettings.ui:763
+#: data/ui/projectsettings.ui:278 data/ui/projectsettings.ui:606
 msgid "pixels"
 msgstr "bildpunkter"
 
 #. When checked, changing the width or height affects also the other so that the aspect ratio value (width / height) does not change.
-#: data/ui/projectsettings.ui:297 data/ui/projectsettings.ui:780
+#: data/ui/projectsettings.ui:295 data/ui/projectsettings.ui:623
 msgid "Constrain proportions"
 msgstr "Begränsa proportioner"
 
-#: data/ui/projectsettings.ui:301
+#: data/ui/projectsettings.ui:299
 msgid "Maintain aspect ratio"
 msgstr "Bevara bildförhållande"
 
-#: data/ui/projectsettings.ui:332 data/ui/renderingdialog.ui:734
+#: data/ui/projectsettings.ui:330 data/ui/renderingdialog.ui:734
 msgid "Frame rate:"
 msgstr "Bildfrekvens:"
 
 #. The title of the section with the video settings
-#: data/ui/projectsettings.ui:385 data/ui/renderingdialog.ui:752
+#: data/ui/projectsettings.ui:383 data/ui/renderingdialog.ui:752
 #: pitivi/effects.py:246
 msgid "Video"
 msgstr "Video"
 
-#: data/ui/projectsettings.ui:488 data/ui/renderingdialog.ui:400
-msgid "Channels:"
-msgstr "Kanaler:"
-
-#: data/ui/projectsettings.ui:522 data/ui/renderingdialog.ui:509
-msgid "Sample rate:"
-msgstr "Samplingsfrekvens:"
-
-#. The title of the section with the audio settings
-#: data/ui/projectsettings.ui:566 data/ui/renderingdialog.ui:527
-#: pitivi/effects.py:122 pitivi/effects.py:246
-msgid "Audio"
-msgstr "Ljud"
-
-#: data/ui/projectsettings.ui:611
+#: data/ui/projectsettings.ui:430
 msgid "Author:"
 msgstr "Upphovsman:"
 
-#: data/ui/projectsettings.ui:623
+#: data/ui/projectsettings.ui:442
 msgid "Year:"
 msgstr "År:"
 
 #. The title of the section with the name, author, year fields
-#: data/ui/projectsettings.ui:655
+#: data/ui/projectsettings.ui:498
 msgid "Info"
 msgstr "Info"
 
-#: data/ui/projectsettings.ui:699
+#: data/ui/projectsettings.ui:542
 msgid "Scaled proxies resolution:"
 msgstr "Upplösning för skalade proxyfiler:"
 
-#: data/ui/projectsettings.ui:720 data/ui/projectsettings.ui:748
+#: data/ui/projectsettings.ui:563 data/ui/projectsettings.ui:591
 msgid "1"
 msgstr "1"
 
-#: data/ui/projectsettings.ui:798
+#: data/ui/projectsettings.ui:641
 msgid "<a href='#'>Proxy Preferences</a>"
 msgstr "<a href='#'>Proxyinställningar</a>"
 
-#: data/ui/projectsettings.ui:832
+#: data/ui/projectsettings.ui:675
 msgid "Proxy"
 msgstr "Proxy"
 
-#: data/ui/projectsettings.ui:865
+#: data/ui/projectsettings.ui:709
 msgid "Title:"
 msgstr "Titel:"
 
-#: data/ui/projectsettings.ui:882
+#: data/ui/projectsettings.ui:726
 msgid "Action:"
 msgstr "Åtgärd:"
 
 # Areas that will never be cropped
-#: data/ui/projectsettings.ui:1007
+#: data/ui/projectsettings.ui:851
 msgid "Safe Areas"
 msgstr "Säkra områden"
 
@@ -648,6 +633,10 @@ msgstr ""
 "grund av format som inte stöds officiellt.\n"
 "<i>Använd på egen risk!</i>"
 
+#: data/ui/renderingdialog.ui:400
+msgid "Channels:"
+msgstr "Kanaler:"
+
 #: data/ui/renderingdialog.ui:432 data/ui/renderingdialog.ui:653
 msgid "Advanced..."
 msgstr "Avancerat…"
@@ -655,6 +644,14 @@ msgstr "Avancerat…"
 #: data/ui/renderingdialog.ui:472 data/ui/renderingdialog.ui:692
 msgid "Codec:"
 msgstr "Kodek:"
+
+#: data/ui/renderingdialog.ui:509
+msgid "Sample rate:"
+msgstr "Samplingsfrekvens:"
+
+#: data/ui/renderingdialog.ui:527 pitivi/effects.py:122 pitivi/effects.py:246
+msgid "Audio"
+msgstr "Ljud"
 
 #: data/ui/renderingdialog.ui:566
 msgid "Scale:"
@@ -697,7 +694,7 @@ msgid "Pause"
 msgstr "Pausa"
 
 #: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:766
-#: pitivi/timeline/timeline.py:1870
+#: pitivi/timeline/timeline.py:1879
 msgid "Play"
 msgstr "Spela upp"
 
@@ -804,15 +801,23 @@ msgstr "Välj en textfärg"
 msgid "Pick a background color"
 msgstr "Välj en bakgrundsfärg"
 
-#: data/ui/titleeditor.ui:164
+#: data/ui/titleeditor.ui:157
+msgid "Pick an outline color"
+msgstr "Välj en konturfärg"
+
+#: data/ui/titleeditor.ui:193
+msgid "Drop Shadow"
+msgstr "Skuggkastning"
+
+#: data/ui/titleeditor.ui:215
 msgid "Alignment"
 msgstr "Justering"
 
-#: data/ui/titleeditor.ui:200
+#: data/ui/titleeditor.ui:251
 msgid "Horizontal:"
 msgstr "Horisontell:"
 
-#: data/ui/titleeditor.ui:224
+#: data/ui/titleeditor.ui:275
 msgid "Vertical:"
 msgstr "Vertikal:"
 
@@ -930,11 +935,11 @@ msgstr ""
 "GStreamer och att återhämta sig från dem"
 
 #. Translators: This is the default text of a title clip.
-#: pitivi/clipproperties.py:63
+#: pitivi/clipproperties.py:64
 msgid "Title Clip"
 msgstr "Titelklipp"
 
-#: pitivi/clipproperties.py:142
+#: pitivi/clipproperties.py:146
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
@@ -942,39 +947,39 @@ msgstr ""
 "Välj ett klipp i tidslinjen för att konfigurera dess egenskaper och effekter "
 "eller skapa ett nytt klipp:"
 
-#: pitivi/clipproperties.py:148
+#: pitivi/clipproperties.py:152
 msgid "Create a title clip"
 msgstr "Skapa ett titelklipp"
 
-#: pitivi/clipproperties.py:153
+#: pitivi/clipproperties.py:157
 msgid "Create a color clip"
 msgstr "Skapa ett färgklipp"
 
-#: pitivi/clipproperties.py:256 pitivi/effects.py:118
+#: pitivi/clipproperties.py:262 pitivi/effects.py:118
 msgid "Time"
 msgstr "Tid"
 
-#: pitivi/clipproperties.py:299
+#: pitivi/clipproperties.py:305
 msgid "Speed"
 msgstr "Hastighet"
 
 # I think this shoudln't be translated.. or ?
 # See https://phabricator.freedesktop.org/T7349
-#: pitivi/clipproperties.py:314 pitivi/utils/widgets.py:800
+#: pitivi/clipproperties.py:320 pitivi/utils/widgets.py:800
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: pitivi/clipproperties.py:317 pitivi/dialogs/prefs.py:285
+#: pitivi/clipproperties.py:323 pitivi/dialogs/prefs.py:285
 #: pitivi/utils/widgets.py:976
 msgid "Reset to default value"
 msgstr "Återställ till standardvärde"
 
-#: pitivi/clipproperties.py:551
+#: pitivi/clipproperties.py:557
 msgid "Effects"
 msgstr "Effekter"
 
-#: pitivi/clipproperties.py:568
+#: pitivi/clipproperties.py:574
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
@@ -982,23 +987,23 @@ msgstr ""
 "För att tillämpa en effekt på klippet, dra den från effektbiblioteket eller "
 "använd knappen nedan."
 
-#: pitivi/clipproperties.py:576
+#: pitivi/clipproperties.py:582
 msgid "Add Effect"
 msgstr "Lägg till effekt"
 
-#: pitivi/clipproperties.py:900
+#: pitivi/clipproperties.py:906
 msgid "Transformation"
 msgstr "Transformering"
 
-#: pitivi/clipproperties.py:1016
+#: pitivi/clipproperties.py:1022
 msgid "Show keyframes"
 msgstr "Visa nyckelbilder"
 
-#: pitivi/clipproperties.py:1019
+#: pitivi/clipproperties.py:1025
 msgid "Activate keyframes"
 msgstr "Aktivera nyckelbilder"
 
-#: pitivi/clipproperties.py:1024
+#: pitivi/clipproperties.py:1030
 msgid "Hide keyframes"
 msgstr "Göm nyckelbilder"
 
@@ -1022,31 +1027,31 @@ msgstr ""
 msgid "Title"
 msgstr "Titel"
 
-#: pitivi/clip_properties/title.py:102 pitivi/clip_properties/title.py:109
+#: pitivi/clip_properties/title.py:111 pitivi/clip_properties/title.py:118
 msgid "Absolute"
 msgstr "Absolut"
 
-#: pitivi/clip_properties/title.py:103
+#: pitivi/clip_properties/title.py:112
 msgid "Top"
 msgstr "Topp"
 
-#: pitivi/clip_properties/title.py:104 pitivi/clip_properties/title.py:111
+#: pitivi/clip_properties/title.py:113 pitivi/clip_properties/title.py:120
 msgid "Center"
 msgstr "Centrum"
 
-#: pitivi/clip_properties/title.py:105
+#: pitivi/clip_properties/title.py:114
 msgid "Bottom"
 msgstr "Botten"
 
-#: pitivi/clip_properties/title.py:106
+#: pitivi/clip_properties/title.py:115
 msgid "Baseline"
 msgstr "Baslinje"
 
-#: pitivi/clip_properties/title.py:110
+#: pitivi/clip_properties/title.py:119
 msgid "Left"
 msgstr "Vänster"
 
-#: pitivi/clip_properties/title.py:112
+#: pitivi/clip_properties/title.py:121
 msgid "Right"
 msgstr "Höger"
 
@@ -1073,7 +1078,7 @@ msgstr "Ångra"
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/editorperspective.py:323 pitivi/editorperspective.py:536
 #: pitivi/editorperspective.py:680 pitivi/editorperspective.py:728
-#: pitivi/editorperspective.py:781 pitivi/preset.py:113 pitivi/project.py:188
+#: pitivi/editorperspective.py:781 pitivi/preset.py:113 pitivi/project.py:194
 #: pitivi/render.py:226
 msgid "Save"
 msgstr "Spara"
@@ -1099,7 +1104,7 @@ msgstr "Snabbintroduktioner till Pitivi"
 msgid "Unable to save project \"%s\""
 msgstr "Kunde inte spara projektet ”%s”"
 
-#: pitivi/editorperspective.py:538 pitivi/project.py:187
+#: pitivi/editorperspective.py:538 pitivi/project.py:193
 msgid "Save as..."
 msgstr "Spara som…"
 
@@ -1158,7 +1163,7 @@ msgid "Detect automatically"
 msgstr "Identifiera automatiskt"
 
 #: pitivi/editorperspective.py:737 pitivi/editorperspective.py:784
-#: pitivi/project.py:60 pitivi/render.py:821
+#: pitivi/project.py:61 pitivi/render.py:821
 msgid "Untitled"
 msgstr "Namnlös"
 
@@ -1336,7 +1341,7 @@ msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Upplösning</b>: %d×%d"
 
 #: pitivi/mediafilespreviewer.py:271 pitivi/mediafilespreviewer.py:288
-#: pitivi/utils/ui.py:534
+#: pitivi/utils/ui.py:536
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Längd</b>: %s"
@@ -1393,7 +1398,7 @@ msgstr "Välj en eller flera filer"
 msgid "Add"
 msgstr "Lägg till"
 
-#: pitivi/medialibrary.py:799 pitivi/render.py:1491
+#: pitivi/medialibrary.py:799 pitivi/render.py:1490
 msgid "Supported file formats"
 msgstr "Alla format som stöds"
 
@@ -1511,11 +1516,11 @@ msgstr "Nytt förval %d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:171 pitivi/render.py:1320
+#: pitivi/project.py:177 pitivi/render.py:1319
 msgid "Sorry, something didn’t work right."
 msgstr "Tyvärr, någonting fungerade inte riktigt rätt."
 
-#: pitivi/project.py:174
+#: pitivi/project.py:180
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1541,11 +1546,11 @@ msgstr ""
 "Innan du stänger Pitivi kan du spara ändringar till den befintliga "
 "projektfilen, eller som en separat projektfil."
 
-#: pitivi/project.py:189
+#: pitivi/project.py:195
 msgid "Close Pitivi"
 msgstr "Stäng Pitivi"
 
-#: pitivi/project.py:259
+#: pitivi/project.py:265
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1555,15 +1560,15 @@ msgstr ""
 "försökte lägga till en mediafil till ditt projekt, använd knappen "
 "”Importera” istället."
 
-#: pitivi/project.py:281
+#: pitivi/project.py:287
 msgid "Ignore backup"
 msgstr "Ignorera säkerhetskopia"
 
-#: pitivi/project.py:283
+#: pitivi/project.py:289
 msgid "Restore from backup"
 msgstr "Återställ från säkerhetskopia"
 
-#: pitivi/project.py:294
+#: pitivi/project.py:300
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1576,16 +1581,16 @@ msgstr ""
 "\n"
 "Vill du läsa in den istället?"
 
-#: pitivi/project.py:367
+#: pitivi/project.py:373
 msgid "You do not have permissions to write to this folder."
 msgstr "Du har inte rättigheter att skriva till denna mapp."
 
 #. Save the project to a temporary file.
-#: pitivi/project.py:400
+#: pitivi/project.py:406
 msgid "project"
 msgstr "projekt"
 
-#: pitivi/project.py:700
+#: pitivi/project.py:706
 msgid "Pitivi encoding profile"
 msgstr "Pitivis kodningsprofil"
 
@@ -1628,26 +1633,26 @@ msgstr "Ungefär %s kvar"
 msgid "Currently rendering"
 msgstr "Renderar"
 
-#: pitivi/render.py:968
+#: pitivi/render.py:964
 msgid "medium"
 msgstr "medium"
 
-#: pitivi/render.py:969
+#: pitivi/render.py:965
 msgid "high"
 msgstr "hög"
 
 #. Translators: This item appears in a combobox's popup and
 #. contains as children the unsupported (but still available)
 #. muxers and encoders.
-#: pitivi/render.py:1075
+#: pitivi/render.py:1066
 msgid "Unsupported"
 msgstr "Stöds ej"
 
-#: pitivi/render.py:1134 pitivi/render.py:1139
+#: pitivi/render.py:1127 pitivi/render.py:1132
 msgid "A file name is required."
 msgstr "Ett filnamn krävs."
 
-#: pitivi/render.py:1142
+#: pitivi/render.py:1135
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1655,22 +1660,22 @@ msgstr ""
 "Denna fil finns redan.\n"
 "Välj ett annat filnamn eller mapp om du inte vill skriva över den."
 
-#: pitivi/render.py:1147
+#: pitivi/render.py:1140
 msgid "Invalid file path"
 msgstr "Ogiltig filsökväg"
 
-#: pitivi/render.py:1179
+#: pitivi/render.py:1172
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: pitivi/render.py:1184
+#: pitivi/render.py:1177
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: pitivi/render.py:1314
+#: pitivi/render.py:1313
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
@@ -1680,11 +1685,11 @@ msgstr ""
 "kanske inte rendera.</b>\n"
 "\n"
 
-#: pitivi/render.py:1322
+#: pitivi/render.py:1321
 msgid "An error occurred while trying to render your project."
 msgstr "Ett fel inträffade vid försök att rendera ditt projekt."
 
-#: pitivi/render.py:1324
+#: pitivi/render.py:1323
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1692,15 +1697,15 @@ msgstr ""
 "Du kanske vill undersöka problemsökningshandboken eller skicka en "
 "felrapport. GStreamer-felet var:"
 
-#: pitivi/render.py:1485
+#: pitivi/render.py:1484
 msgid "Select file path to render"
 msgstr "Välj filsökväg som ska renderas"
 
-#: pitivi/render.py:1595 pitivi/render.py:1596 pitivi/render.py:1602
+#: pitivi/render.py:1594 pitivi/render.py:1595 pitivi/render.py:1601
 msgid "Render complete"
 msgstr "Rendering färdig"
 
-#: pitivi/render.py:1600
+#: pitivi/render.py:1599
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "”%s” är klar med rendering."
@@ -1925,107 +1930,107 @@ msgstr ""
 "Huruvida vänsterklickande också spolar förutom att välja och redigera "
 "videoklipp."
 
-#: pitivi/timeline/timeline.py:341 pitivi/timeline/timeline.py:1766
+#: pitivi/timeline/timeline.py:341 pitivi/timeline/timeline.py:1775
 msgid "Add layer"
 msgstr "Lägg till lager"
 
-#: pitivi/timeline/timeline.py:1709 pitivi/dialogs/prefs.py:60
+#: pitivi/timeline/timeline.py:1718 pitivi/dialogs/prefs.py:60
 msgid "Timeline"
 msgstr "Tidslinje"
 
-#: pitivi/timeline/timeline.py:1716
+#: pitivi/timeline/timeline.py:1725
 msgid "Action Search"
 msgstr "Åtgärdssökning"
 
-#: pitivi/timeline/timeline.py:1724
+#: pitivi/timeline/timeline.py:1733
 msgid "Delete selected clips"
 msgstr "Ta bort markerade klipp"
 
-#: pitivi/timeline/timeline.py:1731
+#: pitivi/timeline/timeline.py:1740
 msgid "Delete selected clips and shift following ones"
 msgstr "Ta bort markerade klipp och skifta efterföljande"
 
-#: pitivi/timeline/timeline.py:1738
+#: pitivi/timeline/timeline.py:1747
 msgid "Group selected clips together"
 msgstr "Gruppera markerade klipp tillsammans"
 
-#: pitivi/timeline/timeline.py:1745
+#: pitivi/timeline/timeline.py:1754
 msgid "Ungroup selected clips"
 msgstr "Avgruppera markerade klipp"
 
-#: pitivi/timeline/timeline.py:1752
+#: pitivi/timeline/timeline.py:1761
 msgid "Copy selected clips"
 msgstr "Kopiera markerade klipp"
 
-#: pitivi/timeline/timeline.py:1759
+#: pitivi/timeline/timeline.py:1768
 msgid "Paste selected clips"
 msgstr "Klistra in markerade klipp"
 
-#: pitivi/timeline/timeline.py:1773
+#: pitivi/timeline/timeline.py:1782
 msgid "Seek to the first clip edge after the playhead"
 msgstr "Spola till den första klippkanten efter uppspelningshuvudet"
 
-#: pitivi/timeline/timeline.py:1780
+#: pitivi/timeline/timeline.py:1789
 msgid "Seek to the first clip edge before the playhead"
 msgstr "Spola till den första klippkanten innan uppspelningshuvudet"
 
-#: pitivi/timeline/timeline.py:1787
+#: pitivi/timeline/timeline.py:1796
 msgid "Shift selected clips one frame forward"
 msgstr "Skifta markerade klipp en bildruta framåt"
 
-#: pitivi/timeline/timeline.py:1794
+#: pitivi/timeline/timeline.py:1803
 msgid "Shift selected clips one frame backward"
 msgstr "Skifta markerade klipp en bildruta bakåt"
 
-#: pitivi/timeline/timeline.py:1801
+#: pitivi/timeline/timeline.py:1810
 msgid "Snap selected clips to the next clip"
 msgstr "Fäst markerade klipp till nästa klipp"
 
-#: pitivi/timeline/timeline.py:1808
+#: pitivi/timeline/timeline.py:1817
 msgid "Snap selected clips to the previous clip"
 msgstr "Fäst markerade klipp till föregående klipp"
 
-#: pitivi/timeline/timeline.py:1815
+#: pitivi/timeline/timeline.py:1824
 msgid "Add an effect to the selected clip"
 msgstr "Lägg till en effekt till det markerade klippet"
 
-#: pitivi/timeline/timeline.py:1828
+#: pitivi/timeline/timeline.py:1837
 msgid "Split the clip at the position"
 msgstr "Dela upp klipp vid positionen"
 
-#: pitivi/timeline/timeline.py:1835
+#: pitivi/timeline/timeline.py:1844
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Lägg till nyckelbildruta till nyckelbildskurvan för valt klipp"
 
-#: pitivi/timeline/timeline.py:1840
+#: pitivi/timeline/timeline.py:1849
 msgid "Timeline Navigation"
 msgstr "Tidslinjenavigering"
 
-#: pitivi/timeline/timeline.py:1848
+#: pitivi/timeline/timeline.py:1857
 msgid "Zoom in"
 msgstr "Zooma in"
 
-#: pitivi/timeline/timeline.py:1856
+#: pitivi/timeline/timeline.py:1865
 msgid "Zoom out"
 msgstr "Zooma ut"
 
-#: pitivi/timeline/timeline.py:1864
+#: pitivi/timeline/timeline.py:1873
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Justera zoom för att anpassa projektet till fönstret"
 
-#: pitivi/timeline/timeline.py:1877
+#: pitivi/timeline/timeline.py:1886
 msgid "Seek backward one frame"
 msgstr "Spola bakåt en bildruta"
 
-#: pitivi/timeline/timeline.py:1884
+#: pitivi/timeline/timeline.py:1893
 msgid "Seek forward one frame"
 msgstr "Spola framåt en bildruta"
 
-#: pitivi/timeline/timeline.py:1892
+#: pitivi/timeline/timeline.py:1901
 msgid "Seek backward one second"
 msgstr "Spola bakåt en sekund"
 
-#: pitivi/timeline/timeline.py:1900
+#: pitivi/timeline/timeline.py:1909
 msgid "Seek forward one second"
 msgstr "Spola framåt en sekund"
 
@@ -2253,117 +2258,117 @@ msgid "Max CPU usage dedicated to transcoding"
 msgstr "Maximal processoranvändning avsedd för omkodning"
 
 #. Translators: 'fps' is for 'frames per second'
-#: pitivi/utils/ui.py:350
+#: pitivi/utils/ui.py:352
 msgid "{0:s} fps"
 msgstr "{0:s} bilder/s"
 
-#: pitivi/utils/ui.py:370
+#: pitivi/utils/ui.py:372
 #, python-brace-format
 msgid "{0:n} kHz"
 msgstr "{0:n} kHz"
 
-#: pitivi/utils/ui.py:379
+#: pitivi/utils/ui.py:381
 msgid "Mono"
 msgstr "Mono"
 
-#: pitivi/utils/ui.py:380
+#: pitivi/utils/ui.py:382
 msgid "Stereo"
 msgstr "Stereo"
 
-#: pitivi/utils/ui.py:381
+#: pitivi/utils/ui.py:383
 msgid "6 (5.1)"
 msgstr "6 (5.1)"
 
-#: pitivi/utils/ui.py:382
+#: pitivi/utils/ui.py:384
 msgid "8 (7.1)"
 msgstr "8 (7.1)"
 
-#: pitivi/utils/ui.py:513
+#: pitivi/utils/ui.py:515
 #, python-format
 msgid "<b>Duration:</b> %s"
 msgstr "<b>Längd:</b> %s"
 
-#: pitivi/utils/ui.py:516
+#: pitivi/utils/ui.py:518
 #, python-format
 msgid "<b>Proxy creation progress:</b> %d%%"
 msgstr "<b>Skapelseförlopp för proxy:</b> %d%%"
 
-#: pitivi/utils/ui.py:530
+#: pitivi/utils/ui.py:532
 #, python-format
 msgid "<b>Path</b>: %s"
 msgstr "<b>Sökväg</b>: %s"
 
-#: pitivi/utils/ui.py:540
+#: pitivi/utils/ui.py:542
 #, python-format
 msgid "<b>Size</b>: %s"
 msgstr "<b>Storlek</b>: %s"
 
-#: pitivi/utils/ui.py:576
+#: pitivi/utils/ui.py:578
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[0] "<b>Ljud:</b> %d kanal i %d <i>Hz</i> (%d <i>bitar</i>)"
 msgstr[1] "<b>Ljud:</b> %d kanaler i %d <i>Hz</i> (%d <i>bitar</i>)"
 
-#: pitivi/utils/ui.py:588
+#: pitivi/utils/ui.py:590
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
 msgstr "<b>Video:</b> %d×%d <i>bildpunkter</i> med %s <i>bilder/s</i>"
 
-#: pitivi/utils/ui.py:591
+#: pitivi/utils/ui.py:593
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>Bild:</b> %d×%d <i>bildpunkter</i>"
 
-#: pitivi/utils/ui.py:645 pitivi/utils/ui.py:672 pitivi/utils/ui.py:696
+#: pitivi/utils/ui.py:647 pitivi/utils/ui.py:674 pitivi/utils/ui.py:698
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d timme"
 msgstr[1] "%d timmar"
 
-#: pitivi/utils/ui.py:648 pitivi/utils/ui.py:675 pitivi/utils/ui.py:699
+#: pitivi/utils/ui.py:650 pitivi/utils/ui.py:677 pitivi/utils/ui.py:701
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minut"
 msgstr[1] "%d minuter"
 
-#: pitivi/utils/ui.py:651 pitivi/utils/ui.py:678 pitivi/utils/ui.py:702
+#: pitivi/utils/ui.py:653 pitivi/utils/ui.py:680 pitivi/utils/ui.py:704
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d sekund"
 msgstr[1] "%d sekunder"
 
-#: pitivi/utils/ui.py:670
+#: pitivi/utils/ui.py:672
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d dag"
 msgstr[1] "%d dagar"
 
-#: pitivi/utils/ui.py:711
+#: pitivi/utils/ui.py:713
 msgid "Just now"
 msgstr "Just nu"
 
-#: pitivi/utils/ui.py:714
+#: pitivi/utils/ui.py:716
 msgid "An hour ago"
 msgstr "En timme sedan"
 
-#: pitivi/utils/ui.py:717
+#: pitivi/utils/ui.py:719
 msgid "Today"
 msgstr "Idag"
 
-#: pitivi/utils/ui.py:720
+#: pitivi/utils/ui.py:722
 msgid "Yesterday"
 msgstr "Igår"
 
-#: pitivi/utils/ui.py:729
+#: pitivi/utils/ui.py:731
 msgid "About a year ago"
 msgstr "Ungefär ett år sedan"
 
-#: pitivi/utils/ui.py:732
+#: pitivi/utils/ui.py:734
 #, python-format
 msgid "About %d year ago"
 msgid_plural "About %d years ago"
