@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-07-02 07:58+0000\n"
-"PO-Revision-Date: 2021-07-02 13:12+0300\n"
+"POT-Creation-Date: 2021-07-05 23:44+0000\n"
+"PO-Revision-Date: 2021-07-06 07:02+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -116,7 +116,7 @@ msgstr "Розпочинаємо автовирівнювання"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Виконання автовирівнювання</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1646
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1647
 msgid "Estimating..."
 msgstr "Визначення оцінки…"
 
@@ -165,31 +165,36 @@ msgstr "Канали"
 msgid "Audio:"
 msgstr "Звук:"
 
-#: data/ui/cliptransformation.ui:51
+#: data/ui/cliptransformation.ui:56
 msgid "Y:"
 msgstr "Y:"
 
-#: data/ui/cliptransformation.ui:96
+#: data/ui/cliptransformation.ui:99
 msgid "Height:"
 msgstr "Висота:"
 
-#: data/ui/cliptransformation.ui:140
+#: data/ui/cliptransformation.ui:141
+#| msgid "Constrain proportions"
+msgid "Constrain Proportions"
+msgstr "Зберегти пропорції"
+
+#: data/ui/cliptransformation.ui:157
 msgid "X:"
 msgstr "X:"
 
-#: data/ui/cliptransformation.ui:161
+#: data/ui/cliptransformation.ui:178
 msgid "Previous keyframe"
 msgstr "Попередній ключовий кадр"
 
-#: data/ui/cliptransformation.ui:177
+#: data/ui/cliptransformation.ui:194
 msgid "Next keyframe"
 msgstr "Наступний ключовий кадр"
 
-#: data/ui/cliptransformation.ui:207
+#: data/ui/cliptransformation.ui:224
 msgid "Reset to default values"
 msgstr "Скинути до типовий значень"
 
-#: data/ui/cliptransformation.ui:229
+#: data/ui/cliptransformation.ui:246
 msgid "Width:"
 msgstr "Ширина:"
 
@@ -798,12 +803,10 @@ msgid "Pick a background color"
 msgstr "Вибрати колір тла"
 
 #: data/ui/titleeditor.ui:157
-#| msgid "Pick a text color"
 msgid "Pick an outline color"
 msgstr "Вибрати колір контуру"
 
 #: data/ui/titleeditor.ui:193
-#| msgid "Shadows"
 msgid "Drop Shadow"
 msgstr "Відкидання тіні"
 
@@ -997,15 +1000,15 @@ msgstr "Додати ефект"
 msgid "Transformation"
 msgstr "Перетворення"
 
-#: pitivi/clipproperties.py:1022
+#: pitivi/clipproperties.py:1035
 msgid "Show keyframes"
 msgstr "Показати ключові кадри"
 
-#: pitivi/clipproperties.py:1025
+#: pitivi/clipproperties.py:1038
 msgid "Activate keyframes"
 msgstr "Задіяти ключові кадри"
 
-#: pitivi/clipproperties.py:1030
+#: pitivi/clipproperties.py:1043
 msgid "Hide keyframes"
 msgstr "Приховати ключові кадри"
 
@@ -1405,7 +1408,7 @@ msgstr "Виберіть один або декілька файлів"
 msgid "Add"
 msgstr "Додати"
 
-#: pitivi/medialibrary.py:799 pitivi/render.py:1490
+#: pitivi/medialibrary.py:799 pitivi/render.py:1491
 msgid "Supported file formats"
 msgstr "Підтримувані формати файлів"
 
@@ -1544,7 +1547,7 @@ msgstr "Новий шаблон %d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:177 pitivi/render.py:1319
+#: pitivi/project.py:177 pitivi/render.py:1320
 msgid "Sorry, something didn’t work right."
 msgstr "Вибачте, щось пішло не так."
 
@@ -1695,18 +1698,18 @@ msgstr ""
 msgid "Invalid file path"
 msgstr "Некоректний шлях до файла"
 
-#: pitivi/render.py:1172
+#: pitivi/render.py:1171
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f ГБ"
 
 #. -1 means round to 10
-#: pitivi/render.py:1177
+#: pitivi/render.py:1178
 #, python-format
 msgid "%d MB"
 msgstr "%d МБ"
 
-#: pitivi/render.py:1313
+#: pitivi/render.py:1314
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
@@ -1716,11 +1719,11 @@ msgstr ""
 "зробите, обробка x264enc може виявитися неможливою.</b>\n"
 "\n"
 
-#: pitivi/render.py:1321
+#: pitivi/render.py:1322
 msgid "An error occurred while trying to render your project."
 msgstr "Під час спроби обробити ваш проєкт сталася помилка."
 
-#: pitivi/render.py:1323
+#: pitivi/render.py:1324
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1728,15 +1731,15 @@ msgstr ""
 "Вам варто ознайомитися з нашими настановами щодо усування вад або повідомити "
 "розробникам про ваду у програмі. Повідомлення про помилку GStreamer:"
 
-#: pitivi/render.py:1484
+#: pitivi/render.py:1485
 msgid "Select file path to render"
 msgstr "Виберіть шлях до файла для обробки"
 
-#: pitivi/render.py:1594 pitivi/render.py:1595 pitivi/render.py:1601
+#: pitivi/render.py:1595 pitivi/render.py:1596 pitivi/render.py:1602
 msgid "Render complete"
 msgstr "Обробку завершено"
 
-#: pitivi/render.py:1599
+#: pitivi/render.py:1600
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "Обробку «%s» завершено."
@@ -1860,7 +1863,7 @@ msgstr "Вийти з повноекранного режиму"
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:438
+#: pitivi/timeline/elements.py:441
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1871,12 +1874,12 @@ msgstr ""
 "Мітка часу: %s\n"
 "Значення: %s"
 
-#: pitivi/timeline/elements.py:626
+#: pitivi/timeline/elements.py:629
 #, python-format
 msgid "Timestamp: %s"
 msgstr "Часова позначка: %s"
 
-#: pitivi/timeline/elements.py:1543
+#: pitivi/timeline/elements.py:1546
 msgid "Audio crossfade"
 msgstr "Перехресний перехід звуку"
 
