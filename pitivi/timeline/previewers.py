@@ -1282,14 +1282,17 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         # calculated in the context of the asset duration.
         rect = Gdk.cairo_get_clip_rectangle(context)[1]
         clip = self.ges_elem.get_parent()
+        start = self.ges_elem.props.start
         inpoint = self.ges_elem.props.in_point
         duration = self.ges_elem.props.duration
         max_duration = self.ges_elem.get_asset().get_filesource_asset().get_duration()
         start_ns = min(max(0, self.pixel_to_ns(rect.x) + inpoint), max_duration)
         end_ns = min(max(0, self.pixel_to_ns(rect.x + rect.width) + inpoint), max_duration)
+
         # Get the overall rate of the clip in the current area the clip is used
-        # FIXME: Smarted computation will be needed when we make the rate keyframeable
-        rate = (duration - inpoint) / clip.get_timeline_time_from_internal_time(self.ges_elem, duration)
+        internal_end = clip.get_internal_time_from_timeline_time(self.ges_elem, start + duration)
+        internal_duration = internal_end - inpoint
+        rate = internal_duration / duration
 
         zoom = self.get_current_zoom_level()
         height = self.get_allocation().height - 2 * CLIP_BORDER_WIDTH
