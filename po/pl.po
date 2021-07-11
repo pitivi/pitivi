@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-07-02 07:58+0000\n"
-"PO-Revision-Date: 2021-07-04 18:20+0200\n"
+"POT-Creation-Date: 2021-07-05 23:44+0000\n"
+"PO-Revision-Date: 2021-07-11 12:52+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -120,7 +120,7 @@ msgstr "Uruchamianie automatycznego wyrównania"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Wykonywanie automatycznego wyrównania</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1646
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1647
 msgid "Estimating..."
 msgstr "Obliczanie…"
 
@@ -169,31 +169,35 @@ msgstr "Kanały"
 msgid "Audio:"
 msgstr "Dźwięk:"
 
-#: data/ui/cliptransformation.ui:51
+#: data/ui/cliptransformation.ui:56
 msgid "Y:"
 msgstr "Oś Y:"
 
-#: data/ui/cliptransformation.ui:96
+#: data/ui/cliptransformation.ui:99
 msgid "Height:"
 msgstr "Wysokość:"
 
-#: data/ui/cliptransformation.ui:140
+#: data/ui/cliptransformation.ui:141
+msgid "Constrain Proportions"
+msgstr "Ogranicza proporcje"
+
+#: data/ui/cliptransformation.ui:157
 msgid "X:"
 msgstr "Oś X:"
 
-#: data/ui/cliptransformation.ui:161
+#: data/ui/cliptransformation.ui:178
 msgid "Previous keyframe"
 msgstr "Poprzednia klatka kluczowa"
 
-#: data/ui/cliptransformation.ui:177
+#: data/ui/cliptransformation.ui:194
 msgid "Next keyframe"
 msgstr "Następna klatka kluczowa"
 
-#: data/ui/cliptransformation.ui:207
+#: data/ui/cliptransformation.ui:224
 msgid "Reset to default values"
 msgstr "Przywraca domyślne wartości"
 
-#: data/ui/cliptransformation.ui:229
+#: data/ui/cliptransformation.ui:246
 msgid "Width:"
 msgstr "Szerokość:"
 
@@ -994,15 +998,15 @@ msgstr "Dodaj efekt"
 msgid "Transformation"
 msgstr "Przekształcenie"
 
-#: pitivi/clipproperties.py:1022
+#: pitivi/clipproperties.py:1035
 msgid "Show keyframes"
 msgstr "Wyświetla klatki kluczowe"
 
-#: pitivi/clipproperties.py:1025
+#: pitivi/clipproperties.py:1038
 msgid "Activate keyframes"
 msgstr "Aktywuje klatki kluczowe"
 
-#: pitivi/clipproperties.py:1030
+#: pitivi/clipproperties.py:1043
 msgid "Hide keyframes"
 msgstr "Ukrywa klatki kluczowe"
 
@@ -1400,7 +1404,7 @@ msgstr "Wybór jednego lub więcej plików"
 msgid "Add"
 msgstr "Dodaj"
 
-#: pitivi/medialibrary.py:799 pitivi/render.py:1490
+#: pitivi/medialibrary.py:799 pitivi/render.py:1491
 msgid "Supported file formats"
 msgstr "Obsługiwane formaty plików"
 
@@ -1534,7 +1538,7 @@ msgstr "%d. nowe ustawienie"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:177 pitivi/render.py:1319
+#: pitivi/project.py:177 pitivi/render.py:1320
 msgid "Sorry, something didn’t work right."
 msgstr "Coś nie zadziałało poprawnie."
 
@@ -1683,18 +1687,18 @@ msgstr ""
 msgid "Invalid file path"
 msgstr "Nieprawidłowa ścieżka do pliku"
 
-#: pitivi/render.py:1172
+#: pitivi/render.py:1171
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: pitivi/render.py:1177
+#: pitivi/render.py:1178
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: pitivi/render.py:1313
+#: pitivi/render.py:1314
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
@@ -1704,11 +1708,11 @@ msgstr ""
 "wypadku x264enc może nie być w stanie renderować.</b>\n"
 "\n"
 
-#: pitivi/render.py:1321
+#: pitivi/render.py:1322
 msgid "An error occurred while trying to render your project."
 msgstr "Wystąpił błąd podczas renderowania projektu."
 
-#: pitivi/render.py:1323
+#: pitivi/render.py:1324
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1716,15 +1720,15 @@ msgstr ""
 "Można sprawdzić podręcznik rozwiązywania błędów lub wysłać zgłoszenie błędu. "
 "Błąd biblioteki GStreamer:"
 
-#: pitivi/render.py:1484
+#: pitivi/render.py:1485
 msgid "Select file path to render"
 msgstr "Wybór ścieżki do pliku do renderowania"
 
-#: pitivi/render.py:1594 pitivi/render.py:1595 pitivi/render.py:1601
+#: pitivi/render.py:1595 pitivi/render.py:1596 pitivi/render.py:1602
 msgid "Render complete"
 msgstr "Ukończono renderowanie"
 
-#: pitivi/render.py:1599
+#: pitivi/render.py:1600
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "Ukończono renderowanie „%s”."
@@ -1848,7 +1852,7 @@ msgstr "Zakończ tryb pełnoekranowy"
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:438
+#: pitivi/timeline/elements.py:441
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1859,12 +1863,12 @@ msgstr ""
 "Czas: %s\n"
 "Wartość: %s"
 
-#: pitivi/timeline/elements.py:626
+#: pitivi/timeline/elements.py:629
 #, python-format
 msgid "Timestamp: %s"
 msgstr "Czas: %s"
 
-#: pitivi/timeline/elements.py:1543
+#: pitivi/timeline/elements.py:1546
 msgid "Audio crossfade"
 msgstr "Przenikanie dźwięku"
 
