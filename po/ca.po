@@ -1281,7 +1281,7 @@ msgstr "Us donem la benvinguda al Pitivi!"
 
 #: pitivi/interactiveintro.py:214
 msgid "Drag files here to import them"
-msgstr "Arrossegueu els fitxers aquí per importar-los"
+msgstr "Arrossegueu els fitxers aquí per a importar-los"
 
 #: pitivi/interactiveintro.py:216
 msgid "Drag clips in the timeline to arrange them"
@@ -1383,7 +1383,7 @@ msgstr "Tot"
 #: pitivi/medialibrary.py:238
 #, python-format
 msgid "Scale assets larger than %s×%s px."
-msgstr "Escala els recursos més grans de %s×%s px"
+msgstr "Escala els recursos més grans de %s×%s px."
 
 #: pitivi/medialibrary.py:520 pitivi/medialibrary.py:1011
 msgid "Unknown"
@@ -1880,11 +1880,11 @@ msgstr "Afegeix un marcador"
 
 #: pitivi/timeline/markers.py:150
 msgid "Seek to the first marker before the playhead"
-msgstr "Vés al primer marcador abans del punt de reproducció"
+msgstr "Ves al primer marcador abans del punt de reproducció"
 
 #: pitivi/timeline/markers.py:157
 msgid "Seek to the first marker after the playhead"
-msgstr "Vés al primer marcador després del punt de reproducció"
+msgstr "Ves al primer marcador després del punt de reproducció"
 
 #: pitivi/timeline/ruler.py:233
 #, python-format
@@ -1963,11 +1963,11 @@ msgstr "Enganxa les seqüències seleccionades"
 
 #: pitivi/timeline/timeline.py:1773
 msgid "Seek to the first clip edge after the playhead"
-msgstr "Vés a la primera vora del clip després del punt de reproducció"
+msgstr "Ves a la primera vora del clip després del punt de reproducció"
 
 #: pitivi/timeline/timeline.py:1780
 msgid "Seek to the first clip edge before the playhead"
-msgstr "Vés a la primera vora del clip abans del cap de reproducció"
+msgstr "Ves a la primera vora del clip abans del cap de reproducció"
 
 #: pitivi/timeline/timeline.py:1787
 msgid "Shift selected clips one frame forward"
