@@ -35,6 +35,8 @@ from matplotlib.lines import Line2D
 
 from pitivi.configure import get_pixmap_dir
 from pitivi.effects import ALLOWED_ONLY_ONCE_EFFECTS
+from pitivi.timeline.markers import ClipMarkersBox
+from pitivi.timeline.markers import Marker
 from pitivi.timeline.previewers import AudioPreviewer
 from pitivi.timeline.previewers import ImagePreviewer
 from pitivi.timeline.previewers import TitlePreviewer
@@ -50,7 +52,7 @@ from pitivi.utils.timeline import Selected
 from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
-from pitivi.utils.ui import set_children_state_recurse
+from pitivi.utils.ui import set_children_state_except
 from pitivi.utils.ui import unset_children_state_recurse
 
 KEYFRAME_LINE_HEIGHT = 2
@@ -654,9 +656,6 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         self.__width = 0
         self.__height = 0
 
-        # Needed for effect's keyframe toggling
-        self._ges_elem.ui_element = self
-
         self.props.vexpand = True
 
         self.__previewer = self._get_previewer()
@@ -666,6 +665,9 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         self.__background = self._get_background()
         if self.__background:
             self.add(self.__background)
+
+        self.markers = ClipMarkersBox(self.app, self._ges_elem)
+        self.add(self.markers)
 
         self.keyframe_curve = None
         self.__controlled_property = None
@@ -685,22 +687,18 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         if self.__previewer:
             self.__previewer.release()
 
+        if self.markers:
+            self.markers.release()
+
     # Public API
     def set_size(self, width, height):
         width = max(0, width)
         self.set_size_request(width, height)
 
-        if self.__previewer:
-            self.__previewer.set_size_request(width, height)
-
-        if self.__background:
-            self.__background.set_size_request(width, height)
-
-        if self.keyframe_curve:
-            self.keyframe_curve.set_size_request(width, height)
-
-        self.__width = width
-        self.__height = height
+        if self.__width != width or self.__height != height:
+            self.__width = width
+            self.__height = height
+            self.update_sizes_and_positions()
 
     def show_keyframes(self, ges_elem, prop):
         self.__set_keyframes(ges_elem, prop)
@@ -771,7 +769,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         self.keyframe_curve.connect("leave", self.__curve_leave_cb)
         self.keyframe_curve.set_size_request(self.__width, self.__height)
         self.keyframe_curve.show()
-        self.__update_keyframe_curve_visibility()
+        self.__update_keyframe_curve()
 
     def __create_control_binding(self, element):
         """Creates the required ControlBinding and keyframes."""
@@ -806,23 +804,47 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             if project.pipeline.get_simple_state() != Gst.State.PLAYING:
                 self.propagate_draw(self.keyframe_curve, cr)
 
+        if self.markers and self.markers.is_drawable():
+            self.propagate_draw(self.markers, cr)
+
     # Callbacks
     def __selected_changed_cb(self, unused_selected, selected):
         if not self.keyframe_curve and self.__controlled_property and \
                 selected and len(self.timeline.selection) == 1:
             self.__create_keyframe_curve()
 
-        if self.keyframe_curve:
-            self.__update_keyframe_curve_visibility()
-
         if self.__previewer:
             self.__previewer.set_selected(selected)
 
-    def __update_keyframe_curve_visibility(self):
+        self.update_sizes_and_positions()
+
+    def update_sizes_and_positions(self):
+        markers_height = self.markers.props.height_request
+        width = self.__width
+        height = self.__height
+
+        if self.__background:
+            self.__background.set_size_request(width, height)
+
+        if self.__previewer:
+            self.__previewer.set_size_request(width, height)
+
+        if self.markers:
+            self.markers.set_size_request(width, markers_height)
+
+        # Prevent keyframe curve from overlapping onto markers.
+        if self.keyframe_curve:
+            self.keyframe_curve.set_size_request(self.__width, self.__height - markers_height)
+            self.__update_keyframe_curve()
+
+    def __update_keyframe_curve(self):
         """Updates the keyframes widget visibility by adding or removing it."""
         if self._ges_elem.selected and len(self.timeline.selection) == 1:
+            markers_height = self.markers.props.height_request
             if not self.keyframe_curve.get_parent():
-                self.add(self.keyframe_curve)
+                self.put(self.keyframe_curve, 0, markers_height)
+            else:
+                self.move(self.keyframe_curve, 0, markers_height)
         else:
             self.remove(self.keyframe_curve)
 
@@ -1277,6 +1299,15 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
                 parent_height != self._current_parent_height or \
                 layer != self._current_parent:
 
+            offset_px = self.ns_to_pixel(self.ges_clip.props.in_point)
+
+            for ges_timeline_element in self.ges_clip.get_children(False):
+                if not ges_timeline_element.ui:
+                    continue
+
+                if ges_timeline_element.ui.markers:
+                    ges_timeline_element.ui.markers.offset = offset_px
+
             layer.move(self, x, y)
             self.set_size_request(width, height)
 
@@ -1374,7 +1405,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         if (event.type == Gdk.EventType.ENTER_NOTIFY and
                 event.mode == Gdk.CrossingMode.NORMAL and
                 not self.timeline.scrubbing):
-            set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
+            set_children_state_except(self, Gtk.StateFlags.PRELIGHT, Marker)
             for handle in self.handles:
                 handle.enlarge()
         elif (event.type == Gdk.EventType.LEAVE_NOTIFY and
@@ -1439,6 +1470,17 @@ class SourceClip(Clip):
         self._add_trim_handles()
 
         self.get_style_context().add_class("Clip")
+
+    def _add_child(self, ges_timeline_element):
+        super()._add_child(ges_timeline_element)
+
+        # In some cases a GESEffect is added here,
+        # so we have to limit the markers initialization to GESSources.
+        if not isinstance(ges_timeline_element, GES.Source):
+            return
+
+        if not hasattr(ges_timeline_element, "markers_manager"):
+            ges_timeline_element.markers_manager = MarkerListManager(self.app, ges_timeline_element)
 
     def _remove_child(self, ges_timeline_element):
         if ges_timeline_element.ui:

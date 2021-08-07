@@ -45,7 +45,9 @@ from pitivi.timeline.previewers import Previewer
 from pitivi.timeline.ruler import TimelineScaleRuler
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.markers import GES_MARKERS_SNAPPABLE
 from pitivi.utils.misc import asset_get_duration
+from pitivi.utils.pipeline import PipelineError
 from pitivi.utils.timeline import EditingContext
 from pitivi.utils.timeline import SELECT
 from pitivi.utils.timeline import Selection
@@ -71,6 +73,19 @@ from pitivi.utils.widgets import ZoomBox
 # Creates new layer if a clip is held at layers separator after this time interval
 SEPARATOR_ACCEPTING_DROP_INTERVAL_MS = 1000
 
+
+GlobalSettings.add_config_option('markersSnappableByDefault',
+                                 section="user-interface",
+                                 key="markers-snappable-default",
+                                 default=False,
+                                 notify=False)
+
+if GES_MARKERS_SNAPPABLE:
+    PreferencesDialog.add_toggle_preference('markersSnappableByDefault',
+                                            section="timeline",
+                                            label=_("Markers magnetic by default"),
+                                            description=_(
+                                                "Whether markers created on new clips will be snapping targets by default."))
 
 GlobalSettings.add_config_option('edgeSnapDeadband',
                                  section="user-interface",
@@ -1909,7 +1924,26 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                _("Seek forward one second"))
 
         # Markers actions.
-        self.timeline.layout.insert_action_group("markers", self.markers.action_group)
+        self.add_marker_action = Gio.SimpleAction.new("marker-add", None)
+        self.add_marker_action.connect("activate", self._add_marker_cb)
+        navigation_group.add_action(self.add_marker_action)
+        self.app.shortcuts.add("navigation.marker-add", ["<Primary><Shift>m"],
+                               self.add_marker_action,
+                               _("Add a marker"))
+
+        self.seek_backward_marker_action = Gio.SimpleAction.new("seek-backward-marker", None)
+        self.seek_backward_marker_action.connect("activate", self._seek_backward_marker_cb)
+        navigation_group.add_action(self.seek_backward_marker_action)
+        self.app.shortcuts.add("navigation.seek-backward-marker", ["<Alt>Left"],
+                               self.seek_backward_marker_action,
+                               _("Seek to the first marker before the playhead"))
+
+        self.seek_forward_marker_action = Gio.SimpleAction.new("seek-forward-marker", None)
+        self.seek_forward_marker_action.connect("activate", self._seek_forward_marker_cb)
+        navigation_group.add_action(self.seek_forward_marker_action)
+        self.app.shortcuts.add("navigation.seek-forward-marker", ["<Alt>Right"],
+                               self.seek_forward_marker_action,
+                               _("Seek to the first marker after the playhead"))
 
         # Viewer actions.
         self.timeline.layout.insert_action_group("viewer", self.app.gui.editor.viewer.action_group)
@@ -2320,3 +2354,72 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         win.set_transient_for(self.app.gui)
 
         win.show_all()
+
+    def __get_current_marker_boxes(self):
+        # Return a list of the selected elements' marker boxes
+        sources = self.timeline.selection.get_selected_track_elements()
+        if sources:
+            return [source.ui.markers for source in sources]
+
+        # Else focus on timeline markers
+        return [self.markers]
+
+    def __find_closest_marker(self, containers, before=None, after=None):
+        if not containers:
+            return None
+
+        position = before if before else after
+        timestamps = []
+        for container in containers:
+            timestamp = container.first_marker(before, after)
+            if timestamp is not None:
+                timestamps.append(timestamp)
+
+        if not timestamps:
+            return None
+
+        closest_timestamp = min(timestamps, key=lambda timestamp: abs(position - timestamp))
+        return closest_timestamp
+
+    def _add_marker_cb(self, action, param):
+        try:
+            position = self.app.project_manager.current_project.pipeline.get_position(fails=False)
+        except PipelineError:
+            self.warning("Could not get pipeline position")
+            return
+
+        containers = self.__get_current_marker_boxes()
+
+        with self.app.action_log.started("Added marker", toplevel=True):
+            for marker_container in containers:
+                marker_container.add_at_timeline_time(position)
+
+    def _seek_backward_marker_cb(self, action, param):
+        try:
+            timeline_position = self.app.project_manager.current_project.pipeline.get_position(fails=False)
+        except PipelineError:
+            self.warning("Could not get pipeline position")
+            return
+
+        containers = self.__get_current_marker_boxes()
+        position = self.__find_closest_marker(containers, before=timeline_position)
+        if position is None:
+            return
+
+        self.app.project_manager.current_project.pipeline.simple_seek(position)
+        self.app.gui.editor.timeline_ui.timeline.scroll_to_playhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+
+    def _seek_forward_marker_cb(self, action, param):
+        try:
+            timeline_position = self.app.project_manager.current_project.pipeline.get_position(fails=False)
+        except PipelineError:
+            self.warning("Could not get pipeline position")
+            return
+
+        containers = self.__get_current_marker_boxes()
+        position = self.__find_closest_marker(containers, after=timeline_position)
+        if position is None:
+            return
+
+        self.app.project_manager.current_project.pipeline.simple_seek(position)
+        self.app.gui.editor.timeline_ui.timeline.scroll_to_playhead(align=Gtk.Align.CENTER, when_not_in_view=True)

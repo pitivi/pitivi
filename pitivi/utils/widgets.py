@@ -1019,11 +1019,11 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             return
 
         if active:
-            track_element.ui_element.show_keyframes(self.element, prop)
+            track_element.ui.show_keyframes(self.element, prop)
             binding = self.element.get_control_binding(prop.name)
             self.__bindings_by_keyframe_button[keyframe_button] = binding
         else:
-            track_element.ui_element.show_default_keyframes()
+            track_element.ui.show_default_keyframes()
 
     def __reset_to_default_clicked_cb(self, unused_button, widget,
                                       keyframe_button=None):
@@ -1037,7 +1037,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                     track_element = self.__get_track_element_of_same_type(
                         self.element)
                     if track_element:
-                        track_element.ui_element.show_default_keyframes()
+                        track_element.ui.show_default_keyframes()
                 self.__set_keyframe_active(keyframe_button, False)
                 self.__display_controlled(keyframe_button, False)
 
@@ -1046,8 +1046,8 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
     def __get_track_element_of_same_type(self, effect):
         track_type = effect.get_track_type()
         for track_element in effect.get_parent().get_children(False):
-            if hasattr(track_element, "ui_element") and \
-                    track_element.get_track_type() == track_type:
+            if hasattr(track_element, "ui") and \
+                    track_element.get_track_type() == track_type and track_element != effect:
                 return track_element
         self.warning("Failed to find track element of type %s", track_type)
         return None

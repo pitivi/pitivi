@@ -19,6 +19,7 @@
 from unittest import mock
 
 from gi.repository import Gdk
+from gi.repository import GES
 from gi.repository import Gtk
 
 from pitivi.utils.timeline import Zoomable
@@ -173,14 +174,128 @@ class TestMarkers(common.TestCase):
         marker_box.markers_container.add(12)
         self.assert_markers(markers, [(10, None), (12, None)])
 
-        self.check_seek(marker_box.seek_forward_marker_action, 9, 10)
-        self.check_seek(marker_box.seek_forward_marker_action, 10, 12)
-        self.check_seek(marker_box.seek_forward_marker_action, 11, 12)
-        self.check_seek(marker_box.seek_forward_marker_action, 12, None)
-        self.check_seek(marker_box.seek_forward_marker_action, 13, None)
+        self.check_seek(self.timeline_container.seek_forward_marker_action, 9, 10)
+        self.check_seek(self.timeline_container.seek_forward_marker_action, 10, 12)
+        self.check_seek(self.timeline_container.seek_forward_marker_action, 11, 12)
+        self.check_seek(self.timeline_container.seek_forward_marker_action, 12, None)
+        self.check_seek(self.timeline_container.seek_forward_marker_action, 13, None)
 
-        self.check_seek(marker_box.seek_backward_marker_action, 9, None)
-        self.check_seek(marker_box.seek_backward_marker_action, 10, None)
-        self.check_seek(marker_box.seek_backward_marker_action, 11, 10)
-        self.check_seek(marker_box.seek_backward_marker_action, 12, 10)
-        self.check_seek(marker_box.seek_backward_marker_action, 13, 12)
+        self.check_seek(self.timeline_container.seek_backward_marker_action, 9, None)
+        self.check_seek(self.timeline_container.seek_backward_marker_action, 10, None)
+        self.check_seek(self.timeline_container.seek_backward_marker_action, 11, 10)
+        self.check_seek(self.timeline_container.seek_backward_marker_action, 12, 10)
+        self.check_seek(self.timeline_container.seek_backward_marker_action, 13, 12)
+
+    @common.setup_timeline
+    def test_seeking_with_clips(self):
+        """Checks the seeking actions with clip markers present."""
+        self.timeline.append_layer()
+        timeline = self.timeline_container.timeline
+        clip1 = self.add_clip(self.timeline.layers[0], start=0, duration=30)
+        clip2 = self.add_clip(self.timeline.layers[1], start=10, duration=20)
+
+        markers1 = next(common.get_clip_children(
+            clip1, GES.TrackType.VIDEO)).ui.markers.markers_container
+        markers2 = next(common.get_clip_children(
+            clip2, GES.TrackType.VIDEO)).ui.markers.markers_container
+
+        markers1.add(5)
+        markers1.add(25)
+        markers2.add(5)
+        markers2.add(15)
+
+        forward_seek = self.timeline_container.seek_forward_marker_action
+        backward_seek = self.timeline_container.seek_backward_marker_action
+
+        timeline.selection.select([clip1])
+        self.check_seek(forward_seek, 0, 5)
+        self.check_seek(forward_seek, 5, 25)
+        self.check_seek(forward_seek, 25, None)
+
+        timeline.selection.select([clip2])
+        self.check_seek(forward_seek, 25, None)
+        self.check_seek(backward_seek, 25, 15)
+        self.check_seek(backward_seek, 15, None)
+
+        timeline.selection.select([])
+        self.check_seek(forward_seek, 15, None)
+        self.check_seek(backward_seek, 15, None)
+
+        # When multiple clips are selected, take all their markers into consideration.
+        timeline.selection.select([clip1, clip2])
+        self.check_seek(forward_seek, 15, 25)
+        self.check_seek(backward_seek, 25, 15)
+        self.check_seek(backward_seek, 15, 5)
+
+        # Trim first 10 seconds of clip2, 'cutting off' its first marker.
+        clip2.trim(20)
+        self.check_seek(forward_seek, 5, 25)
+
+        # Add a marker "outside" clip1 and check if it's correctly ignored.
+        markers1.add(50)
+        self.check_seek(forward_seek, 25, None)
+
+        # Add a timeline marker which should be ignored while clips are selected.
+        timeline_markers = self.timeline_container.markers.markers_container
+        timeline_markers.add(28)
+        self.check_seek(forward_seek, 25, None)
+
+        # Unselect clips and seek again.
+        timeline.selection.select([])
+        self.check_seek(forward_seek, 25, 28)
+
+    def perform_at_timeline_position(self, action, position):
+        pipeline = self.project.pipeline
+        with mock.patch.object(pipeline, "get_position") as get_position:
+            get_position.return_value = position
+            action.activate()
+
+    @common.setup_timeline
+    def test_add_marker_action(self):
+        """Checks marker adding shortcut behaviour."""
+        self.timeline.append_layer()
+        timeline = self.timeline_container.timeline
+        add_action = self.timeline_container.add_marker_action
+        clip1 = self.add_clip(self.timeline.layers[0], start=0, duration=20)
+        clip2 = self.add_clip(self.timeline.layers[1], start=10, duration=20)
+
+        timeline_markers = self.timeline_container.markers.markers_container
+        markers1 = next(common.get_clip_children(
+            clip1, GES.TrackType.VIDEO)).ui.markers.markers_container
+        markers2 = next(common.get_clip_children(
+            clip2, GES.TrackType.VIDEO)).ui.markers.markers_container
+
+        # No clips selected - should add a marker to the timeline.
+        self.perform_at_timeline_position(add_action, 15)
+        self.assert_markers(timeline_markers, [(15, None)])
+
+        # Multiple clips selected - add marker to all of them.
+        timeline.selection.select([clip1, clip2])
+        self.perform_at_timeline_position(add_action, 15)
+        self.assert_markers(markers1, [(15, None)])
+        self.assert_markers(markers2, [(5, None)])
+
+        # Adding a marker 'outside' of one clip should fail, but still add to other selected clips.
+        self.perform_at_timeline_position(add_action, 5)
+        self.assert_markers(markers1, [(5, None), (15, None)])
+        self.assert_markers(markers2, [(5, None)])
+
+        self.perform_at_timeline_position(add_action, 25)
+        self.assert_markers(markers1, [(5, None), (15, None)])
+        self.assert_markers(markers2, [(5, None), (15, None)])
+
+        # Make sure nothing was added to the timeline.
+        self.assert_markers(timeline_markers, [(15, None)])
+
+        # One clip selected - make sure no other clips are affected.
+        timeline.selection.select([clip1])
+        self.perform_at_timeline_position(add_action, 10)
+        self.assert_markers(markers1, [(5, None), (10, None), (15, None)])
+        self.assert_markers(markers2, [(5, None), (15, None)])
+
+        timeline.selection.select([clip2])
+        self.perform_at_timeline_position(add_action, 20)
+        self.assert_markers(markers1, [(5, None), (10, None), (15, None)])
+        self.assert_markers(markers2, [(5, None), (10, None), (15, None)])
+
+        self.assert_markers(timeline_markers, [(15, None)])

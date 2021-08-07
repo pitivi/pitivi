@@ -294,10 +294,40 @@ EDITOR_PERSPECTIVE_CSS = """
         background-image: url('%(marker_hovered)s');
     }
 
+    .ClipMarkersBox {
+        transition: 0.15s ease-out;
+        opacity: 0.7;
+    }
+
+    .ClipMarkersBox:hover {
+        background-color: rgba(0, 0, 0, 0.15);
+        opacity: 0.85;
+    }
+
+    .ClipMarkersBox:selected {
+        background-color: rgb(0, 0, 0);
+        opacity: 1;
+    }
+
+    .ClipMarker {
+        background-image: url('%(clip_marker_unselected)s');
+    }
+
+    .ClipMarker:hover {
+        background-image: url('%(clip_marker_hovered)s');
+    }
+
+    .ClipMarker:selected {
+        background-image: url('%(clip_marker_selected)s');
+    }
+
 """ % ({
     'clip_border_width': CLIP_BORDER_WIDTH,
     'marker_hovered': os.path.join(get_pixmap_dir(), "marker-hover.png"),
     'marker_unselected': os.path.join(get_pixmap_dir(), "marker-unselect.png"),
+    'clip_marker_unselected': os.path.join(get_pixmap_dir(), "clip-marker.png"),
+    'clip_marker_hovered': os.path.join(get_pixmap_dir(), "clip-marker-hover.png"),
+    'clip_marker_selected': os.path.join(get_pixmap_dir(), "clip-marker-select.png"),
     'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png"),
     'trimbar_normal': os.path.join(get_pixmap_dir(), "trimbar-normal.png")})
 
@@ -840,6 +870,7 @@ def alter_style_class(style_class, target_widget, css_style):
 
 
 def set_children_state_recurse(widget, state):
+    """Sets the provided state on all children of the given widget."""
     widget.set_state_flags(state, False)
     for child in widget.get_children():
         child.set_state_flags(state, False)
@@ -847,7 +878,20 @@ def set_children_state_recurse(widget, state):
             set_children_state_recurse(child, state)
 
 
+def set_children_state_except(widget, state, *ignored_types):
+    """Sets the provided state on all children of the widget, except those of given types."""
+    widget.set_state_flags(state, False)
+    for child in widget.get_children():
+        if any(isinstance(child, klass) for klass in ignored_types):
+            continue
+
+        child.set_state_flags(state, False)
+        if isinstance(child, Gtk.Container):
+            set_children_state_except(child, state, ignored_types)
+
+
 def unset_children_state_recurse(widget, state):
+    """Unsets the provided state on all children of the given widget."""
     widget.unset_state_flags(state)
     for child in widget.get_children():
         child.unset_state_flags(state)

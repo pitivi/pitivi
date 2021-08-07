@@ -15,26 +15,24 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Markers display and management."""
-from gettext import gettext as _
 from typing import Optional
 
 from gi.repository import Gdk
-from gi.repository import Gio
-from gi.repository import GLib
 from gi.repository import Gtk
 
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.pipeline import PipelineError
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import SPACING
 
-MARKER_WIDTH = 10
+TIMELINE_MARKER_SIZE = 10
+CLIP_MARKER_HEIGHT = 12
+CLIP_MARKER_WIDTH = 10
 
 
 class Marker(Gtk.EventBox, Loggable):
     """Widget representing a marker."""
 
-    def __init__(self, ges_marker):
+    def __init__(self, ges_marker, class_name, width, height):
         Gtk.EventBox.__init__(self)
         Loggable.__init__(self)
 
@@ -44,8 +42,10 @@ class Marker(Gtk.EventBox, Loggable):
         self.ges_marker = ges_marker
         self.ges_marker.ui = self
         self.position_ns = self.ges_marker.props.position
+        self.width = width
+        self.height = height
 
-        self.get_style_context().add_class("Marker")
+        self.get_style_context().add_class(class_name)
         self.ges_marker.connect("notify-meta", self._notify_meta_cb)
 
         self._selected = False
@@ -54,10 +54,10 @@ class Marker(Gtk.EventBox, Loggable):
         return Gtk.SizeRequestMode.CONSTANT_SIZE
 
     def do_get_preferred_height(self):
-        return MARKER_WIDTH, MARKER_WIDTH
+        return self.height, self.height
 
     def do_get_preferred_width(self):
-        return MARKER_WIDTH, MARKER_WIDTH
+        return self.width, self.width
 
     def do_enter_notify_event(self, unused_event):
         self.set_state_flags(Gtk.StateFlags.PRELIGHT, clear=False)
@@ -117,8 +117,8 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         self.props.hexpand = True
         self.props.valign = Gtk.Align.START
 
-        self.offset = 0
-        self.props.height_request = MARKER_WIDTH
+        self._offset = 0
+        self.props.height_request = TIMELINE_MARKER_SIZE
 
         self.__markers_container = None
         self.marker_moving = None
@@ -128,54 +128,15 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
                         Gdk.EventMask.BUTTON_PRESS_MASK |
                         Gdk.EventMask.BUTTON_RELEASE_MASK)
 
-        self._create_actions()
-
-    def _create_actions(self):
-        self.action_group = Gio.SimpleActionGroup()
-        self.insert_action_group("markers", self.action_group)
-        self.app.shortcuts.register_group("markers", _("Markers"), position=70)
-
-        self.add_marker_action = Gio.SimpleAction.new("marker-add", GLib.VariantType("mx"))
-        self.add_marker_action.connect("activate", self._add_marker_cb)
-        self.action_group.add_action(self.add_marker_action)
-        self.app.shortcuts.add("markers.marker-add(@mx nothing)", ["<Primary><Shift>m"],
-                               self.add_marker_action,
-                               _("Add a marker"))
-
-        self.seek_backward_marker_action = Gio.SimpleAction.new("seek-backward-marker", None)
-        self.seek_backward_marker_action.connect("activate", self._seek_backward_marker_cb)
-        self.action_group.add_action(self.seek_backward_marker_action)
-        self.app.shortcuts.add("markers.seek-backward-marker", ["<Alt>Left"],
-                               self.seek_backward_marker_action,
-                               _("Seek to the first marker before the playhead"))
-
-        self.seek_forward_marker_action = Gio.SimpleAction.new("seek-forward-marker", None)
-        self.seek_forward_marker_action.connect("activate", self._seek_forward_marker_cb)
-        self.action_group.add_action(self.seek_forward_marker_action)
-        self.app.shortcuts.add("markers.seek-forward-marker", ["<Alt>Right"],
-                               self.seek_forward_marker_action,
-                               _("Seek to the first marker after the playhead"))
-
-    def _seek_backward_marker_cb(self, action, param):
-        current_position = self.app.project_manager.current_project.pipeline.get_position(fails=False)
-        position = self.first_marker(before=current_position)
-        if position is None:
-            return
-
-        self.app.project_manager.current_project.pipeline.simple_seek(position)
-        self.app.gui.editor.timeline_ui.timeline.scroll_to_playhead(align=Gtk.Align.CENTER, when_not_in_view=True)
-
-    def _seek_forward_marker_cb(self, action, param):
-        current_position = self.app.project_manager.current_project.pipeline.get_position(fails=False)
-        position = self.first_marker(after=current_position)
-        if position is None:
-            return
-
-        self.app.project_manager.current_project.pipeline.simple_seek(position)
-        self.app.gui.editor.timeline_ui.timeline.scroll_to_playhead(align=Gtk.Align.CENTER, when_not_in_view=True)
-
     def first_marker(self, before: Optional[int] = None, after: Optional[int] = None) -> Optional[int]:
+        """Returns position of the closest marker found before or after the given timestamp.
+
+        None is returned if no such marker is found.
+        """
         assert (after is not None) != (before is not None)
+
+        if not self.markers_container:
+            return None
 
         if after is not None:
             start = after + 1
@@ -188,7 +149,7 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
             return None
 
         markers_positions = list([ges_marker.props.position
-                                  for ges_marker in self.__markers_container.get_markers()
+                                  for ges_marker in self.markers_container.get_markers()
                                   if start <= ges_marker.props.position < end])
         if not markers_positions:
             return None
@@ -198,19 +159,12 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         else:
             return max(markers_positions)
 
-    def _add_marker_cb(self, action, param):
-        maybe = param.get_maybe()
-        if maybe:
-            position = maybe.get_int64()
-        else:
-            try:
-                position = self.app.project_manager.current_project.pipeline.get_position(fails=False)
-            except PipelineError:
-                self.warning("Could not get pipeline position")
-                return
+    def add_at_timeline_time(self, position):
+        """Adds a marker at the given timeline position."""
+        if not self.markers_container:
+            return
 
-        with self.app.action_log.started("Added marker", toplevel=True):
-            self.__markers_container.add(position)
+        self.markers_container.add(position)
 
     @property
     def markers_container(self):
@@ -223,6 +177,8 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
             for marker in self.layout.get_children():
                 self.layout.remove(marker)
             self.__markers_container.disconnect_by_func(self._marker_added_cb)
+            self.__markers_container.disconnect_by_func(self._marker_removed_cb)
+            self.__markers_container.disconnect_by_func(self._marker_moved_cb)
 
         self.__markers_container = ges_markers_container
         if self.__markers_container:
@@ -230,6 +186,24 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
             self.__markers_container.connect("marker-added", self._marker_added_cb)
             self.__markers_container.connect("marker-removed", self._marker_removed_cb)
             self.__markers_container.connect("marker-moved", self._marker_moved_cb)
+
+    def release(self):
+        if self.__markers_container:
+            self.__markers_container.disconnect_by_func(self._marker_added_cb)
+            self.__markers_container.disconnect_by_func(self._marker_removed_cb)
+            self.__markers_container.disconnect_by_func(self._marker_moved_cb)
+
+    @property
+    def offset(self):
+        return self._offset
+
+    @offset.setter
+    def offset(self, value):
+        if self.offset == value:
+            return
+
+        self._offset = value
+        self._update_position()
 
     def __create_marker_widgets(self):
         markers = self.__markers_container.get_markers()
@@ -241,17 +215,19 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
     def _hadj_value_changed_cb(self, hadj):
         """Handles the adjustment value change."""
         self.offset = hadj.get_value()
-        self._update_position()
 
     def zoom_changed(self):
         self._update_position()
 
     def _update_position(self):
         for marker in self.layout.get_children():
-            position = self.ns_to_pixel(marker.position) - self.offset - MARKER_WIDTH / 2
+            position = self.ns_to_pixel(marker.position) - self.offset - marker.width / 2
             self.layout.move(marker, position, 0)
 
     def do_button_press_event(self, event):
+        if not self.markers_container:
+            return False
+
         event_widget = Gtk.get_event_widget(event)
         button = event.button
         if button == Gdk.BUTTON_PRIMARY:
@@ -269,11 +245,15 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
 
             else:
                 position = self.pixel_to_ns(event.x + self.offset)
-                param = GLib.Variant.new_maybe(GLib.VariantType("x"), GLib.Variant.new_int64(position))
-                self.add_marker_action.activate(param)
-                self.marker_new.selected = True
+                with self.app.action_log.started("Added marker", toplevel=True):
+                    self.__markers_container.add(position)
+                    self.marker_new.selected = True
+        return True
 
     def do_button_release_event(self, event):
+        if not self.markers_container:
+            return False
+
         button = event.button
         event_widget = Gtk.get_event_widget(event)
         if button == Gdk.BUTTON_PRIMARY:
@@ -281,28 +261,42 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
                 self.marker_moving.selected = False
                 self.marker_moving = None
                 self.app.action_log.commit("Move marker")
+                return True
             elif self.marker_new:
                 self.marker_new.selected = False
                 self.marker_new = None
+                return True
 
         elif button == Gdk.BUTTON_SECONDARY and isinstance(event_widget, Marker):
             with self.app.action_log.started("Removed marker", toplevel=True):
                 self.__markers_container.remove(event_widget.ges_marker)
+                return True
+
+        return False
 
     def do_motion_notify_event(self, event):
+        if not self.markers_container:
+            return False
+
         event_widget = Gtk.get_event_widget(event)
         if event_widget is self.marker_moving:
             event_x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
             event_x = max(0, event_x)
             position_ns = self.pixel_to_ns(event_x + self.offset)
             self.__markers_container.move(self.marker_moving.ges_marker, position_ns)
+            return True
+
+        return False
 
     def _marker_added_cb(self, unused_markers, position, ges_marker):
         self._add_marker(position, ges_marker)
 
+    def _create_marker(self, ges_marker):
+        return Marker(ges_marker, "Marker", TIMELINE_MARKER_SIZE, TIMELINE_MARKER_SIZE)
+
     def _add_marker(self, position, ges_marker):
-        marker = Marker(ges_marker)
-        x = self.ns_to_pixel(position) - self.offset - MARKER_WIDTH / 2
+        marker = self._create_marker(ges_marker)
+        x = self.ns_to_pixel(position) - self.offset - marker.width / 2
         self.layout.put(marker, x, 0)
         marker.show()
         self.marker_new = marker
@@ -322,7 +316,7 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         self._move_marker(position, ges_marker)
 
     def _move_marker(self, position, ges_marker):
-        x = self.ns_to_pixel(position) - self.offset - MARKER_WIDTH / 2
+        x = self.ns_to_pixel(position) - self.offset - ges_marker.ui.width / 2
         self.layout.move(ges_marker.ui, x, 0)
 
 
@@ -359,3 +353,88 @@ class MarkerPopover(Gtk.Popover):
             with self.app.action_log.started("marker comment", toplevel=True):
                 self.marker.comment = buffer.props.text
         self.marker.selected = False
+
+
+class ClipMarkersBox(MarkersBox):
+    def __init__(self, app, ges_elem, hadj=None):
+        super().__init__(app, hadj=hadj)
+        self.ges_elem = ges_elem
+        # ges_elem is a GESSource, but we need a GESClip to convert timestamps
+        self.ges_clip = self.ges_elem.get_parent()
+        # Initially hide the box - only show once a marker container is set
+        self.props.height_request = 0
+        self.get_style_context().add_class("ClipMarkersBox")
+
+    def _create_marker(self, ges_marker):
+        return Marker(ges_marker, "ClipMarker", CLIP_MARKER_WIDTH, CLIP_MARKER_HEIGHT)
+
+    def __internal_to_timeline(self, timestamp):
+        return self.ges_clip.get_timeline_time_from_internal_time(self.ges_elem, timestamp)
+
+    def __timeline_to_internal(self, timestamp):
+        return self.ges_clip.get_internal_time_from_timeline_time(self.ges_elem, timestamp)
+
+    def first_marker(self, before: Optional[int] = None, after: Optional[int] = None) -> Optional[int]:
+        assert (after is not None) != (before is not None)
+
+        if not self.markers_container:
+            return None
+
+        # Limit search to visible markers
+        clip_start = self.ges_clip.props.start
+        clip_end = self.ges_clip.props.start + self.ges_clip.props.duration
+
+        if after is not None:
+            start = max(after + 1, clip_start)
+            end = clip_end
+        else:
+            start = clip_start
+            end = min(before, clip_end)
+
+        if start >= end:
+            return None
+
+        markers_positions = [self.__internal_to_timeline(marker.props.position)
+                             for marker in self.markers_container.get_markers()
+                             if start <= self.__internal_to_timeline(marker.props.position) < end]
+        if not markers_positions:
+            return None
+
+        if after is not None:
+            return min(markers_positions)
+        else:
+            return max(markers_positions)
+
+    def add_at_timeline_time(self, position):
+        if not self.markers_container:
+            return
+
+        start = self.ges_clip.props.start
+        inpoint = self.ges_clip.props.in_point
+        duration = self.ges_clip.props.duration
+
+        # Prevent timestamp conversion failing due to negative result.
+        if position < start:
+            return
+
+        internal_end = self.__timeline_to_internal(start + duration)
+        timestamp = self.__timeline_to_internal(position)
+
+        # Check if marker would land in the 'visible' part of the clip.
+        if not inpoint <= timestamp <= internal_end:
+            return
+
+        self.markers_container.add(timestamp)
+
+    @MarkersBox.markers_container.setter
+    def markers_container(self, ges_markers_container):
+        MarkersBox.markers_container.fset(self, ges_markers_container)
+
+        # Hide the box when no list is selected.
+        height = CLIP_MARKER_HEIGHT if ges_markers_container else 0
+        self.props.height_request = height
+        # Let the parent TimelineElement know to update sizes accordingly.
+        parent_el = self.get_parent()
+        if parent_el is not None:
+            parent_el.update_sizes_and_positions()
+            parent_el.queue_draw()

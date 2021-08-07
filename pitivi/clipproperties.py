@@ -1036,12 +1036,12 @@ class TransformationProperties(Gtk.Expander, Loggable):
             else:
                 self._activate_keyframes_btn.set_tooltip_text(
                     _("Activate keyframes"))
-            self.source.ui_element.show_default_keyframes()
+            self.source.ui.show_default_keyframes()
         else:
             self._prev_keyframe_btn.set_sensitive(True)
             self._next_keyframe_btn.set_sensitive(True)
             self._activate_keyframes_btn.set_tooltip_text(_("Hide keyframes"))
-            self.source.ui_element.show_multiple_keyframes(
+            self.source.ui.show_multiple_keyframes(
                 list(self.__control_bindings.values()))
 
     def __update_control_bindings(self):
