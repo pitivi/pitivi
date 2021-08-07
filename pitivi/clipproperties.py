@@ -45,6 +45,7 @@ from pitivi.effects import HIDDEN_EFFECTS
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.custom_effect_widgets import setup_custom_effect_widgets
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.markers import GES_MARKERS_SNAPPABLE
 from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.pipeline import PipelineError
 from pitivi.utils.timeline import SELECT
@@ -124,6 +125,10 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.effect_expander.set_vexpand(False)
         vbox.pack_start(self.effect_expander, False, False, 0)
 
+        self.marker_expander = MarkerProperties(app)
+        self.marker_expander.set_vexpand(False)
+        vbox.pack_start(self.marker_expander, False, False, 0)
+
         self.helper_box = self.create_helper_box()
         self.clips_box.pack_start(self.helper_box, False, False, 0)
 
@@ -134,6 +139,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.title_expander.set_source(None)
         self.color_expander.set_source(None)
         self.effect_expander.set_clip(None)
+        self.marker_expander.set_clip(None)
 
         self._project = None
         self._selection = None
@@ -233,6 +239,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.title_expander.set_source(title_source)
         self.color_expander.set_source(color_clip_source)
         self.effect_expander.set_clip(ges_clip)
+        self.marker_expander.set_clip(ges_clip)
 
         self.app.gui.editor.viewer.overlay_stack.select(video_source)
 
@@ -552,10 +559,10 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def __init__(self, app):
         Gtk.Expander.__init__(self)
+        Loggable.__init__(self)
 
         self.set_expanded(True)
         self.set_label(_("Effects"))
-        Loggable.__init__(self)
 
         self.app = app
         self.clip = None
@@ -1264,3 +1271,137 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self.source.connect("control-binding-removed", self._control_bindings_changed)
 
         self.set_visible(bool(self.source))
+
+
+class MarkerProperties(Gtk.Expander, Loggable):
+    """Widget for managing the marker lists of a clip.
+
+    Attributes:
+        app (Pitivi): The app.
+        clip (GES.Clip): The clip being configured.
+    """
+
+    TRACK_TYPES = {
+        GES.TrackType.VIDEO: _("Video"),
+        GES.TrackType.AUDIO: _("Audio"),
+        GES.TrackType.TEXT: _("Text"),
+        GES.TrackType.CUSTOM: _("Custom"),
+    }
+
+    def __init__(self, app):
+        Gtk.Expander.__init__(self)
+        Loggable.__init__(self)
+
+        self.set_expanded(True)
+        self.set_label(_("Clip markers"))
+
+        self.app = app
+        self.clip = None
+
+        self.expander_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.add(self.expander_box)
+
+    def set_clip(self, clip):
+        if self.clip:
+            for child in self.clip.get_children(False):
+                if not isinstance(child, GES.Source):
+                    continue
+
+                disconnect_all_by_func(child.markers_manager, self._lists_modified_cb)
+                disconnect_all_by_func(child.markers_manager, self._current_list_changed_cb)
+
+        for child in self.expander_box.get_children():
+            self.expander_box.remove(child)
+
+        self.clip = clip
+        if not self.clip or not isinstance(self.clip, GES.SourceClip):
+            self.hide()
+            return
+
+        self.show()
+
+        for child in self.clip.get_children(False):
+            # Ignore non-source children, e.g. effects
+            if not isinstance(child, GES.Source):
+                continue
+
+            manager = child.markers_manager
+
+            hbox = Gtk.Box(spacing=SPACING)
+            hbox.set_border_width(SPACING)
+
+            child_type = child.get_track_type()
+            name = MarkerProperties.TRACK_TYPES[child_type]
+            label = Gtk.Label(label=name)
+            hbox.pack_start(label, False, False, 0)
+            label.show()
+
+            list_store = Gtk.ListStore(str, str)
+            list_combo = Gtk.ComboBox.new_with_model(list_store)
+
+            renderer_text = Gtk.CellRendererText()
+            list_combo.pack_start(renderer_text, True)
+            list_combo.add_attribute(renderer_text, "text", 1)
+            list_combo.set_id_column(0)
+            hbox.pack_start(list_combo, True, True, 0)
+            list_combo.show()
+
+            snap_toggle = Gtk.CheckButton.new_with_label(_("Magnetic"))
+            hbox.pack_start(snap_toggle, False, False, 0)
+            if GES_MARKERS_SNAPPABLE:
+                snap_toggle.show()
+
+            list_combo.connect("changed", self._combo_changed_cb, child, snap_toggle)
+            snap_toggle.connect("toggled", self._snappable_toggled_cb, manager)
+
+            self._populate_list_combo(manager, list_combo)
+            manager.connect("lists-modified", self._lists_modified_cb, list_combo)
+            manager.connect("current-list-changed", self._current_list_changed_cb, list_combo)
+
+            hbox.show()
+
+            # Display audio marker settings below the video ones,
+            # matching how they're shown on the timeline.
+            if child_type == GES.TrackType.AUDIO:
+                self.expander_box.pack_end(hbox, False, False, 0)
+            else:
+                self.expander_box.pack_start(hbox, False, False, 0)
+
+        self.expander_box.show()
+
+    def _current_list_changed_cb(self, manager, list_key, list_combo):
+        list_combo.set_active_id(list_key)
+
+    def _lists_modified_cb(self, manager, list_combo):
+        self._populate_list_combo(manager, list_combo)
+
+    def _populate_list_combo(self, manager, list_combo):
+        lists = manager.get_all_keys_with_names()
+        list_store = list_combo.get_model()
+
+        list_store.clear()
+        list_store.append(["", _("No markers")])
+        for key, name in lists:
+            list_store.append([key, name])
+
+        list_key = manager.current_list_key
+        list_combo.set_active_id(list_key)
+
+    def _combo_changed_cb(self, combo, ges_source, snap_toggle):
+        tree_iter = combo.get_active_iter()
+        if tree_iter is None:
+            return
+
+        model = combo.get_model()
+        list_key = model[tree_iter][0]
+
+        manager = ges_source.markers_manager
+        manager.current_list_key = list_key
+
+        snap_toggle.set_active(manager.snappable)
+        snap_toggle_interactable = bool(list_key != "")
+        snap_toggle.set_sensitive(snap_toggle_interactable)
+
+    def _snappable_toggled_cb(self, button, manager):
+        active = button.get_active()
+        manager.snappable = active
