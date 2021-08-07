@@ -139,7 +139,7 @@ class TimelineElementObserver(Loggable):
         self.action_log.push(action)
 
 
-class TrackElementObserver(TimelineElementObserver):
+class TrackElementObserver(TimelineElementObserver, MetaContainerObserver):
     """Monitors the props of a track element.
 
     Reports UndoableActions.
@@ -150,6 +150,7 @@ class TrackElementObserver(TimelineElementObserver):
 
     def __init__(self, ges_track_element, action_log):
         TimelineElementObserver.__init__(self, ges_track_element, action_log)
+        MetaContainerObserver.__init__(self, ges_track_element, action_log)
         if isinstance(ges_track_element, GES.BaseEffect):
             property_names = ("active", "priority",)
         else:
@@ -157,6 +158,7 @@ class TrackElementObserver(TimelineElementObserver):
         self.gobject_observer = GObjectObserver(ges_track_element, property_names, action_log)
 
     def release(self):
+        MetaContainerObserver.release(self)
         TimelineElementObserver.release(self)
         self.gobject_observer.release()
 
@@ -738,7 +740,7 @@ class LayerObserver(MetaContainerObserver, Loggable):
                               self._control_binding_added_cb)
         track_element.connect("control-binding-removed",
                               self._control_binding_removed_cb)
-        if isinstance(track_element, (GES.BaseEffect, GES.VideoSource)):
+        if isinstance(track_element, (GES.BaseEffect, GES.VideoSource, GES.AudioSource)):
             observer = TrackElementObserver(track_element, self.action_log)
             self.track_element_observers[track_element] = observer
 

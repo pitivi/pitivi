@@ -342,7 +342,7 @@ class TestLayerObserver(common.TestCase):
             self.layer.add_clip(clip1)
 
         stack = self.action_log.undo_stacks[0]
-        self.assertEqual(len(stack.done_actions), 7, stack.done_actions)
+        self.assertEqual(len(stack.done_actions), 9, stack.done_actions)
         self.assertTrue(isinstance(stack.done_actions[0], ClipAdded))
         self.assertTrue(clip1 in self.get_timeline_clips())
 
