@@ -314,6 +314,7 @@ def setup_clipproperties(func):
         self.transformation_box._new_project_loaded_cb(None, self.project)
 
         self.speed_box = self.clipproperties.speed_expander
+        self.markers_box = self.clipproperties.marker_expander
 
         func(self)
 

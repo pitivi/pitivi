@@ -43,6 +43,7 @@ from pitivi.timeline.previewers import TitlePreviewer
 from pitivi.timeline.previewers import VideoPreviewer
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.markers import MarkerListManager
 from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.misc import filename_from_uri
 from pitivi.utils.pipeline import PipelineError
@@ -667,6 +668,8 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             self.add(self.__background)
 
         self.markers = ClipMarkersBox(self.app, self._ges_elem)
+        self._ges_elem.markers_manager.set_markers_box(self.markers)
+
         self.add(self.markers)
 
         self.keyframe_curve = None
@@ -688,6 +691,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             self.__previewer.release()
 
         if self.markers:
+            self._ges_elem.markers_manager.set_markers_box(None)
             self.markers.release()
 
     # Public API
@@ -1480,7 +1484,7 @@ class SourceClip(Clip):
             return
 
         if not hasattr(ges_timeline_element, "markers_manager"):
-            ges_timeline_element.markers_manager = MarkerListManager(self.app, ges_timeline_element)
+            ges_timeline_element.markers_manager = MarkerListManager(self.app.settings, ges_timeline_element)
 
     def _remove_child(self, ges_timeline_element):
         if ges_timeline_element.ui:
