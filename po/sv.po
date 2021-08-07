@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-07-02 07:58+0000\n"
-"PO-Revision-Date: 2021-07-02 11:46+0200\n"
+"POT-Creation-Date: 2021-07-05 23:44+0000\n"
+"PO-Revision-Date: 2021-07-06 07:21+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 3.0\n"
 "X-Project-Style: gnome\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
@@ -121,7 +121,7 @@ msgstr "Startar automatisk justering"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Genomför automatisk justering</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1646
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1647
 msgid "Estimating..."
 msgstr "Uppskattar…"
 
@@ -170,31 +170,35 @@ msgstr "Kanaler"
 msgid "Audio:"
 msgstr "Ljud:"
 
-#: data/ui/cliptransformation.ui:51
+#: data/ui/cliptransformation.ui:56
 msgid "Y:"
 msgstr "Y:"
 
-#: data/ui/cliptransformation.ui:96
+#: data/ui/cliptransformation.ui:99
 msgid "Height:"
 msgstr "Höjd:"
 
-#: data/ui/cliptransformation.ui:140
+#: data/ui/cliptransformation.ui:141
+msgid "Constrain Proportions"
+msgstr "Begränsa proportioner"
+
+#: data/ui/cliptransformation.ui:157
 msgid "X:"
 msgstr "X:"
 
-#: data/ui/cliptransformation.ui:161
+#: data/ui/cliptransformation.ui:178
 msgid "Previous keyframe"
 msgstr "Föregående nyckelbild"
 
-#: data/ui/cliptransformation.ui:177
+#: data/ui/cliptransformation.ui:194
 msgid "Next keyframe"
 msgstr "Nästa nyckelbild"
 
-#: data/ui/cliptransformation.ui:207
+#: data/ui/cliptransformation.ui:224
 msgid "Reset to default values"
 msgstr "Återställ till standardvärden"
 
-#: data/ui/cliptransformation.ui:229
+#: data/ui/cliptransformation.ui:246
 msgid "Width:"
 msgstr "Bredd:"
 
@@ -995,15 +999,15 @@ msgstr "Lägg till effekt"
 msgid "Transformation"
 msgstr "Transformering"
 
-#: pitivi/clipproperties.py:1022
+#: pitivi/clipproperties.py:1035
 msgid "Show keyframes"
 msgstr "Visa nyckelbilder"
 
-#: pitivi/clipproperties.py:1025
+#: pitivi/clipproperties.py:1038
 msgid "Activate keyframes"
 msgstr "Aktivera nyckelbilder"
 
-#: pitivi/clipproperties.py:1030
+#: pitivi/clipproperties.py:1043
 msgid "Hide keyframes"
 msgstr "Göm nyckelbilder"
 
@@ -1398,7 +1402,7 @@ msgstr "Välj en eller flera filer"
 msgid "Add"
 msgstr "Lägg till"
 
-#: pitivi/medialibrary.py:799 pitivi/render.py:1490
+#: pitivi/medialibrary.py:799 pitivi/render.py:1491
 msgid "Supported file formats"
 msgstr "Alla format som stöds"
 
@@ -1516,7 +1520,7 @@ msgstr "Nytt förval %d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:177 pitivi/render.py:1319
+#: pitivi/project.py:177 pitivi/render.py:1320
 msgid "Sorry, something didn’t work right."
 msgstr "Tyvärr, någonting fungerade inte riktigt rätt."
 
@@ -1664,18 +1668,18 @@ msgstr ""
 msgid "Invalid file path"
 msgstr "Ogiltig filsökväg"
 
-#: pitivi/render.py:1172
+#: pitivi/render.py:1171
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: pitivi/render.py:1177
+#: pitivi/render.py:1178
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: pitivi/render.py:1313
+#: pitivi/render.py:1314
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
@@ -1685,11 +1689,11 @@ msgstr ""
 "kanske inte rendera.</b>\n"
 "\n"
 
-#: pitivi/render.py:1321
+#: pitivi/render.py:1322
 msgid "An error occurred while trying to render your project."
 msgstr "Ett fel inträffade vid försök att rendera ditt projekt."
 
-#: pitivi/render.py:1323
+#: pitivi/render.py:1324
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1697,15 +1701,15 @@ msgstr ""
 "Du kanske vill undersöka problemsökningshandboken eller skicka en "
 "felrapport. GStreamer-felet var:"
 
-#: pitivi/render.py:1484
+#: pitivi/render.py:1485
 msgid "Select file path to render"
 msgstr "Välj filsökväg som ska renderas"
 
-#: pitivi/render.py:1594 pitivi/render.py:1595 pitivi/render.py:1601
+#: pitivi/render.py:1595 pitivi/render.py:1596 pitivi/render.py:1602
 msgid "Render complete"
 msgstr "Rendering färdig"
 
-#: pitivi/render.py:1599
+#: pitivi/render.py:1600
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "”%s” är klar med rendering."
@@ -1830,7 +1834,7 @@ msgstr "Avsluta helskärmsläge"
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:438
+#: pitivi/timeline/elements.py:441
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1841,12 +1845,12 @@ msgstr ""
 "Tidsstämpel: %s\n"
 "Värde: %s"
 
-#: pitivi/timeline/elements.py:626
+#: pitivi/timeline/elements.py:629
 #, python-format
 msgid "Timestamp: %s"
 msgstr "Tidsstämpel: %s"
 
-#: pitivi/timeline/elements.py:1543
+#: pitivi/timeline/elements.py:1546
 msgid "Audio crossfade"
 msgstr "Ljudövertona"
 
@@ -2062,9 +2066,12 @@ msgstr "Bidragsgivare:"
 #: pitivi/dialogs/about.py:76
 msgid "translator-credits"
 msgstr ""
+"Christian Rose <menthos@menthos.com>, 2006\n"
 "Daniel Nylander <po@danielnylander.se>\n"
 "Josef Andersson <josef.andersson@fripost.org>, 2015\n"
-"Anders Jonsson <anders.jonsson@norsjovallen.se>, 2018"
+"Sebastian Rasmussen <sebras@gmail.com>, 2017.\n"
+"Anders Jonsson <anders.jonsson@norsjovallen.se>, 2018\n"
+"Luna Jernberg <droidbittin@gmail.com>, 2021"
 
 #: pitivi/dialogs/browseprojects.py:34
 msgid "Open Project…"
