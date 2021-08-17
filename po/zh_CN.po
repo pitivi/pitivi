@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-06-01 00:49+0000\n"
-"PO-Revision-Date: 2021-06-16 20:53-0400\n"
+"POT-Creation-Date: 2021-07-05 23:44+0000\n"
+"PO-Revision-Date: 2021-08-17 12:57+0800\n"
 "Last-Translator: lumingzh <lumingzh@qq.com>\n"
 "Language-Team: Chinese - China <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -24,7 +24,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.0\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
 msgid "Pitivi video project (legacy)"
@@ -113,7 +113,7 @@ msgstr "自动对齐开始"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>正在进行自动对齐</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1646
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1647
 msgid "Estimating..."
 msgstr "正在估计..."
 
@@ -162,31 +162,35 @@ msgstr "声道"
 msgid "Audio:"
 msgstr "音频："
 
-#: data/ui/cliptransformation.ui:51
+#: data/ui/cliptransformation.ui:56
 msgid "Y:"
 msgstr "Y："
 
-#: data/ui/cliptransformation.ui:96
+#: data/ui/cliptransformation.ui:99
 msgid "Height:"
 msgstr "高度："
 
-#: data/ui/cliptransformation.ui:140
+#: data/ui/cliptransformation.ui:141
+msgid "Constrain Proportions"
+msgstr "约束比例"
+
+#: data/ui/cliptransformation.ui:157
 msgid "X:"
 msgstr "X："
 
-#: data/ui/cliptransformation.ui:161
+#: data/ui/cliptransformation.ui:178
 msgid "Previous keyframe"
-msgstr "上一个关键帧"
+msgstr "上个关键帧"
 
-#: data/ui/cliptransformation.ui:177
+#: data/ui/cliptransformation.ui:194
 msgid "Next keyframe"
-msgstr "下一个关键帧"
+msgstr "下个关键帧"
 
-#: data/ui/cliptransformation.ui:207
+#: data/ui/cliptransformation.ui:224
 msgid "Reset to default values"
 msgstr "重置为默认值"
 
-#: data/ui/cliptransformation.ui:229
+#: data/ui/cliptransformation.ui:246
 msgid "Width:"
 msgstr "宽度："
 
@@ -224,7 +228,7 @@ msgstr "绿色"
 
 #: data/ui/customwidgets/alpha.ui:395
 msgid "Select a color"
-msgstr "选择一个颜色"
+msgstr "选择颜色"
 
 #: data/ui/customwidgets/alpha.ui:407
 msgid "Blue"
@@ -770,25 +774,33 @@ msgstr "无缝模式"
 
 #: data/ui/titleeditor.ui:71
 msgid "Choose a font"
-msgstr "选择一个字体"
+msgstr "选择字体"
 
 #: data/ui/titleeditor.ui:88
 msgid "Pick a text color"
-msgstr "拾取一个文字颜色"
+msgstr "拾取文字颜色"
 
 #: data/ui/titleeditor.ui:123
 msgid "Pick a background color"
-msgstr "拾取一个背景颜色"
+msgstr "拾取背景颜色"
 
-#: data/ui/titleeditor.ui:164
+#: data/ui/titleeditor.ui:157
+msgid "Pick an outline color"
+msgstr "拾取轮廓颜色"
+
+#: data/ui/titleeditor.ui:193
+msgid "Drop Shadow"
+msgstr "投影"
+
+#: data/ui/titleeditor.ui:215
 msgid "Alignment"
 msgstr "对齐"
 
-#: data/ui/titleeditor.ui:200
+#: data/ui/titleeditor.ui:251
 msgid "Horizontal:"
 msgstr "水平："
 
-#: data/ui/titleeditor.ui:224
+#: data/ui/titleeditor.ui:275
 msgid "Vertical:"
 msgstr "竖直："
 
@@ -903,65 +915,65 @@ msgstr ""
 msgid "Title Clip"
 msgstr "标题片段"
 
-#: pitivi/clipproperties.py:144
+#: pitivi/clipproperties.py:146
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
 msgstr "从时间轴上选择一个片段来配置它的属性和特效或创建一个新片段："
 
-#: pitivi/clipproperties.py:150
+#: pitivi/clipproperties.py:152
 msgid "Create a title clip"
 msgstr "创建标题片段"
 
-#: pitivi/clipproperties.py:155
+#: pitivi/clipproperties.py:157
 msgid "Create a color clip"
 msgstr "创建调色片段"
 
-#: pitivi/clipproperties.py:258 pitivi/effects.py:118
+#: pitivi/clipproperties.py:262 pitivi/effects.py:118
 msgid "Time"
 msgstr "时间"
 
-#: pitivi/clipproperties.py:301
+#: pitivi/clipproperties.py:305
 msgid "Speed"
 msgstr "速度"
 
-#: pitivi/clipproperties.py:316 pitivi/utils/widgets.py:800
+#: pitivi/clipproperties.py:320 pitivi/utils/widgets.py:800
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s："
 
-#: pitivi/clipproperties.py:319 pitivi/dialogs/prefs.py:285
+#: pitivi/clipproperties.py:323 pitivi/dialogs/prefs.py:285
 #: pitivi/utils/widgets.py:976
 msgid "Reset to default value"
 msgstr "重置为默认值"
 
-#: pitivi/clipproperties.py:553
+#: pitivi/clipproperties.py:557
 msgid "Effects"
 msgstr "特效"
 
-#: pitivi/clipproperties.py:570
+#: pitivi/clipproperties.py:574
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
 msgstr "将特效从特效库里拖拽到片段上或使用下面的按钮以应用特效。"
 
-#: pitivi/clipproperties.py:578
+#: pitivi/clipproperties.py:582
 msgid "Add Effect"
 msgstr "添加特效"
 
-#: pitivi/clipproperties.py:902
+#: pitivi/clipproperties.py:906
 msgid "Transformation"
 msgstr "变换"
 
-#: pitivi/clipproperties.py:1018
+#: pitivi/clipproperties.py:1035
 msgid "Show keyframes"
 msgstr "显示关键帧"
 
-#: pitivi/clipproperties.py:1021
+#: pitivi/clipproperties.py:1038
 msgid "Activate keyframes"
 msgstr "激活关键帧"
 
-#: pitivi/clipproperties.py:1026
+#: pitivi/clipproperties.py:1043
 msgid "Hide keyframes"
 msgstr "隐藏关键帧"
 
@@ -983,31 +995,31 @@ msgstr "当向时间轴插入标题时的默认片段长度（毫秒单位）。
 msgid "Title"
 msgstr "标题"
 
-#: pitivi/clip_properties/title.py:102 pitivi/clip_properties/title.py:109
+#: pitivi/clip_properties/title.py:111 pitivi/clip_properties/title.py:118
 msgid "Absolute"
 msgstr "独立的"
 
-#: pitivi/clip_properties/title.py:103
+#: pitivi/clip_properties/title.py:112
 msgid "Top"
 msgstr "顶部"
 
-#: pitivi/clip_properties/title.py:104 pitivi/clip_properties/title.py:111
+#: pitivi/clip_properties/title.py:113 pitivi/clip_properties/title.py:120
 msgid "Center"
 msgstr "中心"
 
-#: pitivi/clip_properties/title.py:105
+#: pitivi/clip_properties/title.py:114
 msgid "Bottom"
 msgstr "底部"
 
-#: pitivi/clip_properties/title.py:106
+#: pitivi/clip_properties/title.py:115
 msgid "Baseline"
 msgstr "基线"
 
-#: pitivi/clip_properties/title.py:110
+#: pitivi/clip_properties/title.py:119
 msgid "Left"
 msgstr "左边"
 
-#: pitivi/clip_properties/title.py:112
+#: pitivi/clip_properties/title.py:121
 msgid "Right"
 msgstr "右边"
 
@@ -1178,7 +1190,7 @@ msgstr "新建"
 
 #: pitivi/greeterperspective.py:229 pitivi/greeterperspective.py:290
 msgid "Create a new project"
-msgstr "创建一个新工程"
+msgstr "创建新工程"
 
 #: pitivi/greeterperspective.py:232
 msgid "Open…"
@@ -1186,7 +1198,7 @@ msgstr "打开…"
 
 #: pitivi/greeterperspective.py:233
 msgid "Open an existing project"
-msgstr "打开一个现存工程"
+msgstr "打开现存工程"
 
 #: pitivi/greeterperspective.py:238
 msgid "Select projects for removal"
@@ -1198,11 +1210,11 @@ msgstr "点击一个项目进行选择"
 
 #: pitivi/greeterperspective.py:276
 msgid "Select a Project"
-msgstr "选择一个工程"
+msgstr "选择工程"
 
 #: pitivi/greeterperspective.py:297
 msgid "Open a project"
-msgstr "打开一个工程"
+msgstr "打开工程"
 
 #: pitivi/greeterperspective.py:365
 #, python-format
@@ -1347,7 +1359,7 @@ msgstr "选择一个或更多文件"
 msgid "Add"
 msgstr "添加"
 
-#: pitivi/medialibrary.py:799 pitivi/render.py:1490
+#: pitivi/medialibrary.py:799 pitivi/render.py:1491
 msgid "Supported file formats"
 msgstr "支持的文件格式"
 
@@ -1455,7 +1467,7 @@ msgstr "新建预设 %d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:177 pitivi/render.py:1319
+#: pitivi/project.py:177 pitivi/render.py:1320
 msgid "Sorry, something didn’t work right."
 msgstr "抱歉，有些东西没有正确工作。"
 
@@ -1599,18 +1611,18 @@ msgstr ""
 msgid "Invalid file path"
 msgstr "无效的文件路径"
 
-#: pitivi/render.py:1172
+#: pitivi/render.py:1171
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: pitivi/render.py:1177
+#: pitivi/render.py:1178
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: pitivi/render.py:1313
+#: pitivi/render.py:1314
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
@@ -1619,25 +1631,25 @@ msgstr ""
 "<b>确保您的渲染大小是平稳的，否则 x264enc 可能无法渲染。</b>\n"
 "\n"
 
-#: pitivi/render.py:1321
+#: pitivi/render.py:1322
 msgid "An error occurred while trying to render your project."
 msgstr "尝试渲染您的工程时发生错误。"
 
-#: pitivi/render.py:1323
+#: pitivi/render.py:1324
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
 msgstr "您可能想要查看我们的调试指南或发送缺陷报告。这个 GStreamer 错误是："
 
-#: pitivi/render.py:1484
+#: pitivi/render.py:1485
 msgid "Select file path to render"
 msgstr "选择文件路径以进行渲染"
 
-#: pitivi/render.py:1594 pitivi/render.py:1595 pitivi/render.py:1601
+#: pitivi/render.py:1595 pitivi/render.py:1596 pitivi/render.py:1602
 msgid "Render complete"
 msgstr "渲染完成"
 
-#: pitivi/render.py:1599
+#: pitivi/render.py:1600
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "“%s”已完成渲染。"
@@ -1761,7 +1773,7 @@ msgstr "退出全屏模式"
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:438
+#: pitivi/timeline/elements.py:441
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1772,12 +1784,12 @@ msgstr ""
 "时间戳：%s\n"
 "数值：%s"
 
-#: pitivi/timeline/elements.py:626
+#: pitivi/timeline/elements.py:629
 #, python-format
 msgid "Timestamp: %s"
 msgstr "时间戳：%s"
 
-#: pitivi/timeline/elements.py:1543
+#: pitivi/timeline/elements.py:1546
 msgid "Audio crossfade"
 msgstr "音频淡入淡出"
 
