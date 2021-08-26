@@ -36,6 +36,7 @@
         "python3-pylint.json",
         "python3-matplotlib.json",
         "libcanberra/libcanberra.json",
+        "python3-librosa.json",
         {
             "name": "gsound",
             "buildsystem": "meson",

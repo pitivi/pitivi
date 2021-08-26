@@ -30,7 +30,10 @@ GES_MARKERS_SNAPPABLE = hasattr(GES.MarkerList.new().props, "flags")
 
 DEFAULT_LIST_KEY = "user_markers"
 NAMES_DICT = {
+    # Translators: The list of markers created by the user.
     DEFAULT_LIST_KEY: _("User markers"),
+    # Translators: The list of markers representing detected audio beats.
+    "beat_markers": _("Beats"),
 }
 
 

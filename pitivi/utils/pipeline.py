@@ -43,7 +43,7 @@ WATCHDOG_TIMEOUT = 3
 MAX_BRINGING_TO_PAUSED_DURATION = 5
 MAX_SET_STATE_DURATION = 1
 
-DEFAULT_POSITION_LISTENNING_INTERVAL = 500
+DEFAULT_POSITION_LISTENING_INTERVAL = 10
 
 
 class PipelineError(Exception):
@@ -85,7 +85,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._bus.add_signal_watch()
         self._bus.connect("message", self._bus_message_cb)
         self._listening = False  # for the position handler
-        self._listening_interval = DEFAULT_POSITION_LISTENNING_INTERVAL
+        self._listening_interval = DEFAULT_POSITION_LISTENING_INTERVAL
         self._listening_sig_id = 0
         self._duration = Gst.CLOCK_TIME_NONE
         # The last known position.
@@ -247,7 +247,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._duration = dur
         return dur
 
-    def activate_position_listener(self, interval=DEFAULT_POSITION_LISTENNING_INTERVAL):
+    def activate_position_listener(self, interval=DEFAULT_POSITION_LISTENING_INTERVAL):
         """Activates the position listener.
 
         When activated, the instance will emit the `position` signal at the

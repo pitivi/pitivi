@@ -461,4 +461,5 @@ SOFT_DEPENDENCIES = (
     GstPluginDependency("debugutilsbad", version_required=None,
                         additional_message=_("enables a watchdog in the GStreamer pipeline."
                                              " Use to detect errors happening in GStreamer"
-                                             " and recover from them")))
+                                             " and recover from them")),
+    ClassicDependency("librosa", additional_message=_("enables beat detection functionality")))

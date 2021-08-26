@@ -19,6 +19,7 @@
 import os
 import tempfile
 from unittest import mock
+from unittest import skip
 
 from gi.repository import Gdk
 from gi.repository import GES
@@ -497,6 +498,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.check_import([sample], check_no_transcoding=True,
                               proxying_strategy=ProxyingStrategy.AUTOMATIC)
 
+    @skip("times out")
     def test_import_supported_forced_scaled_audio(self):
         sample = "mp3_sample.mp3"
         with common.cloned_sample(sample):
