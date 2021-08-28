@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-08-25 12:28+0000\n"
-"PO-Revision-Date: 2021-08-26 13:21+0300\n"
+"POT-Creation-Date: 2021-08-28 11:32+0000\n"
+"PO-Revision-Date: 2021-08-28 15:03+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -1015,21 +1015,17 @@ msgstr "Приховати ключові кадри"
 
 #: pitivi/clipproperties.py:1287
 msgid "Text"
-msgstr ""
-"Текст"
+msgstr "Текст"
 
 #: pitivi/clipproperties.py:1296
-#| msgid "Clip Properties"
 msgid "Clip markers"
 msgstr "Позначки кліпів"
 
 #: pitivi/clipproperties.py:1349
 msgid "Magnetic"
-msgstr ""
-"Магнітні"
+msgstr "Магнітні"
 
 #: pitivi/clipproperties.py:1383
-#| msgid "Markers"
 msgid "No markers"
 msgstr "Без позначок"
 
@@ -1936,14 +1932,14 @@ msgstr "Кадр %d"
 
 #: pitivi/timeline/timeline.py:86
 msgid "Markers magnetic by default"
-msgstr ""
-"Типово, позначки є магнетичними"
+msgstr "Типово, позначки є магнетичними"
 
 #: pitivi/timeline/timeline.py:88
 msgid ""
 "Whether markers created on new clips will be snapping targets by default."
 msgstr ""
-"Визначає, чи будуть позначки, які створено для нових кліпів, типово прилипати до цілі."
+"Визначає, чи будуть позначки, які створено для нових кліпів, типово "
+"прилипати до цілі."
 
 #: pitivi/timeline/timeline.py:98
 msgid "Snap distance"
@@ -2283,6 +2279,11 @@ msgid ""
 msgstr ""
 "Ви можете створювати <a href='{doc_url}'>додатки</a> у вашому <a "
 "href='{dir_url}'>каталозі додатків</a>."
+
+#: pitivi/utils/markers.py:33
+#| msgid "No markers"
+msgid "User markers"
+msgstr "Позначки користувача"
 
 #: pitivi/utils/misc.py:278
 msgid ""
