@@ -25,28 +25,29 @@ build dependencies which have to be installed beforehand. Jan 2021 it's much
 easier to install the compiled packages instead of the source packages. When
 upstream makes it easier to use source packages we should switch.
 
-## Updating matplotlib
+## Updating actual dependencies
 
 ```
 $ cd build/flatpak
-$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/3.38 matplotlib
+$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/40 librosa
+$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/40 matplotlib
 ```
 
 ## Updating the development tools
 
 ```
 $ cd build/flatpak
-$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/3.38 ipdb
-$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/3.38 nose2
-$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/3.38 nose setuptools_git setuptools_pep8 sphinx hotdoc
+$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/40 nose setuptools_git setuptools_pep8 sphinx hotdoc
+$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/40 ipdb
+$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/40 nose2
 ```
 
 ## Updating the pre-commit framework
 
 ```
 $ cd build/flatpak
-$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/3.38 pre-commit
-$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/3.38 pylint
+$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/40 pre-commit
+$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/40 pylint
 ```
 
 ## Updating your local sandbox
@@ -63,7 +64,7 @@ If errors happen, you can inspect the SDK by launching `bash` in a sandbox, for
 example:
 
 ```
-$ flatpak run --user --command=bash --devel org.gnome.Sdk/x86_64/3.38
+$ flatpak run --user --command=bash --devel org.gnome.Sdk/x86_64/40
 [📦 org.gnome.Sdk ~]$ python --version
 Python 3.8.6
 ```

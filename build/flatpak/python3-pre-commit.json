@@ -2,28 +2,18 @@
     "name": "python3-pre-commit",
     "buildsystem": "simple",
     "build-commands": [
-        "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"pre-commit\""
+        "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"pre-commit\" --no-build-isolation"
     ],
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/64/c2/b80047c7ac2478f9501676c988a5411ed5572f35d1beff9cae07d321512c/PyYAML-5.3.1.tar.gz",
-            "sha256": "b8eac752c5e14d3eca0e6dd9199cd627518cb5ec06add0de9d32baeee6fe645d"
+            "url": "https://files.pythonhosted.org/packages/44/6f/7120676b6d73228c96e17f1f794d8ab046fc910d781c8d151120c3f1569e/toml-0.10.2-py2.py3-none-any.whl",
+            "sha256": "806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/3b/00/2344469e2084fb287c2e0b57b72910309874c3245463acd6cf5e3db69324/appdirs-1.4.4-py2.py3-none-any.whl",
-            "sha256": "a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/45/cd/3878c9248e59e5e2ebd0dc741ab984b18d86e7283ae9b127b05fc287d239/cfgv-3.2.0-py2.py3-none-any.whl",
-            "sha256": "32e43d604bbe7896fe7c248a9c2276447dbef840feb28fe20494f62af110211d"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/f5/0a/490fa011d699bb5a5f3a0cf57de82237f52a6db9d40f33c53b2736c9a1f9/distlib-0.3.1-py2.py3-none-any.whl",
-            "sha256": "8c09de2c67b3e7deef7184574fc060ab8a793e7adbb183d942c389c8b13c52fb"
+            "url": "https://files.pythonhosted.org/packages/15/4d/23989bdcb80a095a4b92a54a1f568e95bfc9793c70707be623dc75c11257/platformdirs-2.3.0-py3-none-any.whl",
+            "sha256": "8003ac87717ae2c7ee1ea5a84a1a61e87f3fbd16eb5aadba194ea30a9019f648"
         },
         {
             "type": "file",
@@ -32,28 +22,43 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/af/b2/81d64022f2eedef55376f56db9b0f383545a18713c8a47f1ddc9a774d9e6/identify-1.5.11-py2.py3-none-any.whl",
-            "sha256": "7aef7a5104d6254c162990e54a203cdc0fd202046b6c415bd5d636472f6565c4"
+            "url": "https://files.pythonhosted.org/packages/87/26/f6a23dd3e578132cf924e0dd5d4e055af0cd4ab43e2a9f10b7568bfb39d9/distlib-0.3.2-py2.py3-none-any.whl",
+            "sha256": "23e223426b28491b1ced97dc3bbe183027419dfc7982b4fa2f05d5f3ff10711c"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/ae/d0/efdf54539948315cc76e5a66b709212963101d002822c3b54369dbf9b5e0/nodeenv-1.5.0-py2.py3-none-any.whl",
-            "sha256": "5304d424c529c997bc888453aeaa6362d242b6b4631e90f3d4bf1b290f1c84a9"
+            "url": "https://files.pythonhosted.org/packages/0c/cd/1e156227cad9f599524eb10af62a2362f872910a49402dbd2bea2dedc91c/backports.entry_points_selectable-1.1.0-py2.py3-none-any.whl",
+            "sha256": "a6d9a871cde5e15b4c4a53e3d43ba890cc6861ec1332c9c2428c92f977192acc"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/1e/ab/191c8d1dbd179b6577cd9a5744e56aede754776905b9dc9c524b21607cf6/pre_commit-2.9.3-py2.py3-none-any.whl",
-            "sha256": "6c86d977d00ddc8a60d68eec19f51ef212d9462937acf3ea37c7adec32284ac0"
+            "url": "https://files.pythonhosted.org/packages/ab/9f/a0d49dcde93f27125f011f8ce60f86840bc69c95695ed8ed2d77adb2cb8c/virtualenv-20.7.2-py2.py3-none-any.whl",
+            "sha256": "e4670891b3a03eb071748c569a87cceaefbf643c5bac46d996c5a45c34aa0f06"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/44/6f/7120676b6d73228c96e17f1f794d8ab046fc910d781c8d151120c3f1569e/toml-0.10.2-py2.py3-none-any.whl",
-            "sha256": "806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"
+            "url": "https://files.pythonhosted.org/packages/70/96/c7245e551b1cb496bfb95840ace55ca60f20d3d8e33d70faf8c78a976899/PyYAML-5.4.1-cp38-cp38-manylinux1_x86_64.whl",
+            "sha256": "8c1be557ee92a20f184922c7b6424e8ab6691788e6d86137c5d93c1a6ec1b8fb"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/1a/c6/bb564f5eec616d241e85d741f00a07f5f50ea12989022ad49bc66876993c/virtualenv-20.2.2-py2.py3-none-any.whl",
-            "sha256": "54b05fc737ea9c9ee9f8340f579e5da5b09fb64fd010ab5757eb90268616907c"
+            "url": "https://files.pythonhosted.org/packages/54/73/56c89b343befb9c63e8117294d265458f0ff726fa2abcdc6bb5ec5e66a1a/nodeenv-1.6.0-py2.py3-none-any.whl",
+            "sha256": "621e6b7076565ddcacd2db0294c0381e01fd28945ab36bcf00f41c5daf63bef7"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/3f/f3/88ddede5fdfdad64109f4d5d9e74433c1560753253dd2f315cc6fe0db75f/identify-2.2.13-py2.py3-none-any.whl",
+            "sha256": "7199679b5be13a6b40e6e19ea473e789b11b4e3b60986499b1f589ffb03c217c"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/6d/82/0a0ebd35bae9981dea55c06f8e6aaf44a49171ad798795c72c6f64cba4c2/cfgv-3.3.1-py2.py3-none-any.whl",
+            "sha256": "c6a0883f3917a037485059700b9e75da2464e6c27051014ad85ba6aaa5884426"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/7a/5c/55c58c3cf09320bcb053c38e038a33726fb60fea81d7fba686783fe31ae4/pre_commit-2.14.1-py2.py3-none-any.whl",
+            "sha256": "a22d12a02da4d8df314187dfe7a61bda6291d57992060522feed30c8cd658b68"
         }
     ]
 }

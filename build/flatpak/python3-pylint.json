@@ -2,33 +2,18 @@
     "name": "python3-pylint",
     "buildsystem": "simple",
     "build-commands": [
-        "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"pylint\""
+        "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"pylint\" --no-build-isolation"
     ],
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/24/a8/5133f51967fb21e46ee50831c3f5dda49e976b7f915408d670b1603d41d6/astroid-2.4.2-py3-none-any.whl",
-            "sha256": "bc58d83eb610252fd8de6363e39d4f1d0619c894b0ed24603b881c02e64c7386"
+            "url": "https://files.pythonhosted.org/packages/bd/25/5bdf7f1adeebd4e3fa76b2e2f045ae53ee208e40a4231ad0f0c3007e4353/setuptools-57.4.0-py3-none-any.whl",
+            "sha256": "a49230977aa6cfb9d933614d2f7b79036e9945c4cdd7583163f4e920b83418d6"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/cc/89/6888f573886e9dc0906ec98f1b15888de20919a142c355d7f57ebd977d36/isort-5.7.0-py3-none-any.whl",
-            "sha256": "fff4f0c04e1825522ce6949973e83110a6e907750cd92d128b0d14aaaadbffdc"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/34/8c/74acd0ad5a0518be9e0f3b4d022e84da0c1d9b78972afce73259ac85d78b/lazy_object_proxy-1.4.3-cp38-cp38-manylinux1_x86_64.whl",
-            "sha256": "a6ae12d08c0bf9909ce12385803a543bfe99b95fe01e752536a60af2b7797c62"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/87/89/479dc97e18549e21354893e4ee4ef36db1d237534982482c3681ee6e7b57/mccabe-0.6.1-py2.py3-none-any.whl",
-            "sha256": "ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/fb/13/519c1264a134beab2be4bac8dd3e64948980a5ca7833b31cf0255b21f20a/pylint-2.6.0-py3-none-any.whl",
-            "sha256": "bfe68f020f8a0fece830a22dd4d5dddb4ecc6137db04face4c3420a46a52239f"
+            "url": "https://files.pythonhosted.org/packages/82/f7/e43cefbe88c5fd371f4cf0cf5eb3feccd07515af9fd6cf7dbf1d1793a797/wrapt-1.12.1.tar.gz",
+            "sha256": "b62ffa81fb85f4332a4f609cab4ac40709470da05643a082ec1eb88e6d9b97d7"
         },
         {
             "type": "file",
@@ -37,8 +22,33 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/82/f7/e43cefbe88c5fd371f4cf0cf5eb3feccd07515af9fd6cf7dbf1d1793a797/wrapt-1.12.1.tar.gz",
-            "sha256": "b62ffa81fb85f4332a4f609cab4ac40709470da05643a082ec1eb88e6d9b97d7"
+            "url": "https://files.pythonhosted.org/packages/15/4d/23989bdcb80a095a4b92a54a1f568e95bfc9793c70707be623dc75c11257/platformdirs-2.3.0-py3-none-any.whl",
+            "sha256": "8003ac87717ae2c7ee1ea5a84a1a61e87f3fbd16eb5aadba194ea30a9019f648"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/87/89/479dc97e18549e21354893e4ee4ef36db1d237534982482c3681ee6e7b57/mccabe-0.6.1-py2.py3-none-any.whl",
+            "sha256": "ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/87/c4/da8ed7f77c85347c0bc50911d27faa563b85b46d136f8ce6c0f8d05f610d/lazy_object_proxy-1.6.0-cp38-cp38-manylinux1_x86_64.whl",
+            "sha256": "17e0967ba374fc24141738c69736da90e94419338fd4c7c7bef01ee26b339653"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/c4/1d/f4e03047d6767e35c1efb13a280c1ef8b88807230f902da4cfc431a9f602/isort-5.9.3-py3-none-any.whl",
+            "sha256": "e17d6e2b81095c9db0a03a8025a957f334d6ea30b26f9ec70805411e5c7c81f2"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/2f/2b/46d2b492831ea7a637b88bef8e66aae0968edf57042d1f52073a531558ea/astroid-2.7.3-py3-none-any.whl",
+            "sha256": "dc1e8b28427d6bbef6b8842b18765ab58f558c42bb80540bd7648c98412af25e"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/6d/33/5744d1b2d1191cd036c201934a1a517644d805a82cd50fab060b3c379c84/pylint-2.10.2-py3-none-any.whl",
+            "sha256": "e178e96b6ba171f8ef51fbce9ca30931e6acbea4a155074d80cc081596c9e852"
         }
     ]
 }

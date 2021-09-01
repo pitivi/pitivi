@@ -7,7 +7,7 @@
             "name": "python3-nose",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"nose\""
+                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"nose\" --no-build-isolation"
             ],
             "sources": [
                 {
@@ -21,7 +21,7 @@
             "name": "python3-setuptools_git",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"setuptools_git\""
+                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"setuptools_git\" --no-build-isolation"
             ],
             "sources": [
                 {
@@ -35,7 +35,7 @@
             "name": "python3-setuptools_pep8",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"setuptools_pep8\""
+                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"setuptools_pep8\" --no-build-isolation"
             ],
             "sources": [
                 {
@@ -54,103 +54,13 @@
             "name": "python3-sphinx",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"sphinx\""
+                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"sphinx\" --no-build-isolation"
             ],
             "sources": [
                 {
                     "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/dd/a5/81076e10b5ef74493cf08a8e419e61b64324c9c55db4aa7f89c0240c4873/Babel-2.9.0-py2.py3-none-any.whl",
-                    "sha256": "9d35c22fcc79893c3ecc85ac4a56cde1ecf3f19c540bba0922308a6c06ca6fa5"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/30/9e/f663a2aa66a09d838042ae1a2c5659828bb9b41ea3a6efa20a20fd92b121/Jinja2-2.11.2-py2.py3-none-any.whl",
-                    "sha256": "f0a4641d3cf955324a89c04f3d94663aa4d638abe8f733ecd3582848e1c37035"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/4b/20/f6d7648c81cb84815d0be935d5c74cd1cc0239e43eadb1a61062d34b6543/MarkupSafe-1.1.1-cp38-cp38-manylinux1_x86_64.whl",
-                    "sha256": "13d3144e1e340870b25e7b10b98d779608c02016d5184cfb9927a9f10c689f42"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/33/80/bb9219bd1f2b6d41a14339127b6339295e23fb238915174d455d55d6865e/Sphinx-3.4.2-py3-none-any.whl",
-                    "sha256": "b8aa4eb5502c53d3b5ca13a07abeedacd887f7770c198952fd5b9530d973e767"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/10/ad/00b090d23a222943eb0eda509720a404f531a439e803f6538f35136cae9e/alabaster-0.7.12-py2.py3-none-any.whl",
-                    "sha256": "446438bdcca0e05bd45ea2de1668c1d9b032e1a9154c2c259092d77031ddd359"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/5e/a0/5f06e1e1d463903cf0c0eebeb751791119ed7a4b3737fdc9a77f1cdfb51f/certifi-2020.12.5-py2.py3-none-any.whl",
-                    "sha256": "719a74fb9e33b9bd44cc7f3a8d94bc35e4049deebe19ba7d8e108280cfd59830"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/19/c7/fa589626997dd07bd87d9269342ccb74b1720384a4d739a1872bd84fbe68/chardet-4.0.0-py2.py3-none-any.whl",
-                    "sha256": "f864054d66fd9118f2e67044ac8981a54775ec5b67aed0441892edb553d21da5"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/81/44/8a15e45ffa96e6cf82956dd8d7af9e666357e16b0d93b253903475ee947f/docutils-0.16-py2.py3-none-any.whl",
-                    "sha256": "0c5b78adfbf7762415433f5515cd5c9e762339e23369dbe8000d84a4bf4ab3af"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/a2/38/928ddce2273eaa564f6f50de919327bf3a00f091b5baba8dfa9460f3a8a8/idna-2.10-py2.py3-none-any.whl",
-                    "sha256": "b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/31/b2/b5522a0c8d11e4aff83f8342f3f0dea68c2fb25aa44403e420587f0ce204/imagesize-1.2.0-py2.py3-none-any.whl",
-                    "sha256": "6965f19a6a2039c7d48bca7dba2473069ff854c36ae6f19d2cde309d998228a1"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/b1/a7/588bfa063e7763247ab6f7e1d994e331b85e0e7d09f853c59a6eb9696974/packaging-20.8-py2.py3-none-any.whl",
-                    "sha256": "24e0da08660a87484d1602c30bb4902d74816b6985b93de36926f5bc95741858"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/8a/bb/488841f56197b13700afd5658fc279a2025a39e22449b7cf29864669b15d/pyparsing-2.4.7-py2.py3-none-any.whl",
-                    "sha256": "ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/89/06/2c2d3034b4d6bf22f2a4ae546d16925898658a33b4400cfb7e2c1e2871a3/pytz-2020.5-py2.py3-none-any.whl",
-                    "sha256": "16962c5fb8db4a8f63a26646d8886e9d769b6c511543557bc84e9569fb9a9cb4"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/29/c1/24814557f1d22c56d50280771a17307e6bf87b70727d975fd6b2ce6b014a/requests-2.25.1-py2.py3-none-any.whl",
-                    "sha256": "c210084e36a42ae6b9219e00e48287def368a26d03a048ddad7bfee44f75871e"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/7d/4b/cdf1113a0e88b641893b814e9c36f69a6fda28cd88b62c7f0d858cde3166/snowballstemmer-2.0.0-py2.py3-none-any.whl",
-                    "sha256": "209f257d7533fdb3cb73bdbd24f436239ca3b2fa67d56f6ff88e86be08cc5ef0"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/dc/47/86022665a9433d89a66f5911b558ddff69861766807ba685de2e324bd6ed/sphinxcontrib_applehelp-1.0.2-py2.py3-none-any.whl",
-                    "sha256": "806111e5e962be97c29ec4c1e7fe277bfd19e9652fb1a4392105b43e01af885a"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/c5/09/5de5ed43a521387f18bdf5f5af31d099605c992fd25372b2b9b825ce48ee/sphinxcontrib_devhelp-1.0.2-py2.py3-none-any.whl",
-                    "sha256": "8165223f9a335cc1af7ffe1ed31d2871f325254c0423bc0c4c7cd1c1e4734a2e"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/36/62/8222554b29b3acde8420128d6d3999c5904d40922ef4b6ccb370e2be7421/sphinxcontrib_htmlhelp-1.0.3-py2.py3-none-any.whl",
-                    "sha256": "3c0bc24a2c41e340ac37c85ced6dafc879ab485c095b1d65d2461ac2f7cca86f"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/c2/42/4c8646762ee83602e3fb3fbe774c2fac12f317deb0b5dbeeedd2d3ba4b77/sphinxcontrib_jsmath-1.0.1-py2.py3-none-any.whl",
-                    "sha256": "2ec2eaebfb78f3f2078e73666b1415417a116cc848b72e5172e596c871103178"
+                    "url": "https://files.pythonhosted.org/packages/bd/25/5bdf7f1adeebd4e3fa76b2e2f045ae53ee208e40a4231ad0f0c3007e4353/setuptools-57.4.0-py3-none-any.whl",
+                    "sha256": "a49230977aa6cfb9d933614d2f7b79036e9945c4cdd7583163f4e920b83418d6"
                 },
                 {
                     "type": "file",
@@ -159,13 +69,108 @@
                 },
                 {
                     "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/9a/ca/bfad79b79b3821d0c6361c431f0ef4aec16ee248338b2c2013008b34d345/sphinxcontrib_serializinghtml-1.1.4-py2.py3-none-any.whl",
-                    "sha256": "f242a81d423f59617a8e5cf16f5d4d74e28ee9a66f9e5b637a18082991db5a9a"
+                    "url": "https://files.pythonhosted.org/packages/c2/42/4c8646762ee83602e3fb3fbe774c2fac12f317deb0b5dbeeedd2d3ba4b77/sphinxcontrib_jsmath-1.0.1-py2.py3-none-any.whl",
+                    "sha256": "2ec2eaebfb78f3f2078e73666b1415417a116cc848b72e5172e596c871103178"
                 },
                 {
                     "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/f5/71/45d36a8df68f3ebb098d6861b2c017f3d094538c0fb98fa61d4dc43e69b9/urllib3-1.26.2-py2.py3-none-any.whl",
-                    "sha256": "d8ff90d979214d7b4f8ce956e80f4028fc6860e4431f731ea4a8c08f23f99473"
+                    "url": "https://files.pythonhosted.org/packages/c5/09/5de5ed43a521387f18bdf5f5af31d099605c992fd25372b2b9b825ce48ee/sphinxcontrib_devhelp-1.0.2-py2.py3-none-any.whl",
+                    "sha256": "8165223f9a335cc1af7ffe1ed31d2871f325254c0423bc0c4c7cd1c1e4734a2e"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/dc/47/86022665a9433d89a66f5911b558ddff69861766807ba685de2e324bd6ed/sphinxcontrib_applehelp-1.0.2-py2.py3-none-any.whl",
+                    "sha256": "806111e5e962be97c29ec4c1e7fe277bfd19e9652fb1a4392105b43e01af885a"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/8a/bb/488841f56197b13700afd5658fc279a2025a39e22449b7cf29864669b15d/pyparsing-2.4.7-py2.py3-none-any.whl",
+                    "sha256": "ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/3c/77/e2362b676dc5008d81be423070dd9577fa03be5da2ba1105811900fda546/packaging-21.0-py3-none-any.whl",
+                    "sha256": "c86254f9220d55e31cc94d69bade760f0847da8000def4dfe1c6b872fd14ff14"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/31/b2/b5522a0c8d11e4aff83f8342f3f0dea68c2fb25aa44403e420587f0ce204/imagesize-1.2.0-py2.py3-none-any.whl",
+                    "sha256": "6965f19a6a2039c7d48bca7dba2473069ff854c36ae6f19d2cde309d998228a1"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/5f/64/43575537846896abac0b15c3e5ac678d787a4021e906703f1766bfb8ea11/urllib3-1.26.6-py2.py3-none-any.whl",
+                    "sha256": "39fb8672126159acb139a7718dd10806104dec1e2f0f6c88aab05d17df10c8d4"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/c6/77/5464ec50dd0f1c1037e3c93249b040c8fc8078fdda97530eeb02424b6eea/sphinxcontrib_serializinghtml-1.1.5-py2.py3-none-any.whl",
+                    "sha256": "352a9a00ae864471d3a7ead8d7d79f5fc0b57e8b3f95e9867eb9eb28999b92fd"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/63/40/c854ef09500e25f6432dcbad0f37df87fd7046d376272292d8654cc71c95/sphinxcontrib_htmlhelp-2.0.0-py2.py3-none-any.whl",
+                    "sha256": "d412243dfb797ae3ec2b59eca0e52dac12e75a241bf0e4eb861e450d06c6ed07"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/f6/6e/7e07970c90a57c21da92013c5ba47f8e9598c17e88cc35b008ca61225ed3/snowballstemmer-2.1.0-py2.py3-none-any.whl",
+                    "sha256": "b51b447bea85f9968c13b650126a888aabd4cb4463fca868ec596826325dedc2"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/d7/77/ff688d1504cdc4db2a938e2b7b9adee5dd52e34efbd2431051efc9984de9/idna-3.2-py3-none-any.whl",
+                    "sha256": "14475042e284991034cb48e06f6851428fb14c4dc953acd9be9a5e95c7b6dd7a"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/33/53/b7f6126a2b9fd878b025fe3c40266cfaad696f312165008ce045bffa3fe7/charset_normalizer-2.0.4-py3-none-any.whl",
+                    "sha256": "0c8911edd15d19223366a194a513099a302055a962bca2cec0f54b8b63175d8b"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/05/1b/0a0dece0e8aa492a6ec9e4ad2fe366b511558cdc73fd3abc82ba7348e875/certifi-2021.5.30-py2.py3-none-any.whl",
+                    "sha256": "50b1e4f8446b06f41be7dd6338db18e0990601dce795c2b1686458aa7e8fa7d8"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/92/96/144f70b972a9c0eabbd4391ef93ccd49d0f2747f4f6a2a2738e99e5adc65/requests-2.26.0-py2.py3-none-any.whl",
+                    "sha256": "6c1246513ecd5ecd4528a0906f910e8f0f9c6b8ec72030dc9fd154dc1a6efd24"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/70/94/784178ca5dd892a98f113cdd923372024dc04b8d40abe77ca76b5fb90ca6/pytz-2021.1-py2.py3-none-any.whl",
+                    "sha256": "eb10ce3e7736052ed3623d49975ce333bcd712c7bb19a58b9e2089d4057d0798"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/7a/e8/00c435416c9b0238dca6f883563b01c4cc532b2ba6aaf7268081f6238520/MarkupSafe-2.0.1-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl",
+                    "sha256": "3dd007d54ee88b46be476e293f48c85048603f5f516008bee124ddd891398ed6"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/80/21/ae597efc7ed8caaa43fb35062288baaf99a7d43ff0cf66452ddf47604ee6/Jinja2-3.0.1-py3-none-any.whl",
+                    "sha256": "1f06f2da51e7b56b8f238affdd6b4e2c61e39598a378cc49345bc1bd42a978a4"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/4c/5e/6003a0d1f37725ec2ebd4046b657abb9372202655f96e76795dca8c0063c/docutils-0.17.1-py2.py3-none-any.whl",
+                    "sha256": "cf316c8370a737a022b72b56874f6602acf974a37a9fba42ec2876387549fc61"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/aa/96/4ba93c5f40459dc850d25f9ba93f869a623e77aaecc7a9344e19c01942cf/Babel-2.9.1-py2.py3-none-any.whl",
+                    "sha256": "ab49e12b91d937cd11f0b67cb259a57ab4ad2b59ac7a3b41d6c06c0ac5b0def9"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/10/ad/00b090d23a222943eb0eda509720a404f531a439e803f6538f35136cae9e/alabaster-0.7.12-py2.py3-none-any.whl",
+                    "sha256": "446438bdcca0e05bd45ea2de1668c1d9b032e1a9154c2c259092d77031ddd359"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/11/75/86ea47591cd6f8e1dc0d795f65799025f368f7a4647ce9a43320a62374d8/Sphinx-4.1.2-py3-none-any.whl",
+                    "sha256": "46d52c6cee13fec44744b8c01ed692c18a640f6910a725cbb938bc36e8d64544"
                 }
             ]
         },
@@ -173,18 +178,33 @@
             "name": "python3-hotdoc",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"hotdoc\""
+                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"hotdoc\" --no-build-isolation"
             ],
             "sources": [
                 {
                     "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/64/c2/b80047c7ac2478f9501676c988a5411ed5572f35d1beff9cae07d321512c/PyYAML-5.3.1.tar.gz",
-                    "sha256": "b8eac752c5e14d3eca0e6dd9199cd627518cb5ec06add0de9d32baeee6fe645d"
+                    "url": "https://files.pythonhosted.org/packages/9f/81/659038f48d53bb1a9f4ff97b8b2c53f2cb7ff60003b22d57b4dd22d8da0c/wheezy.template-3.1.0.tar.gz",
+                    "sha256": "e11007cac73368dce12998e34b66c476016bb461471ffc1e4d56e84002ec960f"
                 },
                 {
                     "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/3b/00/2344469e2084fb287c2e0b57b72910309874c3245463acd6cf5e3db69324/appdirs-1.4.4-py2.py3-none-any.whl",
-                    "sha256": "a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"
+                    "url": "https://files.pythonhosted.org/packages/76/56/6d6872f79d14c0cb02f1646cbb4592eef935857c0951a105874b7b62a0c3/contextlib2-21.6.0-py2.py3-none-any.whl",
+                    "sha256": "3fbdb64466afd23abaf6c977627b75b6139a5a3e8ce38405c5b413aed7a0471f"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/c7/64/497632c9dc3c1bc94a92d9cafdc5cbd21d011bb651952765195739129a49/schema-0.7.4-py2.py3-none-any.whl",
+                    "sha256": "cf97e4cd27e203ab6bb35968532de1ed8991bce542a646f0ff1d643629a4945d"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/32/af/89487c7bbf433f4079044f3dc32f9a9f887597fe04614a37a292e373e16b/pkgconfig-1.5.5-py3-none-any.whl",
+                    "sha256": "d20023bbeb42ee6d428a0fac6e0904631f545985a10cdd71a20aa58bc47a4209"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/4c/30/8d712990f7f3806d08e54d82ac414cb723f1c1dfaf5831307e94ef8a1392/lxml-4.6.3-cp38-cp38-manylinux2014_x86_64.whl",
+                    "sha256": "1b38116b6e628118dea5b2186ee6820ab138dbb1e24a13e478490c7db2f326ae"
                 },
                 {
                     "type": "file",
@@ -193,43 +213,8 @@
                 },
                 {
                     "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/85/60/370352f7ef6aa96c52fb001831622f50f923c1d575427d021b8ab3311236/contextlib2-0.6.0.post1-py2.py3-none-any.whl",
-                    "sha256": "3355078a159fbb44ee60ea80abd0d87b80b78c248643b49aa6d94673b413609b"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/1f/c3/0b4ea31404ff0e22e37ae3675687575061836b85bf18866a4a61f181e52f/dbus-deviation-0.6.0.tar.gz",
-                    "sha256": "cfbb3c906807d8376ae598bbc889b3a71992cdecc0637091d97ffcbcb69b7408"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/ed/1b/72a1821152d07cf1d8b6fce298aeb06a7eb90f4d6d41acec9861e7cc6df0/decorator-4.4.2-py2.py3-none-any.whl",
-                    "sha256": "41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/dc/2a/a24892ea609b1157c8c9a856dfe67d237adb8de49a5fffa84eb0267d8c30/hotdoc-0.12.2.tar.gz",
-                    "sha256": "2774baba150923a1b201ed72c5cb06507e90daf8f5b832f475182c7231dbd75b"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/52/a5/98a73a83bb06d271c3f915a4a13f9613fdd8a685524f46d9733eebeb55ce/lxml-4.6.2-cp38-cp38-manylinux1_x86_64.whl",
-                    "sha256": "2e5cc908fe43fe1aa299e58046ad66981131a66aea3129aac7770c37f590a644"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/d3/2c/e473e54afc9fae58dfa97066ef6709a7e35a1dd1c28c5a3842989322be00/networkx-1.11-py2.py3-none-any.whl",
-                    "sha256": "1b229b54fe9ccb009cee4de02a88552191497a542a7d5d34adab216b9f15c1ff"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/87/35/4af9634270c00e3411cf951b7e0ea796c262922357cfc7609a86d31f072b/pkgconfig-1.1.0.tar.gz",
-                    "sha256": "709daaf077aa2b33bedac12706373412c3683576a43013bbaa529fc2769d80df"
-                },
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/6d/ae/835f2e0d304c9533c58fe5cbcdd9124708d32e82289fcb8d6084c908ba29/schema-0.7.2-py2.py3-none-any.whl",
-                    "sha256": "3a03c2e2b22e6a331ae73750ab1da46916da6ca861b16e6f073ac1d1eba43b71"
+                    "url": "https://files.pythonhosted.org/packages/3b/00/2344469e2084fb287c2e0b57b72910309874c3245463acd6cf5e3db69324/appdirs-1.4.4-py2.py3-none-any.whl",
+                    "sha256": "a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"
                 },
                 {
                     "type": "file",
@@ -238,13 +223,23 @@
                 },
                 {
                     "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/b1/67/7f0a14a4cc9bd949b8d22383c26fec83a00e7bd428e15c697f998e3e37ba/wheezy.template-0.1.167.tar.gz",
-                    "sha256": "a2ee933452f0352fb8587d79bf6fc66dbf3a14779ef7d17b9fa75e80c0003f19"
+                    "url": "https://files.pythonhosted.org/packages/70/96/c7245e551b1cb496bfb95840ace55ca60f20d3d8e33d70faf8c78a976899/PyYAML-5.4.1-cp38-cp38-manylinux1_x86_64.whl",
+                    "sha256": "8c1be557ee92a20f184922c7b6424e8ab6691788e6d86137c5d93c1a6ec1b8fb"
                 },
                 {
                     "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/be/eb/a4669d56ce4934d88a163e4b0d3cbc96606c073100bd6031f7972679877b/xdg-5.0.1-py3-none-any.whl",
-                    "sha256": "9ddd6649bee9148f952305603a08474e3ef37c909eb19dfcb9737d54ebcc407e"
+                    "url": "https://files.pythonhosted.org/packages/b4/9c/60194245c21825497e9609d8dd6a67db539429e77e28a4a1c651b63a0d26/networkx-2.6.2-py3-none-any.whl",
+                    "sha256": "5fcb7004be69e8fbdf07dcb502efa5c77cadcaad6982164134eeb9721f826c2e"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/2f/3b/ed8628640a4e917be11268d64a342966358b9001801a21edd6c7988794c2/dbus_deviation-0.6.1-py3-none-any.whl",
+                    "sha256": "187d56ea000742af291fa5fe5694365c59c7f7ffb38ad46cee752c40626ec4f2"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/c0/71/726cfc8f179b7b8d1401eb77132e34d8785b0cde3f2625ab75447639bf7a/hotdoc-0.13.5.tar.gz",
+                    "sha256": "b9b59f8a38932cb07018fd8a411016c962bb49bdddab0358926f9eca359925c9"
                 }
             ]
         }

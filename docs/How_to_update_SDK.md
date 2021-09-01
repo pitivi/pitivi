@@ -20,7 +20,7 @@ Docker image for running the tests and this needs to be updated also.
 First, look in `org.pitivi.Pitivi.json` for the current version:
 
 ```
-    "runtime-version": "3.38",
+    "runtime-version": "40",
 ```
 
 Grep the entire repo for this runtime version and replace it with the next

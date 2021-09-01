@@ -2,7 +2,7 @@
     "app-id": "org.pitivi.Pitivi",
     "branch": "master",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.38",
+    "runtime-version": "40",
     "command": "pitivi",
     "finish-args": [
         "--socket=x11",
@@ -47,14 +47,12 @@
         },
         {
             "name": "gsound",
-            "ensure-writable": [
-                "easy-install.pth"
-            ],
+            "buildsystem": "meson",
             "sources": [
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/gsound.git",
-                    "branch": "1.0.2"
+                    "branch": "1.0.3"
                 }
             ]
         },
@@ -69,12 +67,13 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://download.videolan.org/pub/x264/snapshots/x264-snapshot-20191103-2245-stable.tar.bz2",
-                    "sha256": "d74f8f819104a94b0bd075aae39652b1957bcdd460e09b5202582c86e95a5bc0"
+                    "url": "https://download.videolan.org/pub/x264/snapshots/x264-snapshot-20191217-2245-stable.tar.bz2",
+                    "sha256": "b2495c8f2930167d470994b1ce02b0f4bfb24b3317ba36ba7f112e9809264160"
                 }
             ]
         },
         {
+            "//": "Needed by frei0r",
             "name": "gavl",
             "rm-configure": true,
             "config-opts": [
@@ -108,118 +107,6 @@
                     "commands": [
                         "autoreconf -vfi"
                     ]
-                }
-            ]
-        },
-        {
-            "name": "frei0r-plugin",
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://github.com/dyne/frei0r/archive/v1.6.1.tar.gz",
-                    "sha256": "dae0ca623c83173788ce4fc74cb67ac7e50cf33a4412ee3d33bed284da1a8437"
-                }
-            ]
-        },
-        {
-            "name": "libsoundtouch",
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://gitlab.com/soundtouch/soundtouch/-/archive/2.1.2/soundtouch-2.1.2.tar.bz2",
-                    "sha256": "992bba58ecda8c0a3a94cc9648ccebbb84fb6f4f8c1a90fbb4ec3817354ad40d"
-                }
-            ]
-        },
-        {
-            "name": "vo-aacenc",
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://downloads.sourceforge.net/opencore-amr/vo-aacenc/vo-aacenc-0.1.3.tar.gz",
-                    "mirror-urls": [
-                        "http://ftp.debian.org/debian/pool/main/v/vo-aacenc/vo-aacenc_0.1.3.orig.tar.gz"
-                    ],
-                    "sha256": "e51a7477a359f18df7c4f82d195dab4e14e7414cbd48cf79cc195fc446850f36"
-                }
-            ]
-        },
-        {
-            "name": "x265",
-            "buildsystem": "cmake",
-            "subdir": "source",
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://get.videolan.org/x265/x265_3.2.1.tar.gz",
-                    "sha256": "fb9badcf92364fd3567f8b5aa0e5e952aeea7a39a2b864387cec31e3b58cbbcc"
-                }
-            ]
-        },
-        {
-            "name": "ffmpeg",
-            "config-opts": [
-                "--disable-static",
-                "--enable-shared",
-                "--enable-pic",
-                "--disable-avdevice",
-                "--disable-postproc",
-                "--disable-swscale",
-                "--disable-programs",
-                "--disable-ffplay",
-                "--disable-ffprobe",
-                "--disable-ffmpeg",
-                "--disable-encoder=flac",
-                "--disable-protocols",
-                "--disable-devices",
-                "--disable-network",
-                "--disable-hwaccels",
-                "--disable-dxva2",
-                "--disable-vdpau",
-                "--disable-filters",
-                "--enable-filter=yadif",
-                "--disable-doc",
-                "--disable-d3d11va",
-                "--disable-dxva2",
-                "--disable-audiotoolbox",
-                "--disable-videotoolbox",
-                "--disable-vaapi",
-                "--disable-crystalhd",
-                "--disable-mediacodec",
-                "--disable-nvenc",
-                "--disable-mmal",
-                "--disable-omx",
-                "--disable-omx-rpi",
-                "--disable-cuda",
-                "--disable-cuvid",
-                "--disable-libmfx",
-                "--disable-libnpp",
-                "--disable-iconv",
-                "--disable-jni",
-                "--disable-v4l2_m2m",
-                "--enable-gpl",
-                "--enable-optimizations"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/FFmpeg/FFmpeg.git",
-                    "commit": "n4.1.4"
-                }
-            ]
-        },
-        {
-            "name": "fdkaac",
-            "config-opts": [
-                "--with-pic",
-                "--disable-static",
-                "--enable-shared"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/mstorsjo/fdk-aac.git",
-                    "branch": "v0.1.6"
                 }
             ]
         },
@@ -294,14 +181,161 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/opencv/opencv/archive/3.4.8.tar.gz",
-                    "sha256": "f0901648a1db3dc3af30e65082665921dbe998673137380450bdd91e8251b567"
+                    "url": "https://github.com/opencv/opencv/archive/refs/tags/3.4.15.tar.gz",
+                    "sha256": "b1e8470b18e9e793bf70b4ae051bbc9bf81fa45f8cbfee1e6c88858c90be8ff7"
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/opencv/opencv_contrib/archive/3.4.8.tar.gz",
-                    "sha256": "f7daa4136a73261566e4b372d0a5186ce46bb5dbdf6d1bcce0d373a1bb887f83",
+                    "url": "https://github.com/opencv/opencv_contrib/archive/3.4.15.tar.gz",
+                    "sha256": "5004024f2e92e520d324f235dc30a80878fd501fb03ca1f98ca3cbd53d27b6fb",
                     "dest": "contrib"
+                }
+            ]
+        },
+        {
+            "name": "frei0r-plugins",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "sources": [
+                {
+                    "//": "With 1.7.0 there is a build error, so we use this commit",
+                    "type": "git",
+                    "url": "https://github.com/dyne/frei0r.git",
+                    "branch": "86475d3e11e1061bf161e6ed3830fe2cf3d172ac",
+                    "x-checker-data": {
+                        "type": "html",
+                        "url": "https://files.dyne.org/frei0r/",
+                        "version-pattern": "frei0r-plugins-([\\d\\.-]*).tar.gz",
+                        "url-template": "https://files.dyne.org/frei0r/frei0r-plugins-$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "libsoundtouch",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://gitlab.com/soundtouch/soundtouch/-/archive/2.3.0/soundtouch-2.3.0.tar.bz2",
+                    "sha256": "2d037770a0afba551e0444d1c6e362a482fbaf79faeffc676da599676eb7e1b7",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://gitlab.com/api/v4/projects/soundtouch%2Fsoundtouch/releases",
+                        "version-query": ".[0].tag_name",
+                        "url-query": ".[0].assets.sources[] | select(.format == \"tar.bz2\").url",
+                        "timestamp-query": ".[0].released_at"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "vo-aacenc",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/mstorsjo/vo-aacenc/archive/refs/tags/v0.1.3.tar.gz",
+                    "sha256": "ae38610405f862237f6c70360c406297cc4222abf82e86722c505ba74b53a97d"
+                },
+                {
+                    "type": "script",
+                    "dest-filename": "autogen.sh",
+                    "commands": [
+                        "autoreconf -fiv"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "x265",
+            "buildsystem": "cmake",
+            "subdir": "source",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://bitbucket.org/multicoreware/x265_git/downloads/x265_3.5.tar.gz",
+                    "sha256": "e70a3335cacacbba0b3a20ec6fecd6783932288ebc8163ad74bcc9606477cae8",
+                    "x-checker-data": {
+                        "type": "html",
+                        "url": "https://bitbucket.org/multicoreware/x265_git/raw/stable/x265Version.txt",
+                        "version-pattern": "releasetag: ([\\d\\.-]*)$",
+                        "url-template": "https://bitbucket.org/multicoreware/x265_git/downloads/x265_$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "ffmpeg",
+            "config-opts": [
+                "--disable-static",
+                "--enable-shared",
+                "--enable-pic",
+                "--disable-avdevice",
+                "--disable-postproc",
+                "--disable-swscale",
+                "--disable-programs",
+                "--disable-ffplay",
+                "--disable-ffprobe",
+                "--disable-ffmpeg",
+                "--disable-encoder=flac",
+                "--disable-protocols",
+                "--disable-devices",
+                "--disable-network",
+                "--disable-hwaccels",
+                "--disable-dxva2",
+                "--disable-vdpau",
+                "--disable-filters",
+                "--enable-filter=yadif",
+                "--disable-doc",
+                "--disable-d3d11va",
+                "--disable-dxva2",
+                "--disable-audiotoolbox",
+                "--disable-videotoolbox",
+                "--disable-vaapi",
+                "--disable-crystalhd",
+                "--disable-mediacodec",
+                "--disable-nvenc",
+                "--disable-mmal",
+                "--disable-omx",
+                "--disable-omx-rpi",
+                "--disable-cuda",
+                "--disable-cuvid",
+                "--disable-libmfx",
+                "--disable-libnpp",
+                "--disable-iconv",
+                "--disable-jni",
+                "--disable-v4l2_m2m",
+                "--enable-gpl",
+                "--enable-optimizations"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n4.4.tar.gz",
+                    "sha256": "bea6d9f91cdbe4c5ad98e0878955ad5077df3883ef321fd4668ee1076de793fe",
+                    "x-checker-data": {
+                        "type": "html",
+                        "url": "https://raw.githubusercontent.com/FFmpeg/FFmpeg/master/RELEASE",
+                        "version-pattern": "([\\d\\.-]*).git",
+                        "url-template": "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "fdk-aac",
+            "config-opts": [
+                "--with-pic",
+                "--disable-static",
+                "--enable-shared"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.2.tar.gz",
+                    "sha256": "7812b4f0cf66acda0d0fe4302545339517e702af7674dd04e5fe22a5ade16a90"
                 }
             ]
         },
@@ -501,7 +535,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://gitlab.gnome.org/GNOME/libpeas.git"
+                    "url": "https://gitlab.gnome.org/GNOME/libpeas.git",
+                    "branch": "libpeas-1.30.0"
                 }
             ]
         },

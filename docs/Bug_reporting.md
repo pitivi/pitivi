@@ -106,10 +106,10 @@ gdb python3 -ex "run $PITIVI_REPO_DIR/bin/pitivi"
 1. Install the GNOME SDK and its Debug symbols and update them:
 
 ```
-flatpak --user install flathub org.gnome.Sdk/x86_64/3.38
-flatpak --user install flathub org.gnome.Sdk.Debug/x86_64/3.38
-flatpak --user update          org.gnome.Sdk/x86_64/3.38
-flatpak --user update          org.gnome.Sdk.Debug/x86_64/3.38
+flatpak --user install flathub org.gnome.Sdk/x86_64/40
+flatpak --user install flathub org.gnome.Sdk.Debug/x86_64/40
+flatpak --user update          org.gnome.Sdk/x86_64/40
+flatpak --user update          org.gnome.Sdk.Debug/x86_64/40
 ```
 
 2. Start a shell in the Pitivi flatpak sandbox:

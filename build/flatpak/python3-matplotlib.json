@@ -2,33 +2,13 @@
     "name": "python3-matplotlib",
     "buildsystem": "simple",
     "build-commands": [
-        "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"matplotlib\""
+        "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"matplotlib\" --no-build-isolation"
     ],
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/c9/57/a6c81c1d6b8973d288ec6df0993a71a61318c862afc1de71fd3aa1ba1dcd/Pillow-8.1.0-cp38-cp38-manylinux1_x86_64.whl",
-            "sha256": "cdbbe7dff4a677fb555a54f9bc0450f2a21a93c5ba2b44e09e54fcb72d2bd13d"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/f7/d2/e07d3ebb2bd7af696440ce7e754c59dd546ffe1bbe732c8ab68b9c834e61/cycler-0.10.0-py2.py3-none-any.whl",
-            "sha256": "1d8a5ae1ff6c5cf9b93e8811e581232ad8920aeec647c37316ceac982b08cb2d"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/99/04/41e831621ddec54f99e9e3693b8d4f2f583d7f3ee8df33bf9a7d6bf764de/kiwisolver-1.3.1-cp38-cp38-manylinux1_x86_64.whl",
-            "sha256": "78751b33595f7f9511952e7e60ce858c6d64db2e062afb325985ddbd34b5c131"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/de/cf/d81fece6931ab0a3427eb29c2da7c3dc8e611927609d737a55964a3e0ef5/matplotlib-3.3.3-cp38-cp38-manylinux1_x86_64.whl",
-            "sha256": "83e6c895d93fdf93eeff1a21ee96778ba65ef258e5d284160f7c628fee40c38f"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/e5/7d/fe25dcdfc46d14e037cbb87e480ac067da36f56a8e65928bf1040ff35793/numpy-1.19.4-cp38-cp38-manylinux2010_x86_64.whl",
-            "sha256": "1aeef46a13e51931c0b1cf8ae1168b4a55ecd282e6688fdb0a948cc5a1d5afb9"
+            "url": "https://files.pythonhosted.org/packages/36/7a/87837f39d0296e723bb9b62bbb257d0355c7f6128853c78955f57342a56d/python_dateutil-2.8.2-py2.py3-none-any.whl",
+            "sha256": "961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"
         },
         {
             "type": "file",
@@ -37,8 +17,28 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/d4/70/d60450c3dd48ef87586924207ae8907090de0b306af2bce5d134d78615cb/python_dateutil-2.8.1-py2.py3-none-any.whl",
-            "sha256": "75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"
+            "url": "https://files.pythonhosted.org/packages/f8/9e/6b0c9d6e2546faf92385a50ee02294a484ef2eb2170a63e05eb78d1742f7/Pillow-8.3.2-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "sha256": "0412516dcc9de9b0a1e0ae25a280015809de8270f134cc2c1e32c4eeb397cf30"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/aa/69/260a4a1cc89cc00b51f432db048c396952f5c05dfa1345a1b3dbd9ea3544/numpy-1.21.2-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.whl",
+            "sha256": "7fdc7689daf3b845934d67cb221ba8d250fdca20ac0334fea32f7091b93f00d3"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/d0/2c/c3cba6c1ec54c82bfc56204c712dd2e9b069e2590f78a18841dafbdf2ced/kiwisolver-1.3.2-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.whl",
+            "sha256": "b6a5431940f28b6de123de42f0eb47b84a073ee3c3345dc109ad550a3307dd28"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/f7/d2/e07d3ebb2bd7af696440ce7e754c59dd546ffe1bbe732c8ab68b9c834e61/cycler-0.10.0-py2.py3-none-any.whl",
+            "sha256": "1d8a5ae1ff6c5cf9b93e8811e581232ad8920aeec647c37316ceac982b08cb2d"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/11/6b/9c6bb4c1e8380d16dfb78709e907a469bf0ddb12a55249a15c3f15717862/matplotlib-3.4.3-cp38-cp38-manylinux1_x86_64.whl",
+            "sha256": "6a724e3a48a54b8b6e7c4ae38cd3d07084508fa47c410c8757e9db9791421838"
         }
     ]
 }
