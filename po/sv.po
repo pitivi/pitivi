@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-07-05 23:44+0000\n"
-"PO-Revision-Date: 2021-07-06 07:21+0200\n"
+"POT-Creation-Date: 2021-08-28 11:32+0000\n"
+"PO-Revision-Date: 2021-09-02 19:53+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -382,7 +382,7 @@ msgid "Edit the project settings"
 msgstr "Redigera projektinställningarna"
 
 #: data/ui/mainmenubutton.ui:119 data/ui/projectsettings.ui:61
-#: pitivi/medialibrary.py:171 pitivi/medialibrary.py:532
+#: pitivi/medialibrary.py:173 pitivi/medialibrary.py:536
 #: pitivi/dialogs/prefs.py:339
 msgid "Project Settings"
 msgstr "Projektinställningar"
@@ -496,7 +496,7 @@ msgstr "Vissa ändringar kommer inte att gälla förrän du har startat om Pitiv
 #: data/ui/projectsettings.ui:78 data/ui/renderingprogress.ui:41
 #: pitivi/editorperspective.py:544 pitivi/editorperspective.py:679
 #: pitivi/editorperspective.py:727 pitivi/editorperspective.py:780
-#: pitivi/greeterperspective.py:241 pitivi/medialibrary.py:783
+#: pitivi/greeterperspective.py:241 pitivi/medialibrary.py:854
 #: pitivi/dialogs/browseprojects.py:38 pitivi/dialogs/missingasset.py:46
 msgid "Cancel"
 msgstr "Avbryt"
@@ -528,7 +528,7 @@ msgstr "Bildfrekvens:"
 
 #. The title of the section with the video settings
 #: data/ui/projectsettings.ui:383 data/ui/renderingdialog.ui:752
-#: pitivi/effects.py:246
+#: pitivi/clipproperties.py:1285 pitivi/effects.py:246
 msgid "Video"
 msgstr "Video"
 
@@ -583,7 +583,8 @@ msgstr "Rendera"
 msgid "Quality:"
 msgstr "Kvalitet:"
 
-#: data/ui/renderingdialog.ui:179 pitivi/render.py:74
+#: data/ui/renderingdialog.ui:179 pitivi/clipproperties.py:1288
+#: pitivi/render.py:74
 msgid "Custom"
 msgstr "Anpassad"
 
@@ -653,7 +654,8 @@ msgstr "Kodek:"
 msgid "Sample rate:"
 msgstr "Samplingsfrekvens:"
 
-#: data/ui/renderingdialog.ui:527 pitivi/effects.py:122 pitivi/effects.py:246
+#: data/ui/renderingdialog.ui:527 pitivi/clipproperties.py:1286
+#: pitivi/effects.py:122 pitivi/effects.py:246
 msgid "Audio"
 msgstr "Ljud"
 
@@ -698,7 +700,7 @@ msgid "Pause"
 msgstr "Pausa"
 
 #: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:766
-#: pitivi/timeline/timeline.py:1879
+#: pitivi/timeline/timeline.py:1894
 msgid "Play"
 msgstr "Spela upp"
 
@@ -939,11 +941,11 @@ msgstr ""
 "GStreamer och att återhämta sig från dem"
 
 #. Translators: This is the default text of a title clip.
-#: pitivi/clipproperties.py:64
+#: pitivi/clipproperties.py:65
 msgid "Title Clip"
 msgstr "Titelklipp"
 
-#: pitivi/clipproperties.py:146
+#: pitivi/clipproperties.py:152
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
@@ -951,39 +953,39 @@ msgstr ""
 "Välj ett klipp i tidslinjen för att konfigurera dess egenskaper och effekter "
 "eller skapa ett nytt klipp:"
 
-#: pitivi/clipproperties.py:152
+#: pitivi/clipproperties.py:158
 msgid "Create a title clip"
 msgstr "Skapa ett titelklipp"
 
-#: pitivi/clipproperties.py:157
+#: pitivi/clipproperties.py:163
 msgid "Create a color clip"
 msgstr "Skapa ett färgklipp"
 
-#: pitivi/clipproperties.py:262 pitivi/effects.py:118
+#: pitivi/clipproperties.py:269 pitivi/effects.py:118
 msgid "Time"
 msgstr "Tid"
 
-#: pitivi/clipproperties.py:305
+#: pitivi/clipproperties.py:312
 msgid "Speed"
 msgstr "Hastighet"
 
 # I think this shoudln't be translated.. or ?
 # See https://phabricator.freedesktop.org/T7349
-#: pitivi/clipproperties.py:320 pitivi/utils/widgets.py:800
+#: pitivi/clipproperties.py:327 pitivi/utils/widgets.py:800
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: pitivi/clipproperties.py:323 pitivi/dialogs/prefs.py:285
+#: pitivi/clipproperties.py:330 pitivi/dialogs/prefs.py:285
 #: pitivi/utils/widgets.py:976
 msgid "Reset to default value"
 msgstr "Återställ till standardvärde"
 
-#: pitivi/clipproperties.py:557
+#: pitivi/clipproperties.py:565
 msgid "Effects"
 msgstr "Effekter"
 
-#: pitivi/clipproperties.py:574
+#: pitivi/clipproperties.py:581
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
@@ -991,25 +993,41 @@ msgstr ""
 "För att tillämpa en effekt på klippet, dra den från effektbiblioteket eller "
 "använd knappen nedan."
 
-#: pitivi/clipproperties.py:582
+#: pitivi/clipproperties.py:589
 msgid "Add Effect"
 msgstr "Lägg till effekt"
 
-#: pitivi/clipproperties.py:906
+#: pitivi/clipproperties.py:913
 msgid "Transformation"
 msgstr "Transformering"
 
-#: pitivi/clipproperties.py:1035
+#: pitivi/clipproperties.py:1042
 msgid "Show keyframes"
 msgstr "Visa nyckelbilder"
 
-#: pitivi/clipproperties.py:1038
+#: pitivi/clipproperties.py:1045
 msgid "Activate keyframes"
 msgstr "Aktivera nyckelbilder"
 
-#: pitivi/clipproperties.py:1043
+#: pitivi/clipproperties.py:1050
 msgid "Hide keyframes"
 msgstr "Göm nyckelbilder"
+
+#: pitivi/clipproperties.py:1287
+msgid "Text"
+msgstr "Text"
+
+#: pitivi/clipproperties.py:1296
+msgid "Clip markers"
+msgstr "Klippmarkörer"
+
+#: pitivi/clipproperties.py:1349
+msgid "Magnetic"
+msgstr "Magnetiskt"
+
+#: pitivi/clipproperties.py:1383
+msgid "No markers"
+msgstr "Inga markörer"
 
 #: pitivi/clip_properties/color.py:53 plugins/console/console.py:125
 msgid "Color"
@@ -1059,7 +1077,7 @@ msgstr "Vänster"
 msgid "Right"
 msgstr "Höger"
 
-#: pitivi/editorperspective.py:205 pitivi/medialibrary.py:607
+#: pitivi/editorperspective.py:205 pitivi/medialibrary.py:621
 msgid "Media Library"
 msgstr "Mediabibliotek"
 
@@ -1345,68 +1363,68 @@ msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Upplösning</b>: %d×%d"
 
 #: pitivi/mediafilespreviewer.py:271 pitivi/mediafilespreviewer.py:288
-#: pitivi/utils/ui.py:536
+#: pitivi/utils/ui.py:566
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Längd</b>: %s"
 
-#: pitivi/mediafilespreviewer.py:461 pitivi/medialibrary.py:1134
+#: pitivi/mediafilespreviewer.py:461 pitivi/medialibrary.py:1205
 msgid "Error while analyzing a file"
 msgid_plural "Error while analyzing files"
 msgstr[0] "Fel vid analysering av fil"
 msgstr[1] "Fel vid analysering av filer"
 
-#: pitivi/medialibrary.py:144
+#: pitivi/medialibrary.py:146
 msgid "Keep dialog open"
 msgstr "Håll dialogruta öppen"
 
-#: pitivi/medialibrary.py:146
+#: pitivi/medialibrary.py:148
 msgid "When importing files keep the dialog open"
 msgstr "Håll dialogrutan öppen vid import av filer"
 
 #. Translators: Create optimized media for unsupported files.
-#: pitivi/medialibrary.py:152
+#: pitivi/medialibrary.py:154
 msgid "Optimize:"
 msgstr "Optimera:"
 
-#: pitivi/medialibrary.py:156
+#: pitivi/medialibrary.py:158
 msgid "Unsupported assets"
 msgstr "Resurser som ej stöds"
 
-#: pitivi/medialibrary.py:157
+#: pitivi/medialibrary.py:159
 msgid "All"
 msgstr "Alla"
 
-#: pitivi/medialibrary.py:238
+#: pitivi/medialibrary.py:240
 #, python-format
 msgid "Scale assets larger than %s×%s px."
 msgstr "Skala resurser större än %s×%s bildpunkter."
 
-#: pitivi/medialibrary.py:520 pitivi/medialibrary.py:1011
+#: pitivi/medialibrary.py:522 pitivi/medialibrary.py:1082
 msgid "Unknown"
 msgstr "Okänt"
 
-#: pitivi/medialibrary.py:614
+#: pitivi/medialibrary.py:628
 msgid "Remove the selected assets"
 msgstr "Ta bort de markerade resurserna"
 
-#: pitivi/medialibrary.py:623
+#: pitivi/medialibrary.py:635
 msgid "Insert selected assets at the end of the timeline"
 msgstr "Infoga markerade resurser vid slutet av tidslinjen"
 
-#: pitivi/medialibrary.py:780
+#: pitivi/medialibrary.py:851
 msgid "Select One or More Files"
 msgstr "Välj en eller flera filer"
 
-#: pitivi/medialibrary.py:784 pitivi/medialibrary.py:1208
+#: pitivi/medialibrary.py:855 pitivi/medialibrary.py:1279
 msgid "Add"
 msgstr "Lägg till"
 
-#: pitivi/medialibrary.py:799 pitivi/render.py:1491
+#: pitivi/medialibrary.py:870 pitivi/render.py:1491
 msgid "Supported file formats"
 msgstr "Alla format som stöds"
 
-#: pitivi/medialibrary.py:811 pitivi/dialogs/missingasset.py:117
+#: pitivi/medialibrary.py:882 pitivi/dialogs/missingasset.py:117
 msgid "All files"
 msgstr "Alla filer"
 
@@ -1416,86 +1434,86 @@ msgstr "Alla filer"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals)
-#: pitivi/medialibrary.py:917
+#: pitivi/medialibrary.py:988
 #, python-format
 msgid "Transcoding %d asset: %d%% (About %s left)"
 msgid_plural "Transcoding %d assets: %d%% (About %s left)"
 msgstr[0] "Omkodar %d resurs: %d%% (Ungefär %s kvar)"
 msgstr[1] "Omkodar %d resurser: %d%% (Ungefär %s kvar)"
 
-#: pitivi/medialibrary.py:1023
+#: pitivi/medialibrary.py:1094
 msgid "View error"
 msgid_plural "View errors"
 msgstr[0] "Visa fel"
 msgstr[1] "Visa fel"
 
 #. Translators: {0:d} is just like %d (integer number variable)
-#: pitivi/medialibrary.py:1025
+#: pitivi/medialibrary.py:1096
 #, python-brace-format
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
 msgstr[0] "Ett fel inträffade under importen."
 msgstr[1] "{0:d} fel inträffade under importen."
 
-#: pitivi/medialibrary.py:1041
+#: pitivi/medialibrary.py:1112
 #, python-format
 msgid "The project settings have been set to match file '%s'"
 msgstr "Projektinställningarna har ställts in till att matcha filen ”%s”"
 
-#: pitivi/medialibrary.py:1137
+#: pitivi/medialibrary.py:1208
 msgid "The following file can not be used with Pitivi."
 msgid_plural "The following files can not be used with Pitivi."
 msgstr[0] "Följande fil kan inte användas med Pitivi."
 msgstr[1] "Följande filer kan inte användas med Pitivi."
 
-#: pitivi/medialibrary.py:1167
+#: pitivi/medialibrary.py:1238
 msgid "Tag as:"
 msgstr "Tagga som:"
 
-#: pitivi/medialibrary.py:1205
+#: pitivi/medialibrary.py:1276
 msgid "Enter tag"
 msgstr "Ange tagg"
 
-#: pitivi/medialibrary.py:1364
+#: pitivi/medialibrary.py:1435
 msgid "Open containing folder"
 msgstr "Öppna innehållande mapp"
 
-#: pitivi/medialibrary.py:1371
+#: pitivi/medialibrary.py:1442
 msgid "Edit"
 msgstr "Redigera"
 
-#: pitivi/medialibrary.py:1400
+#: pitivi/medialibrary.py:1471
 msgid "Do not use Optimised Proxy for selected asset"
 msgid_plural "Do not use Optimised Proxies for selected assets"
 msgstr[0] "Använd inte optimerad proxyfil för vald resurs"
 msgstr[1] "Använd inte optimerade proxyfiler för valda resurser"
 
-#: pitivi/medialibrary.py:1411 pitivi/medialibrary.py:1433
-#: pitivi/medialibrary.py:1455
+#: pitivi/medialibrary.py:1482 pitivi/medialibrary.py:1504
+#: pitivi/medialibrary.py:1526
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
 msgstr[0] "Ta bort motsvarande proxyfil"
 msgstr[1] "Ta bort motsvarande proxyfiler"
 
-#: pitivi/medialibrary.py:1422
+#: pitivi/medialibrary.py:1493
 msgid "Do not use Proxy for selected asset"
 msgid_plural "Do not use Proxies for selected assets"
 msgstr[0] "Använd inte proxyfil för vald resurs"
 msgstr[1] "Använd inte proxyfiler för valda resurser"
 
-#: pitivi/medialibrary.py:1444
+#: pitivi/medialibrary.py:1515
 msgid "Do not use Scaled Proxy for selected asset"
 msgid_plural "Do not use Scaled Proxies for selected assets"
 msgstr[0] "Använd inte skalad proxyfil för vald resurs"
 msgstr[1] "Använd inte skalade proxyfiler för valda resurser"
 
-#: pitivi/medialibrary.py:1466
+#: pitivi/medialibrary.py:1537
 msgid "Use Optimised Proxy for selected asset"
 msgid_plural "Use Optimised Proxies for selected assets"
 msgstr[0] "Använd optimerad proxyfil för vald resurs"
 msgstr[1] "Använd optimerade proxyfiler för valda resurser"
 
-#: pitivi/medialibrary.py:1476
+#: pitivi/medialibrary.py:1547
 msgid "Use Scaled Proxy for selected asset"
 msgid_plural "Use Scaled Proxies for selected assets"
 msgstr[0] "Använd skalad proxyfil för vald resurs"
@@ -1834,7 +1852,7 @@ msgstr "Avsluta helskärmsläge"
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:441
+#: pitivi/timeline/elements.py:444
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1845,12 +1863,12 @@ msgstr ""
 "Tidsstämpel: %s\n"
 "Värde: %s"
 
-#: pitivi/timeline/elements.py:629
+#: pitivi/timeline/elements.py:632
 #, python-format
 msgid "Timestamp: %s"
 msgstr "Tidsstämpel: %s"
 
-#: pitivi/timeline/elements.py:1546
+#: pitivi/timeline/elements.py:1592
 msgid "Audio crossfade"
 msgstr "Ljudövertona"
 
@@ -1879,32 +1897,26 @@ msgstr "Ta bort lager"
 msgid "Layer %d"
 msgstr "Lager %d"
 
-#: pitivi/timeline/markers.py:136
-msgid "Markers"
-msgstr "Markörer"
-
-#: pitivi/timeline/markers.py:143
-msgid "Add a marker"
-msgstr "Lägg till en markör"
-
-#: pitivi/timeline/markers.py:150
-msgid "Seek to the first marker before the playhead"
-msgstr "Spola till den första markören innan uppspelningshuvudet"
-
-#: pitivi/timeline/markers.py:157
-msgid "Seek to the first marker after the playhead"
-msgstr "Spola till den första markören efter uppspelningshuvudet"
-
 #: pitivi/timeline/ruler.py:233
 #, python-format
 msgid "Frame #%d"
 msgstr "Bildruta #%d"
 
-#: pitivi/timeline/timeline.py:83
+#: pitivi/timeline/timeline.py:86
+msgid "Markers magnetic by default"
+msgstr "Magnetiska markörer som standard"
+
+#: pitivi/timeline/timeline.py:88
+msgid ""
+"Whether markers created on new clips will be snapping targets by default."
+msgstr ""
+"Huruvida markörer som skapas på nya klipp kommer fästas vid mål som standard."
+
+#: pitivi/timeline/timeline.py:98
 msgid "Snap distance"
 msgstr "Fästavstånd"
 
-#: pitivi/timeline/timeline.py:84
+#: pitivi/timeline/timeline.py:99
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1912,11 +1924,11 @@ msgstr ""
 "Tröskelvärde (i bildpunkter) med vilket två klipp ska fästas tillsammans när "
 "de dras eller finjusteras."
 
-#: pitivi/timeline/timeline.py:96
+#: pitivi/timeline/timeline.py:111
 msgid "Image clip duration"
 msgstr "Bildklippsvaraktighet"
 
-#: pitivi/timeline/timeline.py:98
+#: pitivi/timeline/timeline.py:113
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
@@ -1924,119 +1936,131 @@ msgstr ""
 "Standardlängd för videoklipp (i millisekunder) för bilder vid infogande på "
 "tidslinjen."
 
-#: pitivi/timeline/timeline.py:109
+#: pitivi/timeline/timeline.py:124
 msgid "Left click also seeks"
 msgstr "Vänsterklick spolar också"
 
-#: pitivi/timeline/timeline.py:111
+#: pitivi/timeline/timeline.py:126
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
 "Huruvida vänsterklickande också spolar förutom att välja och redigera "
 "videoklipp."
 
-#: pitivi/timeline/timeline.py:341 pitivi/timeline/timeline.py:1775
+#: pitivi/timeline/timeline.py:356 pitivi/timeline/timeline.py:1790
 msgid "Add layer"
 msgstr "Lägg till lager"
 
-#: pitivi/timeline/timeline.py:1718 pitivi/dialogs/prefs.py:60
+#: pitivi/timeline/timeline.py:1733 pitivi/dialogs/prefs.py:60
 msgid "Timeline"
 msgstr "Tidslinje"
 
-#: pitivi/timeline/timeline.py:1725
+#: pitivi/timeline/timeline.py:1740
 msgid "Action Search"
 msgstr "Åtgärdssökning"
 
-#: pitivi/timeline/timeline.py:1733
+#: pitivi/timeline/timeline.py:1748
 msgid "Delete selected clips"
 msgstr "Ta bort markerade klipp"
 
-#: pitivi/timeline/timeline.py:1740
+#: pitivi/timeline/timeline.py:1755
 msgid "Delete selected clips and shift following ones"
 msgstr "Ta bort markerade klipp och skifta efterföljande"
 
-#: pitivi/timeline/timeline.py:1747
+#: pitivi/timeline/timeline.py:1762
 msgid "Group selected clips together"
 msgstr "Gruppera markerade klipp tillsammans"
 
-#: pitivi/timeline/timeline.py:1754
+#: pitivi/timeline/timeline.py:1769
 msgid "Ungroup selected clips"
 msgstr "Avgruppera markerade klipp"
 
-#: pitivi/timeline/timeline.py:1761
+#: pitivi/timeline/timeline.py:1776
 msgid "Copy selected clips"
 msgstr "Kopiera markerade klipp"
 
-#: pitivi/timeline/timeline.py:1768
+#: pitivi/timeline/timeline.py:1783
 msgid "Paste selected clips"
 msgstr "Klistra in markerade klipp"
 
-#: pitivi/timeline/timeline.py:1782
+#: pitivi/timeline/timeline.py:1797
 msgid "Seek to the first clip edge after the playhead"
 msgstr "Spola till den första klippkanten efter uppspelningshuvudet"
 
-#: pitivi/timeline/timeline.py:1789
+#: pitivi/timeline/timeline.py:1804
 msgid "Seek to the first clip edge before the playhead"
 msgstr "Spola till den första klippkanten innan uppspelningshuvudet"
 
-#: pitivi/timeline/timeline.py:1796
+#: pitivi/timeline/timeline.py:1811
 msgid "Shift selected clips one frame forward"
 msgstr "Skifta markerade klipp en bildruta framåt"
 
-#: pitivi/timeline/timeline.py:1803
+#: pitivi/timeline/timeline.py:1818
 msgid "Shift selected clips one frame backward"
 msgstr "Skifta markerade klipp en bildruta bakåt"
 
-#: pitivi/timeline/timeline.py:1810
+#: pitivi/timeline/timeline.py:1825
 msgid "Snap selected clips to the next clip"
 msgstr "Fäst markerade klipp till nästa klipp"
 
-#: pitivi/timeline/timeline.py:1817
+#: pitivi/timeline/timeline.py:1832
 msgid "Snap selected clips to the previous clip"
 msgstr "Fäst markerade klipp till föregående klipp"
 
-#: pitivi/timeline/timeline.py:1824
+#: pitivi/timeline/timeline.py:1839
 msgid "Add an effect to the selected clip"
 msgstr "Lägg till en effekt till det markerade klippet"
 
-#: pitivi/timeline/timeline.py:1837
+#: pitivi/timeline/timeline.py:1852
 msgid "Split the clip at the position"
 msgstr "Dela upp klipp vid positionen"
 
-#: pitivi/timeline/timeline.py:1844
+#: pitivi/timeline/timeline.py:1859
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Lägg till nyckelbildruta till nyckelbildskurvan för valt klipp"
 
-#: pitivi/timeline/timeline.py:1849
+#: pitivi/timeline/timeline.py:1864
 msgid "Timeline Navigation"
 msgstr "Tidslinjenavigering"
 
-#: pitivi/timeline/timeline.py:1857
+#: pitivi/timeline/timeline.py:1872
 msgid "Zoom in"
 msgstr "Zooma in"
 
-#: pitivi/timeline/timeline.py:1865
+#: pitivi/timeline/timeline.py:1880
 msgid "Zoom out"
 msgstr "Zooma ut"
 
-#: pitivi/timeline/timeline.py:1873
+#: pitivi/timeline/timeline.py:1888
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Justera zoom för att anpassa projektet till fönstret"
 
-#: pitivi/timeline/timeline.py:1886
+#: pitivi/timeline/timeline.py:1901
 msgid "Seek backward one frame"
 msgstr "Spola bakåt en bildruta"
 
-#: pitivi/timeline/timeline.py:1893
+#: pitivi/timeline/timeline.py:1908
 msgid "Seek forward one frame"
 msgstr "Spola framåt en bildruta"
 
-#: pitivi/timeline/timeline.py:1901
+#: pitivi/timeline/timeline.py:1916
 msgid "Seek backward one second"
 msgstr "Spola bakåt en sekund"
 
-#: pitivi/timeline/timeline.py:1909
+#: pitivi/timeline/timeline.py:1924
 msgid "Seek forward one second"
 msgstr "Spola framåt en sekund"
+
+#: pitivi/timeline/timeline.py:1932
+msgid "Add a marker"
+msgstr "Lägg till en markör"
+
+#: pitivi/timeline/timeline.py:1939
+msgid "Seek to the first marker before the playhead"
+msgstr "Spola till den första markören innan uppspelningshuvudet"
+
+#: pitivi/timeline/timeline.py:1946
+msgid "Seek to the first marker after the playhead"
+msgstr "Spola till den första markören efter uppspelningshuvudet"
 
 #: pitivi/dialogs/about.py:45
 #, python-format
@@ -2208,22 +2232,22 @@ msgstr ""
 "Denna tangentbordskombination används redan av <b>%s</b>. Tryck ned Ersätt "
 "för att använda den för <b>%s</b> istället."
 
-#: pitivi/dialogs/prefs.py:733
+#: pitivi/dialogs/prefs.py:736
 msgid "No description available."
 msgstr "Ingen beskrivning tillgänglig."
 
-#: pitivi/dialogs/prefs.py:844
+#: pitivi/dialogs/prefs.py:827
 #, python-brace-format
 msgid "Unable to load the plugin '{module_name}'"
 msgstr "Kan inte läsa in insticket '{module_name}'"
 
 #. We could use Gtk.ListBox.set_placeholder, but it
 #. appears bad inside the list widget.
-#: pitivi/dialogs/prefs.py:928
+#: pitivi/dialogs/prefs.py:911
 msgid "No plugins available"
 msgstr "Inga instick tillgängliga"
 
-#: pitivi/dialogs/prefs.py:941
+#: pitivi/dialogs/prefs.py:924
 #, python-brace-format
 msgid ""
 "You can create <a href='{doc_url}'>plugins</a> into your <a "
@@ -2231,6 +2255,10 @@ msgid ""
 msgstr ""
 "Du kan skapa <a href='{doc_url}'>instick</a> till din <a "
 "href='{dir_url}'>instickskatalog</a>."
+
+#: pitivi/utils/markers.py:33
+msgid "User markers"
+msgstr "Användarmarkörer"
 
 #: pitivi/utils/misc.py:278
 msgid ""
@@ -2265,117 +2293,117 @@ msgid "Max CPU usage dedicated to transcoding"
 msgstr "Maximal processoranvändning avsedd för omkodning"
 
 #. Translators: 'fps' is for 'frames per second'
-#: pitivi/utils/ui.py:352
+#: pitivi/utils/ui.py:382
 msgid "{0:s} fps"
 msgstr "{0:s} bilder/s"
 
-#: pitivi/utils/ui.py:372
+#: pitivi/utils/ui.py:402
 #, python-brace-format
 msgid "{0:n} kHz"
 msgstr "{0:n} kHz"
 
-#: pitivi/utils/ui.py:381
+#: pitivi/utils/ui.py:411
 msgid "Mono"
 msgstr "Mono"
 
-#: pitivi/utils/ui.py:382
+#: pitivi/utils/ui.py:412
 msgid "Stereo"
 msgstr "Stereo"
 
-#: pitivi/utils/ui.py:383
+#: pitivi/utils/ui.py:413
 msgid "6 (5.1)"
 msgstr "6 (5.1)"
 
-#: pitivi/utils/ui.py:384
+#: pitivi/utils/ui.py:414
 msgid "8 (7.1)"
 msgstr "8 (7.1)"
 
-#: pitivi/utils/ui.py:515
+#: pitivi/utils/ui.py:545
 #, python-format
 msgid "<b>Duration:</b> %s"
 msgstr "<b>Längd:</b> %s"
 
-#: pitivi/utils/ui.py:518
+#: pitivi/utils/ui.py:548
 #, python-format
 msgid "<b>Proxy creation progress:</b> %d%%"
 msgstr "<b>Skapelseförlopp för proxy:</b> %d%%"
 
-#: pitivi/utils/ui.py:532
+#: pitivi/utils/ui.py:562
 #, python-format
 msgid "<b>Path</b>: %s"
 msgstr "<b>Sökväg</b>: %s"
 
-#: pitivi/utils/ui.py:542
+#: pitivi/utils/ui.py:572
 #, python-format
 msgid "<b>Size</b>: %s"
 msgstr "<b>Storlek</b>: %s"
 
-#: pitivi/utils/ui.py:578
+#: pitivi/utils/ui.py:608
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[0] "<b>Ljud:</b> %d kanal i %d <i>Hz</i> (%d <i>bitar</i>)"
 msgstr[1] "<b>Ljud:</b> %d kanaler i %d <i>Hz</i> (%d <i>bitar</i>)"
 
-#: pitivi/utils/ui.py:590
+#: pitivi/utils/ui.py:620
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
 msgstr "<b>Video:</b> %d×%d <i>bildpunkter</i> med %s <i>bilder/s</i>"
 
-#: pitivi/utils/ui.py:593
+#: pitivi/utils/ui.py:623
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>Bild:</b> %d×%d <i>bildpunkter</i>"
 
-#: pitivi/utils/ui.py:647 pitivi/utils/ui.py:674 pitivi/utils/ui.py:698
+#: pitivi/utils/ui.py:677 pitivi/utils/ui.py:704 pitivi/utils/ui.py:728
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d timme"
 msgstr[1] "%d timmar"
 
-#: pitivi/utils/ui.py:650 pitivi/utils/ui.py:677 pitivi/utils/ui.py:701
+#: pitivi/utils/ui.py:680 pitivi/utils/ui.py:707 pitivi/utils/ui.py:731
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minut"
 msgstr[1] "%d minuter"
 
-#: pitivi/utils/ui.py:653 pitivi/utils/ui.py:680 pitivi/utils/ui.py:704
+#: pitivi/utils/ui.py:683 pitivi/utils/ui.py:710 pitivi/utils/ui.py:734
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d sekund"
 msgstr[1] "%d sekunder"
 
-#: pitivi/utils/ui.py:672
+#: pitivi/utils/ui.py:702
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d dag"
 msgstr[1] "%d dagar"
 
-#: pitivi/utils/ui.py:713
+#: pitivi/utils/ui.py:743
 msgid "Just now"
 msgstr "Just nu"
 
-#: pitivi/utils/ui.py:716
+#: pitivi/utils/ui.py:746
 msgid "An hour ago"
 msgstr "En timme sedan"
 
-#: pitivi/utils/ui.py:719
+#: pitivi/utils/ui.py:749
 msgid "Today"
 msgstr "Idag"
 
-#: pitivi/utils/ui.py:722
+#: pitivi/utils/ui.py:752
 msgid "Yesterday"
 msgstr "Igår"
 
-#: pitivi/utils/ui.py:731
+#: pitivi/utils/ui.py:761
 msgid "About a year ago"
 msgstr "Ungefär ett år sedan"
 
-#: pitivi/utils/ui.py:734
+#: pitivi/utils/ui.py:764
 #, python-format
 msgid "About %d year ago"
 msgid_plural "About %d years ago"
