@@ -254,14 +254,14 @@ class Pitivi(Gtk.Application, Loggable):
             scenario_path = os.path.join(cache_dir, scenario_name + ".scenario")
 
         scenario_path = path_from_uri(quote_uri(scenario_path))
-        self._scenario_file = open(scenario_path, "w")
+        # pylint: disable=consider-using-with
+        self._scenario_file = open(scenario_path, "w", encoding="UTF-8")
 
         if project_path and not project_path.endswith(".scenario"):
             # It's an xges file probably.
-            with open(project_path) as project:
+            with open(project_path, encoding="UTF-8") as project:
                 content = project.read().replace("\n", "")
-                self.write_action("load-project",
-                                  serialized_content=content)
+                self.write_action("load-project", serialized_content=content)
 
     def _new_project_loaded_cb(self, unused_project_manager, project):
         uri = project.get_uri()

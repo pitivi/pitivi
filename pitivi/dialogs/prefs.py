@@ -364,8 +364,8 @@ class PreferencesDialog(Loggable):
         self.__update_proxy_size_revert_button()
 
     def __update_proxy_size_revert_button(self):
-        default = all([self.settings.is_default(setting)
-                       for setting in ("default_scaled_proxy_width", "default_scaled_proxy_height")])
+        default = all(self.settings.is_default(setting)
+                      for setting in ("default_scaled_proxy_width", "default_scaled_proxy_height"))
         self.scaled_proxy_size_revert_button.set_sensitive(not default)
 
     def __update_scaled_proxies_infobar(self):

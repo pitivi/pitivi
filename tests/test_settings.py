@@ -124,7 +124,7 @@ class TestGlobalSettings(common.TestCase):
 
         with mock.patch("pitivi.settings.xdg_config_home") as xdg_config_home,\
                 tempfile.TemporaryDirectory() as temp_dir:
-            with open(os.path.join(temp_dir, "pitivi.conf"), "w") as tmp_file:
+            with open(os.path.join(temp_dir, "pitivi.conf"), "w", encoding="UTF-8") as tmp_file:
                 tmp_file.write(conf_file_content)
             xdg_config_home.return_value = temp_dir
             settings = GlobalSettings()

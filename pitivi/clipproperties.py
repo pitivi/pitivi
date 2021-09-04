@@ -877,10 +877,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _move_effect(self, clip, source_index, drop_index):
         # Handle edge cases
-        if drop_index < 0:
-            drop_index = 0
-        if drop_index > len(clip.get_top_effects()) - 1:
-            drop_index = len(clip.get_top_effects()) - 1
+        drop_index = min(max(0, drop_index), len(clip.get_top_effects()) - 1)
         if source_index == drop_index:
             # Noop.
             return

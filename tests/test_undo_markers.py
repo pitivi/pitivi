@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Tests for the undo.markers module."""
+# pylint: disable=consider-using-with,protected-access
 import tempfile
 
 from gi.repository import Gst

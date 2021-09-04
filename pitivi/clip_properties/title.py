@@ -108,6 +108,8 @@ class TitleProperties(Gtk.Expander, Loggable):
         self.x_absolute_spin = builder.get_object("x-absolute")
         self.y_absolute_spin = builder.get_object("y-absolute")
 
+        # TODO: Remove when we upgrade pylint https://github.com/PyCQA/pylint/issues/4962
+        # pylint: disable=superfluous-parens
         for value_id, text in (("absolute", _("Absolute")),
                                ("top", _("Top")),
                                ("center", _("Center")),
@@ -300,7 +302,7 @@ class TitleProperties(Gtk.Expander, Loggable):
         assert res, pspec.name
         if pspec.name == "text":
             text = html.unescape(value)
-            if self.textbuffer.props.text == text or "":
+            if self.textbuffer.props.text == text:
                 return
             self.textbuffer.props.text = text
         elif pspec.name in ["x-absolute", "y-absolute"]:

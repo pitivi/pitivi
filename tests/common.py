@@ -408,7 +408,7 @@ class TestCase(unittest.TestCase, Loggable):
         unused, xges_path = tempfile.mkstemp(suffix=".xges")
         proj_uri = Gst.filename_to_uri(os.path.abspath(xges_path))
 
-        with open(xges_path, "w") as xges_file:
+        with open(xges_path, "w", encoding="UTF-8") as xges_file:
             xges_file.write(xges)
 
         return proj_uri
@@ -565,7 +565,7 @@ def created_project_file(asset_uri):
         str: The URI of the new project
     """
     unused_fd, xges_path = tempfile.mkstemp()
-    with open(xges_path, "w") as xges:
+    with open(xges_path, "w", encoding="UTF-8") as xges:
         xges.write("""
 <ges version='0.1'>
   <project>

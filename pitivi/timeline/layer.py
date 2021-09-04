@@ -268,7 +268,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__update_audio_button()
 
     def __check_tracks_active(self, tracks):
-        return all([self.ges_layer.get_active_for_track(t) for t in tracks])
+        return all(self.ges_layer.get_active_for_track(t) for t in tracks)
 
     def update(self, media_types):
         self.props.height_request = self.ges_layer.ui.props.height_request

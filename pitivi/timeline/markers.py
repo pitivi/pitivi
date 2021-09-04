@@ -148,9 +148,9 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         if start >= end:
             return None
 
-        markers_positions = list([ges_marker.props.position
-                                  for ges_marker in self.markers_container.get_markers()
-                                  if start <= ges_marker.props.position < end])
+        markers_positions = list(ges_marker.props.position
+                                 for ges_marker in self.markers_container.get_markers()
+                                 if start <= ges_marker.props.position < end)
         if not markers_positions:
             return None
 

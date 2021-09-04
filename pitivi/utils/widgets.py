@@ -335,9 +335,9 @@ class TimeWidget(TextWidget, DynamicWidget):
             nanosecs = frame_no / float(self._framerate) * Gst.SECOND
         return int(nanosecs)
 
-    def set_widget_value(self, timeNanos, send_signal=True):
-        self.default = timeNanos
-        timecode = time_to_string(timeNanos)
+    def set_widget_value(self, time_nanos, send_signal=True):
+        self.default = time_nanos
+        timecode = time_to_string(time_nanos)
         if timecode.startswith("0:"):
             timecode = timecode[2:]
         TextWidget.set_widget_value(self, timecode, send_signal=send_signal)
@@ -1108,9 +1108,9 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         return widget
 
     def get_widget_of_prop(self, prop_name):
-        for prop in self.properties:
+        for prop, value in self.properties.items():
             if prop.name == prop_name:
-                return self.properties[prop]
+                return value
         return None
 
 

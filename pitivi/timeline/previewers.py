@@ -1442,8 +1442,8 @@ class TitlePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         context.set_source(grad)
         context.fill()
 
-    def set_selected(self, select):
-        self._selected = select
+    def set_selected(self, selected):
+        self._selected = selected
 
     def release(self):
         # Nothing to release

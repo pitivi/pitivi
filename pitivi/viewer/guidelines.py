@@ -56,9 +56,9 @@ class Guideline(Enum):
         cr.move_to(width, 0)
         cr.line_to(0, height)
 
-    three_by_three = (_("3 by 3"), __three_by_three_draw_func)
-    vertical_horizontal_center = (_("Vertical/Horizontal"), __vertical_horizontal_center_draw_func)
-    diagonals = (_("Diagonals"), __diagonals_draw_func)
+    THREE_BY_THREE = (_("3 by 3"), __three_by_three_draw_func)
+    VERTICAL_HORIZONTAL_CENTER = (_("Vertical/Horizontal"), __vertical_horizontal_center_draw_func)
+    DIAGONALS = (_("Diagonals"), __diagonals_draw_func)
 
     def __init__(self, label, func):
         self.label = label
@@ -76,12 +76,12 @@ class GuidelinesPopover(Gtk.Popover):
     def __init__(self):
         Gtk.Popover.__init__(self)
 
-        self.switches = dict()
+        self.switches = {}
 
         self.overlay = GuidelinesOverlay()
         self._create_ui()
 
-        self._last_guidelines = {Guideline.three_by_three}
+        self._last_guidelines = {Guideline.THREE_BY_THREE}
 
     def _create_ui(self):
         grid = Gtk.Grid()

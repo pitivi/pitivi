@@ -247,7 +247,7 @@ class GlobalSettings(GObject.Object, Loggable):
                 else:
                     self._config.remove_option(section, key)
         try:
-            with open(self.conf_file_path, 'w') as file:
+            with open(self.conf_file_path, "w", encoding="UTF-8") as file:
                 self._config.write(file)
         except (IOError, OSError) as e:
             self.error("Failed to write to %s: %s", self.conf_file_path, e)

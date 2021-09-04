@@ -72,14 +72,14 @@ class EditorState(Loggable):
         self.log("Editor state saving.")
 
         if self.conf_file_path:
-            with open(self.conf_file_path, "w") as file:
+            with open(self.conf_file_path, "w", encoding="UTF-8") as file:
                 json.dump(self._editor_state, file)
 
     def load_editor_state(self):
         """Load an editor state file into the current editor state."""
         self.log("Loading state from file: %s", self.conf_file_path)
         try:
-            with open(self.conf_file_path, "r") as file:
+            with open(self.conf_file_path, "r", encoding="UTF-8") as file:
                 try:
                     self._editor_state = json.load(file)
                 except (json.decoder.JSONDecodeError, ValueError) as e:

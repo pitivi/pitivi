@@ -56,9 +56,9 @@ class TestPluginManager(common.TestCase):
                           "    def __init__(self):\n"
                           "        GObject.Object.__init__(self)")
 
-            with open(os.path.join(temp_dir, "pluginA.plugin"), "w") as plugin_file:
+            with open(os.path.join(temp_dir, "pluginA.plugin"), "w", encoding="UTF-8") as plugin_file:
                 plugin_file.write(plugin_content)
-            with open(os.path.join(temp_dir, "pluginA.py"), "w") as py_file:
+            with open(os.path.join(temp_dir, "pluginA.py"), "w", encoding="UTF-8") as py_file:
                 py_file.write(py_content)
 
             get_plugins_dir.return_value = temp_dir

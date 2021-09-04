@@ -27,7 +27,6 @@ class TitleOverlay(Overlay):
         Overlay.__init__(self, stack, source)
         self.__position = numpy.array([0, 0])
         self.__size = None
-        self.__click_source_position = None
         self.__click_window_position = None
         self.update_from_source()
 
@@ -43,12 +42,6 @@ class TitleOverlay(Overlay):
         x, y = [int(v) + 0.5 for v in self.__position]
         w, h = [int(v) - 1 for v in self.__size]
         cr.rectangle(x, y, w, h)
-
-    def __get_source_position(self):
-        res_x, x = self._source.get_child_property("x-absolute")
-        res_y, y = self._source.get_child_property("y-absolute")
-        assert res_x and res_y
-        return numpy.array([x, y])
 
     def __get_text_position(self):
         res_x, x = self._source.get_child_property("text-x")
@@ -88,7 +81,6 @@ class TitleOverlay(Overlay):
         return self._is_hovered()
 
     def on_button_press(self):
-        self.__click_source_position = self.__get_source_position()
         self.__click_window_position = self.__position
         if self._is_hovered():
             self._select()
@@ -98,7 +90,6 @@ class TitleOverlay(Overlay):
             self._deselect()
 
     def on_button_release(self, cursor_position):
-        self.__click_source_position = None
         self.on_hover(cursor_position)
         if self._is_hovered():
             self.stack.set_cursor("grab")

@@ -37,6 +37,7 @@ suggestion-mode=yes
 # --disable=W".
 disable=access-member-before-definition,
         arguments-differ, # Pylint fails at this with the Gtk do_* methods, so no thanks.
+        arguments-renamed, # We renamed a handful of positional arguments.
         assignment-from-none, # Most probably subclasses return something else.
         global-statement,
         import-outside-toplevel,
@@ -60,6 +61,7 @@ disable=access-member-before-definition,
         too-many-statements,
         ungrouped-imports, # We have a different tool for imports.
         unsubscriptable-object,
+        unused-private-member, # In theory it's useful, but in practice I'm not so sure.
         C0114, # We have a different tool for docstrings.
         C0115,
         C0116

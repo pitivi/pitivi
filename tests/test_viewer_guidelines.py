@@ -51,7 +51,7 @@ class GuidelinesPopoverTest(common.TestCase):
         self.setup_viewer_widget()
         popover = self.viewer_container.guidelines_popover
 
-        self._check_guidelines([], [Guideline.three_by_three])
+        self._check_guidelines([], [Guideline.THREE_BY_THREE])
 
         all_guidelines = set()
         for guideline in Guideline:

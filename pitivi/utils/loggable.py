@@ -644,7 +644,8 @@ def init(env_var_name, enable_color_output=True, enable_crack_output=True):
 
     if filename_env_var_name in os.environ:
         # install a log handler that uses the value of the environment var
-        _outfile = open(os.environ[filename_env_var_name], "w+")
+        # pylint: disable=consider-using-with
+        _outfile = open(os.environ[filename_env_var_name], "w+", encoding="UTF-8")
     else:
         _outfile = sys.stderr
 

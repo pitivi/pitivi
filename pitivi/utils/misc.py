@@ -109,7 +109,8 @@ def is_valid_file(path):
 
     try:
         # The path doesn't exist, so open(path, "w") is safe to use.
-        open(path, "w").close()
+        # pylint: disable=consider-using-with
+        open(path, "w", encoding="UTF-8").close()
         os.unlink(path)
         return True
     except IOError:
@@ -132,6 +133,7 @@ def is_writable(path):
             return os.access(os.path.dirname(path), os.W_OK)
     except UnicodeDecodeError:
         unicode_error_dialog()
+        return False
 
 
 def uri_is_valid(uri):
@@ -269,6 +271,7 @@ def show_user_manual(page=None):
     # not have a portal to access system wild apps)
     page_uri = get_page_uri(APPMANUALURL_OFFLINE, page)
     try:
+        # pylint: disable=consider-using-with
         subprocess.Popen(["yelp", page_uri])
     except FileNotFoundError as e:
         log.warning("utils", "Failed loading %s: %s", page_uri, e)
@@ -547,7 +550,7 @@ def is_pathname_valid(pathname: str) -> bool:
                     return False
     # If a "TypeError" exception was raised, it almost certainly has the
     # error message "embedded NUL character" indicating an invalid pathname.
-    except TypeError as exc:
+    except TypeError:
         return False
     # If no exception was raised, all path components and hence this
     # pathname itself are valid. (Praise be to the curmudgeonly python.)

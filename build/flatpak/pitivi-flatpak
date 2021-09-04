@@ -86,7 +86,7 @@ def remove_comments(string):
 
 
 def load_manifest(manifest_path):
-    with open(manifest_path, "r") as mr:
+    with open(manifest_path, "r", encoding="UTF-8") as mr:
         contents = mr.read()
         contents = remove_comments(contents)
         manifest = json.loads(contents)
@@ -145,7 +145,7 @@ def expand_manifest(manifest_path, outfile, basedir, gst_version, branchname):
         module["sources"][0]["url"] = repo
         module["sources"][0]["branch"] = branch
 
-    with open(outfile, "w") as of:
+    with open(outfile, "w", encoding="UTF-8") as of:
         print(json.dumps(template, indent=4), file=of)
 
 
@@ -306,11 +306,11 @@ class FlatpakRepos(FlatpakObject):
         self.packages = FlatpakPackages(self)
 
     def add(self, name, flatpakrepo_url, override=True):
-        flatpakrepo = tempfile.NamedTemporaryFile(mode="w")
         try:
-            urlretrieve(flatpakrepo_url, flatpakrepo.name)
-            repo = configparser.ConfigParser()
-            repo.read(flatpakrepo.name)
+            with tempfile.NamedTemporaryFile(mode="w") as flatpakrepo:
+                urlretrieve(flatpakrepo_url, flatpakrepo.name)
+                repo = configparser.ConfigParser()
+                repo.read(flatpakrepo.name)
             url = repo["Flatpak Repo"]["Url"]
         except URLError:
             url = None
@@ -445,18 +445,16 @@ class PitiviFlatpak:
 
         self.build_name = self.name
         if os.path.exists(os.path.join(self.topdir, ".git")):
-            devnull = open(os.devnull)
-            try:
-                branch = subprocess.check_output(
-                    "git rev-parse --abbrev-ref HEAD".split(" "),
-                    stderr=devnull,
-                    cwd=self.topdir).decode("utf-8").strip("\n")
-                self.build_name = self.name + "." + branch
-                self.build_name = self.build_name.replace(os.path.sep, "_")
-            except subprocess.CalledProcessError:
-                pass
-            finally:
-                devnull.close()
+            with open(os.devnull, encoding="UTF-8") as devnull:
+                try:
+                    branch = subprocess.check_output(
+                        "git rev-parse --abbrev-ref HEAD".split(" "),
+                        stderr=devnull,
+                        cwd=self.topdir).decode("utf-8").strip("\n")
+                    self.build_name = self.name + "." + branch
+                    self.build_name = self.build_name.replace(os.path.sep, "_")
+                except subprocess.CalledProcessError:
+                    pass
 
         self.coredumpgdb = None
         self.coredumpctl_matches = ""
@@ -617,7 +615,7 @@ class PitiviFlatpak:
                 command = ["coredumpctl", "dump"] + shlex.split(self.coredumpctl_matches)
                 subprocess.check_call(command, stdout=coredump, stderr=stderr)
 
-                with open(stderr.name, 'r') as stderrf:
+                with open(stderr.name, "r", encoding="UTF-8") as stderrf:
                     stderr = stderrf.read()
                 executable, = re.findall(".*Executable: (.*)", stderr)
                 if not executable.startswith("/newroot"):

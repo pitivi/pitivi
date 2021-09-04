@@ -56,18 +56,19 @@ class ShortcutsManager(GObject.Object):
         if not os.path.isfile(self.config_path):
             return
 
-        for line in open(self.config_path, "r"):
-            action_name, accelerators = line.split(":", 1)
-            accelerators = accelerators.strip("\n").split(",")
-            self.app.set_accels_for_action(action_name, accelerators)
-            yield action_name
+        with open(self.config_path, "r", encoding="UTF-8") as conf_file:
+            for line in conf_file:
+                action_name, accelerators = line.split(":", 1)
+                accelerators = accelerators.strip("\n").split(",")
+                self.app.set_accels_for_action(action_name, accelerators)
+                yield action_name
 
     def save(self):
         """Saves the accelerators for each action to the config file.
 
         Only the actions added using `add` with a title are considered.
         """
-        with open(self.config_path, "w") as conf_file:
+        with open(self.config_path, "w", encoding="UTF-8") as conf_file:
             for unused_group_id, actions in self.group_actions.items():
                 for action, unused_title, unused_action_object in actions:
                     accels = ",".join(self.app.get_accels_for_action(action))
@@ -136,7 +137,7 @@ class ShortcutsManager(GObject.Object):
             str: The name of the conflicting action using the accelerator, or None.
         """
         group_name = action.split(".")[0]
-        for group in {group_name, "app", "win"}:
+        for group in (group_name, "app", "win"):
             for neighbor_action, unused_title, unused_action_object in self.group_actions[group]:
                 if neighbor_action == action:
                     continue

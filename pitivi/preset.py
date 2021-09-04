@@ -182,7 +182,7 @@ class PresetManager(GObject.Object, Loggable):
         for uri in files:
             filepath = os.path.join(presets_dir, uri)
             if filepath.endswith("json"):
-                with open(filepath) as section:
+                with open(filepath, encoding="UTF-8") as section:
                     parser = json.loads(section.read())
                 name = parser["name"]
                 if parser.get("removed"):
@@ -212,7 +212,7 @@ class PresetManager(GObject.Object, Loggable):
         except KeyError:
             file_path = self._build_file_path(preset_name)
             self.presets[preset_name]["filepath"] = file_path
-        with open(file_path, "w") as fout:
+        with open(file_path, "w", encoding="UTF-8") as fout:
             values = self.presets[preset_name]
             raw = self._serialize_preset(values)
             raw["name"] = preset_name
@@ -371,7 +371,7 @@ class PresetManager(GObject.Object, Loggable):
     def _mark_removed(self, name):
         data = json.dumps({"name": name, "removed": True}, indent=4)
         filepath = self._create_user_preset_path(name)
-        with open(filepath, "w") as fout:
+        with open(filepath, "w", encoding="UTF-8") as fout:
             fout.write(data)
 
     def prepend_preset(self, name, values):

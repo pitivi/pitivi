@@ -425,8 +425,8 @@ class AssetThumbnail(GObject.Object, Loggable):
             cls.icons_by_name[icon_name] = (small_icon, large_icon)
         return cls.icons_by_name[icon_name]
 
-    @classmethod
-    def __get_icon(cls, icon_name, size):
+    @staticmethod
+    def __get_icon(icon_name, size):
         icon_theme = Gtk.IconTheme.get_default()
         try:
             icon = icon_theme.load_icon(icon_name, size, Gtk.IconLookupFlags.FORCE_SIZE)
@@ -817,7 +817,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             matches = not tags.difference(self.store[i].tags)
             if matches:
                 row_text = self.store[i].infotext.lower()
-                matches = all([escaped_word in row_text for escaped_word in escaped_words])
+                matches = all(escaped_word in row_text for escaped_word in escaped_words)
             row_widget.set_visible(bool(matches))
 
     def _update_search_suggestions(self, prefix: str, entered_tags: Set[str]):
@@ -1415,6 +1415,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             return
 
         path = os.path.abspath(path_from_uri(assets[0].get_id()))
+        # pylint: disable=consider-using-with
         subprocess.Popen([sys.argv[0], path])
 
     def __create_menu_model(self):

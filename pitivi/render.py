@@ -282,8 +282,8 @@ class PresetsManager(GObject.Object, Loggable):
 
             # Check the GStreamer elements are available.
             profiles = [profile] + profile.get_profiles()
-            if not all([self.project.get_element_factory_name(p)
-                        for p in profiles]):
+            if not all(self.project.get_element_factory_name(p)
+                       for p in profiles):
                 self.warning("unusable preset: %s", name)
                 continue
 

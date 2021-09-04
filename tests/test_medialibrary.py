@@ -110,7 +110,7 @@ class BaseTestMediaLibrary(common.TestCase):
             "notify::fraction", self._progress_bar_cb)
 
         self._create_assets(samples)
-        self.mainloop.run()
+        self.mainloop.run(timeout_seconds=10)
         self.assertFalse(self.medialibrary._progressbar.props.visible)
 
     def check_add_proxy(self, asset, scaled=False, w=160, h=120,
@@ -247,13 +247,14 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
             # Save the project and reload it, making sure there is no asset
             # in that new project
-            project_uri = Gst.filename_to_uri(tempfile.NamedTemporaryFile().name)
-            project.save(project.ges_timeline, project_uri, None, True)
+            with tempfile.NamedTemporaryFile() as temp_file:
+                project_uri = Gst.filename_to_uri(temp_file.name)
+                project.save(project.ges_timeline, project_uri, None, True)
 
-            self._custom_set_up(project_uri)
-            self.assertNotEqual(project, self.app.project_manager.current_project)
-            project = self.app.project_manager.current_project
-            self.assertEqual(project.list_assets(GES.Extractable), [])
+                self._custom_set_up(project_uri)
+                self.assertNotEqual(project, self.app.project_manager.current_project)
+                project = self.app.project_manager.current_project
+                self.assertEqual(project.list_assets(GES.Extractable), [])
 
     def check_selection_post_import(self, **kwargs):
         samples = ["30fps_numeroted_frames_red.mkv",

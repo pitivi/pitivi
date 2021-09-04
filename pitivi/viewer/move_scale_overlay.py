@@ -48,10 +48,8 @@ class Handle:
 
     def __init__(self, overlay):
         self.__size = Handle.INITIAL_SIZE
-        self.__clicked = False
         self.__window_position = numpy.array([0, 0])
         self.__translation = numpy.array([0, 0])
-        self.__click_position_compare = numpy.array([0, 0])
         self.__click_position = numpy.array([0, 0])
         self._opposite_position = numpy.array([0, 0])
         self._opposite_to_handle = numpy.array([0, 0])
@@ -302,7 +300,6 @@ class MoveScaleOverlay(Overlay):
         Overlay.__init__(self, stack, source)
 
         self.__clicked_handle = None
-        self.__click_diagonal_sign = None
 
         self.__action_log = action_log
         self.hovered_handle = None
