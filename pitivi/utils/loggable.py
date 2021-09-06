@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
-import collections
+import collections.abc
 import errno
 import fnmatch
 import os
@@ -714,7 +714,7 @@ def add_log_handler(func):
     Raises:
         TypeError: When func is not a callable.
     """
-    if not isinstance(func, collections.Callable):
+    if not isinstance(func, collections.abc.Callable):
         raise TypeError("func must be callable")
 
     if func not in _log_handlers:
@@ -736,7 +736,7 @@ def add_limited_log_handler(func):
     Raises:
         TypeError: When func is not a callable.
     """
-    if not isinstance(func, collections.Callable):
+    if not isinstance(func, collections.abc.Callable):
         raise TypeError("func must be callable")
 
     if func not in _log_handlers_limited:
