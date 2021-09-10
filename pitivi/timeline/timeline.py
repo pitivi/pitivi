@@ -16,6 +16,7 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 import os
 from gettext import gettext as _
+from typing import Any
 from typing import List
 from typing import Optional
 
@@ -323,7 +324,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
-        self.app = app
+        self.app: Any = app
         self._project = None
         self.ges_timeline = None
         self.editor_state = editor_state
@@ -940,25 +941,34 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         for ges_layer in self.ges_timeline.get_layers():
             ges_layer.ui.update_position()
 
-    def add_clip_to_layer(self, ges_layer, asset, start):
-        if asset.is_image():
-            clip_duration = self.app.settings.imageClipLength * \
-                Gst.SECOND / 1000.0
-            max_duration = 0
-        else:
-            clip_duration = asset_get_duration(asset)
-            max_duration = clip_duration
+    def add_clip_to_layer(self, ges_layer: GES.Layer, asset: GES.Asset, start: int) -> Optional[GES.Clip]:
+        """Creates a clip out of the asset on the specified layer.
 
-        ges_clip = ges_layer.add_asset(asset, start, 0, clip_duration,
-                                       asset.get_supported_formats())
+        Shortens the duration so the clip covers an exact number of frames.
+        """
+        if asset.is_image():
+            duration = self.app.settings.imageClipLength * Gst.SECOND / 1000.0
+        else:
+            duration = asset_get_duration(asset)
+
+        duration = self.mod_duration(duration)
+
+        track_types = asset.get_supported_formats()
+        ges_clip = ges_layer.add_asset(asset, start, 0, duration, track_types)
         if not ges_clip:
-            return ges_clip
+            return None
 
         # Tell GES that the max duration is our newly compute max duration
         # so it has the proper information when doing timeline editing.
-        if max_duration and ges_clip.props.max_duration > max_duration:
-            ges_clip.props.max_duration = max_duration
+        if not asset.is_image():
+            ges_clip.props.max_duration = min(ges_clip.props.max_duration, duration)
+
         return ges_clip
+
+    def mod_duration(self, duration: int) -> int:
+        """Shortens the duration so it represents an exact number of frames."""
+        duration_frames = self.ges_timeline.get_frame_at(duration)
+        return self.ges_timeline.get_frame_time(duration_frames)
 
     def __create_clips(self, x, y):
         """Creates the clips for an asset drag operation.
@@ -980,8 +990,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         for asset in assets:
             ges_layer, unused_on_sep = self.get_layer_at(y)
             if not placement:
-                placement = self.pixel_to_ns(x)
-            placement = max(0, placement)
+                placement = max(0, self.pixel_to_ns(x))
 
             self.debug("Adding %s at %s on layer %s", asset.props.id, Gst.TIME_ARGS(placement), ges_layer)
             self.app.action_log.begin("Add one clip")
@@ -1542,7 +1551,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 if isinstance(obj, GES.Clip):
                     obj.set_start(clip_position)
                     layer.add_clip(obj)
-                    duration = obj.get_duration()
+                    original_duration = obj.get_duration()
+                    duration = self.timeline.mod_duration(original_duration)
+                    if duration != original_duration:
+                        obj.set_duration(duration)
                 elif isinstance(obj, GES.Asset):
                     ges_clip = self.timeline.add_clip_to_layer(layer, obj, clip_position)
                     duration = ges_clip.props.duration

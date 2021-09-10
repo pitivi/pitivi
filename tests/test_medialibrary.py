@@ -110,7 +110,7 @@ class BaseTestMediaLibrary(common.TestCase):
             "notify::fraction", self._progress_bar_cb)
 
         self._create_assets(samples)
-        self.mainloop.run(timeout_seconds=10)
+        self.mainloop.run(timeout_seconds=15)
         self.assertFalse(self.medialibrary._progressbar.props.visible)
 
     def check_add_proxy(self, asset, scaled=False, w=160, h=120,
