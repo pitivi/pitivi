@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2020-01-27 13:32+0000\n"
+"POT-Creation-Date: 2021-03-04 20:52+0000\n"
 "PO-Revision-Date: 2020-02-05 15:39+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
@@ -63,7 +63,7 @@ msgstr ""
 #: C/movearoundtimeline.page:26 C/presets.page:20 C/rendering.page:22
 #: C/savescreenshot.page:11 C/selectiongrouping.page:22 C/splitting.page:22
 #: C/sysreq.page:22 C/transitions.page:22 C/trimming.page:22
-#: C/usingclips.page:22 C/usingeffects.page:16 C/workwithprojects.page:22
+#: C/usingclips.page:26 C/usingeffects.page:16 C/workwithprojects.page:22
 msgid "Creative Commons Share Alike 3.0"
 msgstr "Creative Commons Compartir Igual 3.0"
 
@@ -285,6 +285,19 @@ msgstr "<key>Mayús</key>+arrastrar: edición de onda."
 #: C/cheatsheet.page:88
 msgid "<key>Ctrl</key>+drag: Roll edit."
 msgstr "<key>Ctrl</key>+arrastrar: edición de desplazamiento."
+
+#. (itstool) path: section/title
+#. (itstool) path: item/p
+#: C/cheatsheet.page:95 C/mainwindow.page:41
+msgid "Viewer"
+msgstr "Visor"
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:98
+#, fuzzy
+#| msgid "<key>F1</key>: Show the user manual"
+msgid "<key>'</key>: Toggle the safe areas"
+msgstr "<key>F1</key>: mostrar el manual de usuario"
 
 #. (itstool) path: credit/name
 #: C/codecscontainers.page:11 C/effects.page:12 C/gstreamer.page:15
@@ -915,9 +928,6 @@ msgstr "Manual de inicio rápido de Pitivi"
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/index.page:19
-#| msgctxt "_"
-#| msgid ""
-#| "external ref='figures/logo.png' md5='fe64746d2b62fdda1bf1be2c930d3796'"
 msgctxt "_"
 msgid "external ref='figures/logo.png' md5='fff855c13ab53690ef39bd41670bb519'"
 msgstr "external ref='figures/logo.png' md5='fff855c13ab53690ef39bd41670bb519'"
@@ -1127,8 +1137,11 @@ msgstr "Quitar un fotograma pulsando dos veces en él."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:63
-msgid "Adjust the time and value of a keyframe by moving it with the mouse."
-msgstr "Ajustar el tiempo y el valor de un fotograma moviéndolo con el ratón."
+msgid ""
+"Adjust the time and value of a keyframe by moving it with the mouse. When "
+"moving the keyframe, hold down <key>Ctrl</key> to lock the keyframe "
+"horizontally or vertically."
+msgstr ""
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:66
@@ -1189,11 +1202,18 @@ msgstr "Opacidad (cómo de sólidas son las cosas «opacas»)"
 
 #. (itstool) path: section/p
 #: C/layers.page:30
+#, fuzzy
+#| msgid ""
+#| "Each layer (and each clip) has its own transparency. To continue the "
+#| "paint on glass metaphor, if the paint is thin enough, it can be seen "
+#| "through. Visually, an opacity of 100% means you cannot see the clips "
+#| "below that layer or clip, and an opacity of of 50% means you can partly "
+#| "see them."
 msgid ""
 "Each layer (and each clip) has its own transparency. To continue the paint "
 "on glass metaphor, if the paint is thin enough, it can be seen through. "
 "Visually, an opacity of 100% means you cannot see the clips below that layer "
-"or clip, and an opacity of of 50% means you can partly see them."
+"or clip, and an opacity of 50% means you can partly see them."
 msgstr ""
 "Cada capa (y cada clip) tiene su propia transparencia. Para continuar la "
 "metáfora de la pintura en el vidrio, si la pintura es lo suficientemente "
@@ -1255,11 +1275,47 @@ msgstr ""
 
 #. (itstool) path: section/title
 #: C/layers.page:44
+#, fuzzy
+#| msgid "Understanding layers"
+msgid "Renaming a layer"
+msgstr "Entender las capas"
+
+#. (itstool) path: section/p
+#: C/layers.page:45
+msgid ""
+"To rename a layer, click the layer's name, which is an editable text field."
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/layers.page:48
+msgid "Adjusting layer positioning"
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/layers.page:49
+msgid ""
+"To move a layer to the top of the layer order, click <guiseq><gui>Layer "
+"icon</gui><gui>Move layer to top</gui></guiseq>. To move a layer to the one "
+"position higher in the layer order, click <guiseq><gui>Layer icon</"
+"gui><gui>Move layer up</gui></guiseq>."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/layers.page:50
+msgid ""
+"To move a layer to the one position lower in the layer order, click "
+"<guiseq><gui>Layer icon</gui><gui>Move layer down</gui></guiseq>. To move a "
+"layer to the bottom of the layer order, click <guiseq><gui>Layer icon</"
+"gui><gui>Move layer to bottom</gui></guiseq>."
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/layers.page:53
 msgid "Adding and removing layers"
 msgstr "Añadir y quitar capas"
 
 #. (itstool) path: section/p
-#: C/layers.page:45
+#: C/layers.page:54
 msgid ""
 "To create a layer, drag a clip to the middle space between two existing "
 "layers or just above the top layer or just below the bottom layer. Once the "
@@ -1270,7 +1326,7 @@ msgstr ""
 "Cuando se resalte el fino espacio entre las capas, suéltelo."
 
 #. (itstool) path: section/p
-#: C/layers.page:46
+#: C/layers.page:55
 msgid ""
 "To remove a layer, click <guiseq><gui>Layer icon</gui><gui>Delete layer</"
 "gui></guiseq>. The <gui>Layer icon</gui> can be found at the right of the "
@@ -1281,12 +1337,27 @@ msgstr ""
 "Capa</gui> a la derecha del campo del nombre de la capa."
 
 #. (itstool) path: section/title
-#: C/layers.page:49
+#: C/layers.page:58
+#, fuzzy
+#| msgid "Moving the playhead"
+msgid "Muting a layer"
+msgstr "Mover la posición actual"
+
+#. (itstool) path: section/p
+#: C/layers.page:59
+msgid ""
+"To mute a layer, click <gui>Volume icon</gui>. The icon will be toggled to "
+"show the layer has been muted. To unmute a layer, click <gui>Volume icon</"
+"gui> again."
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/layers.page:62
 msgid "What about audio layers?"
 msgstr "¿Qué pasa con las capas de sonido?"
 
 #. (itstool) path: section/p
-#: C/layers.page:50
+#: C/layers.page:63
 msgid ""
 "Unlike in vision, multiple sounds do not “block” each other. If you have "
 "multiple audio clips on separate layers, their sound will be mixed together. "
@@ -1315,7 +1386,7 @@ msgid ""
 "Unported license."
 msgstr ""
 "Este trabajo se distribuye bajo una Licencia Creative Commons Atribución - "
-"Compartir igual 3.0 sin soporte."
+"Compartir igual 3.0 no portada."
 
 #. (itstool) path: page/p
 #: C/license.page:16
@@ -1459,11 +1530,6 @@ msgstr "Pestañas primarias: bibliotecas de medios y de efectos"
 #: C/mainwindow.page:38
 msgid "Contextual tabs: clip properties, transitions, titles"
 msgstr "Pestañas contextuales: propiedades del clip, transiciones, títulos"
-
-#. (itstool) path: item/p
-#: C/mainwindow.page:41
-msgid "Viewer"
-msgstr "Visor"
 
 #. (itstool) path: item/p
 #. (itstool) path: section/title
@@ -2695,27 +2761,44 @@ msgstr "Agrupa y desagrupar vídeos"
 
 #. (itstool) path: section/p
 #: C/selectiongrouping.page:57
-msgid ""
-"The grouping and ungrouping functions are useful when you want to add or "
-"separate audio tracks from video clips, or when you want to create a block "
-"of clips that you can select, edit and move all at once."
+msgid "Pitivi allows you to combine"
 msgstr ""
-"Las funciones de agrupar y desagrupar son útiles cuando se quieren agregar o "
-"separar pistas de sonido desde clips de vídeo, o cuando se quiere crear un "
-"bloque de clips que se puedan seleccionar, editar y mover a la vez."
+
+#. (itstool) path: item/p
+#: C/selectiongrouping.page:59
+#, fuzzy
+#| msgid "Audio and video curves"
+msgid "audio and video into clips, and"
+msgstr "Curvas de sonido y vídeo"
+
+#. (itstool) path: item/p
+#: C/selectiongrouping.page:60
+#, fuzzy
+#| msgid "Select multiple clips in the timeline."
+msgid "multiple clips into groups."
+msgstr "Seleccione varios clips en la línea del tiempo."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:58
+#: C/selectiongrouping.page:62
+msgid ""
+"This means you can edit multiple pieces of media together, such as moving "
+"them along the timeline together. This section shows you how to group and "
+"ungroup audio and video tracks within clips, and also how to group and "
+"ungroup multiple clips together."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/selectiongrouping.page:63
 msgid "Grouping clips in timeline:"
 msgstr "Agrupar clips en la línea de tiempo:"
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:61
+#: C/selectiongrouping.page:66
 msgid "Select multiple clips in the timeline."
 msgstr "Seleccione varios clips en la línea del tiempo."
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:64
+#: C/selectiongrouping.page:69
 msgid ""
 "Click the <gui>Group clips</gui> button on the timeline toolbar, or press "
 "<keyseq><key>Ctrl</key><key>G</key></keyseq>."
@@ -2724,22 +2807,22 @@ msgstr ""
 "línea de tiempo o pulse <keyseq><key>Ctrl</key><key>G</key></keyseq>."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:67
+#: C/selectiongrouping.page:72
 msgid "You can now select, edit and move the clips all at once."
 msgstr "Ahora puede seleccionar, editar y mover todos los clips a la vez."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:68
+#: C/selectiongrouping.page:73
 msgid "Ungrouping clips in timeline:"
 msgstr "Desagrupar clips en la línea de tiempo:"
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:71
+#: C/selectiongrouping.page:76
 msgid "Select a group of clips in the timeline."
 msgstr "Seleccionar un grupo de clips en la línea del tiempo."
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:74
+#: C/selectiongrouping.page:79
 msgid ""
 "Click the <gui>Ungroup clips</gui> button on the timeline toolbar, or press "
 "<keyseq><key>Ctrl</key><key>Shift</key><key>G</key></keyseq>."
@@ -2749,7 +2832,7 @@ msgstr ""
 "keyseq>."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:77
+#: C/selectiongrouping.page:82
 msgid "You can now select, edit and move the clips independently."
 msgstr ""
 "Ahora puede seleccionar, editar y mover los clips de manera independiente."
@@ -3053,10 +3136,15 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/transitions.page:50
+#, fuzzy
+#| msgid ""
+#| "<em>Normal mode</em> will apply the transition in a linear fashion over "
+#| "the whole overlapping region. When in normal mode, you can adjust the "
+#| "degree of sharpness/smoothenss of the transition."
 msgid ""
 "<em>Normal mode</em> will apply the transition in a linear fashion over the "
 "whole overlapping region. When in normal mode, you can adjust the degree of "
-"sharpness/smoothenss of the transition."
+"sharpness/smoothness of the transition."
 msgstr ""
 "El <em>modo normal</em> aplicará la transición de manera lineal sobre toda "
 "la región de superposición. En modo normal puede ajustar el grado de "
@@ -3478,8 +3566,13 @@ msgstr ""
 msgid "Press and hold <key>Ctrl</key>."
 msgstr "Mantenga pulsada la tecla <key>Mayús</key>."
 
+#. (itstool) path: credit/name
+#: C/usingclips.page:19
+msgid "UNL SOFT261 - Team 3"
+msgstr ""
+
 #. (itstool) path: info/desc
-#: C/usingclips.page:18
+#: C/usingclips.page:22
 msgid ""
 "Learn the difference between clips and files and how to do basic operations "
 "on clips in the timeline."
@@ -3488,17 +3581,17 @@ msgstr ""
 "básicas en los clips a lo largo de la línea de tiempo."
 
 #. (itstool) path: page/title
-#: C/usingclips.page:25
+#: C/usingclips.page:29
 msgid "Using clips"
 msgstr "Usar clips"
 
 #. (itstool) path: section/title
-#: C/usingclips.page:27
+#: C/usingclips.page:31
 msgid "Clips vs files"
 msgstr "Clips frente a archivos"
 
 #. (itstool) path: section/p
-#: C/usingclips.page:28
+#: C/usingclips.page:32
 msgid ""
 "<em>Files</em> are data on your hard disk (videos, music, pictures, etc.) "
 "that can be accessed by <app>Pitivi</app> and incorporated in your video "
@@ -3509,7 +3602,7 @@ msgstr ""
 "proyecto de edición de vídeo."
 
 #. (itstool) path: section/p
-#: C/usingclips.page:29
+#: C/usingclips.page:33
 msgid ""
 "<em>Clips</em> are a visual representation of your files on the timeline. "
 "They represent the period of time they consume on the timeline and can be "
@@ -3525,7 +3618,7 @@ msgstr ""
 "para crear cualquier cantidad de clips diferentes."
 
 #. (itstool) path: note/p
-#: C/usingclips.page:31
+#: C/usingclips.page:35
 msgid ""
 "Since Pitivi is a non-destructive editor, clips are edited, not files. As "
 "such, your files stay intact."
@@ -3534,12 +3627,12 @@ msgstr ""
 "no los archivos. De esta forma sus archivos se mantienen intactos."
 
 #. (itstool) path: section/title
-#: C/usingclips.page:35
+#: C/usingclips.page:39
 msgid "Inserting clips"
 msgstr "Insertar clips"
 
 #. (itstool) path: section/p
-#: C/usingclips.page:36
+#: C/usingclips.page:40
 msgid ""
 "From the <gui>Media Library</gui>, you can insert one or more clips by "
 "selecting them (use the <key>Ctrl</key> or <key>Shift</key> keys to select "
@@ -3550,12 +3643,12 @@ msgstr ""
 "seleccionar varios clips) y realizando uno de los siguientes pasos:"
 
 #. (itstool) path: item/p
-#: C/usingclips.page:39
+#: C/usingclips.page:43
 msgid "Dragging and dropping them onto a place in the timeline."
 msgstr "Arrastrarlos y soltarlos en una parte de la línea del tiempo."
 
 #. (itstool) path: item/p
-#: C/usingclips.page:42
+#: C/usingclips.page:46
 msgid ""
 "Clicking the <gui>Insert the selected clips at the end of the timeline</gui> "
 "button in the <gui>Media Library</gui> header."
@@ -3564,12 +3657,12 @@ msgstr ""
 "del tiempo</gui> en la <gui>Biblioteca de medios</gui>."
 
 #. (itstool) path: item/p
-#: C/usingclips.page:45
+#: C/usingclips.page:49
 msgid "Pressing the <key>Insert</key> key."
 msgstr "Pulsando la tecla <key>Ins</key>."
 
 #. (itstool) path: section/p
-#: C/usingclips.page:48
+#: C/usingclips.page:52
 msgid ""
 "When following the second and third options (clicking or pressing insert), "
 "the new clips will be inserted one after another on the longest layer of the "
@@ -3581,18 +3674,18 @@ msgstr ""
 "cualquier capa."
 
 #. (itstool) path: section/title
-#: C/usingclips.page:51
+#: C/usingclips.page:55
 msgid "Moving clips along the timeline"
 msgstr "Mover clips a lo largo de la línea de tiempo"
 
 #. (itstool) path: section/p
-#: C/usingclips.page:52
+#: C/usingclips.page:56
 msgid "You can move a clip within a layer or move it to a different layer."
 msgstr ""
 "Puede mover un clip a lo largo de una capa o moverlo a una capa diferente."
 
 #. (itstool) path: section/p
-#: C/usingclips.page:53
+#: C/usingclips.page:57
 msgid ""
 "Click and drag a single clip to move it, and release the mouse button to "
 "place it. Dragging horizontally keeps the clip on the same layer, but "
@@ -3606,7 +3699,7 @@ msgstr ""
 "más información)."
 
 #. (itstool) path: section/p
-#: C/usingclips.page:54
+#: C/usingclips.page:58
 msgid ""
 "To move a clip to an existing layer, drag it on the layer at the desired "
 "position and release it. To move a clip to a new layer, drag it to the "
@@ -3619,7 +3712,7 @@ msgstr ""
 "espacio entre las respectivas capas, suéltelo."
 
 #. (itstool) path: section/p
-#: C/usingclips.page:55
+#: C/usingclips.page:59
 msgid ""
 "To move multiple clips at the same time, use the <key>Ctrl</key> or "
 "<key>Shift</key> keys to select multiple clips (see <link xref="
@@ -3636,12 +3729,12 @@ msgstr ""
 "preservarán sus posiciones relativas para cada uno."
 
 #. (itstool) path: section/title
-#: C/usingclips.page:57
+#: C/usingclips.page:61
 msgid "Using ripple editing while moving clips"
 msgstr "Use la edición de onda mientras se mueven los vídeos"
 
 #. (itstool) path: section/p
-#: C/usingclips.page:58
+#: C/usingclips.page:62
 msgid ""
 "While dragging clips around in the timeline, you can use the <link xref="
 "\"trimming#ripple\">ripple technique</link> to move the <em>following</em> "
@@ -3654,19 +3747,19 @@ msgstr ""
 "directamente) para llenar el espacio vacío."
 
 #. (itstool) path: item/p
-#: C/usingclips.page:61
+#: C/usingclips.page:65
 msgid ""
 "Click and drag the clip you want to move, with the mouse button held down"
 msgstr "Pulse y arrastre el clip que quiere, con el botón del ratón apretado"
 
 #. (itstool) path: item/p
-#: C/usingclips.page:64
+#: C/usingclips.page:68
 msgid "During the drag, hold down <key>Shift</key> on the keyboard"
 msgstr ""
 "Mientras arrastra, mantenga apretada la tecla <key>Mayús</key> del teclado."
 
 #. (itstool) path: item/p
-#: C/usingclips.page:67
+#: C/usingclips.page:71
 msgid ""
 "Release the mouse button to end the drag operation, then release the "
 "<key>Shift</key> key."
@@ -3675,13 +3768,40 @@ msgstr ""
 "suelte la tecla <key>Mayús</key>."
 
 #. (itstool) path: section/p
-#: C/usingclips.page:70
+#: C/usingclips.page:74
 msgid ""
 "You can release and press <key>Shift</key> at any time during the drag "
 "operation to disable or enable ripple editing."
 msgstr ""
 "Puede soltar y pulsar la tecla <key>Mayús</key> en cualquier momento "
 "mientras arrastra para desactivar o activar la edición de onda."
+
+#. (itstool) path: section/title
+#: C/usingclips.page:78
+#, fuzzy
+#| msgid "Using clips"
+msgid "Using Color Clips"
+msgstr "Usar clips"
+
+#. (itstool) path: section/p
+#: C/usingclips.page:79
+msgid ""
+"You can create custom color clips using the <gui>Create a color clip</gui> "
+"button located in the <guiseq><gui>middle pane</gui><gui>Clip</gui></guiseq> "
+"tab. The button is available when no clip is <link xref="
+"\"selectiongrouping#selection\">selected</link>."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/usingclips.page:80
+msgid ""
+"Select a color clip to change its color. When a new color clip is created, "
+"it is automatically selected. The color can be changed using the "
+"<guiseq><gui>middle pane</gui><gui>Clip</gui><gui>Color</gui></guiseq> "
+"expander. The <gui>color</gui> button opens a dialog for selecting a color "
+"or entering a hexadecimal color value. Alternatively, any color on the "
+"screen can be picked by using the <gui>color picker</gui> button."
+msgstr ""
 
 #. (itstool) path: info/desc
 #: C/usingeffects.page:14
@@ -3886,13 +4006,6 @@ msgstr "Editar la configuración del proyecto"
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:42
-#| msgid ""
-#| "The project settings define mainly how the video appears while you edit "
-#| "the project. The video resolution and aspect ratio affect the appearance "
-#| "of the previewer. If the resolution and aspect ratio do not match those "
-#| "of your footage, the video may look squished or letterboxed. These "
-#| "settings can be changed at any time by using <guiseq><gui>App menu</"
-#| "gui><gui>Project Settings</gui></guiseq>."
 msgid ""
 "The project settings define mainly how the video appears while you edit the "
 "project. The video resolution affects how much detail the previewer can "
@@ -3917,6 +4030,53 @@ msgstr ""
 "Cuando importa el primer archivo de vídeo la configuración del proyecto se "
 "ajusta automáticamente para que coincida. Consulte los detalles en <link "
 "xref=\"importing\">Obtener medios</link>."
+
+#. (itstool) path: section/title
+#: C/workwithprojects.page:48
+msgid "Preventing cropping of essential content on television screens"
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/workwithprojects.page:49
+msgid ""
+"Depending on how a television is built, the video may be cropped when being "
+"displayed on its screen. The essential content can be placed in the "
+"<em>action-safe area</em>, which is a centered rectangular area safe from "
+"cropping. Similarly, titles can be placed in the smaller <em>title-safe "
+"area</em> to prevent the text sticking to the screen edges."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/workwithprojects.page:50
+msgid ""
+"The safe areas are displayed on the <gui>viewer</gui> as an overlay and will "
+"not affect the video of a project. The size of the action-safe area and the "
+"title-safe area can be specified in the <link xref=\"#projectsettings"
+"\">Project Settings</link>. For example, a size of 90% vertical × 80% "
+"horizontal corresponds to a 5% margin at the top and bottom and a 10% "
+"horizontal margin at the left and right of the video. Producers use their "
+"own guidelines since no television standard defines the <link href=\"https://"
+"en.wikipedia.org/wiki/Safe_area_(television)\">safe areas</link>."
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/workwithprojects.page:52
+msgid "To toggle Safe Areas on and off, press <key>'</key>."
+msgstr ""
+
+#~ msgid "Adjust the time and value of a keyframe by moving it with the mouse."
+#~ msgstr ""
+#~ "Ajustar el tiempo y el valor de un fotograma moviéndolo con el ratón."
+
+#~ msgid ""
+#~ "The grouping and ungrouping functions are useful when you want to add or "
+#~ "separate audio tracks from video clips, or when you want to create a "
+#~ "block of clips that you can select, edit and move all at once."
+#~ msgstr ""
+#~ "Las funciones de agrupar y desagrupar son útiles cuando se quieren "
+#~ "agregar o separar pistas de sonido desde clips de vídeo, o cuando se "
+#~ "quiere crear un bloque de clips que se puedan seleccionar, editar y mover "
+#~ "a la vez."
 
 #~ msgid "Creating new projects and opening recent projects on startup"
 #~ msgstr "Crear proyectos nuevos y abrir proyectos recientes al iniciar"
@@ -4093,10 +4253,6 @@ msgstr ""
 #~ "Puede modificar el tiempo y el valor de un fotograma clave moviéndolo con "
 #~ "el ratón. Puede colocar el fotograma clave en cualquier lugar en el clip "
 #~ "que quiera, incluso si esto cambia el orden de los fotogramas clave."
-
-#~| msgid "Audio curves"
-#~ msgid "Audio and video curves"
-#~ msgstr "Curvas de sonido y vídeo"
 
 #~ msgid ""
 #~ "There is no “layer management” interface in <app>Pitivi</app>. Layers are "
