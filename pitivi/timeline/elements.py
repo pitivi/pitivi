@@ -102,13 +102,20 @@ class KeyframeCurve(FigureCanvasGTK3Cairo, Loggable):
         FigureCanvasGTK3Cairo.__init__(self, figure)
         Loggable.__init__(self)
 
+        # Remove the "matplotlib-canvas" class which forces a white background.
+        # https://github.com/matplotlib/matplotlib/commit/3c832377fb4c4b32fcbdbc60fdfedb57296bc8c0
+        style_ctx = self.get_style_context()
+        for css_class in style_ctx.list_classes():
+            style_ctx.remove_class(css_class)
+
+        style_ctx.add_class("KeyframeCurve")
+
         self._ges_elem = ges_elem
         self._timeline = timeline
         self.__source = binding.props.control_source
         self._connect_sources()
         self.__property_name = binding.props.name
         self.__paramspec = binding.pspec
-        self.get_style_context().add_class("KeyframeCurve")
 
         self.__ylim_min, self.__ylim_max = KeyframeCurve.YLIM_OVERRIDES.get(
             binding.pspec, (0.0, 1.0))
@@ -119,8 +126,8 @@ class KeyframeCurve(FigureCanvasGTK3Cairo, Loggable):
         self._line_xs = []
         self._line_ys = []
 
-        # facecolor to None for transparency
-        self._ax: Axes = figure.add_axes([0, 0, 1, 1], facecolor='None')
+        transparent = (0, 0, 0, 0)
+        self._ax: Axes = figure.add_axes([0, 0, 1, 1], facecolor=transparent)
         # Clear the Axes object.
         self._ax.cla()
         self._ax.grid(False)
