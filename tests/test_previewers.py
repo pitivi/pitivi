@@ -15,12 +15,13 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Tests for the timeline.previewers module."""
-# pylint: disable=protected-access
+# pylint: disable=protected-access,unused-argument
 import os
 import tempfile
 from unittest import mock
 
 import numpy
+from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import Gst
@@ -31,6 +32,8 @@ from pitivi.timeline.previewers import Previewer
 from pitivi.timeline.previewers import THUMB_HEIGHT
 from pitivi.timeline.previewers import THUMB_PERIOD
 from pitivi.timeline.previewers import ThumbnailCache
+from pitivi.utils.timeline import EditingContext
+from pitivi.utils.timeline import Zoomable
 from tests import common
 from tests.test_medialibrary import BaseTestMediaLibrary
 
@@ -95,6 +98,66 @@ class TestAudioPreviewer(BaseTestMediaLibrary):
             samples = list(numpy.load(fsamples))
 
         self.assertEqual(samples, SIMPSON_WAVFORM_VALUES)
+
+    @common.setup_timeline
+    def test_offset(self):
+        # Set the videorate of tears_of_steel.webm.
+        self.project.videorate = Gst.Fraction(24, 1)
+        Zoomable.set_zoom_level(78)
+
+        timeline = self.timeline_container.timeline
+
+        start_frame = 43
+        start = self.timeline.get_frame_time(start_frame)
+        self.assertEqual(start, 1791666667)
+
+        clips = []
+        starts = []
+        asset = GES.UriClipAsset.request_sync(common.get_sample_uri("tears_of_steel.webm"))
+        for delta_frame in range(10):
+            ges_layer = timeline.ges_timeline.append_layer()
+            ges_clip = timeline.add_clip_to_layer(ges_layer, asset, start)
+
+            editing_context = EditingContext(ges_clip, self.timeline, GES.EditMode.EDIT_TRIM, GES.Edge.EDGE_START, self.app)
+            new_start = self.timeline.get_frame_time(start_frame + delta_frame)
+            editing_context.edit_to(new_start, ges_layer)
+            editing_context.finish()
+
+            clips.append(ges_clip)
+            starts.append(new_start)
+
+        # Check the clips.
+        expected_starts = [1791666667, 1833333334, 1875000000, 1916666667, 1958333334, 2000000000, 2041666667, 2083333334, 2125000000, 2166666667]
+        self.assertListEqual(starts, expected_starts,
+                             "the start values calculated in the test are off")
+        self.assertListEqual([c.start for c in clips], expected_starts,
+                             "the start of the clips are wrong")
+        expected_inpoints = [0, 41666667, 83333333, 125000000, 166666667, 208333333, 250000000, 291666667, 333333333, 375000000]
+        self.assertListEqual([c.inpoint for c in clips], expected_inpoints)
+
+        # Check the audio previewers.
+        audio_previewers = list(self.get_clip_element(c, GES.AudioSource).ui.previewer
+                                for c in clips)
+
+        offsets = []
+
+        def set_source_surface(surface, offset_x, offset_y):
+            offsets.append(offset_x)
+
+        samples = list(range(199))
+        for previewer in audio_previewers:
+            previewer.samples = samples
+            with mock.patch.object(Gdk, "cairo_get_clip_rectangle") as cairo_get_clip_rectangle:
+                cairo_get_clip_rectangle.return_value = (True, mock.Mock(x=0, width=10000))
+                from pitivi.timeline import previewers
+                with mock.patch.object(previewers.renderer, "fill_surface") as fill_surface:
+                    context = mock.Mock()
+                    context.set_source_surface = set_source_surface
+                    previewer.do_draw(context)
+            fill_surface.assert_called_once_with(samples, 949, -1)
+
+        expected_offsets = [0, -20, -40, -59, -79, -99, -119, -138, -158, -178]
+        self.assertListEqual(offsets, expected_offsets)
 
 
 class TestPreviewer(common.TestCase):

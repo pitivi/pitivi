@@ -1555,6 +1555,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     duration = self.timeline.mod_duration(original_duration)
                     if duration != original_duration:
                         obj.set_duration(duration)
+                        obj.props.max_duration = min(obj.props.max_duration, duration)
                 elif isinstance(obj, GES.Asset):
                     ges_clip = self.timeline.add_clip_to_layer(layer, obj, clip_position)
                     duration = ges_clip.props.duration

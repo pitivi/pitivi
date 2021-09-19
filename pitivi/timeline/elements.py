@@ -666,9 +666,9 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
         self.props.vexpand = True
 
-        self.__previewer = self._get_previewer()
-        if self.__previewer:
-            self.add(self.__previewer)
+        self.previewer = self._get_previewer()
+        if self.previewer:
+            self.add(self.previewer)
 
         self.__background = self._get_background()
         if self.__background:
@@ -690,12 +690,12 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
     def update_previewer(self):
         """Refreshes the previewer widget."""
-        if self.__previewer:
-            self.__previewer.refresh()
+        if self.previewer:
+            self.previewer.refresh()
 
     def release(self):
-        if self.__previewer:
-            self.__previewer.release()
+        if self.previewer:
+            self.previewer.release()
 
         if self.markers:
             self._ges_elem.markers_manager.set_markers_box(None)
@@ -807,8 +807,8 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
     def do_draw(self, cr):
         self.propagate_draw(self.__background, cr)
 
-        if self.__previewer:
-            self.propagate_draw(self.__previewer, cr)
+        if self.previewer:
+            self.propagate_draw(self.previewer, cr)
 
         if self.keyframe_curve and self.keyframe_curve.is_drawable():
             project = self.timeline.app.project_manager.current_project
@@ -824,8 +824,8 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
                 selected and len(self.timeline.selection) == 1:
             self.__create_keyframe_curve()
 
-        if self.__previewer:
-            self.__previewer.set_selected(selected)
+        if self.previewer:
+            self.previewer.set_selected(selected)
 
         self.update_sizes_and_positions()
 
@@ -837,8 +837,8 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         if self.__background:
             self.__background.set_size_request(width, height)
 
-        if self.__previewer:
-            self.__previewer.set_size_request(width, height)
+        if self.previewer:
+            self.previewer.set_size_request(width, height)
 
         if self.markers:
             self.markers.set_size_request(width, markers_height)

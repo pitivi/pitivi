@@ -257,7 +257,7 @@ class EditingContext(GObject.Object, Loggable):
         app (Pitivi): The app.
     """
 
-    def __init__(self, focus, timeline, mode, edge, app, log_actions):
+    def __init__(self, focus, timeline, mode, edge, app, log_actions=None):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
         if isinstance(focus, GES.TrackElement):
@@ -456,6 +456,7 @@ class Zoomable:
         # DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!
         if duration == Gst.CLOCK_TIME_NONE:
             return 0
+
         return int((float(duration) / Gst.SECOND) * cls.zoomratio)
 
     @classmethod
@@ -465,6 +466,7 @@ class Zoomable:
         # DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!
         if duration == Gst.CLOCK_TIME_NONE:
             return 0
+
         return (float(duration) / Gst.SECOND) * cls.zoomratio
 
     def zoom_changed(self):

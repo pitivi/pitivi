@@ -282,13 +282,12 @@ def setup_timeline(func):
         self.layer = self.timeline.append_layer()
         self.action_log = self.app.action_log
 
-        project = self.app.project_manager.current_project
         self.timeline_container = TimelineContainer(self.app, editor_state=self.app.gui.editor.editor_state)
-        self.timeline_container.set_project(project)
+        self.timeline_container.set_project(self.project)
         self.app.gui.editor.timeline_ui = self.timeline_container
 
         timeline = self.timeline_container.timeline
-        timeline.app.project_manager.current_project = project
+        self.assertEqual(timeline.app.project_manager.current_project, self.project)
         timeline.get_parent = mock.MagicMock(return_value=self.timeline_container)
 
         func(self)
@@ -539,6 +538,12 @@ class TestCase(unittest.TestCase, Loggable):
                 for element in clip.get_children(False):
                     if isinstance(element, GES.VideoTransition):
                         return element
+        return None
+
+    def get_clip_element(self, ges_clip, element_class=GES.VideoSource):
+        for element in ges_clip.get_children(False):
+            if isinstance(element, element_class):
+                return element
         return None
 
     @staticmethod

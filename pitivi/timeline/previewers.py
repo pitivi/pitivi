@@ -1164,9 +1164,9 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         self.surface = None
         # The zoom level when self.surface has been created.
         self._surface_zoom_level = 0
-        # The samples range used when self.surface has been created.
-        self._surface_start_ns = 0
-        self._surface_end_ns = 0
+        # The pixels range self.surface corresponds to.
+        self._surface_start_px = 0
+        self._surface_end_px = 0
         # The playback rate from last time the surface was updated.
         self._rate = 1.0
 
@@ -1278,21 +1278,27 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
             # Nothing to draw.
             return
 
-        # The area we have to refresh is determined by the start and end
-        # calculated in the context of the asset duration.
-        rect = Gdk.cairo_get_clip_rectangle(context)[1]
-        clip = self.ges_elem.get_parent()
+        # The area we have to refresh is this rect inside the clip.
+        # For example rect.x is > 0 when the start of the clip is out of view.
+        # rect.width = how many pixels of the clip are in view horizontally.
+        res, rect = Gdk.cairo_get_clip_rectangle(context)
+        assert res
+
         start = self.ges_elem.props.start
         inpoint = self.ges_elem.props.in_point
         duration = self.ges_elem.props.duration
-        max_duration = self.ges_elem.get_asset().get_filesource_asset().get_duration()
-        start_ns = min(max(0, self.pixel_to_ns(rect.x) + inpoint), max_duration)
-        end_ns = min(max(0, self.pixel_to_ns(rect.x + rect.width) + inpoint), max_duration)
 
         # Get the overall rate of the clip in the current area the clip is used
+        clip = self.ges_elem.get_parent()
         internal_end = clip.get_internal_time_from_timeline_time(self.ges_elem, start + duration)
         internal_duration = internal_end - inpoint
         rate = internal_duration / duration
+
+        inpoint_px = self.ns_to_pixel(start) - self.ns_to_pixel(start - inpoint / rate)
+        max_duration_px = self.ns_to_pixel(clip.maxduration)
+
+        start_px = min(max(0, inpoint_px + rect.x), max_duration_px)
+        end_px = min(max(0, inpoint_px + rect.x + rect.width), max_duration_px)
 
         zoom = self.get_current_zoom_level()
         height = self.get_allocation().height - 2 * CLIP_BORDER_WIDTH
@@ -1300,25 +1306,26 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         if not self.surface or \
                 height != self.surface.get_height() or \
                 zoom != self._surface_zoom_level or \
-                start_ns < self._surface_start_ns or \
+                start_px < self._surface_start_px or \
                 rate != self._rate or \
-                end_ns > self._surface_end_ns:
+                end_px > self._surface_end_px:
+            # Generate a new surface since the previously generated one, if any,
+            # cannot be reused.
             if self.surface:
                 self.surface.finish()
                 self.surface = None
             self._surface_zoom_level = zoom
             # The generated waveform is for an extended range if possible,
             # so if the user scrolls we don't rebuild the waveform every time.
-            extra = self.pixel_to_ns(WAVEFORM_SURFACE_EXTRA_PX)
-            self._surface_start_ns = max(0, start_ns - extra)
-            self._surface_end_ns = min(end_ns + extra, max_duration)
+            self._surface_start_px = max(0, start_px - WAVEFORM_SURFACE_EXTRA_PX)
             self._rate = rate
+            self._surface_end_px = min(end_px + WAVEFORM_SURFACE_EXTRA_PX, max_duration_px)
 
             sample_duration = SAMPLE_DURATION / rate
-            range_start = min(max(0, int(self._surface_start_ns / sample_duration)), len(self.samples))
-            range_end = min(max(0, int(self._surface_end_ns / sample_duration)), len(self.samples))
+            range_start = min(max(0, int(self.pixel_to_ns(self._surface_start_px) / sample_duration)), len(self.samples))
+            range_end = min(max(0, int(self.pixel_to_ns(self._surface_end_px) / sample_duration)), len(self.samples))
             samples = self.samples[range_start:range_end]
-            surface_width = self.ns_to_pixel(self._surface_end_ns - self._surface_start_ns)
+            surface_width = self._surface_end_px - self._surface_start_px
             self.surface = renderer.fill_surface(samples, surface_width, height)
 
         # Paint the surface, ignoring the clipped rect.
@@ -1327,8 +1334,8 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         # the surface in context, if the entire asset would be drawn.
         # 2. - inpoint, because we're drawing a clip, not the entire asset.
         context.set_operator(cairo.OPERATOR_OVER)
-        offset = self.ns_to_pixel(self._surface_start_ns - inpoint)
-        context.set_source_surface(self.surface, offset, CLIP_BORDER_WIDTH)
+        offset_px = self._surface_start_px - inpoint_px
+        context.set_source_surface(self.surface, offset_px, CLIP_BORDER_WIDTH)
         context.paint()
 
     def _emit_done_on_idle(self):
