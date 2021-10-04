@@ -616,6 +616,7 @@ class AssetPreviewer(Previewer, Loggable):
             # bringing the pipeline back to PAUSED.
             self.pipeline.set_state(Gst.State.PAUSED)
             return
+
         pipeline = Gst.parse_launch(
             "uridecodebin uri={uri} name=decode ! "
             "videoconvert ! "
@@ -684,7 +685,10 @@ class AssetPreviewer(Previewer, Loggable):
 
         if not self.thumb_width:
             self.debug("Finding thumb width")
+            # The pipeline will call `_update_thumbnails` after it sets
+            # the missing `thumb_width`.
             self._setup_pipeline()
+            # There is nothing else we can do now without `thummb_width`.
             return False
 
         # Update the thumbnails with what we already have, if anything.
@@ -790,7 +794,7 @@ class AssetPreviewer(Previewer, Loggable):
         self.debug("Waiting for UI to become idle for: %s",
                    path_from_uri(self.uri))
         self.__start_id = GLib.idle_add(self._start_thumbnailing_cb,
-                                        priority=GLib.PRIORITY_LOW)
+                                        priority=GLib.PRIORITY_DEFAULT_IDLE + 50)
 
     def stop_generation(self):
         if self.__start_id:
@@ -839,7 +843,7 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
 
         self.get_style_context().add_class("VideoPreviewer")
 
-        self.ges_elem = ges_elem
+        self.ges_elem: GES.VideoUriSource = ges_elem
         self.thumbs = {}
 
         # Connect signals and fire things up
@@ -865,21 +869,22 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
 
     def _update_thumbnails(self):
         """Updates the thumbnail widgets for the clip at the current zoom."""
+        # The thumb_width is available after the pipeline has been started.
         if not self.thumb_width or not self.ges_elem.get_track() or not self.ges_elem.props.active:
-            # The thumb_width will be available when pipeline has been started
             return
 
         thumbs = {}
         queue = []
-        interval = self.thumb_interval(self.thumb_width)
 
-        y = (self.props.height_request - self.thumb_height) / 2
+        interval = self.thumb_interval(self.thumb_width)
+        y = (self.props.height_request - self.thumb_height) // 2
         clip = self.ges_elem.get_parent()
-        for position in range(clip.props.start, clip.props.start + clip.props.duration, interval):
-            x = Zoomable.ns_to_pixel(position)
+        for element_position in range(0, self.ges_elem.props.duration, interval):
+            x = Zoomable.ns_to_pixel(element_position)
 
             # Convert position in the timeline to the internal position in the source element
-            position = clip.get_internal_time_from_timeline_time(self.ges_elem, position)
+            internal_position = clip.get_internal_time_from_timeline_time(self.ges_elem, self.ges_elem.props.start + element_position)
+            position = quantize(internal_position, interval)
             try:
                 thumb = self.thumbs.pop(position)
                 self.move(thumb, x, y)
@@ -895,9 +900,11 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
             else:
                 if position not in self.failures and position != self.position:
                     queue.append(position)
+
         for thumb in self.thumbs.values():
             self.remove(thumb)
         self.thumbs = thumbs
+
         self.queue = queue
         if queue:
             self.become_controlled()
@@ -922,7 +929,10 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
 
     def _inpoint_changed_cb(self, unused_ges_timeline_element, unused_param_spec):
         """Handles the changing of the in-point of the clip."""
-        self._update_thumbnails()
+        # Whenever the inpoint changes, the duration also changes, as we never
+        # "roll". We rely on the handler for the duration change event to update
+        # the thumbnails.
+        self.debug("Inpoint change ignored, expecting following duration change")
 
     def _duration_changed_cb(self, unused_ges_timeline_element, unused_param_spec):
         """Handles the changing of the duration of the clip."""

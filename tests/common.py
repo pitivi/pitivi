@@ -156,7 +156,7 @@ def create_main_loop():
         source.set_callback(timeout_cb)
         source.attach()
         if until_empty:
-            GLib.idle_add(mainloop.quit)
+            GLib.idle_add(mainloop.quit, priority=GLib.PRIORITY_LOW + 1)
         GLib.MainLoop.run(mainloop)
         source.destroy()
         if timed_out:
