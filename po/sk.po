@@ -2,22 +2,22 @@
 # Copyright (C) 2010, 2011 Free Software Foundation, Inc.
 # This file is distributed under the same license as the pitivi package.
 # Peter Mráz <etkinator@gmail.com>, 2010, 2011.
-# Dušan Kazik <prescott66@gmail.com>, 2014, 2015.
+# Dušan Kazik <prescott66@gmail.com>, 2014-2021.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-08-28 11:32+0000\n"
-"PO-Revision-Date: 2021-08-31 11:09+0200\n"
+"POT-Creation-Date: 2021-08-31 09:10+0000\n"
+"PO-Revision-Date: 2021-10-06 10:47+0200\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
 "Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
-"X-Generator: Poedit 3.0\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0\n"
+"X-Generator: Gtranslator 40.0\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
 msgid "Pitivi video project (legacy)"
@@ -1094,7 +1094,7 @@ msgstr "Značky klipu"
 
 #: pitivi/clipproperties.py:1349
 msgid "Magnetic"
-msgstr ""
+msgstr "Magnetické"
 
 #: pitivi/clipproperties.py:1383
 msgid "No markers"
@@ -1598,11 +1598,11 @@ msgstr[2] "Nasledujúce súbory sa nedajú použiť v aplikácii Pitivi."
 
 #: pitivi/medialibrary.py:1238
 msgid "Tag as:"
-msgstr ""
+msgstr "Označiť ako:"
 
 #: pitivi/medialibrary.py:1276
 msgid "Enter tag"
-msgstr ""
+msgstr "Zadajte značku"
 
 #: pitivi/medialibrary.py:1435
 msgid "Open containing folder"
@@ -1861,9 +1861,10 @@ msgstr ""
 "problémov, alebo vyplniť chybové hlásenie. S knižnicou GStreamer nastala "
 "táto chyba:"
 
+# window title
 #: pitivi/render.py:1485
 msgid "Select file path to render"
-msgstr ""
+msgstr "Výber cesty súboru na vykreslenie"
 
 #: pitivi/render.py:1595 pitivi/render.py:1596 pitivi/render.py:1602
 msgid "Render complete"
@@ -2055,12 +2056,13 @@ msgstr "Snímka č. %d"
 
 #: pitivi/timeline/timeline.py:86
 msgid "Markers magnetic by default"
-msgstr ""
+msgstr "Značky predvolene magnetické"
 
 #: pitivi/timeline/timeline.py:88
 msgid ""
 "Whether markers created on new clips will be snapping targets by default."
 msgstr ""
+"Či sa budú značky vytvorené v novom klipe predvolene prichytávať k cieľom."
 
 # gst label
 #: pitivi/timeline/timeline.py:98
@@ -2148,25 +2150,23 @@ msgstr "Posun na hranu prvého klipu pred kurzorom prehrávania"
 
 #: pitivi/timeline/timeline.py:1811
 msgid "Shift selected clips one frame forward"
-msgstr ""
+msgstr "Posun vybraných klipov o jeden snímok dopredu"
 
 #: pitivi/timeline/timeline.py:1818
 msgid "Shift selected clips one frame backward"
-msgstr ""
+msgstr "Posun vybraných klipov o jeden snímok dozadu"
 
 # action
 #: pitivi/timeline/timeline.py:1825
-#, fuzzy
 #| msgid "Group selected clips together"
 msgid "Snap selected clips to the next clip"
-msgstr "Zoskupenie vybraných klipov dohromady"
+msgstr "Prichytenie vybraných klipov k nasledujúcemu klipu"
 
 # action
 #: pitivi/timeline/timeline.py:1832
-#, fuzzy
 #| msgid "Remove selected clips from the project"
 msgid "Snap selected clips to the previous clip"
-msgstr "Odstráni vybrané klipy z projektu"
+msgstr "Prichytenie vybraných klipov k predchádzajúcemu klipu"
 
 #: pitivi/timeline/timeline.py:1839
 msgid "Add an effect to the selected clip"
