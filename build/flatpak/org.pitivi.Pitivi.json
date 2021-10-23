@@ -218,15 +218,13 @@
             "name": "libsoundtouch",
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://gitlab.com/soundtouch/soundtouch/-/archive/2.3.0/soundtouch-2.3.0.tar.bz2",
-                    "sha256": "2d037770a0afba551e0444d1c6e362a482fbaf79faeffc676da599676eb7e1b7",
+                    "type": "git",
+                    "url": "https://codeberg.org/soundtouch/soundtouch",
+                    "tag": "2.3.1",
+                    "commit": "e1f315f5358d9db5cee35a7a2886425489fcefe8",
                     "x-checker-data": {
-                        "type": "json",
-                        "url": "https://gitlab.com/api/v4/projects/soundtouch%2Fsoundtouch/releases",
-                        "version-query": ".[0].tag_name",
-                        "url-query": ".[0].assets.sources[] | select(.format == \"tar.bz2\").url",
-                        "timestamp-query": ".[0].released_at"
+                        "type": "git",
+                        "tag-pattern": "^([\\d.]+)$"
                     }
                 }
             ]
