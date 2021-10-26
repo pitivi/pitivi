@@ -20,7 +20,7 @@ To update the flatpak runtime version, look in `org.pitivi.Pitivi.json` for the
 current version:
 
 ```
-    "runtime-version": "40",
+    "runtime-version": "41",
 ```
 
 Check out what is the latest flatpak runtime version. For example:

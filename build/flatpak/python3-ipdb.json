@@ -7,8 +7,8 @@
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/bd/25/5bdf7f1adeebd4e3fa76b2e2f045ae53ee208e40a4231ad0f0c3007e4353/setuptools-57.4.0-py3-none-any.whl",
-            "sha256": "a49230977aa6cfb9d933614d2f7b79036e9945c4cdd7583163f4e920b83418d6"
+            "url": "https://files.pythonhosted.org/packages/46/a5/1949127a03a85aebf06ee809249239929d9ca7b2b6e90f236c52e17fc713/setuptools-58.3.0-py3-none-any.whl",
+            "sha256": "1a24f0e5c14b91ad6810745a7242721fd5011ed164553136f946f768b06559f7"
         },
         {
             "type": "file",
@@ -22,13 +22,13 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/7f/de/6c111d687335729cf8c156394c8d119b0dc3c34b6966ff2a2f7fe4aa79cf/matplotlib_inline-0.1.2-py3-none-any.whl",
-            "sha256": "5cf1176f554abb4fa98cb362aa2b55c500147e4bdbb07e3fda359143e1da0811"
+            "url": "https://files.pythonhosted.org/packages/a6/2d/2230afd570c70074e80fd06857ba2bdc5f10c055bd9125665fe276fadb67/matplotlib_inline-0.1.3-py3-none-any.whl",
+            "sha256": "aed605ba3b72462d64d475a21a9296f400a19c4f74a31b59103d2a99ffd5aa5c"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/6a/36/b1b9bfdf28690ae01d9ca0aa5b0d07cb4448ac65fb91dc7e2d094e3d992f/decorator-5.0.9-py3-none-any.whl",
-            "sha256": "6e5c199c16f7a9f0e3a61a4a54b3d27e7dad0dbdde92b944426cb20914376323"
+            "url": "https://files.pythonhosted.org/packages/3d/cc/d7b758e54779f7e465179427de7e78c601d3330d6c411ea7ba9ae2f38102/decorator-5.1.0-py3-none-any.whl",
+            "sha256": "7b12e7c3c6ab203a29e157335e9122cb03de9ab7264b137594103fd4a683b374"
         },
         {
             "type": "file",
@@ -37,8 +37,8 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/38/4c/466298b114eea62f300dbef98cc2c33c6cbc439f1f71bc199c674ae23c2c/traitlets-5.1.0-py3-none-any.whl",
-            "sha256": "03f172516916220b58c9f19d7f854734136dd9528103d04e9bf139a92c9f54c4"
+            "url": "https://files.pythonhosted.org/packages/37/46/be8a3c030bd3673f4800fa7f46eda972dfa2990089a51ec5dd0a26ed33e9/traitlets-5.1.1-py3-none-any.whl",
+            "sha256": "2d313cc50a42cd6c277e7d7dc8d4d7fedd06a2c215f78766ae7b1a66277e0033"
         },
         {
             "type": "file",
@@ -52,8 +52,8 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/c6/37/ec72228971dbaf191243b8ee383c6a3834b5cde23daab066dfbfbbd5438b/prompt_toolkit-3.0.20-py3-none-any.whl",
-            "sha256": "6076e46efae19b1e0ca1ec003ed37a933dc94b4d20f486235d436e64771dcd5c"
+            "url": "https://files.pythonhosted.org/packages/ce/4a/8820c6ade67e69d5762a2fbbd4a8a516fbf5a257fb111a5db922b2a04150/prompt_toolkit-3.0.21-py3-none-any.whl",
+            "sha256": "62b3d3ea5a3ccee94dc1aac018279cf64866a76837156ebe159b981c42dd20a8"
         },
         {
             "type": "file",
@@ -72,8 +72,8 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/50/b1/618daafee1bbc6e7e9dceb105eca919ca8eceeeda8b80282e25d416df39b/ipython-7.27.0-py3-none-any.whl",
-            "sha256": "75b5e060a3417cf64f138e0bb78e58512742c57dc29db5a5058a2b1f0c10df02"
+            "url": "https://files.pythonhosted.org/packages/76/d1/e6166fc278a0aab9c2997ae241346837368fc9aa0c6eea9b0dbe2d727004/ipython-7.28.0-py3-none-any.whl",
+            "sha256": "f16148f9163e1e526f1008d7c8d966d9c15600ca20d1a754287cf96d00ba6f1d"
         },
         {
             "type": "file",
