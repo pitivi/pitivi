@@ -4,8 +4,8 @@ short-description: How to update the Python dependencies
 
 # Python dependencies
 
-Pitivi has a single Python runtime dependency `matplotlib` but in the
-development sandbox we install quite a few Python tools.
+Pitivi has only two Python runtime dependencies: `librosa` and `matplotlib`, but
+in the development sandbox we install quite a few Python tools.
 
 Each Python package has its own `python3-*.json` file in
 [build/flatpak](https://gitlab.gnome.org/GNOME/pitivi/-/tree/master/build/flatpak),
@@ -25,7 +25,7 @@ build dependencies which have to be installed beforehand. Jan 2021 it's much
 easier to install the compiled packages instead of the source packages. When
 upstream makes it easier to use source packages we should switch.
 
-## Updating actual dependencies
+## Updating runtime dependencies
 
 ```
 $ cd build/flatpak

@@ -27,7 +27,7 @@ index.md
 	The_people.md
 	Administrative.md
 		release.md
-		How_to_update_SDK.md
+		How_to_update_sandbox.md
 		Updating_Python_dependencies.md
 		Precommit_hooks.md
 	Praise.md
