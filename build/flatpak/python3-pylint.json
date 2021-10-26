@@ -7,13 +7,18 @@
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/bd/25/5bdf7f1adeebd4e3fa76b2e2f045ae53ee208e40a4231ad0f0c3007e4353/setuptools-57.4.0-py3-none-any.whl",
-            "sha256": "a49230977aa6cfb9d933614d2f7b79036e9945c4cdd7583163f4e920b83418d6"
+            "url": "https://files.pythonhosted.org/packages/46/a5/1949127a03a85aebf06ee809249239929d9ca7b2b6e90f236c52e17fc713/setuptools-58.3.0-py3-none-any.whl",
+            "sha256": "1a24f0e5c14b91ad6810745a7242721fd5011ed164553136f946f768b06559f7"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/82/f7/e43cefbe88c5fd371f4cf0cf5eb3feccd07515af9fd6cf7dbf1d1793a797/wrapt-1.12.1.tar.gz",
-            "sha256": "b62ffa81fb85f4332a4f609cab4ac40709470da05643a082ec1eb88e6d9b97d7"
+            "url": "https://files.pythonhosted.org/packages/af/d9/7493b12ecb4ffa80e46092e347718a5d695be6a44062a9c9ffe1895a4101/wrapt-1.13.2-cp39-cp39-manylinux2010_x86_64.whl",
+            "sha256": "7574de567dcd4858a2ffdf403088d6df8738b0e1eabea220553abf7c9048f59e"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/74/60/18783336cc7fcdd95dae91d73477830aa53f5d3181ae4fe20491d7fc3199/typing_extensions-3.10.0.2-py3-none-any.whl",
+            "sha256": "f1d25edafde516b146ecd0613dabcc61409817af4766fbbcfb8d1ad4ec441a34"
         },
         {
             "type": "file",
@@ -22,8 +27,8 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/15/4d/23989bdcb80a095a4b92a54a1f568e95bfc9793c70707be623dc75c11257/platformdirs-2.3.0-py3-none-any.whl",
-            "sha256": "8003ac87717ae2c7ee1ea5a84a1a61e87f3fbd16eb5aadba194ea30a9019f648"
+            "url": "https://files.pythonhosted.org/packages/b1/78/dcfd84d3aabd46a9c77260fb47ea5d244806e4daef83aa6fe5d83adb182c/platformdirs-2.4.0-py3-none-any.whl",
+            "sha256": "8868bbe3c3c80d42f20156f22e7131d2fb321f5bc86a2a345375c6481a67021d"
         },
         {
             "type": "file",
@@ -32,8 +37,8 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/87/c4/da8ed7f77c85347c0bc50911d27faa563b85b46d136f8ce6c0f8d05f610d/lazy_object_proxy-1.6.0-cp38-cp38-manylinux1_x86_64.whl",
-            "sha256": "17e0967ba374fc24141738c69736da90e94419338fd4c7c7bef01ee26b339653"
+            "url": "https://files.pythonhosted.org/packages/b6/6d/ca30420d414e6203117b2968fa6f8e883aac0d582bf378658753ce71c98b/lazy_object_proxy-1.6.0-cp39-cp39-manylinux1_x86_64.whl",
+            "sha256": "4732c765372bd78a2d6b2150a6e99d00a78ec963375f236979c0626b97ed8e43"
         },
         {
             "type": "file",
@@ -42,13 +47,13 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/2f/2b/46d2b492831ea7a637b88bef8e66aae0968edf57042d1f52073a531558ea/astroid-2.7.3-py3-none-any.whl",
-            "sha256": "dc1e8b28427d6bbef6b8842b18765ab58f558c42bb80540bd7648c98412af25e"
+            "url": "https://files.pythonhosted.org/packages/55/36/bd5e2919e9cfe635e6b0a1c30fdaebdd9742acc1fad2a49a73b478e8e7b3/astroid-2.8.4-py3-none-any.whl",
+            "sha256": "0755c998e7117078dcb7d0bda621391dd2a85da48052d948c7411ab187325346"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/6d/33/5744d1b2d1191cd036c201934a1a517644d805a82cd50fab060b3c379c84/pylint-2.10.2-py3-none-any.whl",
-            "sha256": "e178e96b6ba171f8ef51fbce9ca30931e6acbea4a155074d80cc081596c9e852"
+            "url": "https://files.pythonhosted.org/packages/37/42/948d1486727806df2e0016f1cfc2d3beafe289f96d53dfc85d967f79afc5/pylint-2.11.1-py3-none-any.whl",
+            "sha256": "0f358e221c45cbd4dad2a1e4b883e75d28acdcccd29d40c76eb72b307269b126"
         }
     ]
 }

@@ -2,7 +2,7 @@
     "app-id": "org.pitivi.Pitivi",
     "branch": "master",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "40",
+    "runtime-version": "41",
     "command": "pitivi",
     "finish-args": [
         "--socket=x11",
@@ -465,7 +465,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Dpygi-overrides-dir=/app/lib/python3.8/site-packages/gi/overrides/",
+                "-Dpygi-overrides-dir=/app/lib/python3.9/site-packages/gi/overrides/",
                 "--libdir=lib"
             ],
             "sources": [

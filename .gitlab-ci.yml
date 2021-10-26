@@ -8,6 +8,7 @@ variables:
   MANIFEST: /build/pitivi/build/flatpak/org.pitivi.Pitivi.json
   DBUS_ID: org.pitivi.Pitivi
   GST_DEBUG_NO_COLOR: "true"
+  GNOME_SDK: 41
 
 
 pitivi:master:
@@ -23,8 +24,8 @@ pitivi:master:
   script:
     # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
     - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
-    - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:master-sdk_40"
-    - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:40"
+    - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:master-sdk_${GNOME_SDK}"
+    - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:${GNOME_SDK}"
 
     # Commands to be run in the Docker image.
     # Clone the Pitivi repo.
@@ -54,7 +55,7 @@ build:
   stage: build
   tags:
     - flatpak
-  image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_40
+  image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_${GNOME_SDK}
   variables:
     XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
   script:

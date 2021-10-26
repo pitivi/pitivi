@@ -12,18 +12,18 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/15/4d/23989bdcb80a095a4b92a54a1f568e95bfc9793c70707be623dc75c11257/platformdirs-2.3.0-py3-none-any.whl",
-            "sha256": "8003ac87717ae2c7ee1ea5a84a1a61e87f3fbd16eb5aadba194ea30a9019f648"
+            "url": "https://files.pythonhosted.org/packages/b1/78/dcfd84d3aabd46a9c77260fb47ea5d244806e4daef83aa6fe5d83adb182c/platformdirs-2.4.0-py3-none-any.whl",
+            "sha256": "8868bbe3c3c80d42f20156f22e7131d2fb321f5bc86a2a345375c6481a67021d"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/93/83/71a2ee6158bb9f39a90c0dea1637f81d5eef866e188e1971a1b1ab01a35a/filelock-3.0.12-py3-none-any.whl",
-            "sha256": "929b7d63ec5b7d6b71b0fa5ac14e030b3f70b75747cef1b10da9b879fef15836"
+            "url": "https://files.pythonhosted.org/packages/1e/25/f3eff6db91bf95f566dbb4256548377868efae91c88d6a236d40d2a04625/filelock-3.3.1-py3-none-any.whl",
+            "sha256": "2b5eb3589e7fdda14599e7eb1a50e09b4cc14f34ed98b8ba56d33bfaafcbef2f"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/87/26/f6a23dd3e578132cf924e0dd5d4e055af0cd4ab43e2a9f10b7568bfb39d9/distlib-0.3.2-py2.py3-none-any.whl",
-            "sha256": "23e223426b28491b1ced97dc3bbe183027419dfc7982b4fa2f05d5f3ff10711c"
+            "url": "https://files.pythonhosted.org/packages/28/36/4bdfb663826d6deedc30b179a7b7876a86943cec9fcfc3f1638489fd8b09/distlib-0.3.3-py2.py3-none-any.whl",
+            "sha256": "c8b54e8454e5bf6237cc84c20e8264c3e991e824ef27e8f1e81049867d861e31"
         },
         {
             "type": "file",
@@ -32,13 +32,13 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/ab/9f/a0d49dcde93f27125f011f8ce60f86840bc69c95695ed8ed2d77adb2cb8c/virtualenv-20.7.2-py2.py3-none-any.whl",
-            "sha256": "e4670891b3a03eb071748c569a87cceaefbf643c5bac46d996c5a45c34aa0f06"
+            "url": "https://files.pythonhosted.org/packages/d2/cb/439d1952bc4cc5be2fb5c2551c94cb039323f2acdc45aa77a3f935d70b16/virtualenv-20.9.0-py2.py3-none-any.whl",
+            "sha256": "1d145deec2da86b29026be49c775cc5a9aab434f85f7efef98307fb3965165de"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/70/96/c7245e551b1cb496bfb95840ace55ca60f20d3d8e33d70faf8c78a976899/PyYAML-5.4.1-cp38-cp38-manylinux1_x86_64.whl",
-            "sha256": "8c1be557ee92a20f184922c7b6424e8ab6691788e6d86137c5d93c1a6ec1b8fb"
+            "url": "https://files.pythonhosted.org/packages/12/fc/a4d5a7554e0067677823f7265cb3ae22aed8a238560b5133b58cda252dad/PyYAML-6.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl",
+            "sha256": "40527857252b61eacd1d9af500c3337ba8deb8fc298940291486c465c8b46ec0"
         },
         {
             "type": "file",
@@ -47,8 +47,8 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/3f/f3/88ddede5fdfdad64109f4d5d9e74433c1560753253dd2f315cc6fe0db75f/identify-2.2.13-py2.py3-none-any.whl",
-            "sha256": "7199679b5be13a6b40e6e19ea473e789b11b4e3b60986499b1f589ffb03c217c"
+            "url": "https://files.pythonhosted.org/packages/26/48/0efb598ae9998a11c322d2de3c2ebf3b189b16c4843c104f0669170851dd/identify-2.3.1-py2.py3-none-any.whl",
+            "sha256": "5a5000bd3293950d992843c0ef3d82b90a582de2161557bda7f493c8c8864f26"
         },
         {
             "type": "file",
@@ -57,8 +57,8 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/7a/5c/55c58c3cf09320bcb053c38e038a33726fb60fea81d7fba686783fe31ae4/pre_commit-2.14.1-py2.py3-none-any.whl",
-            "sha256": "a22d12a02da4d8df314187dfe7a61bda6291d57992060522feed30c8cd658b68"
+            "url": "https://files.pythonhosted.org/packages/b4/f1/40ce9ec975e5b6b2825239bdf7bb48c767b1a8ed3912a71d80e9c911cce3/pre_commit-2.15.0-py2.py3-none-any.whl",
+            "sha256": "a4ed01000afcb484d9eb8d504272e642c4c4099bbad3a6b27e519bd6a3e928a6"
         }
     ]
 }

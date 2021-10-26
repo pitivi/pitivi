@@ -7,8 +7,8 @@
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/a4/3a/8f7b217265503eae2b0ea97e714e2709e1e84ee13cd3ca6abdff1e99e76c/coverage-5.5-cp38-cp38-manylinux2010_x86_64.whl",
-            "sha256": "970284a88b99673ccb2e4e334cfb38a10aab7cd44f7457564d11898a74b62d0a"
+            "url": "https://files.pythonhosted.org/packages/85/a1/8f5c653aa1d05be967a3e3354d99ad72c90fbcae6495227b1c6c864dcc24/coverage-6.0.2-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl",
+            "sha256": "381d773d896cc7f8ba4ff3b92dee4ed740fb88dfe33b6e42efc5e8ab6dfa1cfe"
         },
         {
             "type": "file",

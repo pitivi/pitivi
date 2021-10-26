@@ -12,23 +12,23 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/8a/bb/488841f56197b13700afd5658fc279a2025a39e22449b7cf29864669b15d/pyparsing-2.4.7-py2.py3-none-any.whl",
-            "sha256": "ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"
+            "url": "https://files.pythonhosted.org/packages/88/5e/0a57c44b43ee416eb19df309ba8323ffa0f6e6af7756c5352d35da72694c/pyparsing-3.0.1-py3-none-any.whl",
+            "sha256": "fd93fc45c47893c300bd98f5dd1b41c0e783eaeb727e7cea210dcc09d64ce7c3"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/f8/9e/6b0c9d6e2546faf92385a50ee02294a484ef2eb2170a63e05eb78d1742f7/Pillow-8.3.2-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-            "sha256": "0412516dcc9de9b0a1e0ae25a280015809de8270f134cc2c1e32c4eeb397cf30"
+            "url": "https://files.pythonhosted.org/packages/2f/59/af1ac6f871dab6e7e5e7d3ad29a976ed529afe1ba08287e5337da8e30233/Pillow-8.4.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "sha256": "b8831cb7332eda5dc89b21a7bce7ef6ad305548820595033a4b03cf3091235ed"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/aa/69/260a4a1cc89cc00b51f432db048c396952f5c05dfa1345a1b3dbd9ea3544/numpy-1.21.2-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.whl",
-            "sha256": "7fdc7689daf3b845934d67cb221ba8d250fdca20ac0334fea32f7091b93f00d3"
+            "url": "https://files.pythonhosted.org/packages/d3/b3/7f13d41fa5c3ddc393cbc9eeb369960e74a77cfb2bb2297103a4fc60321d/numpy-1.21.3-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl",
+            "sha256": "bffa2eee3b87376cc6b31eee36d05349571c236d1de1175b804b348dc0941e3f"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/d0/2c/c3cba6c1ec54c82bfc56204c712dd2e9b069e2590f78a18841dafbdf2ced/kiwisolver-1.3.2-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.whl",
-            "sha256": "b6a5431940f28b6de123de42f0eb47b84a073ee3c3345dc109ad550a3307dd28"
+            "url": "https://files.pythonhosted.org/packages/1f/99/58fe27c8e4a3de823f9fc28ab2c415347efc4139f1c85cac65a008007210/kiwisolver-1.3.2-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl",
+            "sha256": "30fa008c172355c7768159983a7270cb23838c4d7db73d6c0f6b60dde0d432c6"
         },
         {
             "type": "file",
@@ -37,8 +37,8 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/11/6b/9c6bb4c1e8380d16dfb78709e907a469bf0ddb12a55249a15c3f15717862/matplotlib-3.4.3-cp38-cp38-manylinux1_x86_64.whl",
-            "sha256": "6a724e3a48a54b8b6e7c4ae38cd3d07084508fa47c410c8757e9db9791421838"
+            "url": "https://files.pythonhosted.org/packages/d0/c6/cca253a56088f330153276d71ffbfccabed9bd59d0c254e6b77aacf9d801/matplotlib-3.4.3-cp39-cp39-manylinux1_x86_64.whl",
+            "sha256": "6be8df61b1626e1a142c57e065405e869e9429b4a6dab4a324757d0dc4d42235"
         }
     ]
 }
