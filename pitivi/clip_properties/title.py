@@ -26,6 +26,7 @@ from gi.repository import Pango
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
+from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import argb_to_gdk_rgba
 from pitivi.utils.ui import gdk_rgba_to_argb
@@ -127,6 +128,7 @@ class TitleProperties(Gtk.Expander, Loggable):
 
     def _set_child_property(self, name, value, mergeable=False):
         with self.app.action_log.started("Title change property %s" % name,
+                                         finalizing_action=CommitTimelineFinalizingAction(self.app.project_manager.current_project.pipeline),
                                          mergeable=mergeable,
                                          toplevel=True):
             self._setting_props = True
