@@ -39,7 +39,9 @@ disable=access-member-before-definition,
         arguments-differ, # Pylint fails at this with the Gtk do_* methods, so no thanks.
         arguments-renamed, # We renamed a handful of positional arguments.
         assignment-from-none, # Most probably subclasses return something else.
+        consider-using-f-string, # We can enable this after we merge some large MRs!
         global-statement,
+        global-variable-not-assigned,
         import-outside-toplevel,
         no-else-return, # Looks better in some cases.
         no-member,
