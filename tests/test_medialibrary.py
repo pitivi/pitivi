@@ -81,8 +81,7 @@ class BaseTestMediaLibrary(common.TestCase):
 
     def _progress_bar_cb(self, progressbar, unused_pspec):
         if self.check_no_transcoding:
-            self.assertTrue(progressbar.props.fraction == 1.0 or
-                            progressbar.props.fraction == 0.0,
+            self.assertTrue(progressbar.props.fraction in (0, 1),
                             "Some transcoding is happening, got progress: %f"
                             % progressbar.props.fraction)
 
