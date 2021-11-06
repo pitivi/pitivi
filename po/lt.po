@@ -300,7 +300,7 @@ msgid "max alpha"
 msgstr "max alfa"
 
 #: data/ui/effectslibrary.ui:16
-msgid "Favourites"
+msgid "Favorites"
 msgstr "Mėgiamiausi"
 
 #: data/ui/effectslibrary.ui:43 data/ui/medialibrary.ui:165
@@ -1231,7 +1231,7 @@ msgid "No effects"
 msgstr "Jokių efektų"
 
 #: pitivi/effects.py:481
-msgid "Add to Favourites"
+msgid "Add to Favorites"
 msgstr "Pridėti prie mėgiamų"
 
 #: pitivi/greeterperspective.py:228 pitivi/preset.py:101 pitivi/render.py:214

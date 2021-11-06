@@ -302,7 +302,7 @@ msgid "max alpha"
 msgstr "макс. прозорість"
 
 #: data/ui/effectslibrary.ui:16
-msgid "Favourites"
+msgid "Favorites"
 msgstr "Улюблені"
 
 #: data/ui/effectslibrary.ui:43 data/ui/medialibrary.ui:165
@@ -1240,7 +1240,7 @@ msgid "No effects"
 msgstr "Немає ефектів"
 
 #: pitivi/effects.py:481
-msgid "Add to Favourites"
+msgid "Add to Favorites"
 msgstr "Додати до улюблених"
 
 #: pitivi/greeterperspective.py:228 pitivi/preset.py:101 pitivi/render.py:214

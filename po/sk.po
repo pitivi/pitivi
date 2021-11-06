@@ -314,7 +314,7 @@ msgid "max alpha"
 msgstr "max. alfa"
 
 #: data/ui/effectslibrary.ui:16
-msgid "Favourites"
+msgid "Favorites"
 msgstr "Obľúbené"
 
 # label
@@ -1338,7 +1338,7 @@ msgstr "Žiadne efekty"
 
 # tooltip
 #: pitivi/effects.py:481
-msgid "Add to Favourites"
+msgid "Add to Favorites"
 msgstr "Pridá do obľúbených"
 
 # projekt

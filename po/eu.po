@@ -292,7 +292,7 @@ msgid "max alpha"
 msgstr "alfa max"
 
 #: data/ui/effectslibrary.ui:16
-msgid "Favourites"
+msgid "Favorites"
 msgstr "Gogokoak"
 
 #: data/ui/effectslibrary.ui:43 data/ui/medialibrary.ui:165
@@ -1159,7 +1159,7 @@ msgid "No effects"
 msgstr "Efekturik ez"
 
 #: pitivi/effects.py:481
-msgid "Add to Favourites"
+msgid "Add to Favorites"
 msgstr "Gehitu gogokoei"
 
 #: pitivi/greeterperspective.py:228 pitivi/preset.py:101 pitivi/render.py:213

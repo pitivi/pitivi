@@ -478,7 +478,7 @@ class EffectListWidget(Gtk.Box, Loggable):
             fav_button.props.relief = Gtk.ReliefStyle.NONE
             fav_button.props.halign = Gtk.Align.CENTER
             fav_button.props.valign = Gtk.Align.CENTER
-            fav_button.set_tooltip_text(_("Add to Favourites"))
+            fav_button.set_tooltip_text(_("Add to Favorites"))
 
             starred = effect_name in self.app.settings.favourite_effects
             self._set_fav_button_state(fav_button, starred)

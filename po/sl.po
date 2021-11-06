@@ -290,7 +290,7 @@ msgid "max alpha"
 msgstr ""
 
 #: data/ui/effectslibrary.ui:16
-msgid "Favourites"
+msgid "Favorites"
 msgstr "Priljubljeno"
 
 #: data/ui/effectslibrary.ui:43 data/ui/medialibrary.ui:124
@@ -1155,7 +1155,7 @@ msgid "No effects"
 msgstr "Brez učinkov"
 
 #: pitivi/effects.py:480
-msgid "Add to Favourites"
+msgid "Add to Favorites"
 msgstr "Dodaj med priljubljene"
 
 #: pitivi/greeterperspective.py:228 pitivi/preset.py:101 pitivi/render.py:202

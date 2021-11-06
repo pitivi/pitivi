@@ -20,6 +20,10 @@ msgstr ""
 "X-Generator: Virtaal 0.7.0-rc1\n"
 "X-Project-Style: default\n"
 
+#: data/ui/effectslibrary.ui:16
+msgid "Favorites"
+msgstr "Favourites"
+
 #: ../pitivi/application.py:120
 #, python-format
 msgid ""
@@ -337,6 +341,10 @@ msgstr "All effects"
 #: ../pitivi/effects.py:71
 msgid "Colors"
 msgstr "Colours"
+
+#: pitivi/effects.py:481
+msgid "Add to Favorites"
+msgstr "Add to Favourites"
 
 #: ../pitivi/effects.py:85
 msgid "Noise"

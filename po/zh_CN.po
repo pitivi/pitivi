@@ -299,7 +299,7 @@ msgid "max alpha"
 msgstr "最大透明"
 
 #: data/ui/effectslibrary.ui:16
-msgid "Favourites"
+msgid "Favorites"
 msgstr "收藏"
 
 #: data/ui/effectslibrary.ui:43 data/ui/medialibrary.ui:165
@@ -1199,7 +1199,7 @@ msgid "No effects"
 msgstr "没有特效"
 
 #: pitivi/effects.py:481
-msgid "Add to Favourites"
+msgid "Add to Favorites"
 msgstr "添加至收藏"
 
 #: pitivi/greeterperspective.py:228 pitivi/preset.py:101 pitivi/render.py:214
