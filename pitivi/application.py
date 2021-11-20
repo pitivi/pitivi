@@ -2,7 +2,7 @@
 # Pitivi video editor
 # Copyright (c) 2005-2009 Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2008-2009 Alessandro Decina <alessandro.d@gmail.com>
-# Copyright (c) 2014 Alexandru Băluț <alexandru.balut@gmail.com>
+# Copyright (c) 2014 Alex Băluț <alexandru.balut@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 import os
 import time
 from gettext import gettext as _
+from typing import Optional
 
 from gi.repository import Gio
 from gi.repository import GLib
@@ -44,6 +45,7 @@ from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quote_uri
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.system import get_system
+from pitivi.utils.system import System
 from pitivi.utils.threads import ThreadMaster
 from pitivi.utils.timeline import Zoomable
 
@@ -58,7 +60,7 @@ class Pitivi(Gtk.Application, Loggable):
         recent_manager (Gtk.RecentManager): Manages recently used projects.
         project_manager (ProjectManager): The holder of the current project.
         settings (GlobalSettings): The application-wide settings.
-        system (pitivi.utils.system.System): The system running the app.
+        system (System): The system running the app.
     """
 
     __gsignals__ = {
@@ -71,17 +73,17 @@ class Pitivi(Gtk.Application, Loggable):
                                  flags=Gio.ApplicationFlags.NON_UNIQUE | Gio.ApplicationFlags.HANDLES_OPEN)
         Loggable.__init__(self)
 
-        self.settings = None
-        self.threads = None
-        self.effects = None
-        self.system = None
+        self.settings: Optional[GlobalSettings] = None
+        self.threads: Optional[ThreadMaster] = None
+        self.effects: Optional[EffectsManager] = None
+        self.system: Optional[System] = None
         self.project_manager = ProjectManager(self)
 
-        self.action_log = None
-        self.project_observer = None
-        self._last_action_time = Gst.util_get_timestamp()
+        self.action_log: Optional[UndoableActionLog] = None
+        self.project_observer: Optional[ProjectObserver] = None
+        self._last_action_time: int = Gst.util_get_timestamp()
 
-        self.gui = None
+        self.gui: Optional[MainWindow] = None
         self.recent_manager = Gtk.RecentManager.get_default()
         self.__inhibit_cookies = {}
 

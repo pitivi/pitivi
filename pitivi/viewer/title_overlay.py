@@ -17,6 +17,7 @@
 import cairo
 import numpy
 
+from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.viewer.overlay import Overlay
 
 
@@ -71,7 +72,7 @@ class TitleOverlay(Overlay):
         self.queue_draw()
 
     def on_hover(self, cursor_position):
-        if (self.__position < cursor_position).all() and (cursor_position < self.__position + self.__size).all():
+        if (self.__position <= cursor_position).all() and (cursor_position < self.__position + self.__size).all():
             if self._is_selected():
                 self.stack.set_cursor("grab")
             self._hover()
@@ -85,11 +86,19 @@ class TitleOverlay(Overlay):
         if self._is_hovered():
             self._select()
             self.stack.set_cursor("grabbing")
-            self.stack.selected_overlay = self
-        elif self._is_selected():
-            self._deselect()
+            self.stack.app.action_log.begin("Title drag",
+                                            finalizing_action=CommitTimelineFinalizingAction(
+                                                self.stack.app.project_manager.current_project.pipeline),
+                                            toplevel=True)
+        else:
+            # We're not hovered anymore, make sure we're not selected.
+            if self._is_selected():
+                self._deselect()
 
     def on_button_release(self, cursor_position):
+        if self._is_selected():
+            self.stack.app.action_log.commit("Title drag")
+
         self.on_hover(cursor_position)
         if self._is_hovered():
             self.stack.set_cursor("grab")

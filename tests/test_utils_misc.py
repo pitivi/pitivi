@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-# Copyright (c) 2020, Alexandru Băluț <alexandru.balut@gmail.com>
+# Copyright (c) 2020, Alex Băluț <alexandru.balut@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public

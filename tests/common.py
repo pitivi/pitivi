@@ -111,14 +111,16 @@ def create_project():
     return project
 
 
-def create_pitivi(**settings):
+def create_pitivi(**settings) -> Pitivi:
+    """Creates a Pitivi app with the specified settings, ready to be tested."""
     app = Pitivi()
     app._setup()
 
+    app.settings = __create_settings(**settings)
+
+    # Patch a main window object so things depending on it can work properly.
     app.gui = mock.Mock()
     app.gui.editor.viewer.action_group = Gio.SimpleActionGroup()
-
-    app.settings = __create_settings(**settings)
     app.gui.editor.editor_state = EditorState(app.project_manager)
 
     return app

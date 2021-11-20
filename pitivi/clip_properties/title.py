@@ -18,8 +18,11 @@
 import html
 import os
 from gettext import gettext as _
+from typing import Optional
+from typing import Union
 
 from gi.repository import GES
+from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import Pango
 
@@ -60,8 +63,13 @@ class TitleProperties(Gtk.Expander, Loggable):
         self.set_label(_("Title"))
         self.set_expanded(True)
         self.app = app
-        self.source = None
+        self.source: Optional[GES.TitleSource] = None
+        # Whether the source's props are being set as a result of UI
+        # interactions.
         self._setting_props = False
+        # Whether the UI is being updated as a result of the props changes
+        # performed not by this class.
+        self._setting_ui = False
         self._children_props_handler = None
 
         self._create_ui()
@@ -139,8 +147,7 @@ class TitleProperties(Gtk.Expander, Loggable):
                 self._setting_props = False
 
     def _drop_shadow_checkbox_cb(self, checkbox):
-        if not self.source:
-            # Nothing to update.
+        if self._setting_ui:
             return
 
         active = checkbox.get_active()
@@ -148,6 +155,9 @@ class TitleProperties(Gtk.Expander, Loggable):
         self._set_child_property("draw-shadow", active)
 
     def _color_picker_value_changed_cb(self, widget, color_button, color_layer):
+        if self._setting_ui:
+            return
+
         argb = widget.calculate_argb()
         self.debug("Setting text %s to %x", color_layer, argb)
         self._set_child_property(color_layer, argb)
@@ -155,11 +165,17 @@ class TitleProperties(Gtk.Expander, Loggable):
         color_button.set_rgba(rgba)
 
     def _background_color_button_cb(self, widget):
+        if self._setting_ui:
+            return
+
         color = gdk_rgba_to_argb(widget.get_rgba())
         self.debug("Setting title background color to %x", color)
         self._set_child_property("foreground-color", color)
 
     def _front_text_color_button_cb(self, widget):
+        if self._setting_ui:
+            return
+
         color = gdk_rgba_to_argb(widget.get_rgba())
         self.debug("Setting title foreground color to %x", color)
         # TODO: Use set_text_color when we work with TitleSources instead of
@@ -167,16 +183,22 @@ class TitleProperties(Gtk.Expander, Loggable):
         self._set_child_property("color", color)
 
     def _front_text_outline_color_button_cb(self, widget):
+        if self._setting_ui:
+            return
+
         color = gdk_rgba_to_argb(widget.get_rgba())
         self.debug("Setting title outline color to %x", color)
         self._set_child_property("outline-color", color)
 
     def _font_button_cb(self, widget):
+        if self._setting_ui:
+            return
+
         font_desc = widget.get_font_desc().to_string()
         self.debug("Setting font desc to %s", font_desc)
         self._set_child_property("font-desc", font_desc)
 
-    def _update_from_source(self, source):
+    def __update_from_source(self, source):
         res, text = source.get_child_property("text")
         assert res
         self.textbuffer.props.text = html.unescape(text or "")
@@ -224,8 +246,7 @@ class TitleProperties(Gtk.Expander, Loggable):
         self.outline_color_button.set_rgba(color)
 
     def _text_changed_cb(self, unused_text_buffer):
-        if not self.source:
-            # Nothing to update.
+        if self._setting_ui:
             return
 
         escaped_text = html.escape(self.textbuffer.props.text)
@@ -234,8 +255,7 @@ class TitleProperties(Gtk.Expander, Loggable):
 
     def _alignment_changed_cb(self, combo):
         """Handles changes in the h/v alignment widgets."""
-        if not self.source:
-            # Nothing to update.
+        if self._setting_ui:
             return
 
         if combo == self.valignment_combo:
@@ -249,8 +269,7 @@ class TitleProperties(Gtk.Expander, Loggable):
 
     def _absolute_alignment_value_changed_cb(self, spin):
         """Handles changes in the absolute alignment widgets."""
-        if not self.source:
-            # Nothing to update.
+        if self._setting_ui:
             return
 
         if spin == self.x_absolute_spin:
@@ -266,7 +285,7 @@ class TitleProperties(Gtk.Expander, Loggable):
         visible = self.halignment_combo.get_active_id() == "absolute"
         self.x_absolute_spin.set_visible(visible)
 
-    def set_source(self, source):
+    def set_source(self, source: Optional[Union[GES.TextOverlay, GES.TitleSource]]):
         """Sets the clip to be edited with this editor.
 
         Args:
@@ -281,7 +300,11 @@ class TitleProperties(Gtk.Expander, Loggable):
 
         if source:
             assert isinstance(source, (GES.TextOverlay, GES.TitleSource))
-            self._update_from_source(source)
+            self._setting_ui = True
+            try:
+                self.__update_from_source(source)
+            finally:
+                self._setting_ui = False
             self._children_props_handler = source.connect("deep-notify",
                                                           self._source_deep_notify_cb)
             self.source = source
@@ -300,6 +323,15 @@ class TitleProperties(Gtk.Expander, Loggable):
                        pspec.name)
             return
 
+        self._setting_ui = True
+        try:
+            self.__update_ui_for_prop(pspec)
+        finally:
+            self._setting_ui = False
+
+        self.app.project_manager.current_project.pipeline.commit_timeline()
+
+    def __update_ui_for_prop(self, pspec: GObject.ParamSpec):
         res, value = self.source.get_child_property(pspec.name)
         assert res, pspec.name
         if pspec.name == "text":
@@ -346,5 +378,3 @@ class TitleProperties(Gtk.Expander, Loggable):
             self.outline_color_button.set_rgba(color)
         elif pspec.name == "draw-shadow":
             self.drop_shadow_checkbox.set_active(value)
-
-        self.app.project_manager.current_project.pipeline.commit_timeline()
