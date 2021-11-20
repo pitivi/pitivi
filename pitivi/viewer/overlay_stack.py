@@ -77,7 +77,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
         for overlay in self.__overlays.values():
             overlay.update_from_source()
 
-    def __overlay_for_source(self, source):
+    def __overlay_for_source(self, source: GES.Source):
         if source in self.__overlays:
             return self.__overlays[source]
 

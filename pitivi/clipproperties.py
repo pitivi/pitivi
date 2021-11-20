@@ -154,15 +154,15 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         label.set_xalign(0)
         box.pack_start(label, False, False, SPACING)
 
-        title_button = Gtk.Button()
-        title_button.set_label(_("Create a title clip"))
-        title_button.connect("clicked", self.create_title_clip_cb)
-        box.pack_start(title_button, False, False, SPACING)
+        self._title_button = Gtk.Button()
+        self._title_button.set_label(_("Create a title clip"))
+        self._title_button.connect("clicked", self.create_title_clip_cb)
+        box.pack_start(self._title_button, False, False, SPACING)
 
-        color_button = Gtk.Button()
-        color_button.set_label(_("Create a color clip"))
-        color_button.connect("clicked", self.create_color_clip_cb)
-        box.pack_start(color_button, False, False, SPACING)
+        self._color_button = Gtk.Button()
+        self._color_button.set_label(_("Create a color clip"))
+        self._color_button.connect("clicked", self.create_color_clip_cb)
+        box.pack_start(self._color_button, False, False, SPACING)
 
         box.show_all()
         return box
