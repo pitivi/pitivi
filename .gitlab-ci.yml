@@ -20,7 +20,9 @@ pitivi:master:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
   services:
-    - docker:19.03.0-dind
+    - docker:20.10.11-dind
+  before_script:
+    - docker info
   script:
     # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
     - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
