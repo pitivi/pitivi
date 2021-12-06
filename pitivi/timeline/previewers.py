@@ -1408,7 +1408,15 @@ class TitlePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
             self.queue_draw()
 
     def do_draw(self, context):
-        rect = Gdk.cairo_get_clip_rectangle(context)[1]
+        width = self.get_allocated_width()
+        height = self.get_allocated_height()
+
+        # The rect that needs to be drawn
+        exists, rect = Gdk.cairo_get_clip_rectangle(context)
+        if not exists:
+            return
+
+        # Text color white
         context.set_source_rgb(1, 1, 1)
 
         # Get text
@@ -1420,41 +1428,46 @@ class TitlePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
 
         # Adapt to RTL/LTR direction
         direction = Pango.unichar_direction(escaped_text[0])
-        if direction in (Pango.Direction.LTR, Pango.Direction.NEUTRAL):
-            stops = (0, 1)
-            x_pos = 10
-            grad = cairo.LinearGradient(rect.width * 0.66, 0,
-                                        rect.width * 0.91, 0)
-        else:
-            stops = (1, 0)
-            x_pos = -10
-            grad = cairo.LinearGradient(rect.width * 0.09, 0,
-                                        rect.width * 0.34, 0)
+        ltr = direction in (Pango.Direction.LTR, Pango.Direction.NEUTRAL)
 
-        # Gradient to make text "fade out"
+        x_pos = 10 if ltr else -10
+        y_pos = int((height / 2) - 11)
+        # Draw the text only if it intersects the rectangle to be drawn.
+        if rect.y + rect.height > y_pos:
+            # Setup Pango layout for drawing the text.
+            layout = PangoCairo.create_layout(context)
+            layout.set_markup(escaped_text, -1)
+
+            layout.set_auto_dir(True)
+            layout.set_font_description(self._font_desc)
+            layout.set_width(width * Pango.SCALE)
+
+            # Prevent lines from being wrapped
+            layout.set_ellipsize(Pango.EllipsizeMode.END)
+
+            # Draw text
+            context.move_to(x_pos, y_pos)
+            PangoCairo.show_layout(context, layout)
+
+        # Draw gradient on top of text to make the text "fade out".
+        # The gradient is mostly transparent and turning opaque at the very end.
+        if ltr:
+            x0 = width * 0.66
+            x1 = width * 0.91
+        else:
+            x0 = width * 0.09
+            x1 = width * 0.34
+        # Control vector of the gradient is x0 -> x1.
+        grad = cairo.LinearGradient(x0, 0, x1, 0)
         if self._selected:
             color = (0.14, 0.133, 0.15)
         else:
             color = (0.368, 0.305, 0.4)
-
-        grad.add_color_stop_rgba(stops[0], color[0], color[1], color[2], 0)
-        grad.add_color_stop_rgba(stops[1], color[0], color[1], color[2], 1)
-
-        # Setup Pango layout
-        layout = PangoCairo.create_layout(context)
-        layout.set_auto_dir(True)
-        layout.set_font_description(self._font_desc)
-        layout.set_width(rect.width * Pango.SCALE)
-
-        # Prevent lines from being wrapped
-        layout.set_ellipsize(Pango.EllipsizeMode.END)
-
-        # Draw text
-        layout.set_markup(escaped_text, -1)
-        context.move_to(x_pos, (rect.height / 2) - 11)
-        PangoCairo.show_layout(context, layout)
-
-        # Draw gradient
+        # Set the start offset of the control vector to transparent (if ltr).
+        grad.add_color_stop_rgba(0.0, color[0], color[1], color[2], 0 if ltr else 1)
+        # Set the end offset of the control vector to opaque (if ltr).
+        grad.add_color_stop_rgba(1.0, color[0], color[1], color[2], 1 if ltr else 0)
+        # The rectangle to be filled represents the entire surface.
         context.rectangle(0, 0, rect.width, rect.height)
         context.set_source(grad)
         context.fill()
