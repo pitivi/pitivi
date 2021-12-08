@@ -18,6 +18,7 @@
 from typing import Optional
 
 from gi.repository import Gdk
+from gi.repository import GES
 from gi.repository import Gtk
 
 from pitivi.utils.loggable import Loggable
@@ -356,13 +357,17 @@ class MarkerPopover(Gtk.Popover):
 
 
 class ClipMarkersBox(MarkersBox):
-    def __init__(self, app, ges_elem, hadj=None):
-        super().__init__(app, hadj=hadj)
+    """Bar at the top of a clip for displaying and editing clip markers."""
+
+    def __init__(self, app, ges_elem: GES.Source, hadj: Optional[Gtk.Adjustment] = None):
+        MarkersBox.__init__(self, app, hadj=hadj)
+
         self.ges_elem = ges_elem
-        # ges_elem is a GESSource, but we need a GESClip to convert timestamps
+        # We need a GESClip to convert timestamps.
         self.ges_clip = self.ges_elem.get_parent()
-        # Initially hide the box - only show once a marker container is set
-        self.props.height_request = 0
+
+        self.props.height_request = CLIP_MARKER_HEIGHT
+
         self.get_style_context().add_class("ClipMarkersBox")
 
     def _create_marker(self, ges_marker):
@@ -426,15 +431,13 @@ class ClipMarkersBox(MarkersBox):
 
         self.markers_container.add(timestamp)
 
-    @MarkersBox.markers_container.setter
-    def markers_container(self, ges_markers_container):
-        MarkersBox.markers_container.fset(self, ges_markers_container)
+    def do_button_press_event(self, event):
+        """Ignore press events unless the clip is the only one selected."""
+        if not self.ges_clip.selected:
+            return False
 
-        # Hide the box when no list is selected.
-        height = CLIP_MARKER_HEIGHT if ges_markers_container else 0
-        self.props.height_request = height
-        # Let the parent TimelineElement know to update sizes accordingly.
-        parent_el = self.get_parent()
-        if parent_el is not None:
-            parent_el.update_sizes_and_positions()
-            parent_el.queue_draw()
+        selection = self.app.gui.editor.timeline_ui.timeline.selection
+        if selection.get_single_clip() is not self.ges_clip:
+            return False
+
+        return MarkersBox.do_button_press_event(self, event)
