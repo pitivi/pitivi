@@ -15,15 +15,16 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Markers display and management."""
+import os
 from typing import Optional
 
 from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gtk
 
+from pitivi.configure import get_ui_dir
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
-from pitivi.utils.ui import SPACING
 
 TIMELINE_MARKER_SIZE = 10
 CLIP_MARKER_HEIGHT = 12
@@ -75,14 +76,15 @@ class Marker(Gtk.EventBox, Loggable):
         return self.ges_marker.props.position
 
     @property
-    def comment(self):
+    def comment(self) -> str:
         """Returns a comment from ges_marker."""
-        return self.ges_marker.get_string("comment")
+        return self.ges_marker.get_string("comment") or ""
 
     @comment.setter
-    def comment(self, text):
+    def comment(self, text: str):
         if text == self.comment:
             return
+
         self.ges_marker.set_string("comment", text)
 
     @property
@@ -121,9 +123,9 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         self._offset = 0
         self.props.height_request = TIMELINE_MARKER_SIZE
 
-        self.__markers_container = None
-        self.marker_moving = None
-        self.marker_new = None
+        self.__markers_container: Optional[GES.MarkerList] = None
+        self.marker_moving: Optional[Marker] = None
+        self.marker_new: Optional[Marker] = None
 
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK |
                         Gdk.EventMask.BUTTON_PRESS_MASK |
@@ -169,7 +171,7 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
 
     @property
     def markers_container(self):
-        """Gets the GESMarkerContainer."""
+        """Gets the GES.MarkerList."""
         return self.__markers_container
 
     @markers_container.setter
@@ -229,48 +231,45 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         if not self.markers_container:
             return False
 
-        event_widget = Gtk.get_event_widget(event)
-        button = event.button
-        if button == Gdk.BUTTON_PRIMARY:
+        if event.button == Gdk.BUTTON_PRIMARY:
+            event_widget = Gtk.get_event_widget(event)
             if isinstance(event_widget, Marker):
                 if event.type == Gdk.EventType.BUTTON_PRESS:
                     self.marker_moving = event_widget
                     self.marker_moving.selected = True
                     self.app.action_log.begin("Move marker", toplevel=True)
+                    return True
 
-                elif event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
+                if event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
                     self.marker_moving = None
                     self.app.action_log.rollback()
-                    marker_popover = MarkerPopover(self.app, event_widget)
+                    marker_popover = MarkerPopover(self.app, event_widget, self.__markers_container)
                     marker_popover.popup()
+                    return True
 
             else:
                 position = self.pixel_to_ns(event.x + self.offset)
                 with self.app.action_log.started("Added marker", toplevel=True):
                     self.__markers_container.add(position)
                     self.marker_new.selected = True
-        return True
+                return True
+
+        return False
 
     def do_button_release_event(self, event):
         if not self.markers_container:
             return False
 
-        button = event.button
-        event_widget = Gtk.get_event_widget(event)
-        if button == Gdk.BUTTON_PRIMARY:
+        if event.button == Gdk.BUTTON_PRIMARY:
             if self.marker_moving:
                 self.marker_moving.selected = False
                 self.marker_moving = None
                 self.app.action_log.commit("Move marker")
                 return True
-            elif self.marker_new:
+
+            if self.marker_new:
                 self.marker_new.selected = False
                 self.marker_new = None
-                return True
-
-        elif button == Gdk.BUTTON_SECONDARY and isinstance(event_widget, Marker):
-            with self.app.action_log.started("Removed marker", toplevel=True):
-                self.__markers_container.remove(event_widget.ges_marker)
                 return True
 
         return False
@@ -321,35 +320,43 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         self.layout.move(ges_marker.ui, x, 0)
 
 
+@Gtk.Template(filename=os.path.join(get_ui_dir(), "markerpopover.ui"))
 class MarkerPopover(Gtk.Popover):
-    """A popover to edit a marker's metadata."""
+    """A popover to edit a marker's metadata or to remove the marker."""
 
-    def __init__(self, app, marker):
+    __gtype_name__ = "MarkerPopover"
+
+    comment_textview = Gtk.Template.Child()
+    remove_button = Gtk.Template.Child()
+
+    def __init__(self, app, marker: Marker, markers_container: GES.MarkerList):
         Gtk.Popover.__init__(self)
 
         self.app = app
+        self.marker: Optional[Marker] = marker
+        self.markers_container: GES.MarkerList = markers_container
 
-        self.text_view = Gtk.TextView()
-        self.text_view.set_size_request(100, -1)
-
-        self.marker = marker
-
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        vbox.props.margin = SPACING
-        vbox.pack_start(self.text_view, False, True, 0)
-        self.add(vbox)
-
-        text = self.marker.comment
-        if text:
-            text_buffer = self.text_view.get_buffer()
-            text_buffer.set_text(text)
+        self.comment_textview.get_buffer().set_text(self.marker.comment)
 
         self.set_position(Gtk.PositionType.TOP)
         self.set_relative_to(self.marker)
         self.show_all()
 
+    @Gtk.Template.Callback()
+    def remove_button_clicked_cb(self, event):
+        with self.app.action_log.started("Removed marker", toplevel=True):
+            self.markers_container.remove(self.marker.ges_marker)
+
+        self.marker = None
+
+        self.hide()
+
     def do_closed(self):
-        buffer = self.text_view.get_buffer()
+        if not self.marker:
+            # The user clicked the Remove button so no need to update the text.
+            return
+
+        buffer = self.comment_textview.get_buffer()
         if buffer.props.text != self.marker.comment:
             with self.app.action_log.started("marker comment", toplevel=True):
                 self.marker.comment = buffer.props.text

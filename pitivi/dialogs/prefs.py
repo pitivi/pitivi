@@ -18,6 +18,7 @@
 import os
 from gettext import gettext as _
 from threading import Timer
+from typing import Optional
 
 from gi.repository import Gdk
 from gi.repository import Gio
@@ -725,9 +726,9 @@ class PluginPreferencesRow(Gtk.ListBoxRow):
     switch = Gtk.Template.Child()
 
     def __init__(self, item):
-        super().__init__()
+        Gtk.ListBoxRow.__init__(self)
         self.plugin_info = item.plugin_info
-        self.switch_handler_id = None
+        self.switch_handler_id: Optional[int] = None
 
         self._title_label.set_text(self.plugin_info.get_name())
 

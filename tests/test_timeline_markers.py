@@ -65,14 +65,27 @@ class TestMarkers(common.TestCase):
         event = mock.Mock(spec=Gdk.EventButton)
         event.x = x
         event.y = 1
-        event.button = Gdk.BUTTON_SECONDARY
+        event.button = Gdk.BUTTON_PRIMARY
 
         with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
             get_event_widget.return_value = marker.ui
-            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
-            marker_box.do_button_press_event(event)
-            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
-            marker_box.do_button_release_event(event)
+
+            def popup(markerpopover):
+                # The popover is becoming visible, so we simulate a click.
+                markerpopover.remove_button.clicked()
+
+            original_popover_menu = Gtk.Popover.popup
+            Gtk.Popover.popup = popup
+            try:
+                event.type = Gdk.EventType.BUTTON_PRESS
+                event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+                marker_box.do_button_press_event(event)
+
+                event.type = Gdk.EventType.DOUBLE_BUTTON_PRESS
+                event.guiEvent = Gdk.Event.new(Gdk.EventType.DOUBLE_BUTTON_PRESS)
+                marker_box.do_button_press_event(event)
+            finally:
+                Gtk.Popover.popup = original_popover_menu
 
         self.assert_markers(markers, [])
 
@@ -122,24 +135,27 @@ class TestMarkers(common.TestCase):
         event = mock.Mock(spec=Gdk.EventButton)
         event.x = x
         event.y = 1
-        event.type = Gdk.EventType.BUTTON_PRESS
         event.button = Gdk.BUTTON_PRIMARY
 
         with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
             get_event_widget.return_value = marker.ui
 
             def popup(markerpopover):
-                text_buffer = markerpopover.text_view.get_buffer()
+                # The popover is becoming visible, so we simulate the user entering text.
+                text_buffer = markerpopover.comment_textview.get_buffer()
                 text_buffer.set_text("com")
                 text_buffer.set_text("comment")
                 markerpopover.popdown()
+
             original_popover_menu = Gtk.Popover.popup
             Gtk.Popover.popup = popup
             try:
+                event.type = Gdk.EventType.BUTTON_PRESS
                 event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
                 marker_box.do_button_press_event(event)
-                event.guiEvent = Gdk.Event.new(Gdk.EventType.DOUBLE_BUTTON_PRESS)
+
                 event.type = Gdk.EventType.DOUBLE_BUTTON_PRESS
+                event.guiEvent = Gdk.Event.new(Gdk.EventType.DOUBLE_BUTTON_PRESS)
                 marker_box.do_button_press_event(event)
             finally:
                 Gtk.Popover.popup = original_popover_menu
