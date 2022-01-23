@@ -123,12 +123,8 @@ class Selection(GObject.Object, Loggable):
         for obj, selected in self.__get_selection_changes(old_selection):
             obj.selected.selected = selected
             if obj.ui:
-                if selected:
-                    from pitivi.utils.ui import set_children_state_recurse
-                    set_children_state_recurse(obj.ui, Gtk.StateFlags.SELECTED)
-                else:
-                    from pitivi.utils.ui import unset_children_state_recurse
-                    unset_children_state_recurse(obj.ui, Gtk.StateFlags.SELECTED)
+                from pitivi.utils.ui import set_state_flags_recurse
+                set_state_flags_recurse(obj.ui, Gtk.StateFlags.SELECTED, are_set=selected)
             for element in obj.get_children(False):
                 if isinstance(obj, (GES.BaseEffect, GES.TextOverlay)):
                     continue

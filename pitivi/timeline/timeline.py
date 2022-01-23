@@ -61,12 +61,11 @@ from pitivi.utils.ui import PLAYHEAD_COLOR
 from pitivi.utils.ui import PLAYHEAD_WIDTH
 from pitivi.utils.ui import SEPARATOR_HEIGHT
 from pitivi.utils.ui import set_cairo_color
-from pitivi.utils.ui import set_children_state_recurse
+from pitivi.utils.ui import set_state_flags_recurse
 from pitivi.utils.ui import SNAPBAR_COLOR
 from pitivi.utils.ui import SNAPBAR_WIDTH
 from pitivi.utils.ui import SPACING
 from pitivi.utils.ui import TOUCH_INPUT_SOURCES
-from pitivi.utils.ui import unset_children_state_recurse
 from pitivi.utils.ui import URI_TARGET_ENTRY
 from pitivi.utils.widgets import ZoomBox
 
@@ -1351,12 +1350,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return None
 
-    def _set_separators_prelight(self, light):
+    def _set_separators_prelight(self, prelight):
         for sep in self.__on_separators:
-            if light:
-                set_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
-            else:
-                unset_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
+            set_state_flags_recurse(sep, Gtk.StateFlags.PRELIGHT, are_set=prelight)
 
     def __drag_update(self, x, y):
         """Updates a clip or asset drag operation.

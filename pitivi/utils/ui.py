@@ -869,25 +869,19 @@ def alter_style_class(style_class, target_widget, css_style):
         css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 
-def set_children_state_recurse(widget, state, ignored_classes=()):
+def set_state_flags_recurse(widget, state_flags, are_set, ignored_classes=()):
     """Sets the provided state on all children of the given widget."""
-    widget.set_state_flags(state, False)
-    for child in widget.get_children():
-        if isinstance(child, ignored_classes):
-            continue
+    if isinstance(widget, ignored_classes):
+        return
 
-        child.set_state_flags(state, False)
-        if isinstance(child, Gtk.Container):
-            set_children_state_recurse(child, state, ignored_classes)
+    if are_set:
+        widget.set_state_flags(state_flags, clear=False)
+    else:
+        widget.unset_state_flags(state_flags)
 
-
-def unset_children_state_recurse(widget, state):
-    """Unsets the provided state on all children of the given widget."""
-    widget.unset_state_flags(state)
-    for child in widget.get_children():
-        child.unset_state_flags(state)
-        if isinstance(child, Gtk.Container):
-            unset_children_state_recurse(child, state)
+    if isinstance(widget, Gtk.Container):
+        for child in widget.get_children():
+            set_state_flags_recurse(child, state_flags, are_set, ignored_classes)
 
 
 def disable_scroll_event_cb(widget, unused_event):

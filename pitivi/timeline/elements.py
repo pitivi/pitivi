@@ -53,8 +53,7 @@ from pitivi.utils.timeline import Selected
 from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
-from pitivi.utils.ui import set_children_state_recurse
-from pitivi.utils.ui import unset_children_state_recurse
+from pitivi.utils.ui import set_state_flags_recurse
 
 KEYFRAME_LINE_HEIGHT = 2
 KEYFRAME_LINE_ALPHA = 0.5
@@ -1413,17 +1412,21 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             handle.hide()
 
     def _event_cb(self, element, event):
+        prelight = None
         if (event.type == Gdk.EventType.ENTER_NOTIFY and
                 event.mode == Gdk.CrossingMode.NORMAL and
                 not self.timeline.scrubbing):
-            set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT, ignored_classes=(Marker,))
+            prelight = True
             for handle in self.handles:
                 handle.enlarge()
         elif (event.type == Gdk.EventType.LEAVE_NOTIFY and
               event.mode == Gdk.CrossingMode.NORMAL):
-            unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
+            prelight = False
             for handle in self.handles:
                 handle.shrink()
+
+        if prelight is not None:
+            set_state_flags_recurse(self, Gtk.StateFlags.PRELIGHT, are_set=prelight, ignored_classes=(Marker,))
 
         return False
 
