@@ -869,25 +869,16 @@ def alter_style_class(style_class, target_widget, css_style):
         css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 
-def set_children_state_recurse(widget, state):
+def set_children_state_recurse(widget, state, ignored_classes=()):
     """Sets the provided state on all children of the given widget."""
     widget.set_state_flags(state, False)
     for child in widget.get_children():
-        child.set_state_flags(state, False)
-        if isinstance(child, Gtk.Container):
-            set_children_state_recurse(child, state)
-
-
-def set_children_state_except(widget, state, *ignored_types):
-    """Sets the provided state on all children of the widget, except those of given types."""
-    widget.set_state_flags(state, False)
-    for child in widget.get_children():
-        if any(isinstance(child, klass) for klass in ignored_types):
+        if isinstance(child, ignored_classes):
             continue
 
         child.set_state_flags(state, False)
         if isinstance(child, Gtk.Container):
-            set_children_state_except(child, state, ignored_types)
+            set_children_state_recurse(child, state, ignored_classes)
 
 
 def unset_children_state_recurse(widget, state):

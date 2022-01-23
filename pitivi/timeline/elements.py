@@ -53,7 +53,7 @@ from pitivi.utils.timeline import Selected
 from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
-from pitivi.utils.ui import set_children_state_except
+from pitivi.utils.ui import set_children_state_recurse
 from pitivi.utils.ui import unset_children_state_recurse
 
 KEYFRAME_LINE_HEIGHT = 2
@@ -1416,7 +1416,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         if (event.type == Gdk.EventType.ENTER_NOTIFY and
                 event.mode == Gdk.CrossingMode.NORMAL and
                 not self.timeline.scrubbing):
-            set_children_state_except(self, Gtk.StateFlags.PRELIGHT, Marker)
+            set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT, ignored_classes=(Marker,))
             for handle in self.handles:
                 handle.enlarge()
         elif (event.type == Gdk.EventType.LEAVE_NOTIFY and
