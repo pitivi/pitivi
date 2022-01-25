@@ -17,6 +17,7 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 import os
 from gettext import gettext as _
+from typing import Optional
 
 import numpy
 from gi.repository import Gdk
@@ -1174,7 +1175,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
     __gtype_name__ = "PitiviClip"
 
-    def __init__(self, layer, ges_clip):
+    def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
         Gtk.EventBox.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
@@ -1361,6 +1362,8 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.update_position()
 
     def _button_release_event_cb(self, unused_widget, event):
+        self.debug("Button release event")
+
         if self.timeline.got_dragged:
             # This means a drag & drop operation just finished and
             # this button-release-event should be ignored.
@@ -1374,7 +1377,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
         mode = SELECT
         if self.timeline.get_parent().control_mask:
-            if not self.get_state_flags() & Gtk.StateFlags.SELECTED:
+            if not self.ges_clip.selected:
                 mode = SELECT_ADD
             else:
                 mode = UNSELECT
@@ -1477,7 +1480,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 class SourceClip(Clip):
     __gtype_name__ = "PitiviSourceClip"
 
-    def __init__(self, layer, ges_clip):
+    def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
         Clip.__init__(self, layer, ges_clip)
 
     def _setup_widget(self):
@@ -1485,16 +1488,29 @@ class SourceClip(Clip):
 
         self.get_style_context().add_class("Clip")
 
-    def _add_child(self, ges_timeline_element):
-        super()._add_child(ges_timeline_element)
+    def _add_child(self, ges_timeline_element: GES.TimelineElement):
+        Clip._add_child(self, ges_timeline_element)
 
         # In some cases a GESEffect is added here,
         # so we have to limit the markers initialization to GESSources.
         if not isinstance(ges_timeline_element, GES.Source):
             return
 
-        if not hasattr(ges_timeline_element, "markers_manager"):
-            ges_timeline_element.markers_manager = MarkerListManager(self.app.settings, ges_timeline_element)
+        ges_source: GES.Source = ges_timeline_element
+
+        if not hasattr(ges_source, "markers_manager"):
+            ges_source.markers_manager = MarkerListManager(self.app.settings, ges_source)
+
+        widget = self._create_child_widget(ges_source)
+        if not widget:
+            return
+
+        ges_source.ui = widget
+        self._elements_container.pack_start(widget, expand=True, fill=False, padding=0)
+        widget.set_visible(True)
+
+    def _create_child_widget(self, ges_source: GES.Source) -> Optional[Gtk.Widget]:
+        raise NotImplementedError()
 
     def _remove_child(self, ges_timeline_element):
         if ges_timeline_element.ui:
@@ -1505,7 +1521,7 @@ class SourceClip(Clip):
 class UriClip(SourceClip):
     __gtype_name__ = "PitiviUriClip"
 
-    def __init__(self, layer, ges_clip):
+    def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
         SourceClip.__init__(self, layer, ges_clip)
         self.get_style_context().add_class("UriClip")
         self.props.has_tooltip = True
@@ -1516,69 +1532,52 @@ class UriClip(SourceClip):
 
         return True
 
-    def _add_child(self, ges_timeline_element):
-        SourceClip._add_child(self, ges_timeline_element)
+    def _create_child_widget(self, ges_source: GES.Source) -> Optional[Gtk.Widget]:
+        if ges_source.get_track_type() == GES.TrackType.AUDIO:
+            self.audio_widget = AudioUriSource(ges_source, self.timeline)
+            return self.audio_widget
+        elif ges_source.get_track_type() == GES.TrackType.VIDEO:
+            self.video_widget = VideoUriSource(ges_source, self.timeline)
+            return self.video_widget
 
-        if not isinstance(ges_timeline_element, GES.Source):
-            return
-
-        if ges_timeline_element.get_track_type() == GES.TrackType.AUDIO:
-            self.audio_widget = AudioUriSource(ges_timeline_element, self.timeline)
-            ges_timeline_element.ui = self.audio_widget
-            self._elements_container.pack_end(self.audio_widget, True, False, 0)
-            self.audio_widget.set_visible(True)
-        elif ges_timeline_element.get_track_type() == GES.TrackType.VIDEO:
-            self.video_widget = VideoUriSource(ges_timeline_element, self.timeline)
-            ges_timeline_element.ui = self.video_widget
-            self._elements_container.pack_start(self.video_widget, True, False, 0)
-            self.video_widget.set_visible(True)
+        return None
 
 
 class TestClip(SourceClip):
     __gtype_name__ = "PitiviTestClip"
 
-    def __init__(self, layer, ges_clip):
+    def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
         SourceClip.__init__(self, layer, ges_clip)
         self.get_style_context().add_class("TestClip")
 
-    def _add_child(self, ges_timeline_element):
-        SourceClip._add_child(self, ges_timeline_element)
+    def _create_child_widget(self, ges_source: GES.Source) -> Optional[Gtk.Widget]:
+        if ges_source.get_track_type() == GES.TrackType.VIDEO:
+            self.video_widget = VideoTestSource(ges_source, self.timeline)
+            return self.video_widget
 
-        if not isinstance(ges_timeline_element, GES.Source):
-            return
-
-        if ges_timeline_element.get_track_type() == GES.TrackType.VIDEO:
-            self.video_widget = VideoTestSource(ges_timeline_element, self.timeline)
-            ges_timeline_element.ui = self.video_widget
-            self._elements_container.pack_start(self.video_widget, True, False, 0)
-            self.video_widget.set_visible(True)
+        return None
 
 
 class TitleClip(SourceClip):
     __gtype_name__ = "PitiviTitleClip"
 
-    def __init__(self, layer, ges_clip):
+    def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
         SourceClip.__init__(self, layer, ges_clip)
         self.get_style_context().add_class("TitleClip")
 
-    def _add_child(self, ges_timeline_element):
-        SourceClip._add_child(self, ges_timeline_element)
+    def _create_child_widget(self, ges_source: GES.Source) -> Optional[Gtk.Widget]:
+        if ges_source.get_track_type() == GES.TrackType.VIDEO:
+            self.video_widget = TitleSource(ges_source, self.timeline)
+            return self.video_widget
 
-        if not isinstance(ges_timeline_element, GES.Source):
-            return
-
-        if ges_timeline_element.get_track_type() == GES.TrackType.VIDEO:
-            self.video_widget = TitleSource(ges_timeline_element, self.timeline)
-            ges_timeline_element.ui = self.video_widget
-            self._elements_container.pack_start(self.video_widget, True, False, 0)
-            self.video_widget.set_visible(True)
+        return None
 
 
 class TransitionClip(Clip):
 
     __gtype_name__ = "PitiviTransitionClip"
 
-    def __init__(self, layer, ges_clip):
+    def __init__(self, layer: GES.Layer, ges_clip: GES.Clip):
         self.__has_video = False
 
         Clip.__init__(self, layer, ges_clip)
