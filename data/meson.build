@@ -6,7 +6,7 @@ install_subdir('audiopresets', install_dir: pkgdatadir)
 install_subdir('videopresets', install_dir: pkgdatadir)
 install_subdir('gstpresets', install_dir: pkgdatadir)
 
-desktop_file = i18n.merge_file('org.pitivi.Pitivi.desktop',
+desktop_file = i18n.merge_file(
     type: 'desktop',
     output : 'org.pitivi.Pitivi.desktop',
     input : 'org.pitivi.Pitivi.desktop.in',
@@ -25,7 +25,7 @@ if desktop_file_validate.found()
   )
 endif
 
-appdata_file = i18n.merge_file('org.pitivi.Pitivi.appdata.xml',
+appdata_file = i18n.merge_file(
     type: 'xml',
     output : 'org.pitivi.Pitivi.appdata.xml',
     input : 'org.pitivi.Pitivi.appdata.xml.in',
@@ -43,7 +43,7 @@ if appstream_util.found()
   )
 endif
 
-i18n.merge_file('org.pitivi.Pitivi-mime.xml',
+i18n.merge_file(
     output : 'org.pitivi.Pitivi-mime.xml',
     input : 'org.pitivi.Pitivi-mime.xml.in',
     po_dir: podir,
