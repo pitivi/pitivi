@@ -430,10 +430,15 @@ class TestCase(unittest.TestCase, Loggable):
         self.assertEqual(len(clips), num_clips)
         return clips
 
-    def toggle_clip_selection(self, ges_clip, expect_selected):
-        """Toggles the selection state of @ges_clip."""
-        selected = bool(ges_clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED)
-        self.assertEqual(ges_clip.selected.selected, selected)
+    def click_clip(self, ges_clip: GES.Clip, expect_selected: bool, ctrl_key: bool = False):
+        """Clicks the specified clip."""
+        self.assert_clip_selected(ges_clip, not expect_selected)
+
+        timeline = ges_clip.ui.timeline
+        original_control_mask = timeline.get_parent().control_mask
+        if ctrl_key:
+            # Pretend the Ctrl key is being pressed.
+            timeline.get_parent().control_mask = True
 
         # Simulate a click on the clip.
         event = mock.Mock(spec=Gdk.EventButton)
@@ -442,17 +447,31 @@ class TestCase(unittest.TestCase, Loggable):
         event.get_button.return_value = (True, 1)
         with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
             get_event_widget.return_value = ges_clip.ui
-            ges_clip.ui.timeline._button_press_event_cb(None, event)
+            timeline._button_press_event_cb(None, event)
             with mock.patch.object(ges_clip.ui, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (0, 0)
-                with mock.patch.object(ges_clip.ui.timeline, "get_layer_at") as get_layer_at:
+                with mock.patch.object(timeline, "get_layer_at") as get_layer_at:
                     get_layer_at.return_value = ges_clip.props.layer, None
                     ges_clip.ui._button_release_event_cb(None, event)
-                    ges_clip.ui.timeline._button_release_event_cb(None, event)
+                    timeline._button_release_event_cb(None, event)
 
+        if ctrl_key:
+            timeline.get_parent().control_mask = original_control_mask
+
+        self.assert_clip_selected(ges_clip, expect_selected)
+
+    def assert_clip_selected(self, ges_clip, expect_selected):
         self.assertEqual(bool(ges_clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED),
                          expect_selected)
         self.assertEqual(ges_clip.selected.selected, expect_selected)
+
+        for child in ges_clip.ui.get_children():
+            if not hasattr(child, "selected"):
+                continue
+
+            self.assertEqual(bool(child.get_state_flags() & Gtk.StateFlags.SELECTED),
+                             expect_selected)
+            self.assertEqual(child.selected, expect_selected)
 
     def assert_caps_equal(self, caps1, caps2):
         if isinstance(caps1, str):

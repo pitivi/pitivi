@@ -243,7 +243,7 @@ class TestGrouping(common.TestCase):
         timeline = timeline_container.timeline
         self.__check_can_group_ungroup(timeline_container, False, False)
         ges_clip, = self.add_clips_simple(timeline, 1)
-        self.toggle_clip_selection(ges_clip, expect_selected=True)
+        self.click_clip(ges_clip, expect_selected=True)
         self.__check_can_group_ungroup(timeline_container, False, True)
 
         timeline_container.ungroup_action.emit("activate", None)
@@ -251,7 +251,7 @@ class TestGrouping(common.TestCase):
 
         layer, = timeline.ges_timeline.get_layers()
         ges_clip0, ges_clip1 = layer.get_clips()
-        self.toggle_clip_selection(ges_clip0, expect_selected=True)
+        self.click_clip(ges_clip0, expect_selected=True)
         self.__check_can_group_ungroup(timeline_container, False, False)
 
         # Press <ctrl> so selecting in ADD mode
@@ -259,7 +259,7 @@ class TestGrouping(common.TestCase):
         event.keyval = Gdk.KEY_Control_L
         timeline_container.do_key_press_event(event)
 
-        self.toggle_clip_selection(ges_clip1, expect_selected=True)
+        self.click_clip(ges_clip1, expect_selected=True)
         self.__check_can_group_ungroup(timeline_container, True, False)
 
         timeline_container.group_action.emit("activate", None)
@@ -279,7 +279,7 @@ class TestGrouping(common.TestCase):
         # Select the 2 clips
         for clip in clips:
             self.assertIsNone(clip.get_parent())
-            self.toggle_clip_selection(clip, expect_selected=True)
+            self.click_clip(clip, expect_selected=True)
 
         timeline_container.group_action.emit("activate", None)
 
@@ -291,8 +291,7 @@ class TestGrouping(common.TestCase):
                 self.assertEqual(clip.get_toplevel_parent(), selected_clip.get_toplevel_parent())
 
             self.assertEqual(clips[0].get_parent(), clip.get_parent())
-            self.assertTrue(bool(clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED))
-            self.assertTrue(clip.selected)
+            self.assert_clip_selected(clip, expect_selected=True)
 
         group = clips[0].get_parent()
         self.assertEqual(len(group.get_children(False)), len(clips))
@@ -314,12 +313,11 @@ class TestGrouping(common.TestCase):
         self.assertEqual(len(clips), num_clips)
 
         # Deselect one grouped clip clips
-        self.toggle_clip_selection(clips[0], expect_selected=False)
+        self.click_clip(clips[0], expect_selected=False)
 
         # Make sure all the clips have been deselected
         for clip in clips:
-            self.assertFalse(bool(clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED))
-            self.assertFalse(clip.selected)
+            self.assert_clip_selected(clip, expect_selected=False)
 
     def test_group_ungroup(self):
         num_clips = 2
@@ -339,49 +337,63 @@ class TestGrouping(common.TestCase):
             self.assertIsNone(clip.get_parent())
 
     def test_group_splitted_clip_and_select_group(self):
-
+        # Create a clip and select it
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         clips = self.add_clips_simple(timeline, 1)
         clips[0].props.duration = timeline.ges_timeline.get_frame_time(4)
+        self.click_clip(clips[0], expect_selected=True)
+
+        # Split the clip
         position = timeline.ges_timeline.get_frame_time(2)
-        self.toggle_clip_selection(clips[0], expect_selected=True)
-
         timeline.ges_timeline.get_asset().pipeline.get_position = mock.Mock(return_value=position)
-        layer = timeline.ges_timeline.get_layers()[0]
-
-        # Split
         timeline_container.split_action.emit("activate", None)
+        layer = timeline.ges_timeline.get_layers()[0]
         clips = layer.get_clips()
         self.assertEqual(len(clips), 2)
 
-        # Only the first clip is selected so select the
-        # second one
-        self.assertTrue(clips[0].selected)
-        self.assertFalse(clips[1].selected)
+        # Only the first clip is selected
+        self.assert_clip_selected(clips[0], expect_selected=True)
+        self.assert_clip_selected(clips[1], expect_selected=False)
 
+        # Select the second clip
         event = mock.Mock()
         event.keyval = Gdk.KEY_Control_L
         timeline_container.do_key_press_event(event)
+        self.click_clip(clips[1], expect_selected=True)
         timeline.get_clicked_layer_and_pos = mock.Mock()
         timeline.get_clicked_layer_and_pos.return_value = (None, None)
-        self.toggle_clip_selection(clips[1], expect_selected=True)
         timeline_container.do_key_release_event(event)
 
-        for clip in clips:
-            self.assertTrue(clip.selected)
+        # Both clips are selected
+        self.assert_clip_selected(clips[0], expect_selected=True)
+        self.assert_clip_selected(clips[1], expect_selected=True)
 
-        # Group the two parts
+        # Group the two selected clips
         timeline_container.group_action.emit("activate", None)
 
-        self.toggle_clip_selection(clips[1], expect_selected=True)
+        # Deselect the second clip, notice both clips have been deselected
+        self.click_clip(clips[1], expect_selected=False, ctrl_key=True)
+        self.assert_clip_selected(clips[0], expect_selected=False)
+
+        # Select the second clip, notice both clips have been selected
+        self.click_clip(clips[1], expect_selected=True)
+        self.assert_clip_selected(clips[0], expect_selected=True)
+
+        # Deselect the first clip, notice both clips have been deselected
+        self.click_clip(clips[0], expect_selected=False, ctrl_key=True)
+        self.assert_clip_selected(clips[1], expect_selected=False)
+
+        # Select the first clip, notice both clips have been selected
+        self.click_clip(clips[0], expect_selected=True)
+        self.assert_clip_selected(clips[1], expect_selected=True)
 
     def test_ungroup_clip(self):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         ges_clip, = self.add_clips_simple(timeline, 1)
 
-        self.toggle_clip_selection(ges_clip, expect_selected=True)
+        self.click_clip(ges_clip, expect_selected=True)
 
         timeline_container.ungroup_action.emit("activate", None)
         layer = timeline.ges_timeline.get_layers()[0]
@@ -466,7 +478,7 @@ class TestCopyPaste(common.TestCase):
 
         # Select the 2 clips
         for clip in clips:
-            self.toggle_clip_selection(clip, expect_selected=True)
+            self.click_clip(clip, expect_selected=True)
 
         self.assertTrue(timeline_container.copy_action.props.enabled)
         self.assertFalse(timeline_container.paste_action.props.enabled)
@@ -536,10 +548,11 @@ class TestCopyPaste(common.TestCase):
         timeline_container.paste_action.emit("activate", None)
 
         clips = layer.get_clips()
-        self.assertListEqual([bool(clip.selected) for clip in clips], [False, True])
+        self.assert_clip_selected(clips[0], expect_selected=False)
+        self.assert_clip_selected(clips[1], expect_selected=True)
 
         # The copy_clips() above simulates CTRL button press, so this will add 1st clip to the selection.
-        self.toggle_clip_selection(clips[0], True)
+        self.click_clip(clips[0], expect_selected=True)
         timeline_container.copy_action.emit("activate", None)
 
         # Paste two clips.
@@ -548,7 +561,10 @@ class TestCopyPaste(common.TestCase):
         timeline_container.paste_action.emit("activate", None)
 
         clips = layer.get_clips()
-        self.assertListEqual([bool(clip.selected) for clip in clips], [False, False, True, True])
+        self.assert_clip_selected(clips[0], expect_selected=False)
+        self.assert_clip_selected(clips[1], expect_selected=False)
+        self.assert_clip_selected(clips[2], expect_selected=True)
+        self.assert_clip_selected(clips[3], expect_selected=True)
 
 
 class TestEditing(common.TestCase):
@@ -600,9 +616,9 @@ class TestShiftSelection(common.TestCase):
 
     def __check_selected(self, selected_clips, not_selected_clips):
         for clip in selected_clips:
-            self.assertEqual(clip.selected._selected, True)
+            self.assert_clip_selected(clip, expect_selected=True)
         for clip in not_selected_clips:
-            self.assertEqual(clip.selected._selected, False)
+            self.assert_clip_selected(clip, expect_selected=False)
 
     def __check_simple(self, left_click_also_seeks):
         timeline_container = common.create_timeline_container()
@@ -882,7 +898,7 @@ class TestKeyboardShiftClips(common.TestCase):
         event.keyval = Gdk.KEY_Control_L
         self.timeline_container.do_key_press_event(event)
         for clip in ges_clips:
-            self.toggle_clip_selection(clip, expect_selected=True)
+            self.click_clip(clip, expect_selected=True)
         self.timeline_container.do_key_release_event(event)
 
         self.timeline_container.shift_forward_action.emit("activate", None)
@@ -921,15 +937,10 @@ class TestKeyboardShiftClips(common.TestCase):
         ges_clip3 = self.add_clip(self.layer, 13 * Gst.SECOND, duration=2 * Gst.SECOND)
         ges_clip4 = self.add_clip(self.layer, 15 * Gst.SECOND, duration=2 * Gst.SECOND)
 
-        event = mock.Mock()
-        event.keyval = Gdk.KEY_Control_L
-        self.timeline_container.do_key_press_event(event)
-        self.toggle_clip_selection(ges_clip1, expect_selected=True)
-        self.toggle_clip_selection(ges_clip2, expect_selected=True)
-        self.toggle_clip_selection(ges_clip3, expect_selected=True)
-        self.toggle_clip_selection(ges_clip4, expect_selected=True)
-
-        self.timeline_container.do_key_release_event(event)
+        self.click_clip(ges_clip1, expect_selected=True, ctrl_key=True)
+        self.click_clip(ges_clip2, expect_selected=True, ctrl_key=True)
+        self.click_clip(ges_clip3, expect_selected=True, ctrl_key=True)
+        self.click_clip(ges_clip4, expect_selected=True, ctrl_key=True)
 
         self.timeline_container.shift_forward_action.emit("activate", None)
 
@@ -954,7 +965,7 @@ class TestSnapClips(common.TestCase):
         ges_clip1 = self.add_clip(self.layer, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
         ges_clip2 = self.add_clip(self.layer, 9 * Gst.SECOND, duration=2 * Gst.SECOND)
 
-        self.toggle_clip_selection(ges_clip1, expect_selected=True)
+        self.click_clip(ges_clip1, expect_selected=True)
 
         self.timeline_container.snap_clips_forward_action.emit("activate", None)
         self.assertEqual(ges_clip1.start, ges_clip2.start - ges_clip1.duration)
@@ -969,11 +980,8 @@ class TestSnapClips(common.TestCase):
         ges_clip2 = self.add_clip(self.layer, 7 * Gst.SECOND, duration=2 * Gst.SECOND)
         ges_clip3 = self.add_clip(self.layer, 11 * Gst.SECOND, duration=2 * Gst.SECOND)
 
-        event = mock.Mock()
-        event.keyval = Gdk.KEY_Control_L
-        self.timeline_container.do_key_press_event(event)
-        self.toggle_clip_selection(ges_clip1, expect_selected=True)
-        self.toggle_clip_selection(ges_clip2, expect_selected=True)
+        self.click_clip(ges_clip1, expect_selected=True, ctrl_key=True)
+        self.click_clip(ges_clip2, expect_selected=True, ctrl_key=True)
 
         self.timeline_container.snap_clips_forward_action.emit("activate", None)
         self.assertEqual(ges_clip2.start, ges_clip3.start - ges_clip2.duration)
@@ -993,7 +1001,7 @@ class TestSnapClips(common.TestCase):
         clip = self.add_clip(layer2, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
         end_clip = self.add_clip(layer2, 30 * Gst.SECOND, duration=2 * Gst.SECOND)
 
-        self.toggle_clip_selection(clip, expect_selected=True)
+        self.click_clip(clip, expect_selected=True)
 
         self.timeline_container.snap_clips_forward_action.emit("activate", None)
         self.assertEqual(clip.start, end_clip.start - clip.duration)
@@ -1007,7 +1015,7 @@ class TestSnapClips(common.TestCase):
         ges_clip = self.add_clip(self.layer, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
         clip_start = ges_clip.start
 
-        self.toggle_clip_selection(ges_clip, expect_selected=True)
+        self.click_clip(ges_clip, expect_selected=True)
 
         self.timeline_container.snap_clips_forward_action.emit("activate", None)
         self.assertEqual(ges_clip.start, clip_start)
@@ -1019,7 +1027,7 @@ class TestSnapClips(common.TestCase):
         self.add_clip(self.layer, 30 * Gst.SECOND, duration=2 * Gst.SECOND)
         ges_clip = self.add_clip(layer2, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
 
-        self.toggle_clip_selection(ges_clip, expect_selected=True)
+        self.click_clip(ges_clip, expect_selected=True)
 
         self.timeline_container.snap_clips_forward_action.emit("activate", None)
         self.assertEqual(ges_clip.start, self.timeline.get_duration() - ges_clip.duration)
