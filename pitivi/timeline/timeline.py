@@ -2185,7 +2185,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         """
         with self.app.action_log.started("split clip", toplevel=True,
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline)):
-            self._split_elements(self.timeline.selection.selected)
+            self._split_elements(list(self.timeline.selection))
 
     def _split_elements(self, clips=None):
         splitting_selection = clips is not None
@@ -2197,7 +2197,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         position = self._project.pipeline.get_position()
         position = self.ges_timeline.get_frame_time(self.ges_timeline.get_frame_at(position))
         splitted = False
-
         with self._project.pipeline.commit_timeline_after():
             for clip in clips:
                 start = clip.get_start()
@@ -2287,7 +2286,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         previous_snapping_distance = self.ges_timeline.get_snapping_distance()
         self.ges_timeline.set_snapping_distance(0)
         try:
-            clips = list(self.timeline.selection.selected)
+            clips = list(self.timeline.selection)
             clips.sort(key=lambda candidate_clip: candidate_clip.start, reverse=delta_frames > 0)
             # We must use delta * frame_time because getting negative frame time is not possible.
             clip_delta = delta_frames * self.ges_timeline.get_frame_time(1)
@@ -2309,7 +2308,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def snap_clips(self, forward: bool):
         """Snap clips to next or previous clip."""
-        clips = list(self.timeline.selection.selected)
+        clips = list(self.timeline.selection)
         clips.sort(key=lambda clip: clip.start, reverse=forward)
         with self.app.action_log.started("Snaps to closest clip",
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),

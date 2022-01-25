@@ -214,17 +214,13 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self._project = project
 
     def _selection_changed_cb(self, selection):
-        selected_clips = selection.selected
-        single_clip_selected = len(selected_clips) == 1
-        self.helper_box.set_visible(not single_clip_selected)
+        ges_clip = selection.get_single_clip()
+        self.helper_box.set_visible(not ges_clip)
 
         video_source = None
         title_source = None
         color_clip_source = None
-        ges_clip = None
-        if single_clip_selected:
-            ges_clip = list(selected_clips)[0]
-
+        if ges_clip:
             for child in ges_clip.get_children(False):
                 if isinstance(child, GES.VideoSource):
                     video_source = child

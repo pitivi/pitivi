@@ -326,7 +326,7 @@ class TestGrouping(common.TestCase):
         clips = self.add_clips_simple(timeline, num_clips)
         self.group_clips(timeline_container, clips)
 
-        self.assertEqual(len(timeline.selection.selected), num_clips)
+        self.assertEqual(len(timeline.selection), num_clips)
 
         timeline_container.ungroup_action.emit("activate", None)
         layer = timeline.ges_timeline.get_layers()[0]

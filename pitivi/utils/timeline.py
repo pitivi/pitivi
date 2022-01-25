@@ -15,6 +15,9 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
+from typing import List
+from typing import Set
+
 from gi.repository import GES
 from gi.repository import GObject
 from gi.repository import Gst
@@ -70,9 +73,6 @@ class Selected(GObject.Object):
 class Selection(GObject.Object, Loggable):
     """Manages a set of clips representing a selection.
 
-    Attributes:
-        selected (List[GES.TrackElement]): Set of selected elements.
-
     Signals:
         selection-changed: The contents of the selection changed.
     """
@@ -84,52 +84,50 @@ class Selection(GObject.Object, Loggable):
     def __init__(self):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
-        self.selected = set()
+        self._clips: Set[GES.Clip] = set()
         self.can_group = False
         self.can_ungroup = False
 
-    def set_selection(self, objs, mode):
+    def set_selection(self, clips: List[GES.Clip], mode: int):
         """Updates the current selection.
 
         Args:
-            objs (List[GES.TrackElement]): Timeline objects to update the
-                selection with.
+            clips (List[GES.Clip]): Timeline clips to update the selection with.
             mode (SELECT or UNSELECT or SELECT_ADD): The type of update to
                 apply. The selection will be:
                 - `SELECT` : set to the provided selection.
                 - `UNSELECT` : the same minus the provided selection.
                 - `SELECT_ADD` : extended with the provided selection.
         """
-        selection = set()
-        for obj in objs:
-            # FIXME GES break, handle the fact that we have unlinked objects in
-            # GES
-            if isinstance(obj, GES.TrackElement):
-                selection.add(obj.get_parent())
-            else:
-                selection.add(obj)
+        self.debug("Updating selection %s mode %s", clips, mode)
         if mode == SELECT_ADD:
-            selection = self.selected | selection
+            selection = self._clips | set(clips)
         elif mode == UNSELECT:
-            selection = self.selected - selection
+            selection = self._clips - set(clips)
+        else:
+            selection = set(clips)
 
-        old_selection = self.selected
-        if selection == old_selection:
+        if self._clips == selection:
             # Nothing changed. This can happen for example when the user clicks
             # the selected clip, then the clip remains selected.
             return
-        self.selected = selection
+
+        old_selection = self._clips
+        self._clips = selection
 
         for obj, selected in self.__get_selection_changes(old_selection):
             obj.selected.selected = selected
             if obj.ui:
                 from pitivi.utils.ui import set_state_flags_recurse
                 set_state_flags_recurse(obj.ui, Gtk.StateFlags.SELECTED, are_set=selected)
+
             for element in obj.get_children(False):
                 if isinstance(obj, (GES.BaseEffect, GES.TextOverlay)):
                     continue
                 element.selected.selected = selected
+
         self.set_can_group_ungroup()
+
         self.emit("selection-changed")
 
     def set_can_group_ungroup(self):
@@ -146,13 +144,13 @@ class Selection(GObject.Object, Loggable):
         self.can_ungroup = can_ungroup and not self.can_group
 
     def __get_selection_changes(self, old_selection):
-        for obj in old_selection - self.selected:
+        for obj in old_selection - self._clips:
             yield obj, False
 
         # Announce all selected objects that they are selected, even if
         # they were already selected. This allows them to update based on
         # the current selection.
-        for obj in self.selected:
+        for obj in self._clips:
             yield obj, True
 
     def select(self, objs):
@@ -168,7 +166,7 @@ class Selection(GObject.Object, Loggable):
             List[GES.TrackElement]
         """
         objects = []
-        for clip in self.selected:
+        for clip in self._clips:
             objects.extend(clip.get_children(False))
 
         return set(objects)
@@ -179,8 +177,8 @@ class Selection(GObject.Object, Loggable):
         Args:
             clip_type (type): The class the clip must be an instance of.
         """
-        if len(self.selected) == 1:
-            clip = tuple(self.selected)[0]
+        if len(self._clips) == 1:
+            clip = tuple(self._clips)[0]
             if isinstance(clip, clip_type):
                 return clip
         return None
@@ -189,7 +187,7 @@ class Selection(GObject.Object, Loggable):
     def toplevels(self):
         """Returns the toplevel elements of the selection."""
         toplevels = set()
-        for obj in self.selected:
+        for obj in self._clips:
             if not obj.timeline:
                 # The element has been removed from the timeline. Ignore it.
                 continue
@@ -215,7 +213,7 @@ class Selection(GObject.Object, Loggable):
             have only non-serializable ancestors.
         """
         toplevels = set()
-        for obj in self.selected:
+        for obj in self._clips:
             if not obj.timeline:
                 # The element has been removed from the timeline. Ignore it.
                 continue
@@ -229,10 +227,10 @@ class Selection(GObject.Object, Loggable):
         return group
 
     def __len__(self):
-        return len(self.selected)
+        return len(self._clips)
 
     def __iter__(self):
-        return iter(self.selected)
+        return iter(self._clips)
 
 
 class EditingContext(GObject.Object, Loggable):
@@ -269,7 +267,6 @@ class EditingContext(GObject.Object, Loggable):
         self.old_priority = self.focus.get_priority()
 
         self.new_position = None
-        self.new_priority = None
 
         self.timeline = timeline
         self.app = app
@@ -286,6 +283,7 @@ class EditingContext(GObject.Object, Loggable):
                                       toplevel=True)
 
     def finish(self):
+        self.debug("Finishing editing context")
         if self.__log_actions:
             self.app.action_log.commit("move-clip")
         self.timeline.get_asset().pipeline.commit_timeline()
@@ -314,7 +312,6 @@ class EditingContext(GObject.Object, Loggable):
             priority = max(0, priority)
 
         self.new_position = position
-        self.new_priority = priority
 
         if self.with_video:
             frame = self.timeline.get_frame_at(position)
