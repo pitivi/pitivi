@@ -1,14 +1,14 @@
 # Swedish translation for pitivi documentation.
-# Copyright © 2015-2021 pitivi's COPYRIGHT HOLDER
+# Copyright © 2015-2022 pitivi's COPYRIGHT HOLDER
 # This file is distributed under the same license as the pitivi package.
 # Josef Andersson <josef.andersson@fripost.org>, 2015, 2016.
-# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2019, 2020, 2021.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2019, 2020, 2021, 2022.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2021-03-04 20:52+0000\n"
-"PO-Revision-Date: 2021-03-05 22:31+0100\n"
+"POT-Creation-Date: 2021-03-05 21:32+0000\n"
+"PO-Revision-Date: 2022-01-29 23:19+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
@@ -1654,7 +1654,7 @@ msgid ""
 "The timeline toolbar is located at the right edge of the timeline. It "
 "contains basic actions for editing in timeline:"
 msgstr ""
-"Tidslinjens verktygsrad är placerad på den högra kanten av tidslinjen. Den "
+"Tidslinjens verktygsfält är placerat på den högra kanten av tidslinjen. Det "
 "innehåller grundläggande åtgärder för att redigera i tidslinjen:"
 
 #. (itstool) path: item/p
