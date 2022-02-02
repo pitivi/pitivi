@@ -768,6 +768,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self._scroll_start_y = event.y
 
     def _button_release_event_cb(self, unused_widget, event):
+        self.debug("RELEASED %s", event)
         allow_seek = not self.__got_dragged
 
         res, button = event.get_button()
@@ -1429,6 +1430,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return new_ges_layer
 
     def drag_end(self):
+        self.debug("Ending dragging")
         if self.editing_context:
             self.__end_snap()
 

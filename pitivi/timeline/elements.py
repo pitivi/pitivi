@@ -1195,6 +1195,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.ges_clip = ges_clip
         self.ges_clip.ui = self
         self.ges_clip.selected = Selected()
+        self.ges_clip.selected.selected = self.ges_clip in self.timeline.selection
 
         self.audio_widget = None
         self.video_widget = None
@@ -1205,6 +1206,8 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         for ges_timeline_element in self.ges_clip.get_children(False):
             self._add_child(ges_timeline_element)
             self.__connect_to_child(ges_timeline_element)
+
+        set_state_flags_recurse(self, Gtk.StateFlags.SELECTED, are_set=self.ges_clip.selected)
 
         # Connect to Widget signals.
         self.connect("button-release-event", self._button_release_event_cb)
@@ -1459,6 +1462,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
     def _add_child(self, ges_timeline_element):
         ges_timeline_element.selected = Selected()
+        ges_timeline_element.selected.selected = self.ges_clip.selected.selected
         ges_timeline_element.ui = None
 
     def _child_added_cb(self, unused_ges_clip, ges_timeline_element):

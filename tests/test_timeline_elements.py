@@ -28,6 +28,7 @@ from matplotlib.backend_bases import MouseEvent
 
 from pitivi.timeline.elements import GES_TYPE_UI_TYPE
 from pitivi.undo.undo import UndoableActionLog
+from pitivi.utils.timeline import SELECT
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import LAYER_HEIGHT
 from tests import common
@@ -486,9 +487,29 @@ class TestVideoSource(common.TestCase):
 class TestClip(common.TestCase):
     """Tests for the Clip class."""
 
+    def test_selection_status_persists_when_clip_changes_layer(self):
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        selection = timeline.selection
+        layer1 = timeline.ges_timeline.append_layer()
+        layer2 = timeline.ges_timeline.append_layer()
+
+        clip = self.add_clip(layer1, start=0)
+        selection.set_selection([clip], SELECT)
+        self.assertEqual(selection.get_single_clip(), clip)
+        self.assert_clip_selected(clip, expect_selected=True)
+
+        clip.move_to_layer_full(layer2)
+        clip2, = layer2.get_clips()
+        self.assert_clip_selected(clip2, expect_selected=True)
+
     def test_clip_subclasses(self):
         """Checks the constructors of the Clip class."""
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+
         for gtype, widget_class in GES_TYPE_UI_TYPE.items():
             ges_object = GObject.new(gtype)
-            widget = widget_class(mock.Mock(), ges_object)
+            widget = widget_class(ges_layer.ui, ges_object)
             self.assertEqual(ges_object.ui, widget, widget_class)
