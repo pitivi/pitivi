@@ -1752,14 +1752,14 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         # Clips actions.
         self.delete_action = Gio.SimpleAction.new("delete-selected-clips", None)
-        self.delete_action.connect("activate", self._delete_selected)
+        self.delete_action.connect("activate", self._delete_selected_cb)
         group.add_action(self.delete_action)
         self.app.shortcuts.add("timeline.delete-selected-clips", ["Delete"],
                                self.delete_action,
                                _("Delete selected clips"))
 
         self.delete_and_shift_action = Gio.SimpleAction.new("delete-selected-clips-and-shift", None)
-        self.delete_and_shift_action.connect("activate", self._delete_selected_and_shift)
+        self.delete_and_shift_action.connect("activate", self._delete_selected_and_shift_cb)
         group.add_action(self.delete_and_shift_action)
         self.app.shortcuts.add("timeline.delete-selected-clips-and-shift", ["<Shift>Delete"],
                                self.delete_and_shift_action,
@@ -1978,7 +1978,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.timeline.update_position()
         return False
 
-    def _delete_selected(self, unused_action, unused_parameter):
+    def _delete_selected_cb(self, unused_action, unused_parameter):
         if self.ges_timeline:
             with Previewer.manager.paused():
                 with self.app.action_log.started("delete clip",
@@ -1992,7 +1992,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             self.timeline.selection.set_selection([], SELECT)
 
-    def _delete_selected_and_shift(self, unused_action, unused_parameter):
+    def _delete_selected_and_shift_cb(self, unused_action, unused_parameter):
         if self.ges_timeline:
             with self.app.action_log.started("delete clip and shift",
                                              finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
@@ -2036,35 +2036,37 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _ungroup_selected_cb(self, unused_action, unused_parameter):
         if not self.ges_timeline:
-            self.info("No ges_timeline set yet!")
             return
 
+        toplevels = self.timeline.selection.toplevels()
+        containers = set()
         with self.app.action_log.started("ungroup",
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                          toplevel=True):
-            toplevels = self.timeline.selection.toplevels
             for toplevel in toplevels:
+                # Normally we don't ungroup Clips unless they are
+                # selected by themselves.
                 if isinstance(toplevel, GES.Group) or len(toplevels) == 1:
-                    toplevel.ungroup(recursive=False)
+                    containers |= set(toplevel.ungroup(recursive=False))
 
-        self.timeline.selection.set_selection([], SELECT)
+        clips = list(self.timeline.selection.get_clips_of(containers))
+        self.timeline.selection.set_selection(clips, SELECT)
 
     def _group_selected_cb(self, unused_action, unused_parameter):
         if not self.ges_timeline:
-            self.info("No timeline set yet?")
+            return
+
+        toplevels = self.timeline.selection.toplevels()
+        if not toplevels:
             return
 
         with self.app.action_log.started("group",
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                          toplevel=True):
-            toplevels = self.timeline.selection.toplevels
-            if toplevels:
-                GES.Container.group(list(toplevels))
+            container = GES.Container.group(list(toplevels))
 
-            # timeline.selection doesn't change during grouping,
-            # we need to manually update group actions.
-            self.timeline.selection.set_can_group_ungroup()
-            self.update_actions()
+        clips = self.timeline.selection.get_clips_of([container])
+        self.timeline.selection.set_selection(clips, SELECT)
 
     def __copy_clips_cb(self, unused_action, unused_parameter):
         group = self.timeline.selection.group()

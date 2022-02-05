@@ -432,8 +432,6 @@ class TestCase(unittest.TestCase, Loggable):
 
     def click_clip(self, ges_clip: GES.Clip, expect_selected: bool, ctrl_key: bool = False):
         """Clicks the specified clip."""
-        self.assert_clip_selected(ges_clip, not expect_selected)
-
         timeline = ges_clip.ui.timeline
         original_control_mask = timeline.get_parent().control_mask
         if ctrl_key:

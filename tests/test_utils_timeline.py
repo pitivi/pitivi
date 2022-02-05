@@ -107,27 +107,27 @@ class TestSelection(common.TestCase):
         selection = Selection()
 
         selection.set_selection([clip1, clip2, clip3, clip4], SELECT)
-        self.assertSetEqual(selection.toplevels, {clip1, clip2, clip3, clip4})
+        self.assertSetEqual(selection.toplevels(), {clip1, clip2, clip3, clip4})
 
         group1 = GES.Container.group([clip1, clip2])
         group1.props.serialize = True
-        self.assertSetEqual(selection.toplevels, {group1, clip3, clip4})
+        self.assertSetEqual(selection.toplevels(), {group1, clip3, clip4})
 
         group2 = GES.Container.group([group1, clip3])
         group2.props.serialize = True
-        self.assertSetEqual(selection.toplevels, {group2, clip4})
+        self.assertSetEqual(selection.toplevels(), {group2, clip4})
 
         group1.props.serialize = True
         group1.props.serialize = False
-        self.assertSetEqual(selection.toplevels, {group2, clip4})
+        self.assertSetEqual(selection.toplevels(), {group2, clip4})
 
         group1.props.serialize = False
         group2.props.serialize = False
-        self.assertSetEqual(selection.toplevels, {clip1, clip2, clip3, clip4})
+        self.assertSetEqual(selection.toplevels(), {clip1, clip2, clip3, clip4})
 
         group1.props.serialize = True
         group2.props.serialize = False
-        self.assertSetEqual(selection.toplevels, {group1, clip3, clip4})
+        self.assertSetEqual(selection.toplevels(), {group1, clip3, clip4})
 
 
 class TestEditingContext(common.TestCase):

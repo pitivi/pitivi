@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
-from typing import List
+from typing import Iterable
 from typing import Set
 
 from gi.repository import GES
@@ -74,7 +74,8 @@ class Selection(GObject.Object, Loggable):
     """Manages a set of clips representing a selection.
 
     Signals:
-        selection-changed: The contents of the selection changed.
+        selection-changed: The contents of the selection or the grouping of
+            the selected clips changed.
     """
 
     __gsignals__ = {
@@ -88,60 +89,64 @@ class Selection(GObject.Object, Loggable):
         self.can_group = False
         self.can_ungroup = False
 
-    def set_selection(self, clips: List[GES.Clip], mode: int):
+    def set_selection(self, clips: Iterable[GES.Clip], mode: int):
         """Updates the current selection.
 
         Args:
-            clips (List[GES.Clip]): Timeline clips to update the selection with.
+            clips (Iterable[GES.Clip]): Timeline clips to update the selection with.
             mode (SELECT or UNSELECT or SELECT_ADD): The type of update to
                 apply. The selection will be:
                 - `SELECT` : set to the provided selection.
                 - `UNSELECT` : the same minus the provided selection.
                 - `SELECT_ADD` : extended with the provided selection.
         """
+        if not isinstance(clips, Set):
+            clips = set(clips)
         self.debug("Updating selection %s mode %s", clips, mode)
         if mode == SELECT_ADD:
-            selection = self._clips | set(clips)
+            selection = self._clips | clips
         elif mode == UNSELECT:
-            selection = self._clips - set(clips)
+            selection = self._clips - clips
         else:
-            selection = set(clips)
+            selection = clips
 
-        if self._clips == selection:
-            # Nothing changed. This can happen for example when the user clicks
-            # the selected clip, then the clip remains selected.
-            return
+        selection_changed = self._clips != selection
+        if selection_changed:
+            old_selection = self._clips
+            self._clips = selection
 
-        old_selection = self._clips
-        self._clips = selection
+            for obj, selected in self.__get_selection_changes(old_selection):
+                obj.selected.selected = selected
+                if obj.ui:
+                    from pitivi.utils.ui import set_state_flags_recurse
+                    set_state_flags_recurse(obj.ui, Gtk.StateFlags.SELECTED, are_set=selected)
 
-        for obj, selected in self.__get_selection_changes(old_selection):
-            obj.selected.selected = selected
-            if obj.ui:
-                from pitivi.utils.ui import set_state_flags_recurse
-                set_state_flags_recurse(obj.ui, Gtk.StateFlags.SELECTED, are_set=selected)
+                for element in obj.get_children(False):
+                    if isinstance(obj, (GES.BaseEffect, GES.TextOverlay)):
+                        continue
+                    element.selected.selected = selected
 
-            for element in obj.get_children(False):
-                if isinstance(obj, (GES.BaseEffect, GES.TextOverlay)):
-                    continue
-                element.selected.selected = selected
+        # Always check, maybe the clips have been grouped or ungrouped.
+        grouping_changed = self._set_can_group_ungroup()
 
-        self.set_can_group_ungroup()
+        if selection_changed or grouping_changed:
+            self.emit("selection-changed")
 
-        self.emit("selection-changed")
-
-    def set_can_group_ungroup(self):
-        can_ungroup = False
-        toplevels = self.toplevels
-        self.can_group = len(toplevels) > 1
+    def _set_can_group_ungroup(self) -> bool:
+        toplevels = self.toplevels()
+        can_group = len(toplevels) > 1
         # If we allow grouping, we disallow ungrouping.
-        if not self.can_group:
+        can_ungroup = False
+        if not can_group:
             for toplevel in toplevels:
                 if (isinstance(toplevel, GES.Group) or
                         (isinstance(toplevel, GES.Container) and len(toplevel.get_children(False)) > 1)):
                     can_ungroup = True
                     break
-        self.can_ungroup = can_ungroup and not self.can_group
+        changed = (self.can_group, self.can_ungroup) != (can_group, can_ungroup)
+        self.can_group = can_group
+        self.can_ungroup = can_ungroup
+        return changed
 
     def __get_selection_changes(self, old_selection):
         for obj in old_selection - self._clips:
@@ -183,7 +188,6 @@ class Selection(GObject.Object, Loggable):
                 return clip
         return None
 
-    @property
     def toplevels(self):
         """Returns the toplevel elements of the selection."""
         toplevels = set()
@@ -231,6 +235,16 @@ class Selection(GObject.Object, Loggable):
 
     def __iter__(self):
         return iter(self._clips)
+
+    @staticmethod
+    def get_clips_of(containers: Iterable[GES.Container]) -> Iterable[GES.Clip]:
+        for container in containers:
+            if isinstance(container, GES.Clip):
+                yield container
+            elif isinstance(container, GES.Container):
+                for child in container.get_children(recursive=True):
+                    if isinstance(child, GES.Clip):
+                        yield child
 
 
 class EditingContext(GObject.Object, Loggable):

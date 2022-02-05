@@ -154,14 +154,13 @@ class TestTimelineObserver(common.TestCase):
 
         self.assertTrue(self.layer.add_clip(clip1))
         self.assertTrue(self.layer.add_clip(clip2))
-        # The selection does not care about GES.Groups, only about GES.Clips.
-        self.timeline_container.timeline.selection.select([clip1, clip2])
         self.assertEqual(clip1.props.timeline, self.layer.get_timeline())
         self.assertEqual(clip2.props.timeline, self.layer.get_timeline())
 
+        self.timeline_container.timeline.selection.select([clip1, clip2])
         self.timeline_container.group_action.activate(None)
-        self.assertTrue(isinstance(clip1.get_parent(), GES.Group))
         self.assertEqual(clip1.get_parent(), clip2.get_parent())
+        self.assertTrue(isinstance(clip1.get_parent(), GES.Group), type(clip1.get_parent()))
 
         self.timeline_container.ungroup_action.activate(None)
         self.assertIsNone(clip1.get_parent())

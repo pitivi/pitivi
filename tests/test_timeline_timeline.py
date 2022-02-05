@@ -241,45 +241,44 @@ class TestGrouping(common.TestCase):
     def test_can_group_ungroup(self):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
+        # Timeline empty.
         self.__check_can_group_ungroup(timeline_container, False, False)
+
         ges_clip, = self.add_clips_simple(timeline, 1)
+        # No clip selected.
+        self.__check_can_group_ungroup(timeline_container, False, False)
+
         self.click_clip(ges_clip, expect_selected=True)
+        # An audio-video clip is selected.
         self.__check_can_group_ungroup(timeline_container, False, True)
 
         timeline_container.ungroup_action.emit("activate", None)
-        self.__check_can_group_ungroup(timeline_container, False, False)
+        # The resulting audio clip and video clip should both be selected.
+        self.__check_can_group_ungroup(timeline_container, True, False)
 
         layer, = timeline.ges_timeline.get_layers()
         ges_clip0, ges_clip1 = layer.get_clips()
-        self.click_clip(ges_clip0, expect_selected=True)
+        self.click_clip(ges_clip0, expect_selected=False, ctrl_key=True)
+        # Only one of the clips remains selected.
         self.__check_can_group_ungroup(timeline_container, False, False)
 
-        # Press <ctrl> so selecting in ADD mode
-        event = mock.Mock()
-        event.keyval = Gdk.KEY_Control_L
-        timeline_container.do_key_press_event(event)
-
-        self.click_clip(ges_clip1, expect_selected=True)
+        self.click_clip(ges_clip0, expect_selected=True)
+        self.click_clip(ges_clip1, expect_selected=True, ctrl_key=True)
+        # Both clip are selected.
         self.__check_can_group_ungroup(timeline_container, True, False)
 
         timeline_container.group_action.emit("activate", None)
+        # The resulting audio-video clip should be selected.
         self.__check_can_group_ungroup(timeline_container, False, True)
 
     def group_clips(self, timeline_container, clips):
         timeline = timeline_container.timeline
         timeline.app.settings.leftClickAlsoSeeks = False
 
-        # Press <ctrl> so selecting in ADD mode
-        event = mock.Mock()
-        event.keyval = Gdk.KEY_Control_L
-        timeline_container.do_key_press_event(event)
-        timeline.get_clicked_layer_and_pos = mock.Mock()
-        timeline.get_clicked_layer_and_pos.return_value = (None, None)
-
         # Select the 2 clips
         for clip in clips:
             self.assertIsNone(clip.get_parent())
-            self.click_clip(clip, expect_selected=True)
+            self.click_clip(clip, expect_selected=True, ctrl_key=True)
 
         timeline_container.group_action.emit("activate", None)
 
@@ -296,6 +295,8 @@ class TestGrouping(common.TestCase):
         group = clips[0].get_parent()
         self.assertEqual(len(group.get_children(False)), len(clips))
 
+        self.assertEqual(len(timeline.selection), len(clips))
+
     def test_group(self):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
@@ -308,16 +309,19 @@ class TestGrouping(common.TestCase):
         timeline = timeline_container.timeline
         clips = self.add_clips_simple(timeline, num_clips)
         self.group_clips(timeline_container, clips)
-        layer = timeline.ges_timeline.get_layers()[0]
+        layer, = timeline.ges_timeline.get_layers()
         clips = layer.get_clips()
         self.assertEqual(len(clips), num_clips)
 
-        # Deselect one grouped clip clips
-        self.click_clip(clips[0], expect_selected=False)
-
-        # Make sure all the clips have been deselected
+        # Deselect one of the clips in the group.
+        self.click_clip(clips[0], expect_selected=False, ctrl_key=True)
         for clip in clips:
             self.assert_clip_selected(clip, expect_selected=False)
+
+        # Select one of the clips in the group.
+        self.click_clip(clips[0], expect_selected=True)
+        for clip in clips:
+            self.assert_clip_selected(clip, expect_selected=True)
 
     def test_group_ungroup(self):
         num_clips = 2
@@ -326,7 +330,8 @@ class TestGrouping(common.TestCase):
         clips = self.add_clips_simple(timeline, num_clips)
         self.group_clips(timeline_container, clips)
 
-        self.assertEqual(len(timeline.selection), num_clips)
+        # Selecting a clip selects all the clips in its group.
+        self.click_clip(clips[0], expect_selected=True)
 
         timeline_container.ungroup_action.emit("activate", None)
         layer = timeline.ges_timeline.get_layers()[0]
@@ -372,14 +377,6 @@ class TestGrouping(common.TestCase):
         # Group the two selected clips
         timeline_container.group_action.emit("activate", None)
 
-        # Deselect the second clip, notice both clips have been deselected
-        self.click_clip(clips[1], expect_selected=False, ctrl_key=True)
-        self.assert_clip_selected(clips[0], expect_selected=False)
-
-        # Select the second clip, notice both clips have been selected
-        self.click_clip(clips[1], expect_selected=True)
-        self.assert_clip_selected(clips[0], expect_selected=True)
-
         # Deselect the first clip, notice both clips have been deselected
         self.click_clip(clips[0], expect_selected=False, ctrl_key=True)
         self.assert_clip_selected(clips[1], expect_selected=False)
@@ -387,6 +384,14 @@ class TestGrouping(common.TestCase):
         # Select the first clip, notice both clips have been selected
         self.click_clip(clips[0], expect_selected=True)
         self.assert_clip_selected(clips[1], expect_selected=True)
+
+        # Deselect the second clip, notice both clips have been deselected
+        self.click_clip(clips[1], expect_selected=False, ctrl_key=True)
+        self.assert_clip_selected(clips[0], expect_selected=False)
+
+        # Select the second clip, notice both clips have been selected
+        self.click_clip(clips[1], expect_selected=True)
+        self.assert_clip_selected(clips[0], expect_selected=True)
 
     def test_ungroup_clip(self):
         timeline_container = common.create_timeline_container()
