@@ -989,7 +989,7 @@ msgstr "Introducció"
 #. (itstool) path: section/title
 #: C/index.page:28
 msgid "Getting Started"
-msgstr "Començar"
+msgstr "Primers passos"
 
 #. (itstool) path: section/title
 #: C/index.page:31
@@ -1697,7 +1697,7 @@ msgstr ""
 "utilitzareu per a editar. Verticalment està dividida en capes que podeu "
 "omplir amb seqüències de vídeo i àudio. Horitzontalment, constitueix una "
 "representació proporcional al temps de la cronologia del vostre projecte. Es "
-"poden aplicar diferents nivells per a ampliar la línia de temps. Tot i això, "
+"poden aplicar diferents nivells per a ampliar la línia de temps. De totes maneres, "
 "això sols es pot aplicar a la dimensió horitzontal (cronològica) de la línia "
 "de temps."
 
@@ -3137,13 +3137,13 @@ msgid ""
 "Assuming that you have two overlapping clips in your timeline, you can "
 "achieve other types of transitions by following these steps:"
 msgstr ""
-"Si assumim que teniu dues seqüències que se solapen en la línia de temps, "
+"Si assumim que teniu dues seqüències que es solapen en la línia de temps, "
 "podeu aconseguir altres tipus de transicions seguint els passos següents:"
 
 #. (itstool) path: item/p
 #: C/transitions.page:38
 msgid "Select the overlapping region by clicking on it."
-msgstr "Seleccioneu la regió que se solapa prement sobre ella."
+msgstr "Seleccioneu la regió que es solapa prement sobre ella."
 
 #. (itstool) path: item/p
 #: C/transitions.page:41
