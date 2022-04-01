@@ -252,7 +252,7 @@ class TestGrouping(common.TestCase):
         # An audio-video clip is selected.
         self.__check_can_group_ungroup(timeline_container, False, True)
 
-        timeline_container.ungroup_action.emit("activate", None)
+        timeline_container.ungroup_action.activate()
         # The resulting audio clip and video clip should both be selected.
         self.__check_can_group_ungroup(timeline_container, True, False)
 
@@ -267,7 +267,7 @@ class TestGrouping(common.TestCase):
         # Both clip are selected.
         self.__check_can_group_ungroup(timeline_container, True, False)
 
-        timeline_container.group_action.emit("activate", None)
+        timeline_container.group_action.activate()
         # The resulting audio-video clip should be selected.
         self.__check_can_group_ungroup(timeline_container, False, True)
 
@@ -280,7 +280,7 @@ class TestGrouping(common.TestCase):
             self.assertIsNone(clip.get_parent())
             self.click_clip(clip, expect_selected=True, ctrl_key=True)
 
-        timeline_container.group_action.emit("activate", None)
+        timeline_container.group_action.activate()
 
         for clip in clips:
             # Check that we created a new group
@@ -333,7 +333,7 @@ class TestGrouping(common.TestCase):
         # Selecting a clip selects all the clips in its group.
         self.click_clip(clips[0], expect_selected=True)
 
-        timeline_container.ungroup_action.emit("activate", None)
+        timeline_container.ungroup_action.activate()
         layer = timeline.ges_timeline.get_layers()[0]
         clips = layer.get_clips()
         self.assertEqual(len(clips), num_clips)
@@ -352,7 +352,7 @@ class TestGrouping(common.TestCase):
         # Split the clip
         position = timeline.ges_timeline.get_frame_time(2)
         timeline.ges_timeline.get_asset().pipeline.get_position = mock.Mock(return_value=position)
-        timeline_container.split_action.emit("activate", None)
+        timeline_container.split_action.activate()
         layer = timeline.ges_timeline.get_layers()[0]
         clips = layer.get_clips()
         self.assertEqual(len(clips), 2)
@@ -375,7 +375,7 @@ class TestGrouping(common.TestCase):
         self.assert_clip_selected(clips[1], expect_selected=True)
 
         # Group the two selected clips
-        timeline_container.group_action.emit("activate", None)
+        timeline_container.group_action.activate()
 
         # Deselect the first clip, notice both clips have been deselected
         self.click_clip(clips[0], expect_selected=False, ctrl_key=True)
@@ -400,7 +400,7 @@ class TestGrouping(common.TestCase):
 
         self.click_clip(ges_clip, expect_selected=True)
 
-        timeline_container.ungroup_action.emit("activate", None)
+        timeline_container.ungroup_action.activate()
         layer = timeline.ges_timeline.get_layers()[0]
         ges_clip0, ges_clip1 = layer.get_clips()
 
@@ -466,110 +466,184 @@ class TestGrouping(common.TestCase):
                          "No new layer should have been created")
 
 
-class TestCopyPaste(common.TestCase):
+class TestCutCopyPaste(common.TestCase):
 
-    def copy_clips(self, num_clips):
-        timeline_container = common.create_timeline_container()
-        timeline = timeline_container.timeline
-
-        clips = self.add_clips_simple(timeline, num_clips)
-
-        # Press <ctrl> so selecting in ADD mode
-        event = mock.Mock()
-        event.keyval = Gdk.KEY_Control_L
-        timeline_container.do_key_press_event(event)
-        timeline.get_clicked_layer_and_pos = mock.Mock()
-        timeline.get_clicked_layer_and_pos.return_value = (None, None)
-
-        # Select the 2 clips
+    @common.setup_project_with_clips(assets_names=["mp3_sample.mp3", "tears_of_steel.webm"])
+    def test_cut_paste(self):
+        # Cut the clips.
+        clips = self.layer.get_clips()
         for clip in clips:
-            self.click_clip(clip, expect_selected=True)
+            self.click_clip(clip, expect_selected=True, ctrl_key=True)
+        self.timeline_container.cut_action.activate()
 
-        self.assertTrue(timeline_container.copy_action.props.enabled)
-        self.assertFalse(timeline_container.paste_action.props.enabled)
-        timeline_container.copy_action.emit("activate", None)
-        self.assertTrue(timeline_container.paste_action.props.enabled)
+        # Check no clip is present.
+        clips = self.layer.get_clips()
+        self.assertEqual(len(clips), 0)
 
-        return timeline_container
+        # Paste the clips.
+        position = 0
+        self.project.pipeline.get_position = mock.Mock(return_value=position)
+        self.timeline_container.paste_action.activate()
 
-    def test_copy_paste(self):
-        timeline_container = self.copy_clips(2)
-        timeline = timeline_container.timeline
-        layer = timeline.ges_timeline.get_layers()[0]
-        project = timeline.ges_timeline.get_asset()
-
-        clips = layer.get_clips()
+        # Check the clips are pasted at the given position and are selected.
+        clips = self.layer.get_clips()
         self.assertEqual(len(clips), 2)
+        self.assert_clip_selected(clips[0], expect_selected=True)
+        self.assert_clip_selected(clips[1], expect_selected=True)
 
-        # Pasting clips for the first time.
-        position = 20
-        project.pipeline.get_position = mock.Mock(return_value=position)
-        timeline_container.paste_action.emit("activate", None)
+        first_clip_start = clips[0].props.start
+        second_clip_start = clips[1].props.start
+        self.assertEqual(first_clip_start, position)
+        self.assertEqual(second_clip_start, position + clips[0].props.duration)
 
-        n_clips = layer.get_clips()
-        self.assertEqual(len(n_clips), 4)
+        # Cut the first clip.
+        self.click_clip(clips[1], expect_selected=False, ctrl_key=True)
+        # TODO: Remove this line when https://gitlab.gnome.org/GNOME/pitivi/-/issues/2433 is fixed.
+        self.click_clip(clips[0], expect_selected=True)
+        self.timeline_container.cut_action.activate()
 
-        copied_clips = [clip for clip in n_clips if clip not in clips]
+        # Check only the second clip is present.
+        clips = self.layer.get_clips()
+        self.assertEqual(len(clips), 1)
+        self.assert_clip_selected(clips[0], expect_selected=False)
+        self.assertEqual(clips[0].props.start, second_clip_start)
+
+        # Paste the clip again.
+        self.project.pipeline.get_position = mock.Mock(return_value=first_clip_start)
+        self.timeline_container.paste_action.activate()
+
+        # Check both clips are present.
+        clips = self.layer.get_clips()
+        self.assertEqual(len(clips), 2)
+        self.assert_clip_selected(clips[0], expect_selected=True)
+        self.assert_clip_selected(clips[1], expect_selected=False)
+        self.assertEqual(clips[0].props.start, first_clip_start)
+        self.assertEqual(clips[1].props.start, second_clip_start)
+
+    @common.setup_project_with_clips(assets_names=["mp3_sample.mp3", "tears_of_steel.webm"])
+    def test_copy_paste(self):
+        # Copy the clips.
+        clips = self.layer.get_clips()
+        for clip in clips:
+            self.click_clip(clip, expect_selected=True, ctrl_key=True)
+        self.timeline_container.copy_action.activate()
+
+        # Paste the clips for the first time.
+        position = self.project.pipeline.get_duration()
+        self.project.pipeline.get_position = mock.Mock(return_value=position)
+        self.timeline_container.paste_action.activate()
+
+        new_clips = self.layer.get_clips()
+        self.assertEqual(len(new_clips), 4)
+
+        copied_clips = [clip for clip in new_clips if clip not in clips]
         self.assertEqual(len(copied_clips), 2)
         self.assertEqual(copied_clips[0].props.start, position)
-        self.assertEqual(copied_clips[1].props.start, position + 10)
+        self.assertEqual(copied_clips[1].props.start, position + copied_clips[0].props.duration)
 
-        # Pasting same clips second time.
-        position = 40
-        project.pipeline.get_position = mock.Mock(return_value=position)
-        timeline_container.paste_action.emit("activate", None)
+        # Paste the same clips for the second time.
+        position = self.project.pipeline.get_duration()
+        self.project.pipeline.get_position = mock.Mock(return_value=position)
+        self.timeline_container.paste_action.activate()
 
-        n_clips = layer.get_clips()
-        self.assertEqual(len(n_clips), 6)
+        new_clips = self.layer.get_clips()
+        self.assertEqual(len(new_clips), 6)
 
-        copied_clips = [clip for clip in n_clips if clip not in clips]
+        copied_clips = [clip for clip in new_clips if clip not in clips]
         self.assertEqual(len(copied_clips), 4)
         self.assertEqual(copied_clips[2].props.start, position)
-        self.assertEqual(copied_clips[3].props.start, position + 10)
+        self.assertEqual(copied_clips[3].props.start, position + copied_clips[2].props.duration)
 
+    @common.setup_project_with_clips(assets_names=["tears_of_steel.webm"])
     def test_paste_not_possible(self):
-        timeline_container = self.copy_clips(1)
-        timeline = timeline_container.timeline
-        layer = timeline.ges_timeline.get_layers()[0]
-        project = timeline.ges_timeline.get_asset()
-        self.assertEqual(len(layer.get_clips()), 1)
+        # Copy the clip.
+        clip, = self.layer.get_clips()
+        self.click_clip(clip, expect_selected=True)
+        self.timeline_container.copy_action.activate()
 
+        # Try to paste the clip at the same position.
         position = 0
-        project.pipeline.get_position = mock.Mock(return_value=position)
-        timeline_container.paste_action.emit("activate", None)
-        self.assertEqual(len(layer.get_clips()), 1)
+        self.project.pipeline.get_position = mock.Mock(return_value=position)
+        self.timeline_container.paste_action.activate()
 
-    def test_paste_selection(self):
-        timeline_container = self.copy_clips(1)
-        timeline = timeline_container.timeline
-        layer = timeline.ges_timeline.get_layers()[0]
-        project = timeline.ges_timeline.get_asset()
-
-        # Paste a single clip.
-        clips = layer.get_clips()
+        clips = self.layer.get_clips()
         self.assertEqual(len(clips), 1)
-        position = 10
-        project.pipeline.get_position = mock.Mock(return_value=position)
-        timeline_container.paste_action.emit("activate", None)
 
-        clips = layer.get_clips()
+    @common.setup_project_with_clips(assets_names=["tears_of_steel.webm"])
+    def test_paste_selection(self):
+        # Copy the clip.
+        clip, = self.layer.get_clips()
+        self.click_clip(clip, expect_selected=True)
+        self.timeline_container.copy_action.activate()
+
+        # Paste the clip.
+        position = self.project.pipeline.get_duration()
+        self.project.pipeline.get_position = mock.Mock(return_value=position)
+        self.timeline_container.paste_action.activate()
+
+        clips = self.layer.get_clips()
         self.assert_clip_selected(clips[0], expect_selected=False)
         self.assert_clip_selected(clips[1], expect_selected=True)
 
-        # The copy_clips() above simulates CTRL button press, so this will add 1st clip to the selection.
-        self.click_clip(clips[0], expect_selected=True)
-        timeline_container.copy_action.emit("activate", None)
+        # Add the first clip to the selection.
+        self.click_clip(clips[0], expect_selected=True, ctrl_key=True)
+        self.timeline_container.copy_action.activate()
 
-        # Paste two clips.
-        position = 20
-        project.pipeline.get_position = mock.Mock(return_value=position)
-        timeline_container.paste_action.emit("activate", None)
+        # Paste both clips.
+        position = self.project.pipeline.get_duration()
+        self.project.pipeline.get_position = mock.Mock(return_value=position)
+        self.timeline_container.paste_action.activate()
 
-        clips = layer.get_clips()
+        clips = self.layer.get_clips()
         self.assert_clip_selected(clips[0], expect_selected=False)
         self.assert_clip_selected(clips[1], expect_selected=False)
         self.assert_clip_selected(clips[2], expect_selected=True)
         self.assert_clip_selected(clips[3], expect_selected=True)
+
+    @common.setup_project_with_clips(assets_names=["tears_of_steel.webm"])
+    def test_actions_enabled_status(self):
+        # Check status after the initialization.
+        self.assertFalse(self.timeline_container.cut_action.props.enabled)
+        self.assertFalse(self.timeline_container.copy_action.props.enabled)
+        self.assertFalse(self.timeline_container.paste_action.props.enabled)
+
+        # Check status after selecting the clip.
+        clip, = self.layer.get_clips()
+        self.click_clip(clip, expect_selected=True)
+
+        self.assertTrue(self.timeline_container.cut_action.props.enabled)
+        self.assertTrue(self.timeline_container.copy_action.props.enabled)
+        self.assertFalse(self.timeline_container.paste_action.props.enabled)
+
+        # Check status after copying the clip.
+        self.timeline_container.copy_action.activate()
+
+        self.assertTrue(self.timeline_container.cut_action.props.enabled)
+        self.assertTrue(self.timeline_container.copy_action.props.enabled)
+        self.assertTrue(self.timeline_container.paste_action.props.enabled)
+
+        # Check status after cutting the clip.
+        self.timeline_container.cut_action.activate()
+
+        self.assertFalse(self.timeline_container.cut_action.props.enabled)
+        self.assertFalse(self.timeline_container.copy_action.props.enabled)
+        self.assertTrue(self.timeline_container.paste_action.props.enabled)
+
+        # Check status after pasting the clip.
+        position = 0
+        self.project.pipeline.get_position = mock.Mock(return_value=position)
+        self.timeline_container.paste_action.activate()
+
+        self.assertTrue(self.timeline_container.cut_action.props.enabled)
+        self.assertTrue(self.timeline_container.copy_action.props.enabled)
+        self.assertTrue(self.timeline_container.paste_action.props.enabled)
+
+        # Check status after deleting the clip.
+        self.timeline_container.delete_action.activate()
+
+        self.assertFalse(self.timeline_container.cut_action.props.enabled)
+        self.assertFalse(self.timeline_container.copy_action.props.enabled)
+        self.assertTrue(self.timeline_container.paste_action.props.enabled)
 
 
 class TestEditing(common.TestCase):
@@ -906,10 +980,10 @@ class TestKeyboardShiftClips(common.TestCase):
             self.click_clip(clip, expect_selected=True)
         self.timeline_container.do_key_release_event(event)
 
-        self.timeline_container.shift_forward_action.emit("activate", None)
+        self.timeline_container.shift_forward_action.activate()
         self.assertListEqual([clip.start - delta for clip in ges_clips], clip_original_starts)
 
-        self.timeline_container.shift_backward_action.emit("activate", None)
+        self.timeline_container.shift_backward_action.activate()
         self.assertListEqual([clip.start for clip in ges_clips], clip_original_starts)
 
     @common.setup_project(["tears_of_steel.webm"])
@@ -947,14 +1021,14 @@ class TestKeyboardShiftClips(common.TestCase):
         self.click_clip(ges_clip3, expect_selected=True, ctrl_key=True)
         self.click_clip(ges_clip4, expect_selected=True, ctrl_key=True)
 
-        self.timeline_container.shift_forward_action.emit("activate", None)
+        self.timeline_container.shift_forward_action.activate()
 
         self.assertEqual(5 * Gst.SECOND, ges_clip1.start)
         self.assertEqual(10 * Gst.SECOND, ges_clip2.start)
         self.assertEqual(13 * Gst.SECOND, ges_clip3.start)
         self.assertEqual(15 * Gst.SECOND, ges_clip4.start)
 
-        self.timeline_container.shift_backward_action.emit("activate", None)
+        self.timeline_container.shift_backward_action.activate()
 
         self.assertEqual(5 * Gst.SECOND, ges_clip1.start)
         self.assertEqual(10 * Gst.SECOND, ges_clip2.start)
@@ -972,10 +1046,10 @@ class TestSnapClips(common.TestCase):
 
         self.click_clip(ges_clip1, expect_selected=True)
 
-        self.timeline_container.snap_clips_forward_action.emit("activate", None)
+        self.timeline_container.snap_clips_forward_action.activate()
         self.assertEqual(ges_clip1.start, ges_clip2.start - ges_clip1.duration)
 
-        self.timeline_container.snap_clips_backward_action.emit("activate", None)
+        self.timeline_container.snap_clips_backward_action.activate()
         self.assertEqual(ges_clip1.start, 0)
 
     @common.setup_timeline
@@ -988,11 +1062,11 @@ class TestSnapClips(common.TestCase):
         self.click_clip(ges_clip1, expect_selected=True, ctrl_key=True)
         self.click_clip(ges_clip2, expect_selected=True, ctrl_key=True)
 
-        self.timeline_container.snap_clips_forward_action.emit("activate", None)
+        self.timeline_container.snap_clips_forward_action.activate()
         self.assertEqual(ges_clip2.start, ges_clip3.start - ges_clip2.duration)
         self.assertEqual(ges_clip1.start, ges_clip2.start - ges_clip1.duration)
 
-        self.timeline_container.snap_clips_backward_action.emit("activate", None)
+        self.timeline_container.snap_clips_backward_action.activate()
         self.assertEqual(ges_clip1.start, 0)
         self.assertEqual(ges_clip2.start, ges_clip1.start + ges_clip1.duration)
 
@@ -1008,10 +1082,10 @@ class TestSnapClips(common.TestCase):
 
         self.click_clip(clip, expect_selected=True)
 
-        self.timeline_container.snap_clips_forward_action.emit("activate", None)
+        self.timeline_container.snap_clips_forward_action.activate()
         self.assertEqual(clip.start, end_clip.start - clip.duration)
 
-        self.timeline_container.snap_clips_backward_action.emit("activate", None)
+        self.timeline_container.snap_clips_backward_action.activate()
         self.assertEqual(clip.start, 0)
 
     @common.setup_timeline
@@ -1022,7 +1096,7 @@ class TestSnapClips(common.TestCase):
 
         self.click_clip(ges_clip, expect_selected=True)
 
-        self.timeline_container.snap_clips_forward_action.emit("activate", None)
+        self.timeline_container.snap_clips_forward_action.activate()
         self.assertEqual(ges_clip.start, clip_start)
 
     @common.setup_timeline
@@ -1034,5 +1108,5 @@ class TestSnapClips(common.TestCase):
 
         self.click_clip(ges_clip, expect_selected=True)
 
-        self.timeline_container.snap_clips_forward_action.emit("activate", None)
+        self.timeline_container.snap_clips_forward_action.activate()
         self.assertEqual(ges_clip.start, self.timeline.get_duration() - ges_clip.duration)

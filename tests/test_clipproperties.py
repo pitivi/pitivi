@@ -620,7 +620,7 @@ class SpeedPropertiesTest(common.TestCase):
         self.timeline_container.timeline.selection.select([clip])
         total_duration = clip.props.duration
         self.project.pipeline.get_position = mock.Mock(return_value=duration)
-        self.timeline_container.split_action.emit("activate", None)
+        self.timeline_container.split_action.activate()
 
         clip1, clip2 = self.layer.get_clips()
         self.assertEqual(clip1.props.start, 0)

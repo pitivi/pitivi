@@ -379,7 +379,7 @@ class TestLayerObserver(common.TestCase):
         clip = GES.TitleClip()
         self.layer.add_clip(clip)
 
-        self.timeline_container.add_layer_action.emit("activate", None)
+        self.timeline_container.add_layer_action.activate()
 
         layers = self.timeline.get_layers()
         self.assertEqual(len(layers), 2)
@@ -694,11 +694,11 @@ class TestLayerObserver(common.TestCase):
             clip.ui.timeline._button_press_event_cb(None, event)
         clip.ui._button_release_event_cb(None, event)
 
-        self.timeline_container.copy_action.emit("activate", None)
+        self.timeline_container.copy_action.activate()
 
         position = 10
         project.pipeline.get_position = mock.Mock(return_value=position)
-        self.timeline_container.paste_action.emit("activate", None)
+        self.timeline_container.paste_action.activate()
         self.assertEqual(len(self.layer.get_clips()), 2)
 
         self.action_log.undo()

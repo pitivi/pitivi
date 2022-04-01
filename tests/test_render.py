@@ -542,7 +542,7 @@ class TestRender(BaseTestMediaLibrary):
         caps = dialog.dialog.get_caps()
         self.assert_caps_equal(caps, "video/x-h264,profile=baseline")
 
-        dialog.dialog.ok_btn.emit("clicked")
+        dialog.dialog.ok_btn.clicked()
         self.assert_caps_equal(project.video_profile.get_format(), "video/x-h264,profile=baseline")
 
         dialog._video_settings_button_clicked_cb(None)

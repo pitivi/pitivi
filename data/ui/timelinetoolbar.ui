@@ -70,6 +70,21 @@
       </packing>
     </child>
     <child>
+      <object class="GtkToolButton" id="toolbutton8">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Cut clips</property>
+        <property name="action_name">timeline.cut-selected-clips</property>
+        <property name="label" translatable="yes">Cut</property>
+        <property name="use_underline">True</property>
+        <property name="icon_name">edit-cut-symbolic</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="homogeneous">True</property>
+      </packing>
+    </child>
+    <child>
       <object class="GtkToolButton" id="toolbutton5">
         <property name="visible">True</property>
         <property name="can_focus">False</property>

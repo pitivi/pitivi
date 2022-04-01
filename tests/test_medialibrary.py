@@ -239,7 +239,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.assertEqual(set(project.list_assets(GES.Extractable)), set([target, asset]))
 
             # Remove the asset
-            self.medialibrary.remove_assets_action.emit("activate", None)
+            self.medialibrary.remove_assets_action.activate()
 
             # Make sure that the project has not assets anymore
             self.assertEqual(project.list_assets(GES.Extractable), [])

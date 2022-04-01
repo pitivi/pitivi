@@ -1656,6 +1656,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.delete_and_shift_action.set_enabled(selection_non_empty)
         self.group_action.set_enabled(selection.can_group)
         self.ungroup_action.set_enabled(selection.can_ungroup)
+        self.cut_action.set_enabled(selection_non_empty)
         self.copy_action.set_enabled(selection_non_empty)
         can_paste = bool(self.__copied_group)
         self.paste_action.set_enabled(can_paste)
@@ -1778,6 +1779,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.app.shortcuts.add("timeline.ungroup-selected-clips", ["<Primary><Shift>g"],
                                self.ungroup_action,
                                _("Ungroup selected clips"))
+
+        self.cut_action = Gio.SimpleAction.new("cut-selected-clips", None)
+        self.cut_action.connect("activate", self.__cut_clips_cb)
+        group.add_action(self.cut_action)
+        self.app.shortcuts.add("timeline.cut-selected-clips", ["<Primary>x"],
+                               self.cut_action,
+                               _("Cut selected clips"))
 
         self.copy_action = Gio.SimpleAction.new("copy-selected-clips", None)
         self.copy_action.connect("activate", self.__copy_clips_cb)
@@ -2067,6 +2075,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         clips = self.timeline.selection.get_clips_of([container])
         self.timeline.selection.set_selection(clips, SELECT)
+
+    def __cut_clips_cb(self, unused_action, unused_parameter):
+        self.copy_action.activate(None)
+        self.delete_action.activate(None)
 
     def __copy_clips_cb(self, unused_action, unused_parameter):
         group = self.timeline.selection.group()
