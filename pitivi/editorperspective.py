@@ -834,7 +834,7 @@ class PreviewAssetWindow(Gtk.Window):
         self._previewer.preview_uri(self._asset.get_id())
         self._previewer.show()
 
-        self.connect("focus-out-event", self._leave_preview_cb)
+        self.connect("key-press-event", self._key_press_event_cb)
 
     def preview(self):
         """Shows the window and starts the playback."""
@@ -876,6 +876,7 @@ class PreviewAssetWindow(Gtk.Window):
             new_height = max_width * img_height / img_width
             return int(max_width), int(new_height + controls_height)
 
-    def _leave_preview_cb(self, window, unused):
-        self.destroy()
+    def _key_press_event_cb(self, unused_widget, event):
+        if event.keyval == Gdk.KEY_Escape:
+            self.destroy()
         return True
