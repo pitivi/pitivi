@@ -305,6 +305,7 @@ def setup_timeline(func):
 
 
 def setup_clipproperties(func):
+    """Wraps a test, providing a usable ClipProperties."""
     def wrapped(self):
         app = self.timeline_container.app
 
@@ -315,10 +316,14 @@ def setup_clipproperties(func):
         self.transformation_box._new_project_loaded_cb(None, self.project)
 
         self.speed_box = self.clipproperties.speed_expander
+        self.compositing_box = self.clipproperties.compositing_expander
         self.markers_box = self.clipproperties.marker_expander
 
         func(self)
 
+        del self.markers_box
+        del self.compositing_box
+        del self.speed_box
         del self.transformation_box
         del self.clipproperties
 
@@ -539,10 +544,12 @@ class TestCase(unittest.TestCase, Loggable):
         self.assertEqual(len(effects), count)
 
     def assert_control_source_values(self, control_source, expected_values, expected_timestamps):
-        values = [timed_value.value for timed_value in control_source.get_all()]
+        keyframes = control_source.get_all()
+
+        values = [timed_value.value for timed_value in keyframes]
         self.assertListEqual(values, expected_values)
 
-        timestamps = [timed_value.timestamp for timed_value in control_source.get_all()]
+        timestamps = [timed_value.timestamp for timed_value in keyframes]
         self.assertListEqual(timestamps, expected_timestamps)
 
     def get_timeline_clips(self):

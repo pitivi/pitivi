@@ -35,6 +35,7 @@ from gi.repository import Gtk
 
 from pitivi.clip_properties.alignment import AlignmentEditor
 from pitivi.clip_properties.color import ColorProperties
+from pitivi.clip_properties.compositing import CompositingProperties
 from pitivi.clip_properties.title import TitleProperties
 from pitivi.configure import get_pixmap_dir
 from pitivi.configure import get_ui_dir
@@ -121,6 +122,10 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.color_expander.set_vexpand(False)
         vbox.pack_start(self.color_expander, False, False, 0)
 
+        self.compositing_expander = CompositingProperties(app)
+        self.compositing_expander.set_vexpand(False)
+        vbox.pack_start(self.compositing_expander, False, False, 0)
+
         self.effect_expander = EffectProperties(app)
         self.effect_expander.set_vexpand(False)
         vbox.pack_start(self.effect_expander, False, False, 0)
@@ -138,6 +143,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.speed_expander.set_clip(None)
         self.title_expander.set_source(None)
         self.color_expander.set_source(None)
+        self.compositing_expander.set_source(None)
         self.effect_expander.set_clip(None)
         self.marker_expander.set_clip(None)
 
@@ -234,6 +240,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.speed_expander.set_clip(ges_clip if (not title_source and not color_clip_source) else None)
         self.title_expander.set_source(title_source)
         self.color_expander.set_source(color_clip_source)
+        self.compositing_expander.set_source(video_source)
         self.effect_expander.set_clip(ges_clip)
         self.marker_expander.set_clip(ges_clip)
 
