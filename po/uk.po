@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2022-04-02 18:55+0000\n"
-"PO-Revision-Date: 2022-04-03 12:22+0300\n"
+"POT-Creation-Date: 2022-04-03 11:20+0000\n"
+"PO-Revision-Date: 2022-04-03 20:15+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -124,6 +124,30 @@ msgstr "Визначення оцінки…"
 #: data/ui/clipcolor.ui:21
 msgid "Pick the clip color"
 msgstr "Вибрати колір кліпу"
+
+#: data/ui/clipcompositing.ui:43
+msgid "Fade-in:"
+msgstr "Наростання:"
+
+#: data/ui/clipcompositing.ui:55 data/ui/clipcompositing.ui:123
+#| msgid "%d second"
+#| msgid_plural "%d seconds"
+msgid "seconds"
+msgstr "секунд"
+
+#: data/ui/clipcompositing.ui:98
+msgid "Fade-out:"
+msgstr "Згасання:"
+
+#: data/ui/clipcompositing.ui:151
+#| msgid "Reset all"
+msgid "Reset fade-in"
+msgstr "Скинути наростання"
+
+#: data/ui/clipcompositing.ui:166
+#| msgid "Reset all"
+msgid "Reset fade-out"
+msgstr "Скинути згасання"
 
 #: data/ui/clipmediaprops.ui:8
 msgid "Clip Properties"
@@ -756,12 +780,10 @@ msgid "Ungroup"
 msgstr "Розгрупувати"
 
 #: data/ui/timelinetoolbar.ui:76
-#| msgid "Copy clips"
 msgid "Cut clips"
 msgstr "Вирізати кліпи"
 
 #: data/ui/timelinetoolbar.ui:78
-#| msgid "Custom"
 msgid "Cut"
 msgstr "Вирізати"
 
@@ -1044,6 +1066,10 @@ msgstr "Без позначок"
 msgid "Color"
 msgstr "Колір"
 
+#: pitivi/clip_properties/compositing.py:53 pitivi/effects.py:77
+msgid "Compositing"
+msgstr "Композиція"
+
 #: pitivi/clip_properties/title.py:47
 msgid "Title clip duration"
 msgstr "Тривалість кліпу з титрами"
@@ -1218,10 +1244,6 @@ msgstr "Перегляд"
 #: pitivi/effects.py:61
 msgid "Colors"
 msgstr "Кольори"
-
-#: pitivi/effects.py:77
-msgid "Compositing"
-msgstr "Композиція"
 
 #: pitivi/effects.py:84
 msgid "Noise & blur"
@@ -2019,7 +2041,6 @@ msgid "Ungroup selected clips"
 msgstr "Розгрупувати позначені кліпи"
 
 #: pitivi/timeline/timeline.py:1788
-#| msgid "Copy selected clips"
 msgid "Cut selected clips"
 msgstr "Вирізати позначені кліпи"
 
