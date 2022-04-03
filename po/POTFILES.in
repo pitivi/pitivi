@@ -5,6 +5,7 @@ data/org.pitivi.Pitivi.appdata.xml.in
 data/org.pitivi.Pitivi.desktop.in
 data/ui/alignmentprogress.ui
 data/ui/clipcolor.ui
+data/ui/clipcompositing.ui
 data/ui/clipmediaprops.ui
 data/ui/cliptransformation.ui
 data/ui/customwidgets/alpha.ui
@@ -27,6 +28,7 @@ pitivi/application.py
 pitivi/check.py
 pitivi/clipproperties.py
 pitivi/clip_properties/color.py
+pitivi/clip_properties/compositing.py
 pitivi/clip_properties/title.py
 pitivi/editorperspective.py
 pitivi/effects.py
