@@ -20,7 +20,7 @@ To update the flatpak runtime version, look in `org.pitivi.Pitivi.json` for the
 current version:
 
 ```
-    "runtime-version": "41",
+    "runtime-version": "42",
 ```
 
 Check out what is the latest flatpak runtime version. For example:
@@ -28,12 +28,12 @@ Check out what is the latest flatpak runtime version. For example:
 ```
 $ flatpak remote-ls flathub --system | grep org.gnome.Platform
 GNOME Application Platform version 3.38	org.gnome.Platform		3.38
-GNOME Application Platform version 40	org.gnome.Platform		40
 GNOME Application Platform version 41	org.gnome.Platform		41
+GNOME Application Platform version 42	org.gnome.Platform		42
 ```
 
 Check out in the git history how we updated the runtime version in the past and
-replace it with the latest release.
+repeat with the latest SDK.
 
 
 ## Update the sandbox dependencies
@@ -50,6 +50,14 @@ Others have to be checked and updated manually.
 Most of the [Python dependencies](Updating_Python_dependencies.md) can be
 updated with `flatpak-pip-generator`.
 
+
+## Sync with flathub
+
+Check if any changes to the [flathub Pitivi
+manifest](https://github.com/flathub/org.pitivi.Pitivi) need to be ported over.
+
+In particular, pay attention to the `shared-modules` git submodule to copy
+`libcanberra` into `build/flatpak`.
 
 ## Check the Python version
 

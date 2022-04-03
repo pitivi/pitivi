@@ -7,13 +7,13 @@
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/85/a1/8f5c653aa1d05be967a3e3354d99ad72c90fbcae6495227b1c6c864dcc24/coverage-6.0.2-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl",
-            "sha256": "381d773d896cc7f8ba4ff3b92dee4ed740fb88dfe33b6e42efc5e8ab6dfa1cfe"
+            "url": "https://files.pythonhosted.org/packages/60/a8/0f951285dff76cbedbbba89c1969586020150a3b53267b5d8674b2ead15a/coverage-6.3.2-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "sha256": "dd6fe30bd519694b356cbfcaca9bd5c1737cddd20778c6a581ae20dc8c04def2"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/95/cf/ea7c3991fbb76f55bc1110e0356ef8a29a8ca546e5899a529018c6715c03/nose2-0.10.0-py2.py3-none-any.whl",
-            "sha256": "aa620e759f2c5018d9ba041340391913e282ecebd3c392027f1575847b093ec6"
+            "url": "https://files.pythonhosted.org/packages/f5/5c/18e2e45551825d5402012979d8ccc518f3c978bc8f194018500705d5a6ee/nose2-0.11.0-py2.py3-none-any.whl",
+            "sha256": "d37e75e3010bb4739fe6045a29d4c633ac3146cb5704ee4e4a9e4abeceb2dee3"
         }
     ]
 }

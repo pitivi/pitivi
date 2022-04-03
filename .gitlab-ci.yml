@@ -8,7 +8,7 @@ variables:
   MANIFEST: /build/pitivi/build/flatpak/org.pitivi.Pitivi.json
   DBUS_ID: org.pitivi.Pitivi
   GST_DEBUG_NO_COLOR: "true"
-  GNOME_SDK: 41
+  GNOME_SDK: 42
 
 
 pitivi:master:

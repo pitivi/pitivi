@@ -1376,7 +1376,7 @@ class ColorPickerButton(Gtk.Button):
     color_g = GObject.Property(type=int, default=0)
     color_b = GObject.Property(type=int, default=0)
 
-    def __init__(self, r=0, g=0, b=0):
+    def __init__(self, r=0, g=0, b=0):  # pylint: disable=invalid-name
         Gtk.Button.__init__(self)
         self.color_r = r
         self.color_g = g

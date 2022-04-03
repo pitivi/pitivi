@@ -40,7 +40,7 @@ Built daily out of the development branch.
 
 ```
 $ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-$ flatpak install flathub org.gnome.Platform//41
+$ flatpak install flathub org.gnome.Platform//42
 $ flatpak install http://flatpak.pitivi.org/pitivi-master.flatpakref
 ```
 

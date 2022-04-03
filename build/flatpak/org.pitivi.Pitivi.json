@@ -2,10 +2,10 @@
     "app-id": "org.pitivi.Pitivi",
     "branch": "master",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "41",
+    "runtime-version": "42",
     "command": "pitivi",
     "finish-args": [
-        "--socket=x11",
+        "--socket=fallback-x11",
         "--share=ipc",
         "--socket=pulseaudio",
         "--socket=wayland",
@@ -35,16 +35,7 @@
         "python3-hotdoc.json",
         "python3-pylint.json",
         "python3-matplotlib.json",
-        {
-            "name": "libcanberra",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "git://git.0pointer.de/libcanberra",
-                    "branch": "c0620e432650e81062c1967cc669829dbd29b310"
-                }
-            ]
-        },
+        "libcanberra/libcanberra.json",
         {
             "name": "gsound",
             "buildsystem": "meson",
@@ -52,7 +43,8 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/gsound.git",
-                    "branch": "1.0.3"
+                    "tag": "1.0.3",
+                    "commit": "95d36d60cf53e0e7c5d5325e0f1f4fc765a611ae"
                 }
             ]
         },
@@ -66,9 +58,10 @@
             ],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://download.videolan.org/pub/x264/snapshots/x264-snapshot-20191217-2245-stable.tar.bz2",
-                    "sha256": "b2495c8f2930167d470994b1ce02b0f4bfb24b3317ba36ba7f112e9809264160"
+                    "type": "git",
+                    "url": "https://code.videolan.org/videolan/x264.git",
+                    "//": "Just get the latest from https://code.videolan.org/videolan/x264/-/commits/stable/ they don't do tags/snapshots/releases anymore",
+                    "commit": "5db6aa6cab1b146e07b60cc1736a01f21da01154"
                 }
             ]
         },
@@ -181,13 +174,13 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/opencv/opencv/archive/refs/tags/3.4.15.tar.gz",
-                    "sha256": "b1e8470b18e9e793bf70b4ae051bbc9bf81fa45f8cbfee1e6c88858c90be8ff7"
+                    "url": "https://github.com/opencv/opencv/archive/refs/tags/3.4.17.tar.gz",
+                    "sha256": "1353eec67849aadb20df71d8bae18b83708e18fc5da080fe5efeabb1e99b2ee8"
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/opencv/opencv_contrib/archive/3.4.15.tar.gz",
-                    "sha256": "5004024f2e92e520d324f235dc30a80878fd501fb03ca1f98ca3cbd53d27b6fb",
+                    "url": "https://github.com/opencv/opencv_contrib/archive/3.4.17.tar.gz",
+                    "sha256": "2b4d3e91a5767a1ae4f4e2a71b0a93c9ec744755763653a650e40ace8f7b9a1b",
                     "dest": "contrib"
                 }
             ]
@@ -201,10 +194,9 @@
             ],
             "sources": [
                 {
-                    "//": "With 1.7.0 there is a build error, so we use this commit",
                     "type": "git",
                     "url": "https://github.com/dyne/frei0r.git",
-                    "branch": "86475d3e11e1061bf161e6ed3830fe2cf3d172ac",
+                    "tag": "v1.8.0",
                     "x-checker-data": {
                         "type": "html",
                         "url": "https://files.dyne.org/frei0r/",
@@ -311,8 +303,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n4.4.tar.gz",
-                    "sha256": "bea6d9f91cdbe4c5ad98e0878955ad5077df3883ef321fd4668ee1076de793fe",
+                    "url": "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n4.4.1.tar.gz",
+                    "sha256": "82b43cc67296bcd01a59ae6b327cdb50121d3a9e35f41a30de1edd71bb4a6666",
                     "x-checker-data": {
                         "type": "html",
                         "url": "https://raw.githubusercontent.com/FFmpeg/FFmpeg/master/RELEASE",
@@ -343,7 +335,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "0.4.32",
+                    "tag": "0.4.32",
                     "url": "https://gitlab.freedesktop.org/gstreamer/orc.git"
                 }
             ]
@@ -534,7 +526,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/libpeas.git",
-                    "branch": "libpeas-1.30.0"
+                    "tag": "libpeas-1.32.0"
                 }
             ]
         },
