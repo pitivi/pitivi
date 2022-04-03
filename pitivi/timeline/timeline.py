@@ -777,7 +777,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         elif self.__moving_layer:
             self.__end_moving_layer()
             return False
-        elif res and button == 1:
+        elif self.layout.marquee.is_visible() and res and button == 1:
             clips = self.layout.marquee.find_clips()
             self.selection.set_selection(clips, SELECT)
             self.layout.marquee.hide()
