@@ -3,20 +3,21 @@
 # This file is distributed under the same license as the pitivi package.
 #
 # lxlalexlxl <pilipchukap@rambler.ru>, 2011.
-# Yuri Chornoivan <yurchor@ukr.net>, 2020, 2021.
+# Yuri Chornoivan <yurchor@ukr.net>, 2020, 2021, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2021-03-04 20:52+0000\n"
-"PO-Revision-Date: 2021-03-05 16:23+0200\n"
+"POT-Creation-Date: 2022-04-02 00:16+0000\n"
+"PO-Revision-Date: 2022-04-03 12:27+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Lokalize 20.11.70\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Lokalize 20.12.0\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
@@ -1123,7 +1124,9 @@ msgid ""
 "horizontally or vertically."
 msgstr ""
 "Скоригувати час і значення ключового кадру пересуванням його за допомогою "
-"вказівника миші. При пересування ключового кадру утримуйте натиснутою клавішу <key>Ctrl</key>, щоб заблокувати ключовий кадр у горизонтальному або вертикальному напрямку."
+"вказівника миші. При пересування ключового кадру утримуйте натиснутою "
+"клавішу <key>Ctrl</key>, щоб заблокувати ключовий кадр у горизонтальному або "
+"вертикальному напрямку."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:66
@@ -3164,20 +3167,29 @@ msgstr "Зникнення та поява"
 
 #. (itstool) path: section/p
 #: C/transitions.page:65
+#| msgid ""
+#| "You can create fade-in and fade-out transitions in single clips by using "
+#| "keyframes controlling the clip's opacity. For more information on "
+#| "keyframes, see <link xref=\"keyframecurves\">Keyframe curves</link>. To "
+#| "understand opacity, see <link xref=\"layers\">Understanding layers</"
+#| "link>. The following images illustrate how to fade a clip to black:"
 msgid ""
-"You can create fade-in and fade-out transitions in single clips by using "
-"keyframes controlling the clip's opacity. For more information on keyframes, "
-"see <link xref=\"keyframecurves\">Keyframe curves</link>. To understand "
-"opacity, see <link xref=\"layers\">Understanding layers</link>. The "
-"following images illustrate how to fade a clip to black:"
+"You can create fade-in and fade-out transitions in single clips by "
+"specifying their duration in the <gui>Compositing</gui> section of the "
+"<gui>Clip Properties</gui> panel. These can be fine-tuned by interacting "
+"with the <link xref=\"keyframecurves\">Keyframe curve</link> controlling the "
+"clip's opacity. To understand opacity, see <link xref=\"layers"
+"\">Understanding layers</link>. The following images illustrate how to fade "
+"a clip to black by editing the clip's keyframes:"
 msgstr ""
-"Ви можете створити переходи зі згасанням або появою у окремих кліпах, "
-"скориставшись ключовими кадрами для керування непрозорістю кліпів. Щоб "
-"дізнатися більше про ключові кадри, ознайомтеся із <link xref="
-"\"keyframecurves\">розділом щодо кривих ключових кадрів</link>. Докладніший "
-"опис непрозорості наведено у <link xref=\"layers\">розділів щодо шарів</"
-"link>. На наступних зображеннях проілюстровано перехід зображення кліпу у "
-"чорний колір:"
+"Ви можете створити переходи зі згасанням або появою у окремих кліпах,"
+" зазначивши їхню тривалість у розділі <gui>Композиція</gui> на панелі <gui"
+">Властивості кліпу</gui>. Скоригувати значення можна за допомогою <link"
+" xref=\"keyframecurves\">Кривої ключових кадрів</link>, яка керує"
+" непрозорістю кліпу. Докладніший опис непрозорості наведено у <link"
+" xref=\"layers\">розділів щодо шарів</link>. На наступних зображеннях"
+" проілюстровано перехід зображення кліпу у чорний колір редагуванням ключових"
+" кадрів кліпу:"
 
 #. (itstool) path: figure/title
 #: C/transitions.page:67
