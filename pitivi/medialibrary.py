@@ -431,7 +431,9 @@ class AssetThumbnail(GObject.Object, Loggable):
         try:
             icon = icon_theme.load_icon(icon_name, size, Gtk.IconLookupFlags.FORCE_SIZE)
         except GLib.Error:
-            icon = icon_theme.load_icon("dialog-question", size, 0)
+            # The resulting black question mark is good for light themes but
+            # not the best for the dark ones.
+            icon = icon_theme.load_icon("dialog-question-symbolic", size, 0)
         return icon
 
     def _set_state(self):

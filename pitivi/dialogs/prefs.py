@@ -872,7 +872,7 @@ class PluginsBox(Gtk.ListBox):
         button = Gtk.Button.new()
         button.props.valign = Gtk.Align.CENTER
         button.props.relief = Gtk.ReliefStyle.NONE
-        button.add(Gtk.Image.new_from_icon_name("folder-open-symbolic", 1))
+        button.add(Gtk.Image.new_from_icon_name("folder-open-symbolic", Gtk.IconSize.MENU))
         button.connect("clicked", self.__location_clicked_cb, group.get_dir())
 
         inner_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)

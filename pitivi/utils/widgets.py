@@ -177,7 +177,7 @@ class TextWidget(Gtk.Box, DynamicWidget):
                 self.valid = True
             else:
                 if self.valid:
-                    self.text.set_icon_from_icon_name(1, "dialog-warning")
+                    self.text.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "dialog-warning-symbolic")
                 self.valid = False
         elif self.send_signal:
             self.emit("value-changed")
@@ -594,7 +594,7 @@ class InputValidationWidget(Gtk.Box, DynamicWidget):
         DynamicWidget.__init__(self, widget.default)
         self._widget = widget
         self._validation_function = validation_function
-        self._warning_sign = Gtk.Image.new_from_icon_name("dialog-warning", 3)
+        self._warning_sign = Gtk.Image.new_from_icon_name("dialog-warning-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
 
         self.set_orientation(Gtk.Orientation.HORIZONTAL)
         self.pack_start(self._widget, expand=False, fill=False, padding=0)

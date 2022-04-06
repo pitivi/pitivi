@@ -16,6 +16,7 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 import os
 from gettext import gettext as _
+from typing import Optional
 
 from gi.repository import GdkPixbuf
 from gi.repository import GES
@@ -31,9 +32,9 @@ from pitivi.utils.ui import SPACING
 
 
 (COL_TRANSITION_ASSET,
- COL_NAME_TEXT,
- COL_DESC_TEXT,
- COL_ICON) = list(range(4))
+ COL_NAME,
+ COL_ICON_NAME,
+ COL_DESCRIPTION) = list(range(4))
 
 BORDER_LOOP_THRESHOLD = 50000
 
@@ -53,15 +54,9 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.app = app
         self.element = None
         self._pixdir = os.path.join(get_pixmap_dir(), "transitions")
-        icon_theme = Gtk.IconTheme.get_default()
-        self._question_icon = icon_theme.load_icon("dialog-question", 48, 0)
         self.set_orientation(Gtk.Orientation.VERTICAL)
         # Whether a child widget has the focus.
         self.container_focused = False
-
-        # Tooltip handling
-        self._current_transition_name = None
-        self._current_tooltip_icon = None
 
         # Searchbox
         self.searchbar = Gtk.Box()
@@ -109,18 +104,23 @@ class TransitionsListWidget(Gtk.Box, Loggable):
               "the transition type."))
         self.infobar.get_content_area().add(txtlabel)
 
-        self.storemodel = Gtk.ListStore(GES.Asset, str, str, GdkPixbuf.Pixbuf)
+        self.storemodel = Gtk.ListStore(GES.Asset, str, str, str)
+        # Create the filterModel for searching
+        self.model_filter = self.storemodel.filter_new()
 
         self.iconview_scrollwin = Gtk.ScrolledWindow()
         self.iconview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
 
-        self.iconview = Gtk.IconView(model=self.storemodel)
-        self.iconview.set_pixbuf_column(COL_ICON)
-        # We don't show text because we have a searchbar and the names are ugly
-        # self.iconview.set_text_column(COL_NAME_TEXT)
-        self.iconview.set_item_width(48 + 10)
-        self.iconview_scrollwin.add(self.iconview)
+        self.iconview = Gtk.IconView(model=self.model_filter)
+        cell_renderer = Gtk.CellRendererPixbuf()
+        cell_renderer.props.stock_size = Gtk.IconSize.DIALOG
+        self.iconview.pack_start(cell_renderer, expand=False)
+        self.iconview.add_attribute(cell_renderer, "icon-name", COL_ICON_NAME)
+
+        self.iconview.set_item_width(48 + SPACING)
         self.iconview.set_property("has_tooltip", True)
+
+        self.iconview_scrollwin.add(self.iconview)
 
         self.search_entry.connect("changed", self._search_entry_changed_cb)
         self.search_entry.connect("icon-press", self._search_entry_icon_press_cb)
@@ -133,10 +133,6 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.pack_start(self.searchbar, False, False, 0)
         self.pack_start(self.iconview_scrollwin, True, True, 0)
         self.pack_start(self.props_widgets, False, False, 0)
-
-        # Create the filterModel for searching
-        self.model_filter = self.storemodel.filter_new()
-        self.iconview.set_model(self.model_filter)
 
         self.infobar.show_all()
         self.iconview_scrollwin.show_all()
@@ -249,18 +245,15 @@ class TransitionsListWidget(Gtk.Box, Loggable):
     def _load_available_transitions_cb(self):
         """Loads the transitions types and icons into the storemodel."""
         for trans_asset in GES.list_assets(GES.TransitionClip):
-            trans_asset.icon = self._get_icon(trans_asset.get_id())
-            self.storemodel.append([trans_asset,
-                                    str(trans_asset.get_id()),
-                                    str(trans_asset.get_meta(
-                                        GES.META_DESCRIPTION)),
-                                    trans_asset.icon])
+            name = trans_asset.get_id()
+            icon_name = name if self._get_icon(name) else "dialog-question-symbolic"
+            description = trans_asset.get_meta(GES.META_DESCRIPTION)
+            self.storemodel.append([trans_asset, name, icon_name, description])
 
         # Now that the UI is fully ready, enable searching
         self.model_filter.set_visible_func(self._set_row_visible_func, data=None)
         # Alphabetical/name sorting instead of based on the ID number
-        self.storemodel.set_sort_column_id(
-            COL_NAME_TEXT, Gtk.SortType.ASCENDING)
+        self.storemodel.set_sort_column_id(COL_NAME, Gtk.SortType.ASCENDING)
 
     def activate(self, element):
         """Hides the infobar and shows the transitions UI."""
@@ -311,15 +304,13 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.searchbar.hide()
         self.infobar.show()
 
-    def _get_icon(self, transition_nick):
+    def _get_icon(self, transition_nick: str) -> Optional[GdkPixbuf.Pixbuf]:
         """Gets an icon pixbuf for the specified transition nickname."""
-        name = transition_nick + ".png"
         try:
-            icon = GdkPixbuf.Pixbuf.new_from_file(
-                os.path.join(self._pixdir, name))
+            return GdkPixbuf.Pixbuf.new_from_file(
+                os.path.join(self._pixdir, transition_nick + ".png"))
         except GLib.Error:
-            icon = self._question_icon
-        return icon
+            return None
 
     def _iconview_query_tooltip_cb(self, view, x, y, keyboard_mode, tooltip):
         is_row, x, y, model, path, iter_ = view.get_tooltip_context(
@@ -329,27 +320,24 @@ class TransitionsListWidget(Gtk.Box, Loggable):
 
         view.set_tooltip_item(tooltip, path)
 
-        name = model.get_value(iter_, COL_TRANSITION_ASSET).get_id()
-        if self._current_transition_name != name:
-            self._current_transition_name = name
-            icon = model.get_value(iter_, COL_ICON)
-            self._current_tooltip_icon = icon
+        icon_name = model.get_value(iter_, COL_ICON_NAME)
+        tooltip.set_icon_from_icon_name(icon_name, Gtk.IconSize.DIALOG)
 
-        longname = model.get_value(iter_, COL_NAME_TEXT).strip()
-        description = model.get_value(iter_, COL_DESC_TEXT)
-        txt = "<b>%s:</b>\n%s" % (GLib.markup_escape_text(longname),
-                                  GLib.markup_escape_text(description),)
-        tooltip.set_markup(txt)
+        longname = model.get_value(iter_, COL_NAME)
+        description = model.get_value(iter_, COL_DESCRIPTION)
+        markup = "<b>{}:</b>\n{}".format(GLib.markup_escape_text(longname),
+                                         GLib.markup_escape_text(description))
+        tooltip.set_markup(markup)
         return True
 
     def get_selected_item(self):
         path = self.iconview.get_selected_items()
-        if path == []:
+        if not path:
             return None
         return self.model_filter[path[0]][COL_TRANSITION_ASSET]
 
     def _set_row_visible_func(self, model, model_iter, data):
         """Filters the icon view to show only the search results."""
         text = self.search_entry.get_text().lower()
-        return text in model.get_value(model_iter, COL_DESC_TEXT).lower() or\
-            text in model.get_value(model_iter, COL_NAME_TEXT).lower()
+        return text in model.get_value(model_iter, COL_DESCRIPTION).lower() or \
+            text in model.get_value(model_iter, COL_NAME).lower()

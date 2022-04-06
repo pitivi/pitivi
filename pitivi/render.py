@@ -1143,7 +1143,7 @@ class RenderDialog(Loggable):
                 tooltip_text = None
                 self._is_filename_valid = True
 
-        warning_icon = "dialog-warning" if tooltip_text else None
+        warning_icon = "dialog-warning-symbolic" if tooltip_text else None
         self.fileentry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, warning_icon)
         self.fileentry.set_icon_tooltip_text(Gtk.EntryIconPosition.SECONDARY, tooltip_text)
         self.__update_render_button_sensitivity()

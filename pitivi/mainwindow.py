@@ -92,6 +92,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         os.environ["PULSE_PROP_application.icon_name"] = "pitivi"
 
         Gtk.IconTheme.get_default().append_search_path(get_pixmap_dir())
+        Gtk.IconTheme.get_default().append_search_path(os.path.join(get_pixmap_dir(), "transitions"))
 
         Gtk.ApplicationWindow.__init__(self)
         Loggable.__init__(self)

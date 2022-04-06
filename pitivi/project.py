@@ -214,7 +214,7 @@ class ProjectManager(GObject.Object, Loggable):
         vbox.pack_start(primary, True, True, 0)
 
         # make the [[image] text] hbox
-        image = Gtk.Image.new_from_icon_name("dialog-error", Gtk.IconSize.DIALOG)
+        image = Gtk.Image.new_from_icon_name("dialog-error-symbolic", Gtk.IconSize.DIALOG)
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=SPACING * 2)
         hbox.pack_start(image, False, True, 0)
         hbox.pack_start(vbox, True, True, 0)
@@ -310,7 +310,7 @@ class ProjectManager(GObject.Object, Loggable):
 
         # make the [[image] text] hbox
         image = Gtk.Image.new_from_icon_name(
-            "dialog-question", Gtk.IconSize.DIALOG)
+            "dialog-question-symbolic", Gtk.IconSize.DIALOG)
         hbox = Gtk.Box(homogeneous=False, spacing=SPACING * 2)
         hbox.set_orientation(Gtk.Orientation.HORIZONTAL)
         hbox.pack_start(image, False, False, 0)
