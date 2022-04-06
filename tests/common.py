@@ -154,13 +154,17 @@ def create_main_loop():
         mainloop.quit()
 
     def run(timeout_seconds=5, until_empty=False):
-        source = GLib.timeout_source_new_seconds(timeout_seconds)
-        source.set_callback(timeout_cb)
-        source.attach()
+        # Limit the test running time only when not debugging.
+        debugging = os.environ.get("PITIVI_VSCODE_DEBUG", False)
+        if not debugging:
+            source = GLib.timeout_source_new_seconds(timeout_seconds)
+            source.set_callback(timeout_cb)
+            source.attach()
         if until_empty:
             GLib.idle_add(mainloop.quit, priority=GLib.PRIORITY_LOW + 1)
         GLib.MainLoop.run(mainloop)
-        source.destroy()
+        if not debugging:
+            source.destroy()
         if timed_out:
             raise Exception("Timed out after %s seconds" % timeout_seconds)
 

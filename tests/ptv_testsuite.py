@@ -42,6 +42,12 @@ class PitiviTest(Test):
 
 def setup_tests(test_manager, options):
     """Sets up Pitivi unit testsuite."""
+    if os.environ.get("PITIVI_VSCODE_DEBUG", False):
+        import debugpy
+        debugpy.listen(5678)
+        print("Waiting for the debugger to attach...")
+        debugpy.wait_for_client()
+
     loader = unittest.TestLoader()
     testsuites = loader.discover(CDIR)
     for testsuite in testsuites:

@@ -33,3 +33,21 @@ Waiting for the debugger to attach...
 ```
 
 Press `F5` in VS Code. If the Pitivi window shows up, your debugger is working.
+
+### Debugging Unit Tests
+
+You can also debug the unit tests by launching the test suite with the `PITIVI_VSCODE_DEBUG` environment variable set to 1:
+
+```
+(ptv-flatpak) $ PITIVI_VSCODE_DEBUG=1 ptvtests
+[...]
+Waiting for the debugger to attach...
+```
+
+Note the test suite typically limits how long a test can run and will kill any test reaching the timeout period.  Thus, when you set a breakpoint in a test, you may have to increase the timeouts to avoid it being killed while you debug:
+
+```
+(ptv-flatpak) $ PITIVI_VSCODE_DEBUG=1 ptvtests --timeout-factor 1000 [-t test_filename_or_method]
+[...]
+Waiting for the debugger to attach...
+```
