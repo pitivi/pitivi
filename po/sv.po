@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2022-04-02 18:55+0000\n"
-"PO-Revision-Date: 2022-04-02 21:32+0200\n"
+"POT-Creation-Date: 2022-04-03 11:20+0000\n"
+"PO-Revision-Date: 2022-04-03 14:19+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -128,6 +128,26 @@ msgstr "Uppskattar…"
 #: data/ui/clipcolor.ui:21
 msgid "Pick the clip color"
 msgstr "Välj klippfärgen"
+
+#: data/ui/clipcompositing.ui:43
+msgid "Fade-in:"
+msgstr "Intoning:"
+
+#: data/ui/clipcompositing.ui:55 data/ui/clipcompositing.ui:123
+msgid "seconds"
+msgstr "sekunder"
+
+#: data/ui/clipcompositing.ui:98
+msgid "Fade-out:"
+msgstr "Uttoning:"
+
+#: data/ui/clipcompositing.ui:151
+msgid "Reset fade-in"
+msgstr "Återställ intoning"
+
+#: data/ui/clipcompositing.ui:166
+msgid "Reset fade-out"
+msgstr "Återställ uttoning"
 
 #: data/ui/clipmediaprops.ui:8
 msgid "Clip Properties"
@@ -1041,6 +1061,10 @@ msgstr "Inga markörer"
 msgid "Color"
 msgstr "Färg"
 
+#: pitivi/clip_properties/compositing.py:53 pitivi/effects.py:77
+msgid "Compositing"
+msgstr "Grafiksammansättning"
+
 #: pitivi/clip_properties/title.py:47
 msgid "Title clip duration"
 msgstr "Titelklipplängd"
@@ -1214,10 +1238,6 @@ msgstr "Förhandsvisa"
 #: pitivi/effects.py:61
 msgid "Colors"
 msgstr "Färger"
-
-#: pitivi/effects.py:77
-msgid "Compositing"
-msgstr "Grafiksammansättning"
 
 #: pitivi/effects.py:84
 msgid "Noise & blur"
