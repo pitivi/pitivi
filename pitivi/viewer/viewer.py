@@ -272,8 +272,8 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         # Peak Meters
         self.peak_meter_box = Gtk.Box()
-        self.peak_meter_box.set_margin_right(SPACING)
-        self.peak_meter_box.set_margin_left(SPACING)
+        self.peak_meter_box.set_margin_end(SPACING)
+        self.peak_meter_box.set_margin_start(SPACING)
         self.peak_meter_box.set_margin_bottom(SPACING)
         self.peak_meter_box.set_margin_top(SPACING)
         self.peak_meter_box.set_property("valign", Gtk.Align.CENTER)
@@ -284,7 +284,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.peak_meter_scale = PeakMeterScale()
         self.peak_meter_scale.set_property("valign", Gtk.Align.FILL)
         self.peak_meter_scale.set_property("halign", Gtk.Align.CENTER)
-        self.peak_meter_scale.set_margin_left(SPACING)
+        self.peak_meter_scale.set_margin_start(SPACING)
         self.peak_meter_box.pack_end(self.peak_meter_scale, False, False, 0)
         self.viewer_row_box.pack_end(self.peak_meter_box, False, False, 0)
         self.peak_meter_scale.connect("configure-event", self.__peak_meter_scale_configure_event_cb)
@@ -294,8 +294,8 @@ class ViewerContainer(Gtk.Box, Loggable):
         bbox.set_orientation(Gtk.Orientation.HORIZONTAL)
         bbox.set_property("valign", Gtk.Align.CENTER)
         bbox.set_property("halign", Gtk.Align.CENTER)
-        bbox.set_margin_left(SPACING)
-        bbox.set_margin_right(SPACING)
+        bbox.set_margin_start(SPACING)
+        bbox.set_margin_end(SPACING)
         self.pack_end(bbox, False, False, 0)
 
         self.guidelines_button = Gtk.MenuButton.new()

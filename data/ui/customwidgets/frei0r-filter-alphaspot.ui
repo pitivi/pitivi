@@ -277,7 +277,7 @@
       <object class="GtkSeparator" id="separator2">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="margin_right">328</property>
+        <property name="margin_end">328</property>
       </object>
       <packing>
         <property name="left_attach">1</property>

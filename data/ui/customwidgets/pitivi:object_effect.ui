@@ -31,7 +31,7 @@
         <property name="can-focus">True</property>
         <property name="receives-default">True</property>
         <property name="halign">start</property>
-        <property name="margin-left">2</property>
+        <property name="margin-start">2</property>
         <property name="hexpand">True</property>
         <property name="use-alpha">True</property>
         <property name="title" translatable="yes">Pick the clip color</property>

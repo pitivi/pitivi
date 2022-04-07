@@ -413,7 +413,7 @@
                           <object class="GtkEntry" id="author_entry">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
-                            <property name="margin-right">10</property>
+                            <property name="margin-end">10</property>
                             <property name="hexpand">True</property>
                             <property name="invisible-char">●</property>
                           </object>

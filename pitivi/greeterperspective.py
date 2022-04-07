@@ -448,7 +448,7 @@ class GreeterPerspective(Perspective):
         grid = Gtk.Grid()
         grid.props.row_spacing = SPACING
         grid.props.column_spacing = PADDING
-        grid.props.margin_left = SPACING
+        grid.props.margin_start = SPACING
         grid.props.margin_top = SPACING * 2
 
         for row_index, dep in enumerate(MISSING_SOFT_DEPS.values()):

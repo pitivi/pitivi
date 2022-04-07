@@ -664,7 +664,7 @@ class TrackerPerspective(Perspective):
         back_button.set_always_show_image(True)
         back_button.set_tooltip_text(_("Go back"))
         back_button.connect("clicked", self.__back_button_clicked_cb)
-        back_button.set_margin_right(4 * PADDING)
+        back_button.set_margin_end(4 * PADDING)
         headerbar.pack_start(back_button)
         headerbar.props.title = os.path.basename(self.asset.props.id)
         headerbar.show_all()

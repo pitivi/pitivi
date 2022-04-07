@@ -665,7 +665,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         remove_effect_button = Gtk.Button.new_from_icon_name("window-close",
                                                              Gtk.IconSize.BUTTON)
-        remove_effect_button.props.margin_right = PADDING
+        remove_effect_button.props.margin_end = PADDING
 
         row_widgets_box = Gtk.Box()
         row_drag_icon = Gtk.Image.new_from_pixbuf(self.drag_lines_pixbuf)

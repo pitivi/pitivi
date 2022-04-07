@@ -248,12 +248,12 @@ class PreferencesDialog(Loggable):
 
             label_widget = Gtk.Label(label=label)
             label_widget.set_alignment(0.0, 0.5)
-            label_widget.props.margin_right = PADDING * 3
+            label_widget.props.margin_end = PADDING * 3
             label_widget.props.margin_top = PADDING * 2
             label_widget.props.margin_bottom = PADDING * 2
             label_size_group.add_widget(label_widget)
 
-            widget.props.margin_right = PADDING * 3
+            widget.props.margin_end = PADDING * 3
             widget.props.margin_top = PADDING * 2
             widget.props.margin_bottom = PADDING * 2
             prop_size_group.add_widget(widget)
@@ -269,7 +269,7 @@ class PreferencesDialog(Loggable):
                 box.pack_start(box1, False, False, 0)
                 box.pack_start(extra_widget, False, False, SPACING)
 
-            box.props.margin_left = PADDING * 3
+            box.props.margin_start = PADDING * 3
 
             row = Gtk.ListBoxRow()
             row.set_activatable(False)
@@ -442,22 +442,22 @@ class PreferencesDialog(Loggable):
             accel_label.set_state_flags(Gtk.StateFlags.INSENSITIVE, True)
 
         title_label.props.xalign = 0
-        title_label.props.margin_left = PADDING * 3
-        title_label.props.margin_right = PADDING * 3
+        title_label.props.margin_start = PADDING * 3
+        title_label.props.margin_end = PADDING * 3
         title_label.props.margin_top = PADDING * 2
         title_label.props.margin_bottom = PADDING * 2
         self.description_size_group.add_widget(title_label)
 
         accel_label.props.xalign = 0
-        accel_label.props.margin_left = PADDING * 3
-        accel_label.props.margin_right = PADDING * 2
+        accel_label.props.margin_start = PADDING * 3
+        accel_label.props.margin_end = PADDING * 2
         self.accel_size_group.add_widget(accel_label)
 
         # Add the third column with the reset button.
         button = Gtk.Button.new_from_icon_name("edit-clear-all-symbolic",
                                                Gtk.IconSize.MENU)
         button.set_tooltip_text(_("Reset the shortcut to the default accelerator"))
-        button.props.margin_right = PADDING / 2
+        button.props.margin_end = PADDING / 2
         button.set_relief(Gtk.ReliefStyle.NONE)
         button.connect("clicked", self.__reset_accelerator_cb, item)
         button.set_sensitive(accel_changed)
@@ -492,8 +492,8 @@ class PreferencesDialog(Loggable):
             header.set_markup("<b>%s</b>" % group_title)
             header.props.margin_top = PADDING if not prev_group else PADDING * 8
             header.props.margin_bottom = PADDING * 2
-            header.props.margin_left = 1
-            header.props.margin_right = PADDING * 2
+            header.props.margin_start = 1
+            header.props.margin_end = PADDING * 2
             header.props.xalign = 0
             alter_style_class("group_title", header, "font-size: small;")
             header.get_style_context().add_class("group_title")
@@ -879,7 +879,7 @@ class PluginsBox(Gtk.ListBox):
         inner_box.set_halign(Gtk.Align.FILL)
         inner_box.props.margin_top = PADDING * 3
         inner_box.props.margin_bottom = PADDING
-        inner_box.props.margin_right = PADDING * 2
+        inner_box.props.margin_end = PADDING * 2
         inner_box.pack_start(header, True, True, 0)
         inner_box.pack_start(button, False, False, 0)
 

@@ -85,8 +85,8 @@ class LayerControls(Gtk.EventBox, Loggable):
         name_row = Gtk.Box()
         name_row.set_orientation(Gtk.Orientation.HORIZONTAL)
         name_row.props.margin_top = PADDING
-        name_row.props.margin_left = PADDING
-        name_row.props.margin_right = PADDING
+        name_row.props.margin_start = PADDING
+        name_row.props.margin_end = PADDING
         vbox.pack_start(name_row, False, False, 0)
 
         self.menubutton = Gtk.MenuButton.new()
