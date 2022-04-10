@@ -379,6 +379,7 @@ class TestLayerObserver(common.TestCase):
         clip = GES.TitleClip()
         self.layer.add_clip(clip)
 
+        self.timeline_container.update_actions()
         self.timeline_container.add_layer_action.activate()
 
         layers = self.timeline.get_layers()

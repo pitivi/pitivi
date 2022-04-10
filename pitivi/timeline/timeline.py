@@ -1662,6 +1662,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.paste_action.set_enabled(can_paste)
         self.keyframe_action.set_enabled(selection_non_empty)
         project_loaded = bool(self._project)
+        self.add_layer_action.set_enabled(project_loaded)
         self.backward_one_frame_action.set_enabled(project_loaded)
         self.forward_one_frame_action.set_enabled(project_loaded)
         self.backward_one_second_action.set_enabled(project_loaded)
