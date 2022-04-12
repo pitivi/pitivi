@@ -40,7 +40,7 @@ replace `ptvtests` with `gst-validate-launcher tests/ptv_testsuite.py`.
 
 ```
 $ alias ptvtests
-ptvtests='ptvenv gst-validate-launcher /.../pitivi-dev/pitivi/tests/ptv_testsuite.py'
+ptvtests='ptvenv gst-validate-launcher /.../pitivi-dev/pitivi/tests/ptv_testsuite.py --dump-on-failure'
 ```
 
 ### Writing unit tests
