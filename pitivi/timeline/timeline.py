@@ -1060,6 +1060,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 for clip in self.dragging_group.get_children(False):
                     clip.get_layer().remove_clip(clip)
                 self._project.pipeline.commit_timeline()
+                self.app.gui.editor.focus_timeline()
 
             self.dragging_element = None
             self.__got_dragged = False
