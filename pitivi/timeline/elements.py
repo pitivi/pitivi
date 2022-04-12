@@ -1460,12 +1460,12 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
     def __curve_leave_cb(self, unused_keyframe_curve):
         self.__show_handles()
 
-    def _add_child(self, ges_timeline_element):
+    def _add_child(self, ges_timeline_element: GES.TimelineElement):
         ges_timeline_element.selected = Selected()
         ges_timeline_element.selected.selected = self.ges_clip.selected.selected
         ges_timeline_element.ui = None
 
-    def _child_added_cb(self, unused_ges_clip, ges_timeline_element):
+    def _child_added_cb(self, ges_clip, ges_timeline_element: GES.TimelineElement):
         self.__force_position_update = True
         self._add_child(ges_timeline_element)
         self.__connect_to_child(ges_timeline_element)
@@ -1474,7 +1474,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
     def _remove_child(self, ges_timeline_element):
         pass
 
-    def _child_removed_cb(self, unused_ges_clip, ges_timeline_element):
+    def _child_removed_cb(self, unused_ges_clip, ges_timeline_element: GES.TimelineElement):
         self.__force_position_update = True
         self.__disconnect_from_child(ges_timeline_element)
         self._remove_child(ges_timeline_element)
@@ -1510,7 +1510,10 @@ class SourceClip(Clip):
             return
 
         ges_source.ui = widget
-        self._elements_container.pack_start(widget, expand=True, fill=False, padding=0)
+        if ges_source.get_track_type() == GES.TrackType.VIDEO:
+            self._elements_container.pack_start(widget, expand=True, fill=False, padding=0)
+        else:
+            self._elements_container.pack_end(widget, expand=True, fill=False, padding=0)
         widget.set_visible(True)
 
     def _create_child_widget(self, ges_source: GES.Source) -> Optional[Gtk.Widget]:
