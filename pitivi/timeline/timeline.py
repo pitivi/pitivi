@@ -116,7 +116,7 @@ PreferencesDialog.add_numeric_preference('imageClipLength',
 GlobalSettings.add_config_option('leftClickAlsoSeeks',
                                  section="user-interface",
                                  key="left-click-to-select",
-                                 default=True,
+                                 default=False,
                                  notify=True)
 
 PreferencesDialog.add_toggle_preference('leftClickAlsoSeeks',
