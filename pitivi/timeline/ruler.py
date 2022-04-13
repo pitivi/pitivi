@@ -116,7 +116,9 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
 
         self.position = 0  # In nanoseconds
 
-# Timeline position changed method
+        # Update colors when theme or color preferences change.
+        Gtk.Settings.get_default().connect("notify::gtk-theme-name", self._update_colors_cb)
+        Gtk.Settings.get_default().connect("notify::gtk-application-prefer-dark-theme", self._update_colors_cb)
 
     def set_pipeline(self, pipeline):
         self._pipeline = pipeline
@@ -127,21 +129,7 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
         self.position = position
         self.queue_draw()
 
-# Gtk.Widget overrides
-
-    def do_configure_event(self, unused_event):
-        width = self.get_allocated_width()
-        height = self.get_allocated_height()
-        self.debug("Configuring, height %d, width %d", width, height)
-
-        # Destroy previous buffer
-        if self.pixbuf is not None:
-            self.pixbuf.finish()
-            self.pixbuf = None
-
-        # Create a new buffer
-        self.pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
-
+    def _set_colors(self):
         # pylint: disable=attribute-defined-outside-init
         context = self.get_style_context()
         color_normal = gtk_style_context_get_color(context, Gtk.StateFlags.NORMAL)
@@ -162,6 +150,25 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
         # Two colors with high contrast.
         self._color_frame = gtk_style_context_get_color(context, Gtk.StateFlags.LINK)
 
+    def _update_colors_cb(self, settings, gparams):
+        self._set_colors()
+
+# Gtk.Widget overrides
+
+    def do_configure_event(self, unused_event):
+        width = self.get_allocated_width()
+        height = self.get_allocated_height()
+        self.debug("Configuring, height %d, width %d", width, height)
+
+        # Destroy previous buffer
+        if self.pixbuf is not None:
+            self.pixbuf.finish()
+            self.pixbuf = None
+
+        # Create a new buffer
+        self.pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+
+        self._set_colors()
         return False
 
     def do_draw(self, context):
