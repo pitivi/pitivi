@@ -8,23 +8,23 @@
 # Yinghua Wang <wantinghard@gmail.com>, 2010
 # Tong Hui <tonghuix@gmail.com>, 2016
 # 王滋涵 Zephyr Wang <wi24rd@fedoraproject.org>, 2020.
-# lumingzh <lumingzh@qq.com>, 2016-2021.
 # Liu Tao <lyuutau@outlook.com>, 2021.
+# lumingzh <lumingzh@qq.com>, 2016-2022.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-08-28 11:32+0000\n"
-"PO-Revision-Date: 2021-09-08 16:14+0800\n"
+"POT-Creation-Date: 2022-04-10 23:42+0000\n"
+"PO-Revision-Date: 2022-04-13 20:47+0800\n"
 "Last-Translator: lumingzh <lumingzh@qq.com>\n"
 "Language-Team: Chinese - China <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.0\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"X-Generator: Gtranslator 42.0\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
 msgid "Pitivi video project (legacy)"
@@ -117,9 +117,41 @@ msgstr "<b><big>正在进行自动对齐</big></b>"
 msgid "Estimating..."
 msgstr "正在估计..."
 
+#: data/ui/beatdetection.ui:18
+msgid "Detect beats"
+msgstr "检测节拍"
+
+#: data/ui/beatdetection.ui:35
+msgid "Clear detected beats"
+msgstr "清除检测到的节拍"
+
+#: data/ui/beatdetection.ui:66
+msgid "Detecting..."
+msgstr "正在检测…"
+
 #: data/ui/clipcolor.ui:21
 msgid "Pick the clip color"
-msgstr "选择剪辑颜色"
+msgstr "选取片段颜色"
+
+#: data/ui/clipcompositing.ui:43
+msgid "Fade-in:"
+msgstr "淡入："
+
+#: data/ui/clipcompositing.ui:55 data/ui/clipcompositing.ui:123
+msgid "seconds"
+msgstr "秒"
+
+#: data/ui/clipcompositing.ui:98
+msgid "Fade-out:"
+msgstr "淡出："
+
+#: data/ui/clipcompositing.ui:151
+msgid "Reset fade-in"
+msgstr "重置淡入"
+
+#: data/ui/clipcompositing.ui:166
+msgid "Reset fade-out"
+msgstr "重置淡出"
 
 #: data/ui/clipmediaprops.ui:8
 msgid "Clip Properties"
@@ -303,7 +335,7 @@ msgid "Favorites"
 msgstr "收藏"
 
 #: data/ui/effectslibrary.ui:43 data/ui/medialibrary.ui:165
-#: pitivi/transitions.py:74
+#: pitivi/transitions.py:69
 msgid "Search..."
 msgstr "搜索…"
 
@@ -373,13 +405,13 @@ msgid "Edit the project settings"
 msgstr "编辑工程设置"
 
 #: data/ui/mainmenubutton.ui:119 data/ui/projectsettings.ui:61
-#: pitivi/medialibrary.py:173 pitivi/medialibrary.py:536
-#: pitivi/dialogs/prefs.py:339
+#: pitivi/dialogs/prefs.py:340 pitivi/medialibrary.py:173
+#: pitivi/medialibrary.py:538
 msgid "Project Settings"
 msgstr "工程设置"
 
 #: data/ui/mainmenubutton.ui:148 data/ui/preferences.ui:7
-#: pitivi/mainwindow.py:216
+#: pitivi/mainwindow.py:217
 msgid "Preferences"
 msgstr "首选项"
 
@@ -481,10 +513,10 @@ msgid "Some changes will not take effect until you restart Pitivi"
 msgstr "有些变化在重启 Pitivi 前不会生效"
 
 #: data/ui/projectsettings.ui:78 data/ui/renderingprogress.ui:41
+#: pitivi/dialogs/browseprojects.py:38 pitivi/dialogs/missingasset.py:46
 #: pitivi/editorperspective.py:544 pitivi/editorperspective.py:679
 #: pitivi/editorperspective.py:727 pitivi/editorperspective.py:780
-#: pitivi/greeterperspective.py:241 pitivi/medialibrary.py:854
-#: pitivi/dialogs/browseprojects.py:38 pitivi/dialogs/missingasset.py:46
+#: pitivi/greeterperspective.py:241 pitivi/medialibrary.py:856
 msgid "Cancel"
 msgstr "取消"
 
@@ -515,7 +547,7 @@ msgstr "帧率："
 
 #. The title of the section with the video settings
 #: data/ui/projectsettings.ui:383 data/ui/renderingdialog.ui:752
-#: pitivi/clipproperties.py:1285 pitivi/effects.py:246
+#: pitivi/clip_properties/markers.py:45 pitivi/effects.py:246
 msgid "Video"
 msgstr "视频"
 
@@ -569,7 +601,7 @@ msgstr "渲染"
 msgid "Quality:"
 msgstr "质量："
 
-#: data/ui/renderingdialog.ui:179 pitivi/clipproperties.py:1288
+#: data/ui/renderingdialog.ui:179 pitivi/clip_properties/markers.py:48
 #: pitivi/render.py:74
 msgid "Custom"
 msgstr "自定义"
@@ -635,7 +667,7 @@ msgstr "编解码器："
 msgid "Sample rate:"
 msgstr "采样率："
 
-#: data/ui/renderingdialog.ui:527 pitivi/clipproperties.py:1286
+#: data/ui/renderingdialog.ui:527 pitivi/clip_properties/markers.py:46
 #: pitivi/effects.py:122 pitivi/effects.py:246
 msgid "Audio"
 msgstr "音频"
@@ -680,8 +712,8 @@ msgstr "正在渲染"
 msgid "Pause"
 msgstr "暂停"
 
-#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:766
-#: pitivi/timeline/timeline.py:1894
+#: data/ui/renderingprogress.ui:55 pitivi/timeline/timeline.py:1913
+#: pitivi/viewer/viewer.py:766
 msgid "Play"
 msgstr "播放"
 
@@ -739,30 +771,38 @@ msgid "Ungroup"
 msgstr "解除群组"
 
 #: data/ui/timelinetoolbar.ui:76
+msgid "Cut clips"
+msgstr "剪切片段"
+
+#: data/ui/timelinetoolbar.ui:78
+msgid "Cut"
+msgstr "剪切"
+
+#: data/ui/timelinetoolbar.ui:91
 msgid "Copy clips"
 msgstr "复制片段"
 
-#: data/ui/timelinetoolbar.ui:78
+#: data/ui/timelinetoolbar.ui:93
 msgid "Copy"
 msgstr "复制"
 
-#: data/ui/timelinetoolbar.ui:91
+#: data/ui/timelinetoolbar.ui:106
 msgid "Paste clips"
 msgstr "粘贴片段"
 
-#: data/ui/timelinetoolbar.ui:93
+#: data/ui/timelinetoolbar.ui:108
 msgid "Paste"
 msgstr "粘贴"
 
-#: data/ui/timelinetoolbar.ui:106
+#: data/ui/timelinetoolbar.ui:121
 msgid "Align clips based on their soundtracks"
 msgstr "基于音轨对齐片段"
 
-#: data/ui/timelinetoolbar.ui:109
+#: data/ui/timelinetoolbar.ui:124
 msgid "Align"
 msgstr "对齐"
 
-#: data/ui/timelinetoolbar.ui:122
+#: data/ui/timelinetoolbar.ui:137
 msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
@@ -770,7 +810,7 @@ msgstr ""
 "切换无缝模式\n"
 "当启用时，相邻片段会自动移动以填充间隙。"
 
-#: data/ui/timelinetoolbar.ui:125
+#: data/ui/timelinetoolbar.ui:140
 msgid "Gapless mode"
 msgstr "无缝模式"
 
@@ -810,23 +850,23 @@ msgstr "竖直："
 msgid "Search Action"
 msgstr "搜索动作"
 
-#: pitivi/application.py:158
+#: pitivi/application.py:160
 msgid "General"
 msgstr "常规"
 
-#: pitivi/application.py:165
+#: pitivi/application.py:167
 msgid "Undo the most recent action"
 msgstr "回退最近的动作"
 
-#: pitivi/application.py:171
+#: pitivi/application.py:173
 msgid "Redo the most recent action"
 msgstr "重做最近的动作"
 
-#: pitivi/application.py:176
+#: pitivi/application.py:178
 msgid "Quit"
 msgstr "退出"
 
-#: pitivi/application.py:184
+#: pitivi/application.py:186
 msgid "Show the Shortcuts Window"
 msgstr "显示快捷键窗口"
 
@@ -912,54 +952,58 @@ msgstr ""
 "在 GStreamer pipeline 中启用一个看门狗程序。用来检测 GStreamer 中发生的错误并"
 "从中恢复"
 
+#: pitivi/check.py:465
+msgid "enables beat detection functionality"
+msgstr "启用节拍检测功能"
+
 #. Translators: This is the default text of a title clip.
-#: pitivi/clipproperties.py:65
+#: pitivi/clipproperties.py:66
 msgid "Title Clip"
 msgstr "标题片段"
 
-#: pitivi/clipproperties.py:152
+#: pitivi/clipproperties.py:158
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
 msgstr "从时间轴上选择一个片段来配置它的属性和特效或创建一个新片段："
 
-#: pitivi/clipproperties.py:158
+#: pitivi/clipproperties.py:164
 msgid "Create a title clip"
 msgstr "创建标题片段"
 
-#: pitivi/clipproperties.py:163
+#: pitivi/clipproperties.py:169
 msgid "Create a color clip"
 msgstr "创建调色片段"
 
-#: pitivi/clipproperties.py:269 pitivi/effects.py:118
+#: pitivi/clipproperties.py:272 pitivi/effects.py:118
 msgid "Time"
 msgstr "时间"
 
-#: pitivi/clipproperties.py:312
+#: pitivi/clipproperties.py:315
 msgid "Speed"
 msgstr "速度"
 
-#: pitivi/clipproperties.py:327 pitivi/utils/widgets.py:800
+#: pitivi/clipproperties.py:330 pitivi/utils/widgets.py:800
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s："
 
-#: pitivi/clipproperties.py:330 pitivi/dialogs/prefs.py:285
+#: pitivi/clipproperties.py:333 pitivi/dialogs/prefs.py:286
 #: pitivi/utils/widgets.py:976
 msgid "Reset to default value"
 msgstr "重置为默认值"
 
-#: pitivi/clipproperties.py:565
+#: pitivi/clipproperties.py:568
 msgid "Effects"
 msgstr "特效"
 
-#: pitivi/clipproperties.py:581
+#: pitivi/clipproperties.py:584
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
 msgstr "将特效从特效库里拖拽到片段上或使用下面的按钮以应用特效。"
 
-#: pitivi/clipproperties.py:589
+#: pitivi/clipproperties.py:592
 msgid "Add Effect"
 msgstr "添加特效"
 
@@ -979,69 +1023,267 @@ msgstr "激活关键帧"
 msgid "Hide keyframes"
 msgstr "隐藏关键帧"
 
-#: pitivi/clipproperties.py:1287
-msgid "Text"
-msgstr "文字"
-
-#: pitivi/clipproperties.py:1296
-msgid "Clip markers"
-msgstr "片段标记"
-
-#: pitivi/clipproperties.py:1349
-msgid "Magnetic"
-msgstr "磁力"
-
-#: pitivi/clipproperties.py:1383
-msgid "No markers"
-msgstr "无标记"
-
 #: pitivi/clip_properties/color.py:53 plugins/console/console.py:125
 msgid "Color"
 msgstr "颜色"
 
-#: pitivi/clip_properties/title.py:43
+#: pitivi/clip_properties/compositing.py:53 pitivi/effects.py:77
+msgid "Compositing"
+msgstr "合成"
+
+#: pitivi/clip_properties/markers.py:47
+msgid "Text"
+msgstr "文字"
+
+#: pitivi/clip_properties/markers.py:64
+msgid "Clip markers"
+msgstr "片段标记"
+
+#: pitivi/clip_properties/markers.py:125
+msgid "Magnetic"
+msgstr "磁力"
+
+#: pitivi/clip_properties/title.py:47
 msgid "Title clip duration"
 msgstr "标题片段持续时间"
 
-#: pitivi/clip_properties/title.py:45
+#: pitivi/clip_properties/title.py:49
 msgid ""
 "Default clip length (in milliseconds) of titles when inserting on the "
 "timeline."
 msgstr "当向时间轴插入标题时的默认片段长度（毫秒单位）。"
 
-#: pitivi/clip_properties/title.py:59
+#: pitivi/clip_properties/title.py:63
 msgid "Title"
 msgstr "标题"
 
-#: pitivi/clip_properties/title.py:111 pitivi/clip_properties/title.py:118
+#. TODO: Remove when we upgrade pylint https://github.com/PyCQA/pylint/issues/4962
+#. pylint: disable=superfluous-parens
+#: pitivi/clip_properties/title.py:122 pitivi/clip_properties/title.py:129
 msgid "Absolute"
 msgstr "独立的"
 
-#: pitivi/clip_properties/title.py:112
+#: pitivi/clip_properties/title.py:123
 msgid "Top"
 msgstr "顶部"
 
-#: pitivi/clip_properties/title.py:113 pitivi/clip_properties/title.py:120
+#: pitivi/clip_properties/title.py:124 pitivi/clip_properties/title.py:131
 msgid "Center"
 msgstr "中心"
 
-#: pitivi/clip_properties/title.py:114
+#: pitivi/clip_properties/title.py:125
 msgid "Bottom"
 msgstr "底部"
 
-#: pitivi/clip_properties/title.py:115
+#: pitivi/clip_properties/title.py:126
 msgid "Baseline"
 msgstr "基线"
 
-#: pitivi/clip_properties/title.py:119
+#: pitivi/clip_properties/title.py:130
 msgid "Left"
 msgstr "左边"
 
-#: pitivi/clip_properties/title.py:121
+#: pitivi/clip_properties/title.py:132
 msgid "Right"
 msgstr "右边"
 
-#: pitivi/editorperspective.py:205 pitivi/medialibrary.py:621
+#: pitivi/dialogs/about.py:45
+#, python-format
+msgid "Version %s"
+msgstr "版本 %s"
+
+#: pitivi/dialogs/about.py:47
+#, python-format
+msgid "Version %(cur_ver)s — %(new_ver)s is available"
+msgstr "版本 %(cur_ver)s — %(new_ver)s 已可用"
+
+#: pitivi/dialogs/about.py:58
+msgid "Current maintainers:"
+msgstr "当前的维护者："
+
+#: pitivi/dialogs/about.py:63
+msgid "Past maintainers:"
+msgstr "曾经的维护者："
+
+#: pitivi/dialogs/about.py:69
+msgid "Contributors:"
+msgstr "贡献者："
+
+#. Translators: See
+#. https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
+#. for details on how this is used.
+#: pitivi/dialogs/about.py:76
+msgid "translator-credits"
+msgstr ""
+"Funda Wang <fundawang@linux.net.cn>, 2006.\n"
+"jiero <lililjlj@gmail.com>, 2010.\n"
+"Aron Xu <happyaron.xu@gmail.com>, 2010.\n"
+"YunQiang Su <wzssyqa@gmail.com>, 2010.\n"
+"Yinghua Wang <wantinghard@gmail.com>, 2010.\n"
+"lumingzh <lumingzh@qq.com>, 2016-2021\n"
+"王滋涵 Zephyr Wang <wi24rd@fedoraproject.org>, 2020."
+
+#: pitivi/dialogs/browseprojects.py:34
+msgid "Open Project…"
+msgstr "打开工程…"
+
+#: pitivi/dialogs/browseprojects.py:39 pitivi/dialogs/missingasset.py:47
+msgid "Open"
+msgstr "打开"
+
+#: pitivi/dialogs/browseprojects.py:55
+msgid "All supported formats"
+msgstr "所有支持格式"
+
+#: pitivi/dialogs/clipmediaprops.py:102
+msgid "Variable"
+msgstr "变量"
+
+#: pitivi/dialogs/clipmediaprops.py:128
+msgid "Image:"
+msgstr "图像："
+
+#: pitivi/dialogs/filelisterrordialog.py:52
+msgid "Unknown reason"
+msgstr "未知原因"
+
+#: pitivi/dialogs/filelisterrordialog.py:85
+msgid "Problem:"
+msgstr "问题："
+
+#: pitivi/dialogs/filelisterrordialog.py:93
+msgid "Extra information:"
+msgstr "额外信息："
+
+#: pitivi/dialogs/missingasset.py:44
+msgid "Locate missing file..."
+msgstr "定位缺失文件…"
+
+#: pitivi/dialogs/missingasset.py:58
+msgid "The following file could not be found:"
+msgstr "无法找到以下文件："
+
+#: pitivi/dialogs/missingasset.py:82
+msgid "Please specify its new location:"
+msgstr "请指定新位置："
+
+#. Translators: this is a format filter in a filechooser. Ex: "AVI files"
+#: pitivi/dialogs/missingasset.py:113
+#, python-format
+msgid "%s files"
+msgstr "%s 文件"
+
+#: pitivi/dialogs/missingasset.py:117 pitivi/medialibrary.py:884
+msgid "All files"
+msgstr "所有文件"
+
+#: pitivi/dialogs/prefs.py:61 pitivi/timeline/timeline.py:1745
+msgid "Timeline"
+msgstr "时间轴"
+
+#: pitivi/dialogs/prefs.py:62
+msgid "Plugins"
+msgstr "插件"
+
+#: pitivi/dialogs/prefs.py:63
+msgid "Shortcuts"
+msgstr "快捷键"
+
+#: pitivi/dialogs/prefs.py:64
+msgid "Proxies"
+msgstr "代理"
+
+#: pitivi/dialogs/prefs.py:65
+msgid "Other"
+msgstr "其它"
+
+#: pitivi/dialogs/prefs.py:332
+msgid ""
+"This resolution will be used as the default target resolution for new "
+"projects and projects missing scaled proxy meta-data."
+msgstr "该分辨率将作为新工程和缺少缩放的代理元数据的工程的默认目标分辨率使用。"
+
+#: pitivi/dialogs/prefs.py:345
+msgid "Initial proxy size for new projects"
+msgstr "用于新工程的初始代理大小"
+
+#: pitivi/dialogs/prefs.py:380
+#, python-format
+msgid "Proxy resolution for the current project is %d×%d px"
+msgstr "用于当前工程的代理分辨率为 %d×%d 像素"
+
+#: pitivi/dialogs/prefs.py:459
+msgid "Reset the shortcut to the default accelerator"
+msgstr "将此快捷键重置为默认加速器"
+
+#: pitivi/dialogs/prefs.py:616
+msgid "Set Shortcut"
+msgstr "设置快捷键"
+
+#. Setup the widgets used in the dialog.
+#: pitivi/dialogs/prefs.py:631
+msgid "Apply"
+msgstr "应用"
+
+#: pitivi/dialogs/prefs.py:634
+msgid "Apply the accelerator to this shortcut."
+msgstr "为此快捷键应用此加速器。"
+
+#: pitivi/dialogs/prefs.py:637
+msgid "Replace"
+msgstr "覆盖"
+
+#: pitivi/dialogs/prefs.py:640
+msgid ""
+"Remove this accelerator from where it was used previously and set it for "
+"this shortcut."
+msgstr "从之前使用此加速器的地方移除此加速器并设置到这个快捷键上。"
+
+#: pitivi/dialogs/prefs.py:647
+#, python-format
+msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
+msgstr "为 <b>%s</b> 输入新的快捷键，或按 ESC 取消。"
+
+#: pitivi/dialogs/prefs.py:656
+msgid ""
+"The accelerator you are trying to set might interfere with typing. Try using "
+"Control, Shift or Alt with some other key, please."
+msgstr ""
+"您正在设置的加速器可能会干扰打字。请尝试 CTRL、Shift 或 Alt 与其他按键配合使"
+"用。"
+
+#: pitivi/dialogs/prefs.py:690
+#, python-format
+msgid ""
+"This key combination is already used by <b>%s</b>. Press Replace to use it "
+"for <b>%s</b> instead."
+msgstr "此键已经绑定到了 <b>%s</b>。按“覆盖”来为 <b>%s</b> 使用此快捷键。"
+
+#: pitivi/dialogs/prefs.py:737
+msgid "No description available."
+msgstr "没有适用的描述。"
+
+#: pitivi/dialogs/prefs.py:828
+#, python-brace-format
+msgid "Unable to load the plugin '{module_name}'"
+msgstr "无法加载插件 '{module_name}'"
+
+#. We could use Gtk.ListBox.set_placeholder, but it
+#. appears bad inside the list widget.
+#: pitivi/dialogs/prefs.py:912
+msgid "No plugins available"
+msgstr "没有可用插件"
+
+#: pitivi/dialogs/prefs.py:925
+#, python-brace-format
+msgid ""
+"You can create <a href='{doc_url}'>plugins</a> into your <a "
+"href='{dir_url}'>plugins directory</a>."
+msgstr ""
+"您可以创建 <a href='{doc_url}'>插件</a> 至您的 <a href='{dir_url}'>插件文件夹"
+"</a>。"
+
+#: pitivi/editorperspective.py:205 pitivi/medialibrary.py:623
 msgid "Media Library"
 msgstr "媒体库"
 
@@ -1165,10 +1407,6 @@ msgstr "预览"
 msgid "Colors"
 msgstr "颜色"
 
-#: pitivi/effects.py:77
-msgid "Compositing"
-msgstr "合成"
-
 #: pitivi/effects.py:84
 msgid "Noise & blur"
 msgstr "噪点和模糊"
@@ -1286,23 +1524,23 @@ msgstr "暗色主题"
 msgid "Whether or not to use a dark theme."
 msgstr "是否使用暗色主题。"
 
-#: pitivi/mainwindow.py:188
+#: pitivi/mainwindow.py:189
 msgid "Project"
 msgstr "工程"
 
-#: pitivi/mainwindow.py:195
+#: pitivi/mainwindow.py:196
 msgid "Help"
 msgstr "帮助"
 
-#: pitivi/mainwindow.py:202
+#: pitivi/mainwindow.py:203
 msgid "About"
 msgstr "关于"
 
-#: pitivi/mainwindow.py:209
+#: pitivi/mainwindow.py:210
 msgid "Show the menu button content"
 msgstr "显示菜单按钮内容"
 
-#: pitivi/mainwindow.py:261
+#: pitivi/mainwindow.py:262
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "无法无法载入工程“%s”"
@@ -1326,7 +1564,7 @@ msgstr "<b>分辨率</b>：%d×%d"
 msgid "<b>Duration</b>: %s"
 msgstr "<b>持续时间</b>：%s"
 
-#: pitivi/mediafilespreviewer.py:461 pitivi/medialibrary.py:1205
+#: pitivi/mediafilespreviewer.py:461 pitivi/medialibrary.py:1207
 msgid "Error while analyzing a file"
 msgid_plural "Error while analyzing files"
 msgstr[0] "分析文件时出错"
@@ -1357,33 +1595,29 @@ msgstr "全部"
 msgid "Scale assets larger than %s×%s px."
 msgstr "缩放大于 %s×%s 像素的素材。"
 
-#: pitivi/medialibrary.py:522 pitivi/medialibrary.py:1082
+#: pitivi/medialibrary.py:524 pitivi/medialibrary.py:1084
 msgid "Unknown"
 msgstr "未知"
 
-#: pitivi/medialibrary.py:628
+#: pitivi/medialibrary.py:630
 msgid "Remove the selected assets"
 msgstr "为选择的素材使用代理"
 
-#: pitivi/medialibrary.py:635
+#: pitivi/medialibrary.py:637
 msgid "Insert selected assets at the end of the timeline"
 msgstr "将选择的素材插入到时间轴结尾"
 
-#: pitivi/medialibrary.py:851
+#: pitivi/medialibrary.py:853
 msgid "Select One or More Files"
 msgstr "选择一个或更多文件"
 
-#: pitivi/medialibrary.py:855 pitivi/medialibrary.py:1279
+#: pitivi/medialibrary.py:857 pitivi/medialibrary.py:1281
 msgid "Add"
 msgstr "添加"
 
-#: pitivi/medialibrary.py:870 pitivi/render.py:1491
+#: pitivi/medialibrary.py:872 pitivi/render.py:1491
 msgid "Supported file formats"
 msgstr "支持的文件格式"
-
-#: pitivi/medialibrary.py:882 pitivi/dialogs/missingasset.py:117
-msgid "All files"
-msgstr "所有文件"
 
 #. Translators: this string indicates the estimated time
 #. remaining until an action (such as rendering) completes.
@@ -1391,77 +1625,77 @@ msgstr "所有文件"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals)
-#: pitivi/medialibrary.py:988
+#: pitivi/medialibrary.py:990
 #, python-format
 msgid "Transcoding %d asset: %d%% (About %s left)"
 msgid_plural "Transcoding %d assets: %d%% (About %s left)"
 msgstr[0] "转码 %d 素材：%d%%（大约剩余 %s）"
 
-#: pitivi/medialibrary.py:1094
+#: pitivi/medialibrary.py:1096
 msgid "View error"
 msgid_plural "View errors"
 msgstr[0] "查看错误"
 
 #. Translators: {0:d} is just like %d (integer number variable)
-#: pitivi/medialibrary.py:1096
+#: pitivi/medialibrary.py:1098
 #, python-brace-format
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
 msgstr[0] "导入时发生了 {0:d} 个错误。"
 
-#: pitivi/medialibrary.py:1112
+#: pitivi/medialibrary.py:1114
 #, python-format
 msgid "The project settings have been set to match file '%s'"
 msgstr "工程设置已被设定以适配文件“%s”"
 
-#: pitivi/medialibrary.py:1208
+#: pitivi/medialibrary.py:1210
 msgid "The following file can not be used with Pitivi."
 msgid_plural "The following files can not be used with Pitivi."
 msgstr[0] "以下文件不能用于 Pitivi。"
 
-#: pitivi/medialibrary.py:1238
+#: pitivi/medialibrary.py:1240
 msgid "Tag as:"
 msgstr "标签："
 
-#: pitivi/medialibrary.py:1276
+#: pitivi/medialibrary.py:1278
 msgid "Enter tag"
 msgstr "键入标签"
 
-#: pitivi/medialibrary.py:1435
+#: pitivi/medialibrary.py:1438
 msgid "Open containing folder"
 msgstr "打开所在文件夹"
 
-#: pitivi/medialibrary.py:1442
+#: pitivi/medialibrary.py:1445
 msgid "Edit"
 msgstr "编辑"
 
-#: pitivi/medialibrary.py:1471
+#: pitivi/medialibrary.py:1474
 msgid "Do not use Optimised Proxy for selected asset"
 msgid_plural "Do not use Optimised Proxies for selected assets"
 msgstr[0] "不要为选择的素材使用优化的代理"
 
-#: pitivi/medialibrary.py:1482 pitivi/medialibrary.py:1504
-#: pitivi/medialibrary.py:1526
+#: pitivi/medialibrary.py:1485 pitivi/medialibrary.py:1507
+#: pitivi/medialibrary.py:1529
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
 msgstr[0] "删除对应的代理文件"
 
-#: pitivi/medialibrary.py:1493
+#: pitivi/medialibrary.py:1496
 msgid "Do not use Proxy for selected asset"
 msgid_plural "Do not use Proxies for selected assets"
 msgstr[0] "不要为选择的素材使用代理"
 
-#: pitivi/medialibrary.py:1515
+#: pitivi/medialibrary.py:1518
 msgid "Do not use Scaled Proxy for selected asset"
 msgid_plural "Do not use Scaled Proxies for selected assets"
 msgstr[0] "不要为选择的素材使用缩放的代理"
 
-#: pitivi/medialibrary.py:1537
+#: pitivi/medialibrary.py:1540
 msgid "Use Optimised Proxy for selected asset"
 msgid_plural "Use Optimised Proxies for selected assets"
 msgstr[0] "为选择的素材使用优化的代理"
 
-#: pitivi/medialibrary.py:1547
+#: pitivi/medialibrary.py:1550
 msgid "Use Scaled Proxy for selected asset"
 msgid_plural "Use Scaled Proxies for selected assets"
 msgstr[0] "为选择的素材使用缩放的代理"
@@ -1672,126 +1906,10 @@ msgstr "渲染完成"
 msgid "\"%s\" has finished rendering."
 msgstr "“%s”已完成渲染。"
 
-#: pitivi/transitions.py:82
-msgid "Normal"
-msgstr "正常"
-
-#: pitivi/transitions.py:87
-msgid "Loop"
-msgstr "循环"
-
-#: pitivi/transitions.py:94
-msgid "Reverse direction"
-msgstr "变换方向"
-
-#: pitivi/transitions.py:107
-msgid ""
-"Create a transition by overlapping two adjacent clips on the same layer. "
-"Click the transition on the timeline to change the transition type."
-msgstr ""
-"通过将两个相邻片段在相同图层上交叠来创建一个过渡。点击时间轴上的过渡来改变过"
-"渡类型。"
-
-#: pitivi/transitions.py:229
-msgid "Slow"
-msgstr "慢"
-
-#: pitivi/transitions.py:231
-msgid "Fast"
-msgstr "快"
-
-#: pitivi/transitions.py:233
-msgid "Epileptic"
-msgstr "抖动"
-
-#: pitivi/transitions.py:237
-msgid "Sharp"
-msgstr "锐利"
-
-#: pitivi/transitions.py:239
-msgid "Smooth"
-msgstr "顺滑"
-
-#: pitivi/viewer/guidelines.py:59
-msgid "3 by 3"
-msgstr "3/3"
-
-#: pitivi/viewer/guidelines.py:60
-msgid "Vertical/Horizontal"
-msgstr "垂直／水平"
-
-#: pitivi/viewer/guidelines.py:61
-msgid "Diagonals"
-msgstr "对角线"
-
-#: pitivi/viewer/guidelines.py:92
-msgid "Composition Guidelines"
-msgstr "构图准则"
-
-#: pitivi/viewer/viewer.py:77
-msgid "Currently playing"
-msgstr "当前播放中"
-
-#: pitivi/viewer/viewer.py:252
-msgid "Select composition guidelines"
-msgstr "选择构图准则"
-
-#: pitivi/viewer/viewer.py:260
-msgid "Go to the beginning of the timeline"
-msgstr "跳到时间轴开始"
-
-#: pitivi/viewer/viewer.py:269
-msgid "Go back one second"
-msgstr "后退一秒"
-
-#: pitivi/viewer/viewer.py:282
-msgid "Go forward one second"
-msgstr "前进一秒"
-
-#: pitivi/viewer/viewer.py:291
-msgid "Go to the end of the timeline"
-msgstr "跳到时间轴结尾"
-
-#: pitivi/viewer/viewer.py:298
-msgid ""
-"Enter a timecode or frame number\n"
-"and press \"Enter\" to go to that position"
-msgstr ""
-"输入一个时间码或帧号码\n"
-"并且按下“回车键”跳至那个位置"
-
-#: pitivi/viewer/viewer.py:309
-msgid ""
-"Detach the viewer\n"
-"You can re-attach it by closing the newly created window."
-msgstr ""
-"分离查看器\n"
-"您可以通过关闭新建窗口重新固定它。"
-
-#: pitivi/viewer/viewer.py:336
-msgid "Viewer"
-msgstr "查看器"
-
-#: pitivi/viewer/viewer.py:344
-msgid "Toggle the currently selected composition guidelines"
-msgstr "切换当前选择的构图准则"
-
-#: pitivi/viewer/viewer.py:352
-msgid "Toggle safe areas on viewer"
-msgstr "切换查看器上的安全区域"
-
-#: pitivi/viewer/viewer.py:478 pitivi/viewer/viewer.py:536
-msgid "Show this window in fullscreen"
-msgstr "全屏显示该窗口"
-
-#: pitivi/viewer/viewer.py:533
-msgid "Exit fullscreen mode"
-msgstr "退出全屏模式"
-
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:444
+#: pitivi/timeline/elements.py:451
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1802,12 +1920,12 @@ msgstr ""
 "时间戳：%s\n"
 "数值：%s"
 
-#: pitivi/timeline/elements.py:632
+#: pitivi/timeline/elements.py:639
 #, python-format
 msgid "Timestamp: %s"
 msgstr "时间戳：%s"
 
-#: pitivi/timeline/elements.py:1592
+#: pitivi/timeline/elements.py:1605
 msgid "Audio crossfade"
 msgstr "音频淡入淡出"
 
@@ -1836,7 +1954,7 @@ msgstr "删除该层面"
 msgid "Layer %d"
 msgstr "层面 %d"
 
-#: pitivi/timeline/ruler.py:233
+#: pitivi/timeline/ruler.py:232
 #, python-format
 msgid "Frame #%d"
 msgstr "帧 #%d"
@@ -1878,321 +1996,179 @@ msgstr "左键点击也会查找"
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr "左键点击除了选择和编辑片段外是否也会查找。"
 
-#: pitivi/timeline/timeline.py:356 pitivi/timeline/timeline.py:1790
+#: pitivi/timeline/timeline.py:356 pitivi/timeline/timeline.py:1809
 msgid "Add layer"
 msgstr "添加图层"
 
-#: pitivi/timeline/timeline.py:1733 pitivi/dialogs/prefs.py:60
-msgid "Timeline"
-msgstr "时间轴"
-
-#: pitivi/timeline/timeline.py:1740
+#: pitivi/timeline/timeline.py:1752
 msgid "Action Search"
 msgstr "动作搜索"
 
-#: pitivi/timeline/timeline.py:1748
+#: pitivi/timeline/timeline.py:1760
 msgid "Delete selected clips"
 msgstr "删除选定的片段"
 
-#: pitivi/timeline/timeline.py:1755
+#: pitivi/timeline/timeline.py:1767
 msgid "Delete selected clips and shift following ones"
 msgstr "删除选定的片段并平移跟随的片段"
 
-#: pitivi/timeline/timeline.py:1762
+#: pitivi/timeline/timeline.py:1774
 msgid "Group selected clips together"
 msgstr "将选定的片段编组"
 
-#: pitivi/timeline/timeline.py:1769
+#: pitivi/timeline/timeline.py:1781
 msgid "Ungroup selected clips"
 msgstr "解除编组的片段"
 
-#: pitivi/timeline/timeline.py:1776
-msgid "Copy selected clips"
-msgstr "删除选定的片段"
+#: pitivi/timeline/timeline.py:1788
+msgid "Cut selected clips"
+msgstr "剪切选定的片段"
 
-#: pitivi/timeline/timeline.py:1783
+#: pitivi/timeline/timeline.py:1795
+msgid "Copy selected clips"
+msgstr "复制选定的片段"
+
+#: pitivi/timeline/timeline.py:1802
 msgid "Paste selected clips"
 msgstr "粘贴选定的片段"
 
-#: pitivi/timeline/timeline.py:1797
+#: pitivi/timeline/timeline.py:1816
 msgid "Seek to the first clip edge after the playhead"
 msgstr "寻找至播放头之后的第一个片段边缘"
 
-#: pitivi/timeline/timeline.py:1804
+#: pitivi/timeline/timeline.py:1823
 msgid "Seek to the first clip edge before the playhead"
 msgstr "寻找至播放头之前的第一个片段边缘"
 
-#: pitivi/timeline/timeline.py:1811
+#: pitivi/timeline/timeline.py:1830
 msgid "Shift selected clips one frame forward"
 msgstr "将选中片段向前偏移一帧"
 
-#: pitivi/timeline/timeline.py:1818
+#: pitivi/timeline/timeline.py:1837
 msgid "Shift selected clips one frame backward"
 msgstr "将选中片段向后偏移一帧"
 
-#: pitivi/timeline/timeline.py:1825
+#: pitivi/timeline/timeline.py:1844
 msgid "Snap selected clips to the next clip"
 msgstr "将选中片段吸附至后一片段"
 
-#: pitivi/timeline/timeline.py:1832
+#: pitivi/timeline/timeline.py:1851
 msgid "Snap selected clips to the previous clip"
 msgstr "将选中片段吸附至前一片段"
 
-#: pitivi/timeline/timeline.py:1839
+#: pitivi/timeline/timeline.py:1858
 msgid "Add an effect to the selected clip"
 msgstr "对选中片段添加特效"
 
-#: pitivi/timeline/timeline.py:1852
+#: pitivi/timeline/timeline.py:1871
 msgid "Split the clip at the position"
 msgstr "在此位置分割片段"
 
-#: pitivi/timeline/timeline.py:1859
+#: pitivi/timeline/timeline.py:1878
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "在所选片段的关键帧曲线处增加关键帧"
 
-#: pitivi/timeline/timeline.py:1864
+#: pitivi/timeline/timeline.py:1883
 msgid "Timeline Navigation"
 msgstr "时间轴导航"
 
-#: pitivi/timeline/timeline.py:1872
+#: pitivi/timeline/timeline.py:1891
 msgid "Zoom in"
 msgstr "放大"
 
-#: pitivi/timeline/timeline.py:1880
+#: pitivi/timeline/timeline.py:1899
 msgid "Zoom out"
 msgstr "缩小"
 
-#: pitivi/timeline/timeline.py:1888
+#: pitivi/timeline/timeline.py:1907
 msgid "Adjust zoom to fit the project to the window"
 msgstr "调整缩放使工程适应窗口"
 
-#: pitivi/timeline/timeline.py:1901
+#: pitivi/timeline/timeline.py:1920
 msgid "Seek backward one frame"
 msgstr "向后查找一帧"
 
-#: pitivi/timeline/timeline.py:1908
+#: pitivi/timeline/timeline.py:1927
 msgid "Seek forward one frame"
 msgstr "向前查找一帧"
 
-#: pitivi/timeline/timeline.py:1916
+#: pitivi/timeline/timeline.py:1935
 msgid "Seek backward one second"
 msgstr "向后查找一秒"
 
-#: pitivi/timeline/timeline.py:1924
+#: pitivi/timeline/timeline.py:1943
 msgid "Seek forward one second"
 msgstr "向前查找一秒"
 
-#: pitivi/timeline/timeline.py:1932
+#: pitivi/timeline/timeline.py:1951
 msgid "Add a marker"
 msgstr "添加标记"
 
-#: pitivi/timeline/timeline.py:1939
+#: pitivi/timeline/timeline.py:1958
 msgid "Seek to the first marker before the playhead"
 msgstr "寻找至播放头之前的第一个标记"
 
-#: pitivi/timeline/timeline.py:1946
+#: pitivi/timeline/timeline.py:1965
 msgid "Seek to the first marker after the playhead"
 msgstr "寻找至播放头之后的第一个标记"
 
-#: pitivi/dialogs/about.py:45
-#, python-format
-msgid "Version %s"
-msgstr "版本 %s"
+#: pitivi/transitions.py:77
+msgid "Normal"
+msgstr "正常"
 
-#: pitivi/dialogs/about.py:47
-#, python-format
-msgid "Version %(cur_ver)s — %(new_ver)s is available"
-msgstr "版本 %(cur_ver)s — %(new_ver)s 已可用"
+#: pitivi/transitions.py:82
+msgid "Loop"
+msgstr "循环"
 
-#: pitivi/dialogs/about.py:58
-msgid "Current maintainers:"
-msgstr "当前的维护者："
+#: pitivi/transitions.py:89
+msgid "Reverse direction"
+msgstr "变换方向"
 
-#: pitivi/dialogs/about.py:63
-msgid "Past maintainers:"
-msgstr "曾经的维护者："
-
-#: pitivi/dialogs/about.py:69
-msgid "Contributors:"
-msgstr "贡献者："
-
-#. Translators: See
-#. https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
-#. for details on how this is used.
-#: pitivi/dialogs/about.py:76
-msgid "translator-credits"
+#: pitivi/transitions.py:102
+msgid ""
+"Create a transition by overlapping two adjacent clips on the same layer. "
+"Click the transition on the timeline to change the transition type."
 msgstr ""
-"Funda Wang <fundawang@linux.net.cn>, 2006.\n"
-"jiero <lililjlj@gmail.com>, 2010.\n"
-"Aron Xu <happyaron.xu@gmail.com>, 2010.\n"
-"YunQiang Su <wzssyqa@gmail.com>, 2010.\n"
-"Yinghua Wang <wantinghard@gmail.com>, 2010.\n"
-"lumingzh <lumingzh@qq.com>, 2016-2021\n"
-"王滋涵 Zephyr Wang <wi24rd@fedoraproject.org>, 2020."
+"通过将两个相邻片段在相同图层上交叠来创建一个过渡。点击时间轴上的过渡来改变过"
+"渡类型。"
 
-#: pitivi/dialogs/browseprojects.py:34
-msgid "Open Project…"
-msgstr "打开工程…"
+#: pitivi/transitions.py:225
+msgid "Slow"
+msgstr "慢"
 
-#: pitivi/dialogs/browseprojects.py:39 pitivi/dialogs/missingasset.py:47
-msgid "Open"
-msgstr "打开"
+#: pitivi/transitions.py:227
+msgid "Fast"
+msgstr "快"
 
-#: pitivi/dialogs/browseprojects.py:55
-msgid "All supported formats"
-msgstr "所有支持格式"
+#: pitivi/transitions.py:229
+msgid "Epileptic"
+msgstr "抖动"
 
-#: pitivi/dialogs/clipmediaprops.py:102
-msgid "Variable"
-msgstr "变量"
+#: pitivi/transitions.py:233
+msgid "Sharp"
+msgstr "锐利"
 
-#: pitivi/dialogs/clipmediaprops.py:128
-msgid "Image:"
-msgstr "图像："
+#: pitivi/transitions.py:235
+msgid "Smooth"
+msgstr "顺滑"
 
-#: pitivi/dialogs/filelisterrordialog.py:52
-msgid "Unknown reason"
-msgstr "未知原因"
-
-#: pitivi/dialogs/filelisterrordialog.py:85
-msgid "Problem:"
-msgstr "问题："
-
-#: pitivi/dialogs/filelisterrordialog.py:93
-msgid "Extra information:"
-msgstr "额外信息："
-
-#: pitivi/dialogs/missingasset.py:44
-msgid "Locate missing file..."
-msgstr "定位缺失文件…"
-
-#: pitivi/dialogs/missingasset.py:58
-msgid "The following file could not be found:"
-msgstr "无法找到以下文件："
-
-#: pitivi/dialogs/missingasset.py:82
-msgid "Please specify its new location:"
-msgstr "请指定新位置："
-
-#. Translators: this is a format filter in a filechooser. Ex: "AVI files"
-#: pitivi/dialogs/missingasset.py:113
-#, python-format
-msgid "%s files"
-msgstr "%s 文件"
-
-#: pitivi/dialogs/prefs.py:61
-msgid "Plugins"
-msgstr "插件"
-
-#: pitivi/dialogs/prefs.py:62
-msgid "Shortcuts"
-msgstr "快捷键"
-
-#: pitivi/dialogs/prefs.py:63
-msgid "Proxies"
-msgstr "代理"
-
-#: pitivi/dialogs/prefs.py:64
-msgid "Other"
-msgstr "其它"
-
-#: pitivi/dialogs/prefs.py:331
-msgid ""
-"This resolution will be used as the default target resolution for new "
-"projects and projects missing scaled proxy meta-data."
-msgstr "该分辨率将作为新工程和缺少缩放的代理元数据的工程的默认目标分辨率使用。"
-
-#: pitivi/dialogs/prefs.py:344
-msgid "Initial proxy size for new projects"
-msgstr "用于新工程的初始代理大小"
-
-#: pitivi/dialogs/prefs.py:379
-#, python-format
-msgid "Proxy resolution for the current project is %d×%d px"
-msgstr "用于当前工程的代理分辨率为 %d×%d 像素"
-
-#: pitivi/dialogs/prefs.py:458
-msgid "Reset the shortcut to the default accelerator"
-msgstr "将此快捷键重置为默认加速器"
-
-#: pitivi/dialogs/prefs.py:615
-msgid "Set Shortcut"
-msgstr "设置快捷键"
-
-#. Setup the widgets used in the dialog.
-#: pitivi/dialogs/prefs.py:630
-msgid "Apply"
-msgstr "应用"
-
-#: pitivi/dialogs/prefs.py:633
-msgid "Apply the accelerator to this shortcut."
-msgstr "为此快捷键应用此加速器。"
-
-#: pitivi/dialogs/prefs.py:636
-msgid "Replace"
-msgstr "覆盖"
-
-#: pitivi/dialogs/prefs.py:639
-msgid ""
-"Remove this accelerator from where it was used previously and set it for "
-"this shortcut."
-msgstr "从之前使用此加速器的地方移除此加速器并设置到这个快捷键上。"
-
-#: pitivi/dialogs/prefs.py:646
-#, python-format
-msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
-msgstr "为 <b>%s</b> 输入新的快捷键，或按 ESC 取消。"
-
-#: pitivi/dialogs/prefs.py:655
-msgid ""
-"The accelerator you are trying to set might interfere with typing. Try using "
-"Control, Shift or Alt with some other key, please."
-msgstr ""
-"您正在设置的加速器可能会干扰打字。请尝试 CTRL、Shift 或 Alt 与其他按键配合使"
-"用。"
-
-#: pitivi/dialogs/prefs.py:689
-#, python-format
-msgid ""
-"This key combination is already used by <b>%s</b>. Press Replace to use it "
-"for <b>%s</b> instead."
-msgstr "此键已经绑定到了 <b>%s</b>。按“覆盖”来为 <b>%s</b> 使用此快捷键。"
-
-#: pitivi/dialogs/prefs.py:736
-msgid "No description available."
-msgstr "没有适用的描述。"
-
-#: pitivi/dialogs/prefs.py:827
-#, python-brace-format
-msgid "Unable to load the plugin '{module_name}'"
-msgstr "无法加载插件 '{module_name}'"
-
-#. We could use Gtk.ListBox.set_placeholder, but it
-#. appears bad inside the list widget.
-#: pitivi/dialogs/prefs.py:911
-msgid "No plugins available"
-msgstr "没有可用插件"
-
-#: pitivi/dialogs/prefs.py:924
-#, python-brace-format
-msgid ""
-"You can create <a href='{doc_url}'>plugins</a> into your <a "
-"href='{dir_url}'>plugins directory</a>."
-msgstr ""
-"您可以创建 <a href='{doc_url}'>插件</a> 至您的 <a href='{dir_url}'>插件文件夹"
-"</a>。"
-
-#: pitivi/utils/markers.py:33
+#. Translators: The list of markers created by the user.
+#: pitivi/utils/markers.py:34
 msgid "User markers"
 msgstr "用户标记"
 
-#: pitivi/utils/misc.py:278
+#. Translators: The list of markers representing detected audio beats.
+#: pitivi/utils/markers.py:36
+msgid "Beats"
+msgstr "节拍"
+
+#: pitivi/utils/misc.py:281
 msgid ""
 "Failed to open the user manual. Make sure to have either the `yelp` GNOME "
 "documentation viewer or a web browser installed"
 msgstr "打开用户手册失败。请确保已安装 “yelp” GNOME 文档查看器或网页浏览器"
 
-#: pitivi/utils/misc.py:287
+#: pitivi/utils/misc.py:290
 msgid ""
 "The system's locale that you are using is not UTF-8 capable. Unicode support "
 "is required for Python3 software like Pitivi. Please correct your system "
@@ -2202,7 +2178,7 @@ msgstr ""
 "该系统您使用的区域不兼容 UTF-8。Python3 软件如 Pitivi 需要 Unicode 支持。请更"
 "正您的系统设置；如果您尝试使用 Pitivi 和一个损坏的区域，怪异的BUG将会发生。"
 
-#: pitivi/utils/misc.py:297
+#: pitivi/utils/misc.py:300
 msgid "Error while decoding a string"
 msgstr "解码字符串时出错"
 
@@ -2363,6 +2339,82 @@ msgstr "%s 已显示"
 msgid "%d nanoseconds displayed, because we can"
 msgstr "%d 纳秒已显示，因为我们可以"
 
+#: pitivi/viewer/guidelines.py:59
+msgid "3 by 3"
+msgstr "3/3"
+
+#: pitivi/viewer/guidelines.py:60
+msgid "Vertical/Horizontal"
+msgstr "垂直／水平"
+
+#: pitivi/viewer/guidelines.py:61
+msgid "Diagonals"
+msgstr "对角线"
+
+#: pitivi/viewer/guidelines.py:92
+msgid "Composition Guidelines"
+msgstr "构图准则"
+
+#: pitivi/viewer/viewer.py:77
+msgid "Currently playing"
+msgstr "当前播放中"
+
+#: pitivi/viewer/viewer.py:252
+msgid "Select composition guidelines"
+msgstr "选择构图准则"
+
+#: pitivi/viewer/viewer.py:260
+msgid "Go to the beginning of the timeline"
+msgstr "跳到时间轴开始"
+
+#: pitivi/viewer/viewer.py:269
+msgid "Go back one second"
+msgstr "后退一秒"
+
+#: pitivi/viewer/viewer.py:282
+msgid "Go forward one second"
+msgstr "前进一秒"
+
+#: pitivi/viewer/viewer.py:291
+msgid "Go to the end of the timeline"
+msgstr "跳到时间轴结尾"
+
+#: pitivi/viewer/viewer.py:298
+msgid ""
+"Enter a timecode or frame number\n"
+"and press \"Enter\" to go to that position"
+msgstr ""
+"输入一个时间码或帧号码\n"
+"并且按下“回车键”跳至那个位置"
+
+#: pitivi/viewer/viewer.py:309
+msgid ""
+"Detach the viewer\n"
+"You can re-attach it by closing the newly created window."
+msgstr ""
+"分离查看器\n"
+"您可以通过关闭新建窗口重新固定它。"
+
+#: pitivi/viewer/viewer.py:336
+msgid "Viewer"
+msgstr "查看器"
+
+#: pitivi/viewer/viewer.py:344
+msgid "Toggle the currently selected composition guidelines"
+msgstr "切换当前选择的构图准则"
+
+#: pitivi/viewer/viewer.py:352
+msgid "Toggle safe areas on viewer"
+msgstr "切换查看器上的安全区域"
+
+#: pitivi/viewer/viewer.py:478 pitivi/viewer/viewer.py:536
+msgid "Show this window in fullscreen"
+msgstr "全屏显示该窗口"
+
+#: pitivi/viewer/viewer.py:533
+msgid "Exit fullscreen mode"
+msgstr "退出全屏模式"
+
 #: plugins/console/console.py:123
 msgid "Console"
 msgstr "控制台"
@@ -2403,6 +2455,9 @@ msgstr "输入“{help}(<command>)”获取更多信息。"
 msgid ""
 "Not possible to override {key}, because shortcuts commands are read-only."
 msgstr "无法覆盖 {key}，因为快捷键命令是只读的。"
+
+#~ msgid "No markers"
+#~ msgstr "无标记"
 
 #~ msgid "Folder:"
 #~ msgstr "文件夹："
