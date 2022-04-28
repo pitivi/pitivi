@@ -271,6 +271,11 @@ def setup_project_with_clips(assets_names: List[str]):
         @setup_project(assets_names)
         def wrapper(self):
             assets = self.app.project_manager.current_project.list_assets(GES.UriClip)
+
+            # Insert the assets in the same order that we got them.
+            assets_by_name = {os.path.basename(asset.get_id()): asset for asset in assets}
+            assets = [assets_by_name[name] for name in assets_names]
+
             self.timeline_container.insert_assets(assets, self.timeline.props.duration)
 
             func(self)

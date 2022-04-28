@@ -18,8 +18,6 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Tests for the pitivi.clipproperties module."""
 # pylint: disable=protected-access,no-self-use,import-outside-toplevel,no-member
-from unittest import skip
-
 from gi.repository import Gst
 
 from tests import common
@@ -94,7 +92,6 @@ class CompositingPropertiesTest(common.TestCase):
                                           [0, 1, 0.5, 1, 0],
                                           [0, 0.5 * Gst.SECOND, 0.6 * Gst.SECOND, clip.duration - 0.3 * Gst.SECOND, clip.duration])
 
-    @skip("flaky")
     @common.setup_project_with_clips(assets_names=["1sec_simpsons_trailer.mp4", "30fps_numeroted_frames_blue.webm"])
     @common.setup_clipproperties
     def test_adjustments_updated_when_switching_clips(self):
