@@ -19,9 +19,9 @@ from gi.repository import GES
 from gi.repository import GObject
 from gi.repository import Gst
 
+from pitivi.undo.markers import MetaContainerObserver
 from pitivi.undo.timeline import TimelineObserver
 from pitivi.undo.undo import Action
-from pitivi.undo.undo import MetaContainerObserver
 from pitivi.undo.undo import UndoableAction
 
 

@@ -15,11 +15,71 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Undo/redo logic for markers."""
+from typing import Dict
+
+from gi.repository import GES
+from gi.repository import GObject
 from gi.repository import Gst
 
-from pitivi.undo.undo import MetaContainerObserver
 from pitivi.undo.undo import UndoableAutomaticObjectAction
 from pitivi.utils.loggable import Loggable
+
+
+class MetaChangedAction(UndoableAutomaticObjectAction):
+
+    def __init__(self, meta_container, item, current_value, new_value):
+        UndoableAutomaticObjectAction.__init__(self, meta_container)
+        self.item = item
+        self.old_value = current_value
+        self.new_value = new_value
+
+    def __repr__(self):
+        return "<MetaChangedAction %s.%s: %s -> %s>" % (self.auto_object, self.item, self.old_value, self.new_value)
+
+    def do(self):
+        self.auto_object.set_meta(self.item, self.new_value)
+
+    def undo(self):
+        self.auto_object.set_meta(self.item, self.old_value)
+
+
+class MetaContainerObserver(GObject.Object):
+    """Monitor for MetaContainer changes.
+
+    Attributes:
+        meta_container (GES.MetaContainer): The object to be monitored.
+        action_log (UndoableActionLog): The action log where to report actions.
+    """
+
+    def __init__(self, meta_container: GES.MetaContainer, action_log):
+        self.meta_container: GES.MetaContainer = meta_container
+        self.action_log = action_log
+
+        self.metas = {}
+
+        self.marker_list_observers = {}
+
+        def set_meta(unused_meta_container, item, value):
+            self.__update_meta(item, value)
+        meta_container.foreach(set_meta)
+
+        meta_container.connect("notify-meta", self._notify_meta_cb)
+
+    def _notify_meta_cb(self, meta_container, item, value):
+        current_value = self.metas.get(item)
+        action = MetaChangedAction(meta_container, item, current_value, value)
+        self.__update_meta(item, value)
+        self.action_log.push(action)
+
+    def release(self):
+        self.meta_container.disconnect_by_func(self._notify_meta_cb)
+        self.meta_container = None
+
+    def __update_meta(self, item, value):
+        self.metas[item] = value
+        if isinstance(self.metas[item], GES.MarkerList):
+            observer = MarkerListObserver(self.metas[item], self.action_log)
+            self.marker_list_observers[self.metas[item]] = observer
 
 
 class MarkerListObserver(Loggable):
@@ -32,12 +92,12 @@ class MarkerListObserver(Loggable):
         action_log (UndoableActionLog): The action log where to report actions.
     """
 
-    def __init__(self, ges_marker_list, action_log):
+    def __init__(self, ges_marker_list: GES.MarkerList, action_log):
         Loggable.__init__(self)
 
         self.action_log = action_log
 
-        self.marker_observers = {}
+        self.marker_observers: Dict[GES.Marker, MetaContainerObserver] = {}
 
         ges_marker_list.connect("marker-added", self._marker_added_cb)
         ges_marker_list.connect("marker-removed", self._marker_removed_cb)

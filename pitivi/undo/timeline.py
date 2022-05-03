@@ -19,9 +19,9 @@ from gi.repository import GObject
 from gi.repository import Gst
 
 from pitivi.effects import PROPS_TO_IGNORE
+from pitivi.undo.markers import MetaContainerObserver
 from pitivi.undo.undo import FinalizingAction
 from pitivi.undo.undo import GObjectObserver
-from pitivi.undo.undo import MetaContainerObserver
 from pitivi.undo.undo import UndoableAction
 from pitivi.undo.undo import UndoableAutomaticObjectAction
 from pitivi.utils.loggable import Loggable
