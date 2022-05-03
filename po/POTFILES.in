@@ -12,6 +12,7 @@ data/ui/cliptransformation.ui
 data/ui/customwidgets/alpha.ui
 data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui
 data/ui/customwidgets/frei0r-filter-alphaspot.ui
+data/ui/customwidgets/pitivi:object_effect.ui
 data/ui/effectslibrary.ui
 data/ui/elementsettingsdialog.ui
 data/ui/filelisterrordialog.ui
@@ -24,6 +25,7 @@ data/ui/renderingdialog.ui
 data/ui/renderingprogress.ui
 data/ui/timelinetoolbar.ui
 data/ui/titleeditor.ui
+data/ui/trackerperspective.ui
 
 pitivi/action_search_bar.py
 pitivi/application.py
@@ -57,6 +59,7 @@ pitivi/timeline/layer.py
 pitivi/timeline/markers.py
 pitivi/timeline/ruler.py
 pitivi/timeline/timeline.py
+pitivi/trackerperspective.py
 pitivi/transitions.py
 pitivi/utils/markers.py
 pitivi/utils/misc.py
