@@ -20,6 +20,7 @@ import os
 import pwd
 import shutil
 import tarfile
+import tempfile
 import time
 import uuid
 from gettext import gettext as _
@@ -408,55 +409,48 @@ class ProjectManager(GObject.Object, Loggable):
         project_extension = asset.get_meta(GES.META_FORMATTER_EXTENSION)
         tmp_name = "%s.%s" % (project_name, project_extension)
 
-        directory = os.path.dirname(uri)
-        tmp_uri = os.path.join(directory, tmp_name)
-        # save_project updates the project URI... so we better back it up:
-        _old_uri = self.current_project.uri
-        self.save_project(tmp_uri)
-        self.current_project.uri = _old_uri
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_uri = Gst.filename_to_uri(os.path.join(tmp_dir, tmp_name))
+            # save_project updates the project URI... so we better back it up:
+            _old_uri = self.current_project.uri
+            self.save_project(tmp_uri)
+            self.current_project.uri = _old_uri
+            # create tar file
+            try:
+                with tarfile.open(path_from_uri(uri), mode="w") as tar:
+                    # top directory in tar-file
+                    top = "%s-export" % project_name
+                    # add temporary project file
+                    tar.add(path_from_uri(tmp_uri), os.path.join(top, tmp_name))
 
-        # create tar file
-        try:
-            with tarfile.open(path_from_uri(uri), mode="w") as tar:
-                # top directory in tar-file
-                top = "%s-export" % project_name
-                # add temporary project file
-                tar.add(path_from_uri(tmp_uri), os.path.join(top, tmp_name))
+                    # get common path
+                    sources = project.list_sources()
+                    if self._all_sources_in_homedir(sources):
+                        common = os.path.expanduser("~")
+                    else:
+                        common = "/"
 
-                # get common path
-                sources = project.list_sources()
-                if self._all_sources_in_homedir(sources):
-                    common = os.path.expanduser("~")
-                else:
-                    common = "/"
-
-                # add all sources
-                for source in sources:
-                    path = path_from_uri(source.get_id())
-                    tar.add(
-                        path, os.path.join(top, os.path.relpath(path, common)))
-                tar.close()
-        # This catches errors with tarring; the GUI already shows errors while
-        # saving projects (ex: permissions), so probably no GUI needed here.
-        # Keep the exception generic enough to catch programming errors:
-        except tarfile.TarError as e:
-            everything_ok = False
-            self.error(e)
-            tar_file = path_from_uri(uri)
-            if os.path.isfile(tar_file):
-                renamed = os.path.splitext(tar_file)[
-                    0] + " (CORRUPT)" + "." + project_extension + "_tar"
-                self.warning(
-                    'An error occurred, will save the tarball as "%s"', renamed)
-                os.rename(tar_file, renamed)
-        else:
-            everything_ok = True
-
-        # Ensure we remove the temporary project file no matter what:
-        try:
-            os.remove(path_from_uri(tmp_uri))
-        except OSError:
-            pass
+                    # add all sources
+                    for source in sources:
+                        path = path_from_uri(source.get_id())
+                        tar.add(
+                            path, os.path.join(top, os.path.relpath(path, common)))
+                    tar.close()
+            # This catches errors with tarring; the GUI already shows errors while
+            # saving projects (ex: permissions), so probably no GUI needed here.
+            # Keep the exception generic enough to catch programming errors:
+            except tarfile.TarError as e:
+                everything_ok = False
+                self.error(e)
+                tar_file = path_from_uri(uri)
+                if os.path.isfile(tar_file):
+                    renamed = os.path.splitext(tar_file)[
+                        0] + " (CORRUPT)" + "." + project_extension + "_tar"
+                    self.warning(
+                        'An error occurred, will save the tarball as "%s"', renamed)
+                    os.rename(tar_file, renamed)
+            else:
+                everything_ok = True
 
         return everything_ok
 
