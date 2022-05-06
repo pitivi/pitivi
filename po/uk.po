@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2022-05-03 11:50+0000\n"
-"PO-Revision-Date: 2022-05-03 20:48+0300\n"
+"POT-Creation-Date: 2022-05-06 00:41+0000\n"
+"PO-Revision-Date: 2022-05-06 18:31+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -137,25 +137,29 @@ msgstr "Виявляємо…"
 msgid "Pick the clip color"
 msgstr "Вибрати колір кліпу"
 
-#: data/ui/clipcompositing.ui:43
+#: data/ui/clipcompositing.ui:42
 msgid "Fade-in:"
 msgstr "Наростання:"
 
-#: data/ui/clipcompositing.ui:55 data/ui/clipcompositing.ui:123
+#: data/ui/clipcompositing.ui:54 data/ui/clipcompositing.ui:122
 msgid "seconds"
 msgstr "секунд"
 
-#: data/ui/clipcompositing.ui:98
+#: data/ui/clipcompositing.ui:97
 msgid "Fade-out:"
 msgstr "Згасання:"
 
-#: data/ui/clipcompositing.ui:151
+#: data/ui/clipcompositing.ui:150
 msgid "Reset fade-in"
 msgstr "Скинути наростання"
 
 #: data/ui/clipcompositing.ui:166
 msgid "Reset fade-out"
 msgstr "Скинути згасання"
+
+#: data/ui/clipcompositing.ui:181
+msgid "Blending:"
+msgstr "Змішування:"
 
 #: data/ui/clipmediaprops.ui:8
 msgid "Clip Properties"
@@ -335,7 +339,6 @@ msgid "max alpha"
 msgstr "макс. прозорість"
 
 #: data/ui/customwidgets/pitivi:object_effect.ui:19
-#| msgid "Color"
 msgid "Color:"
 msgstr "Колір:"
 
@@ -879,12 +882,10 @@ msgid "Drag&drop on the video to delimit an object to be tracked."
 msgstr "Перетягніть і скиньте на відео, щоб обмежити об'єкт для стеження."
 
 #: data/ui/trackerperspective.ui:288
-#| msgid "Seek backward one frame"
 msgid "Go back one frame"
 msgstr "Назад на один кадр"
 
 #: data/ui/trackerperspective.ui:318
-#| msgid "Seek forward one frame"
 msgid "Go forward one frame"
 msgstr "Вперед на один кадр"
 
@@ -953,7 +954,6 @@ msgstr ""
 #. Translators: %s is a Python module name or another OS component
 #: pitivi/check.py:224
 #, python-format
-#| msgid "- %s GStreamer plug-in not found on the system"
 msgid "- %s GStreamer element not found on the system"
 msgstr "- Елемент Gstreamer %s у системі не знайдено"
 
@@ -1035,7 +1035,7 @@ msgstr "вмикає можливість виявлення тактів"
 msgid "Title Clip"
 msgstr "Кліп з титрами"
 
-#: pitivi/clipproperties.py:161
+#: pitivi/clipproperties.py:162
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
@@ -1043,37 +1043,37 @@ msgstr ""
 "Позначте кліп на монтажному столі для налаштовування його властивостей та "
 "пов’язаних з ним ефектів або створіть кліп:"
 
-#: pitivi/clipproperties.py:167
+#: pitivi/clipproperties.py:168
 msgid "Create a title clip"
 msgstr "Створення кліпу субтитрів"
 
-#: pitivi/clipproperties.py:172
+#: pitivi/clipproperties.py:173
 msgid "Create a color clip"
 msgstr "Створити кольоровий кліп"
 
-#: pitivi/clipproperties.py:275 pitivi/effects.py:122
+#: pitivi/clipproperties.py:276 pitivi/effects.py:122
 msgid "Time"
 msgstr "Час"
 
-#: pitivi/clipproperties.py:318
+#: pitivi/clipproperties.py:319
 msgid "Speed"
 msgstr "Швидкість"
 
-#: pitivi/clipproperties.py:333 pitivi/utils/widgets.py:800
+#: pitivi/clipproperties.py:334 pitivi/utils/widgets.py:800
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: pitivi/clipproperties.py:336 pitivi/dialogs/prefs.py:286
+#: pitivi/clipproperties.py:337 pitivi/dialogs/prefs.py:286
 #: pitivi/utils/widgets.py:976
 msgid "Reset to default value"
 msgstr "Відновити типове значення"
 
-#: pitivi/clipproperties.py:571
+#: pitivi/clipproperties.py:572
 msgid "Effects"
 msgstr "Ефекти"
 
-#: pitivi/clipproperties.py:589
+#: pitivi/clipproperties.py:590
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
@@ -1081,27 +1081,27 @@ msgstr ""
 "Щоб застосувати ефект до кліпу, перетягніть пункт ефект з бібліотеки ефектів "
 "або скористайтеся розташованою нижче кнопкою."
 
-#: pitivi/clipproperties.py:597
+#: pitivi/clipproperties.py:598
 msgid "Add Effect"
 msgstr "Додати ефект"
 
-#: pitivi/clipproperties.py:607
+#: pitivi/clipproperties.py:608
 msgid "Cover Object"
 msgstr "Покрити об'єкт"
 
-#: pitivi/clipproperties.py:937
+#: pitivi/clipproperties.py:938
 msgid "Transformation"
 msgstr "Перетворення"
 
-#: pitivi/clipproperties.py:1066
+#: pitivi/clipproperties.py:1067
 msgid "Show keyframes"
 msgstr "Показати ключові кадри"
 
-#: pitivi/clipproperties.py:1069
+#: pitivi/clipproperties.py:1070
 msgid "Activate keyframes"
 msgstr "Задіяти ключові кадри"
 
-#: pitivi/clipproperties.py:1074
+#: pitivi/clipproperties.py:1075
 msgid "Hide keyframes"
 msgstr "Приховати ключові кадри"
 
@@ -1109,9 +1109,20 @@ msgstr "Приховати ключові кадри"
 msgid "Color"
 msgstr "Колір"
 
-#: pitivi/clip_properties/compositing.py:53 pitivi/effects.py:81
+#: pitivi/clip_properties/compositing.py:57 pitivi/effects.py:81
 msgid "Compositing"
 msgstr "Композиція"
+
+#. Translators: These are compositing operators.
+#. See https://www.cairographics.org/operators/ for explanation and
+#. visualizations.
+#: pitivi/clip_properties/compositing.py:80
+msgid "Source"
+msgstr "Джерело"
+
+#: pitivi/clip_properties/compositing.py:81
+msgid "Over"
+msgstr "Накладання"
 
 #: pitivi/clip_properties/markers.py:47
 msgid "Text"
@@ -2276,12 +2287,10 @@ msgid "Object {}"
 msgstr "Об'єкт {}"
 
 #: pitivi/trackerperspective.py:665
-#| msgid "Ignore backup"
 msgid "Go back"
 msgstr "Назад"
 
 #: pitivi/trackerperspective.py:739
-#| msgid "Project"
 msgid "Track objects"
 msgstr "Стежити за об'єктами"
 
