@@ -5,6 +5,7 @@ data/org.pitivi.Pitivi.appdata.xml.in
 data/org.pitivi.Pitivi.desktop.in
 data/ui/alignmentprogress.ui
 data/ui/beatdetection.ui
+data/ui/clipblending.ui
 data/ui/clipcolor.ui
 data/ui/clipcompositing.ui
 data/ui/clipmediaprops.ui
