@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2022-05-06 00:41+0000\n"
-"PO-Revision-Date: 2022-05-06 18:31+0300\n"
+"POT-Creation-Date: 2022-05-07 11:42+0000\n"
+"PO-Revision-Date: 2022-05-07 19:21+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -132,6 +132,11 @@ msgstr "Вилучити виявлені такти"
 #: data/ui/beatdetection.ui:66
 msgid "Detecting..."
 msgstr "Виявляємо…"
+
+#: data/ui/clipblending.ui:15
+#| msgid "Blending:"
+msgid "Blending Mode:"
+msgstr "Режим змішування:"
 
 #: data/ui/clipcolor.ui:21 data/ui/customwidgets/pitivi:object_effect.ui:37
 msgid "Pick the clip color"
@@ -1402,7 +1407,7 @@ msgstr "Скасувати"
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/editorperspective.py:323 pitivi/editorperspective.py:536
 #: pitivi/editorperspective.py:680 pitivi/editorperspective.py:728
-#: pitivi/editorperspective.py:781 pitivi/preset.py:113 pitivi/project.py:194
+#: pitivi/editorperspective.py:781 pitivi/preset.py:113 pitivi/project.py:195
 #: pitivi/render.py:226
 msgid "Save"
 msgstr "Зберегти"
@@ -1428,7 +1433,7 @@ msgstr "Короткі вступні зауваження щодо Pitivi"
 msgid "Unable to save project \"%s\""
 msgstr "Не вдалося зберегти проєкт «%s»"
 
-#: pitivi/editorperspective.py:538 pitivi/project.py:193
+#: pitivi/editorperspective.py:538 pitivi/project.py:194
 msgid "Save as..."
 msgstr "Зберегти як…"
 
@@ -1488,7 +1493,7 @@ msgid "Detect automatically"
 msgstr "Визначити автоматично"
 
 #: pitivi/editorperspective.py:737 pitivi/editorperspective.py:784
-#: pitivi/project.py:61 pitivi/render.py:821
+#: pitivi/project.py:62 pitivi/render.py:821
 msgid "Untitled"
 msgstr "Без назви"
 
@@ -1871,11 +1876,11 @@ msgstr "Новий шаблон %d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:177 pitivi/render.py:1320
+#: pitivi/project.py:178 pitivi/render.py:1320
 msgid "Sorry, something didn’t work right."
 msgstr "Вибачте, щось пішло не так."
 
-#: pitivi/project.py:180
+#: pitivi/project.py:181
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1903,11 +1908,11 @@ msgstr ""
 "Перш ніж закривати вікно Pitivi, ви можете зберегти зміни до наявного файла "
 "проєкту або записати їх до нового файла проєкту."
 
-#: pitivi/project.py:195
+#: pitivi/project.py:196
 msgid "Close Pitivi"
 msgstr "Закрити Pitivi"
 
-#: pitivi/project.py:265
+#: pitivi/project.py:266
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1917,15 +1922,15 @@ msgstr ""
 "Якщо ви хочете додати до вашого проєкту якийсь мультимедійний файл, краще "
 "скористайтеся кнопкою «Імпортувати»."
 
-#: pitivi/project.py:287
+#: pitivi/project.py:288
 msgid "Ignore backup"
 msgstr "Ігнорувати резервну копію"
 
-#: pitivi/project.py:289
+#: pitivi/project.py:290
 msgid "Restore from backup"
 msgstr "Відновлення з резервної копії"
 
-#: pitivi/project.py:300
+#: pitivi/project.py:301
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1938,16 +1943,16 @@ msgstr ""
 "\n"
 "Хочете завантажити автоматично збережену версію?"
 
-#: pitivi/project.py:373
+#: pitivi/project.py:374
 msgid "You do not have permissions to write to this folder."
 msgstr "У вас немає прав доступу для запису до цієї теки."
 
 #. Save the project to a temporary file.
-#: pitivi/project.py:406
+#: pitivi/project.py:407
 msgid "project"
 msgstr "проєкт"
 
-#: pitivi/project.py:706
+#: pitivi/project.py:700
 msgid "Pitivi encoding profile"
 msgstr "Профіль кодування Pitivi"
 
