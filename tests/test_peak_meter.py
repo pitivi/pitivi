@@ -117,3 +117,15 @@ class TestPeakMeter(common.TestCase):
         for peak in peaks:
             self.assertGreaterEqual(0, peak, peaks)
             self.assertGreaterEqual(peak, MIN_PEAK, peaks)
+
+    @common.setup_project(["tears_of_steel.webm"])
+    def test_peak_meter_channels_update(self):
+        """Checks that the peak meter channels updates correctly when audio channels changes."""
+        viewer = ViewerContainer(self.app)
+        viewer.set_project(self.project)
+
+        self.assertEqual(self.project.audiochannels, 1)
+        self.assertEqual(len(viewer.peak_meters), 1)
+
+        self.project.audiochannels = 6
+        self.assertEqual(len(viewer.peak_meters), 6)

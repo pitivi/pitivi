@@ -111,17 +111,21 @@ class ViewerContainer(Gtk.Box, Loggable):
     def _project_manager_project_closed_cb(self, unused_project_manager, project):
         if self.project == project:
             project.disconnect_by_func(self._project_video_size_changed_cb)
+            project.disconnect_by_func(self._project_audio_channels_changed_cb)
         self.project = None
 
     def _project_video_size_changed_cb(self, project):
         """Handles Project metadata changes."""
         self._reset_viewer_aspect_ratio(project)
-        self.__update_peak_meters(project)
 
     def _reset_viewer_aspect_ratio(self, project):
         """Resets the viewer aspect ratio."""
         self.target.update_aspect_ratio(project)
         self.timecode_entry.set_framerate(project.videorate)
+
+    def _project_audio_channels_changed_cb(self, project):
+        """Handles Project audio channels changes."""
+        self.__update_peak_meters(project)
 
     def __update_peak_meters(self, project):
         for peak_meter in self.peak_meters:
@@ -168,6 +172,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         project.pipeline.pause()
 
         project.connect("video-size-changed", self._project_video_size_changed_cb)
+        project.connect("audio-channels-changed", self._project_audio_channels_changed_cb)
 
     def __create_new_viewer(self):
         _, sink_widget = self.project.pipeline.create_sink()

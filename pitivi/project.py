@@ -636,6 +636,7 @@ class Project(Loggable, GES.Project):
         "settings-set-from-imported-asset": (GObject.SignalFlags.RUN_LAST, None,
                                              (GES.Asset,)),
         "video-size-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
+        "audio-channels-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
         "safe-area-size-changed": (GObject.SignalFlags.RUN_LAST, None, ())
     }
 
@@ -1002,6 +1003,7 @@ class Project(Loggable, GES.Project):
         """Updates the audio profile and the corresponding project settings."""
         res = Project._set_restriction(self.audio_profile, name, value)
         if res:
+            self.emit("audio-channels-changed")
             self._has_default_audio_settings = False
             self.update_restriction_caps()
         return res
