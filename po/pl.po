@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2022-05-03 11:50+0000\n"
-"PO-Revision-Date: 2022-05-03 14:12+0200\n"
+"POT-Creation-Date: 2022-05-07 22:53+0000\n"
+"PO-Revision-Date: 2022-05-08 11:25+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -140,25 +140,29 @@ msgstr "Wykrywanie…"
 msgid "Pick the clip color"
 msgstr "Wybierz kolor klipu"
 
-#: data/ui/clipcompositing.ui:43
+#: data/ui/clipcompositing.ui:42
 msgid "Fade-in:"
 msgstr "Pojawianie:"
 
-#: data/ui/clipcompositing.ui:55 data/ui/clipcompositing.ui:123
+#: data/ui/clipcompositing.ui:54 data/ui/clipcompositing.ui:122
 msgid "seconds"
 msgstr "s"
 
-#: data/ui/clipcompositing.ui:98
+#: data/ui/clipcompositing.ui:97
 msgid "Fade-out:"
 msgstr "Zanikanie:"
 
-#: data/ui/clipcompositing.ui:151
+#: data/ui/clipcompositing.ui:150
 msgid "Reset fade-in"
 msgstr "Przywraca pojawianie"
 
 #: data/ui/clipcompositing.ui:166
 msgid "Reset fade-out"
 msgstr "Przywraca zanikanie"
+
+#: data/ui/clipcompositing.ui:181
+msgid "Blending:"
+msgstr "Mieszanie:"
 
 #: data/ui/clipmediaprops.ui:8
 msgid "Clip Properties"
@@ -1029,7 +1033,7 @@ msgstr "włącza funkcjonalność wykrywania uderzeń"
 msgid "Title Clip"
 msgstr "Klip tytułowy"
 
-#: pitivi/clipproperties.py:161
+#: pitivi/clipproperties.py:162
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
@@ -1037,37 +1041,37 @@ msgstr ""
 "Proszę wybrać klip na osi czasu, aby skonfigurować jego właściwości i efekty "
 "lub utworzyć nowy klip:"
 
-#: pitivi/clipproperties.py:167
+#: pitivi/clipproperties.py:168
 msgid "Create a title clip"
 msgstr "Utwórz klip tytułowy"
 
-#: pitivi/clipproperties.py:172
+#: pitivi/clipproperties.py:173
 msgid "Create a color clip"
 msgstr "Utwórz klip kolorowy"
 
-#: pitivi/clipproperties.py:275 pitivi/effects.py:122
+#: pitivi/clipproperties.py:276 pitivi/effects.py:122
 msgid "Time"
 msgstr "Czas"
 
-#: pitivi/clipproperties.py:318
+#: pitivi/clipproperties.py:319
 msgid "Speed"
 msgstr "Prędkość"
 
-#: pitivi/clipproperties.py:333 pitivi/utils/widgets.py:800
+#: pitivi/clipproperties.py:334 pitivi/utils/widgets.py:800
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: pitivi/clipproperties.py:336 pitivi/dialogs/prefs.py:286
+#: pitivi/clipproperties.py:337 pitivi/dialogs/prefs.py:286
 #: pitivi/utils/widgets.py:976
 msgid "Reset to default value"
 msgstr "Przywraca domyślną wartość"
 
-#: pitivi/clipproperties.py:571
+#: pitivi/clipproperties.py:572
 msgid "Effects"
 msgstr "Efekty"
 
-#: pitivi/clipproperties.py:589
+#: pitivi/clipproperties.py:590
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
@@ -1075,27 +1079,27 @@ msgstr ""
 "Aby zastosować efekt na klipie, należy przeciągnąć go z kolekcji efektów lub "
 "kliknąć przycisk poniżej."
 
-#: pitivi/clipproperties.py:597
+#: pitivi/clipproperties.py:598
 msgid "Add Effect"
 msgstr "Dodaj efekt"
 
-#: pitivi/clipproperties.py:607
+#: pitivi/clipproperties.py:608
 msgid "Cover Object"
 msgstr "Przykryj obiekt"
 
-#: pitivi/clipproperties.py:937
+#: pitivi/clipproperties.py:938
 msgid "Transformation"
 msgstr "Przekształcenie"
 
-#: pitivi/clipproperties.py:1066
+#: pitivi/clipproperties.py:1067
 msgid "Show keyframes"
 msgstr "Wyświetla klatki kluczowe"
 
-#: pitivi/clipproperties.py:1069
+#: pitivi/clipproperties.py:1070
 msgid "Activate keyframes"
 msgstr "Aktywuje klatki kluczowe"
 
-#: pitivi/clipproperties.py:1074
+#: pitivi/clipproperties.py:1075
 msgid "Hide keyframes"
 msgstr "Ukrywa klatki kluczowe"
 
@@ -1103,9 +1107,20 @@ msgstr "Ukrywa klatki kluczowe"
 msgid "Color"
 msgstr "Kolor"
 
-#: pitivi/clip_properties/compositing.py:53 pitivi/effects.py:81
+#: pitivi/clip_properties/compositing.py:57 pitivi/effects.py:81
 msgid "Compositing"
 msgstr "Składanie"
+
+#. Translators: These are compositing operators.
+#. See https://www.cairographics.org/operators/ for explanation and
+#. visualizations.
+#: pitivi/clip_properties/compositing.py:80
+msgid "Source"
+msgstr "Źródło"
+
+#: pitivi/clip_properties/compositing.py:81
+msgid "Over"
+msgstr "Ponad"
 
 #: pitivi/clip_properties/markers.py:47
 msgid "Text"
@@ -1388,7 +1403,7 @@ msgstr "Cofnij"
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/editorperspective.py:323 pitivi/editorperspective.py:536
 #: pitivi/editorperspective.py:680 pitivi/editorperspective.py:728
-#: pitivi/editorperspective.py:781 pitivi/preset.py:113 pitivi/project.py:194
+#: pitivi/editorperspective.py:781 pitivi/preset.py:113 pitivi/project.py:195
 #: pitivi/render.py:226
 msgid "Save"
 msgstr "Zapisz"
@@ -1414,7 +1429,7 @@ msgstr "Szybkie wprowadzenia do programu Pitivi"
 msgid "Unable to save project \"%s\""
 msgstr "Nie można zapisać projektu „%s”"
 
-#: pitivi/editorperspective.py:538 pitivi/project.py:193
+#: pitivi/editorperspective.py:538 pitivi/project.py:194
 msgid "Save as..."
 msgstr "Zapisz jako…"
 
@@ -1475,7 +1490,7 @@ msgid "Detect automatically"
 msgstr "Wykrycie automatyczne"
 
 #: pitivi/editorperspective.py:737 pitivi/editorperspective.py:784
-#: pitivi/project.py:61 pitivi/render.py:821
+#: pitivi/project.py:62 pitivi/render.py:821
 msgid "Untitled"
 msgstr "Bez tytułu"
 
@@ -1848,11 +1863,11 @@ msgstr "%d. nowe ustawienie"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:177 pitivi/render.py:1320
+#: pitivi/project.py:178 pitivi/render.py:1320
 msgid "Sorry, something didn’t work right."
 msgstr "Coś nie zadziałało poprawnie."
 
-#: pitivi/project.py:180
+#: pitivi/project.py:181
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1878,11 +1893,11 @@ msgstr ""
 "Przed zamknięciem programu Pitivi można zapisać zmiany w istniejącym pliku "
 "projektu lub jako oddzielny plik projektu."
 
-#: pitivi/project.py:195
+#: pitivi/project.py:196
 msgid "Close Pitivi"
 msgstr "Zamknij program Pitivi"
 
-#: pitivi/project.py:265
+#: pitivi/project.py:266
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1892,15 +1907,15 @@ msgstr ""
 "próbowano dodać plik multimedialny do projektu, to należy zamiast tego użyć "
 "przycisku „Zaimportuj”."
 
-#: pitivi/project.py:287
+#: pitivi/project.py:288
 msgid "Ignore backup"
 msgstr "Zignoruj kopię zapasową"
 
-#: pitivi/project.py:289
+#: pitivi/project.py:290
 msgid "Restore from backup"
 msgstr "Przywróć z kopii zapasowej"
 
-#: pitivi/project.py:300
+#: pitivi/project.py:301
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1913,16 +1928,16 @@ msgstr ""
 "\n"
 "Wczytać kopię zapasową?"
 
-#: pitivi/project.py:373
+#: pitivi/project.py:374
 msgid "You do not have permissions to write to this folder."
 msgstr "Brak uprawnień do zapisu w tym katalogu."
 
 #. Save the project to a temporary file.
-#: pitivi/project.py:406
+#: pitivi/project.py:407
 msgid "project"
 msgstr "projekt"
 
-#: pitivi/project.py:706
+#: pitivi/project.py:700
 msgid "Pitivi encoding profile"
 msgstr "Profil kodowania Pitivi"
 
