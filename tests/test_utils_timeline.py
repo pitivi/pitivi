@@ -135,9 +135,9 @@ class TestEditingContext(common.TestCase):
 
     def test_with_video(self):
         """Checks the value of the with_video field."""
-        audio_clip = common.get_sample_clip("mp3_sample.mp3")
-        video_clip = common.get_sample_clip("one_fps_numeroted_blue.mkv")
-        audio_video_clip = common.get_sample_clip("tears_of_steel.webm")
+        audio_clip = GES.UriClipAsset.request_sync(common.get_sample_uri("mp3_sample.mp3")).extract()
+        video_clip = GES.UriClipAsset.request_sync(common.get_sample_uri("one_fps_numeroted_blue.mkv")).extract()
+        audio_video_clip = GES.UriClipAsset.request_sync(common.get_sample_uri("tears_of_steel.webm")).extract()
 
         # Add the clips to a layer so they have TrackElements.
         project = common.create_project()

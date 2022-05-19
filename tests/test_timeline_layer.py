@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
+# pylint: disable=protected-access
 from unittest import mock
 
 from gi.repository import GES
@@ -21,6 +22,7 @@ from gi.repository import GES
 from pitivi.timeline.layer import AUDIO_ICONS
 from pitivi.timeline.layer import Layer
 from pitivi.timeline.layer import VIDEO_ICONS
+from pitivi.utils.ui import LAYER_HEIGHT
 from tests import common
 
 
@@ -159,3 +161,56 @@ class TestLayer(common.TestCase):
         # height of layer.control_ui, which now it should not be set.
         self.assertFalse(hasattr(ges_layer, "control_ui"))
         unused_layer = Layer(ges_layer, timeline)
+
+    @common.setup_timeline
+    def test_layer_heights(self):
+        self.check_layer_height(GES.TrackType(0))
+
+        clip_video = GES.UriClipAsset.request_sync(common.get_sample_uri("one_fps_numeroted_blue.mkv")).extract()
+        self.timeline_container._insert_clips_and_assets([clip_video], 0, self.layer)
+        self.check_layer_height(GES.TrackType.VIDEO)
+
+        clip_audio = GES.UriClipAsset.request_sync(common.get_sample_uri("mp3_sample.mp3")).extract()
+        self.timeline_container._insert_clips_and_assets([clip_audio], 0, self.layer)
+        self.check_layer_height(GES.TrackType.AUDIO | GES.TrackType.VIDEO)
+
+        self.click_clip(clip_video, expect_selected=True)
+        self.timeline_container.delete_action.activate()
+        self.check_layer_height(GES.TrackType.AUDIO)
+
+        self.click_clip(clip_audio, expect_selected=True)
+        self.timeline_container.delete_action.activate()
+        self.check_layer_height(GES.TrackType(0))
+
+        # Undo everything.
+        self.action_log.undo()
+        self.check_layer_height(GES.TrackType.AUDIO)
+
+        self.action_log.undo()
+        self.check_layer_height(GES.TrackType.AUDIO | GES.TrackType.VIDEO)
+
+        self.action_log.undo()
+        self.check_layer_height(GES.TrackType.VIDEO)
+
+        self.action_log.undo()
+        self.check_layer_height(GES.TrackType(0))
+
+        # Redo everything.
+        self.action_log.redo()
+        self.check_layer_height(GES.TrackType.VIDEO)
+
+        self.action_log.redo()
+        self.check_layer_height(GES.TrackType.AUDIO | GES.TrackType.VIDEO)
+
+        self.action_log.redo()
+        self.check_layer_height(GES.TrackType.AUDIO)
+
+        self.action_log.redo()
+        self.check_layer_height(GES.TrackType(0))
+
+    def check_layer_height(self, expected_media_types: GES.TrackType):
+        self.assertEqual(self.timeline_container.timeline.media_types, expected_media_types)
+        if expected_media_types == GES.TrackType.AUDIO | GES.TrackType.VIDEO:
+            self.assertEqual(self.layer.ui.props.height_request, LAYER_HEIGHT)
+        else:
+            self.assertEqual(self.layer.ui.props.height_request, LAYER_HEIGHT // 2)

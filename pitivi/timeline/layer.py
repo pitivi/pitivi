@@ -270,7 +270,7 @@ class LayerControls(Gtk.EventBox, Loggable):
     def __check_tracks_active(self, tracks):
         return all(self.ges_layer.get_active_for_track(t) for t in tracks)
 
-    def update(self, media_types):
+    def update(self, media_types: GES.TrackType):
         self.props.height_request = self.ges_layer.ui.props.height_request
 
         has_audio = media_types & GES.TrackType.AUDIO
@@ -353,27 +353,23 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
 
     def check_media_types(self):
         if self.timeline.editing_context:
-            self.info("Not updating media types as"
-                      " we are editing the timeline")
+            self.info("Not updating media types as we are editing the timeline")
             return
+
         old_media_types = self.media_types
-        self.media_types = GES.TrackType(0)
+        self.media_types: GES.TrackType = GES.TrackType(0)
         ges_clips = self.ges_layer.get_clips()
         for ges_clip in ges_clips:
-            for child in ges_clip.get_children(False):
-                track = child.get_track()
-                if not track:
-                    continue
-                self.media_types |= track.props.track_type
-                if self.media_types == GES.TrackType.AUDIO | GES.TrackType.VIDEO:
-                    # Cannot find more types than these.
-                    break
+            self.media_types |= ges_clip.props.supported_formats
+            if self.media_types & GES.TrackType.AUDIO and self.media_types & GES.TrackType.VIDEO:
+                # Cannot find more types than these.
+                break
 
-        if (self.media_types & GES.TrackType.AUDIO) and (self.media_types & GES.TrackType.VIDEO):
+        if self.media_types & GES.TrackType.AUDIO and self.media_types & GES.TrackType.VIDEO:
             self.props.height_request = LAYER_HEIGHT
         else:
             # If the layer is empty, set layer's height to default height.
-            self.props.height_request = LAYER_HEIGHT / 2
+            self.props.height_request = LAYER_HEIGHT // 2
 
         if hasattr(self.ges_layer, "control_ui") and self.ges_layer.control_ui:
             self.ges_layer.control_ui.update(self.media_types)

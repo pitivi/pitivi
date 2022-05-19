@@ -134,9 +134,9 @@ class TestLayers(common.TestCase):
         self.assertEqual(len(timeline.__on_separators), 1,
                          "The separators must be forgotten only in drag_end()")
 
+    @common.setup_timeline
     def test_media_types(self):
-        timeline_container = common.create_timeline_container()
-        timeline = timeline_container.timeline
+        timeline = self.timeline_container.timeline
 
         ges_layer_1 = timeline.ges_timeline.append_layer()
         ges_layer_2 = timeline.ges_timeline.append_layer()

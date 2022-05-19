@@ -310,7 +310,7 @@ class LayersLayout(Gtk.Layout, Zoomable, Loggable):
 
 
 class Timeline(Gtk.EventBox, Zoomable, Loggable):
-    """Container for the the layers controls and representation.
+    """Container for the layers controls and representation.
 
     Attributes:
         _project (Project): The project.

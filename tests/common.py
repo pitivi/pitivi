@@ -428,7 +428,7 @@ class TestCase(unittest.TestCase, Loggable):
 
         return proj_uri
 
-    def add_clip(self, layer, start, inpoint=0, duration=10, clip_type=GES.TrackType.UNKNOWN):
+    def add_clip(self, layer: GES.Layer, start, inpoint=0, duration=10, clip_type=GES.TrackType.UNKNOWN):
         """Creates a clip on the specified layer."""
         asset = GES.UriClipAsset.request_sync(
             get_sample_uri("tears_of_steel.webm"))
@@ -633,13 +633,6 @@ def get_sample_uri(sample, samples_dir=None):
         tests_dir = os.path.dirname(os.path.abspath(__file__))
         samples_dir = os.path.join(tests_dir, "samples")
     return Gst.filename_to_uri(os.path.join(samples_dir, sample))
-
-
-def get_sample_clip(sample):
-    uri = get_sample_uri(sample)
-    asset = GES.UriClipAsset.request_sync(uri)
-    clip = asset.extract()
-    return clip
 
 
 @contextlib.contextmanager
