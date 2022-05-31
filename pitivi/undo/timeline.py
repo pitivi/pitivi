@@ -721,16 +721,14 @@ class LayerObserver(MetaContainerObserver, Loggable):
         action = ControlSourceRemoveAction(track_element, binding)
         self.action_log.push(action)
 
-    def _connect_to_track_element(self, track_element):
+    def _connect_to_track_element(self, track_element: GES.TrackElement):
         if isinstance(track_element, GES.VideoTransition):
-            ges_clip = track_element.get_toplevel_parent()
+            ges_clip = track_element.get_parent()
             ges_layer = ges_clip.props.layer
-            action = TransitionClipAddedAction(ges_layer, ges_clip,
-                                               track_element)
+            action = TransitionClipAddedAction(ges_layer, ges_clip, track_element)
             self.action_log.push(action)
 
-            observer = GObjectObserver(track_element, TRANSITION_PROPS,
-                                       self.action_log)
+            observer = GObjectObserver(track_element, TRANSITION_PROPS, self.action_log)
             self.track_element_observers[track_element] = observer
             return
 
