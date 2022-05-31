@@ -268,7 +268,7 @@ def setup_project_with_clips(assets_names: List[str]):
     def decorator(func):
         nonlocal assets_names
 
-        @setup_project(assets_names)
+        @setup_project(list(set(assets_names)))
         def wrapper(self):
             assets = self.app.project_manager.current_project.list_assets(GES.UriClip)
 
