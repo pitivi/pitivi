@@ -171,6 +171,7 @@ class Marquee(Gtk.Box, Loggable):
         self.start_x, self.start_y = event_widget.translate_coordinates(
             self._timeline.layout.layers_vbox, event.x, event.y)
         self.end_x, self.end_y = self.start_x, self.start_y
+        self.get_parent().move(self, self.start_x, self.start_y)
 
         self.props.width_request = 0
         self.props.height_request = 0
