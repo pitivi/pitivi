@@ -34,9 +34,9 @@ from pitivi.utils.ui import time_to_string
 
 
 # Tuples of:
-# - an interval lengths in seconds for which a timestamp will be displayed
+# - an interval duration in seconds for which a timestamp will be displayed
 # - how the ticks should be displayed for this interval:
-#   (count per interval, height ratio) tuples.
+#   (tick interval duration in seconds, height ratio) tuples.
 SCALES = (
     (0.1, ((0.1, 1.0), (0.05, .5), (0.01, .25))),
     (0.2, ((0.2, 1.0), (0.1, .5), (0.05, .25))),
@@ -115,6 +115,8 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
         self.pixbuf_offset_painted = 0
 
         self.position = 0  # In nanoseconds
+
+        self._scales = [(interval, list(reversed(ticks))) for interval, ticks in SCALES]
 
         # Update colors when theme or color preferences change.
         Gtk.Settings.get_default().connect("notify::gtk-theme-name", self._update_colors_cb)
@@ -260,7 +262,7 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
         # when we display millis, they are displayed by themselves.
         min_interval_width = context.text_extents("0:00:00")[2] * 1.3
         zoomratio = self.zoom.zoomratio
-        for interval_seconds, ticks in SCALES:
+        for interval_seconds, ticks in self._scales:
             interval_width = interval_seconds * zoomratio
             if interval_width >= min_interval_width:
                 return interval_width, interval_seconds, ticks
@@ -269,11 +271,11 @@ class ScaleRuler(Gtk.DrawingArea, Loggable):
             (min_interval_width, zoomratio))
 
     def draw_ticks(self, context, offset, spacing, interval_seconds, ticks):
-        for tick_interval, height_ratio in reversed(ticks):
+        for tick_interval, height_ratio in ticks:
             count_per_interval = interval_seconds / tick_interval
             space = spacing / count_per_interval
             if space < MIN_TICK_SPACING_PIXELS:
-                break
+                continue
             paintpos = 0.5 - offset
 
             color = (self._color_normal if height_ratio == 1
