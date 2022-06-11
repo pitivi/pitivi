@@ -1,6 +1,9 @@
 # Vim
 *~
 
+# Visual Studio Code
+.vscode
+
 # PyCharm
 .idea
 
