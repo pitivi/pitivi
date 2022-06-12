@@ -19,10 +19,10 @@ from gi.repository import GES
 from gi.repository import GObject
 from gi.repository import Gst
 
+from pitivi.undo.base import Action
+from pitivi.undo.base import UndoableAction
 from pitivi.undo.markers import MetaContainerObserver
 from pitivi.undo.timeline import TimelineObserver
-from pitivi.undo.undo import Action
-from pitivi.undo.undo import UndoableAction
 
 
 class AssetAddedIntention(UndoableAction):

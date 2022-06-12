@@ -26,11 +26,11 @@ from gi.repository import GstController
 from gi.repository import Gtk
 
 from pitivi.timeline.layer import Layer
+from pitivi.undo.base import PropertyChangedAction
 from pitivi.undo.project import AssetAddedAction
 from pitivi.undo.timeline import ClipAdded
 from pitivi.undo.timeline import ClipRemoved
 from pitivi.undo.timeline import TrackElementAdded
-from pitivi.undo.undo import PropertyChangedAction
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import URI_TARGET_ENTRY
 from tests import common

@@ -21,7 +21,7 @@ from gi.repository import GES
 from gi.repository import GObject
 from gi.repository import Gst
 
-from pitivi.undo.undo import UndoableAutomaticObjectAction
+from pitivi.undo.base import UndoableAutomaticObjectAction
 from pitivi.utils.loggable import Loggable
 
 

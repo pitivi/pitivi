@@ -14,16 +14,18 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
+from typing import Optional
+
 from gi.repository import GES
 from gi.repository import GObject
 from gi.repository import Gst
 
 from pitivi.effects import PROPS_TO_IGNORE
+from pitivi.undo.base import FinalizingAction
+from pitivi.undo.base import GObjectObserver
+from pitivi.undo.base import UndoableAction
+from pitivi.undo.base import UndoableAutomaticObjectAction
 from pitivi.undo.markers import MetaContainerObserver
-from pitivi.undo.undo import FinalizingAction
-from pitivi.undo.undo import GObjectObserver
-from pitivi.undo.undo import UndoableAction
-from pitivi.undo.undo import UndoableAutomaticObjectAction
 from pitivi.utils.loggable import Loggable
 
 
@@ -391,13 +393,13 @@ class TransitionClipAction(UndoableAction):
         self.track_element = track_element
 
     @staticmethod
-    def get_video_element(ges_clip):
+    def get_video_element(ges_clip: GES.TransitionClip) -> Optional[GES.VideoTransition]:
         for track_element in ges_clip.get_children(recursive=True):
             if isinstance(track_element, GES.VideoTransition):
                 return track_element
         return None
 
-    def find_video_transition(self):
+    def find_video_transition(self) -> Optional[GES.VideoTransition]:
         for ges_clip in self.ges_layer.get_clips():
             if isinstance(ges_clip, GES.TransitionClip) and \
                     ges_clip.props.start == self.start and \
@@ -405,7 +407,7 @@ class TransitionClipAction(UndoableAction):
                 # Got the transition clip, now find its video element, if any.
                 track_element = TransitionClipAction.get_video_element(ges_clip)
                 if not track_element:
-                    # Probably the audio transition clip.
+                    # This must be the audio transition clip.
                     continue
                 # Double lucky!
                 return track_element
@@ -428,7 +430,7 @@ class TransitionClipAddedAction(TransitionClipAction):
         UndoableAutomaticObjectAction.update_object(self.track_element, track_element)
 
     def undo(self):
-        # The transition is being removed, nothing to do.
+        # The transition will be removed automatically, no need to do it here.
         pass
 
 
@@ -451,25 +453,18 @@ class TransitionClipRemovedAction(TransitionClipAction):
         return cls(ges_layer, ges_clip, track_element)
 
     def do(self):
-        # The transition is being removed, nothing to do.
+        # The transition will be removed automatically, no need to do it here.
         pass
 
     def undo(self):
         # Search the transition clip created automatically to update it.
-        for ges_clip in self.ges_layer.get_clips():
-            if isinstance(ges_clip, GES.TransitionClip) and \
-                    ges_clip.props.start == self.start and \
-                    ges_clip.props.duration == self.duration:
-                # Got the transition clip, now find its video element, if any.
-                track_element = self.get_video_element(ges_clip)
-                if not track_element:
-                    # Probably the audio transition clip.
-                    continue
-                # Double lucky!
-                UndoableAutomaticObjectAction.update_object(self.track_element, track_element)
-                for prop_name, value in self.properties:
-                    track_element.set_property(prop_name, value)
-                break
+        track_element = self.find_video_transition()
+        if not track_element:
+            return
+
+        UndoableAutomaticObjectAction.update_object(self.track_element, track_element)
+        for prop_name, value in self.properties:
+            track_element.set_property(prop_name, value)
 
 
 class LayerAdded(UndoableAction):
