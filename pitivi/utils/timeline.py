@@ -217,11 +217,16 @@ class Selection(GObject.Object, Loggable):
             have only non-serializable ancestors.
         """
         toplevels = set()
-        for obj in self._clips:
-            if not obj.timeline:
-                # The element has been removed from the timeline. Ignore it.
+        for ges_clip in self._clips:
+            if not ges_clip.timeline:
+                # The clip has been removed from the timeline. Ignore it.
                 continue
-            toplevel = obj.get_toplevel_parent()
+
+            if isinstance(ges_clip, GES.Transition):
+                # The transitions are updated automatically, no need to group them etc.
+                continue
+
+            toplevel = ges_clip.get_toplevel_parent()
             toplevels.add(toplevel)
 
         group = GES.Group.new()
