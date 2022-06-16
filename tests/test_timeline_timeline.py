@@ -683,7 +683,7 @@ class TestEditing(common.TestCase):
                          "No new layer should have been created")
 
 
-class TestShiftSelection(common.TestCase):
+class TestClipsSelection(common.TestCase):
 
     def __reset_clips_selection(self, timeline):
         """Unselects all clips in the timeline."""
@@ -849,6 +849,36 @@ class TestShiftSelection(common.TestCase):
     def test_shift_selection_multiple_layers(self):
         self.__check_shift_selection_multiple_layers(left_click_also_seeks=False)
         self.__check_shift_selection_multiple_layers(left_click_also_seeks=True)
+
+    def test_clip_unselection(self):
+        """Tests whether the clips are unselected properly."""
+        timeline = common.create_timeline_container().timeline
+
+        clip1, clip2 = self.add_clips_simple(timeline, 2)
+        self.click_clip(clip1, expect_selected=True, ctrl_key=True)
+        self.click_clip(clip2, expect_selected=True, ctrl_key=True)
+        self.__check_selected([clip1, clip2], [])
+
+        # Unselect clip2.
+        self.click_clip(clip2, expect_selected=False, ctrl_key=True)
+        self.__check_selected([clip1], [clip2])
+
+    def test_grouped_clips_unselection(self):
+        """Tests grouped clips are unselected together."""
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+
+        clip1, clip2, clip3 = self.add_clips_simple(timeline, 3)
+        self.click_clip(clip1, expect_selected=True, ctrl_key=True)
+        self.click_clip(clip2, expect_selected=True, ctrl_key=True)
+        timeline_container.group_action.activate()
+
+        self.click_clip(clip3, expect_selected=True, ctrl_key=True)
+        self.__check_selected([clip1, clip2, clip3], [])
+
+        # Unselect the group.
+        self.click_clip(clip1, expect_selected=False, ctrl_key=True)
+        self.__check_selected([clip3], [clip1, clip2])
 
 
 class TestTimelineContainer(common.TestCase):

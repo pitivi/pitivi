@@ -744,7 +744,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             if self.dragging_element:
                 self.__drag_start_x = event.x
                 self._on_layer = self.dragging_element.layer.ges_layer
-                self.dragging_group = self.selection.group()
             else:
                 layer_controls = self._get_parent_of_type(event_widget, LayerControls)
                 if layer_controls:
@@ -871,6 +870,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def _motion_notify_event_cb(self, unused_widget, event):
         if self.dragging_element:
+            if self.dragging_group is None:
+                self.dragging_group = self.selection.group()
             if isinstance(self.dragging_element, TransitionClip) and \
                     not self.__clicked_handle:
                 # Don't allow dragging a transition.
