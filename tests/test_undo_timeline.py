@@ -30,7 +30,9 @@ from pitivi.undo.base import PropertyChangedAction
 from pitivi.undo.project import AssetAddedAction
 from pitivi.undo.timeline import ClipAdded
 from pitivi.undo.timeline import ClipRemoved
+from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.undo.timeline import TrackElementAdded
+from pitivi.utils.timeline import EditingContext
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import URI_TARGET_ENTRY
 from tests import common
@@ -550,10 +552,12 @@ class TestLayerObserver(common.TestCase):
         self.layer.add_clip(clip2)
         self.assertEqual(len(self.layer.get_clips()), 3)
 
-        with self.action_log.started("move clip"):
+        with self.action_log.started("move clip",
+                                     finalizing_action=CommitTimelineFinalizingAction(self.project.pipeline)):
             clip2.set_start(20 * Gst.SECOND)
         self.assertEqual(clip2.get_start(), 20 * Gst.SECOND)
-        self.assertEqual(len(self.layer.get_clips()), 2)
+        self.assertEqual(len(self.layer.get_clips()), 2,
+                         "The two title clips don't overlap so there should be no transition clip")
 
         self.action_log.undo()
         self.assertEqual(clip2.get_start(), 5 * Gst.SECOND)
@@ -562,6 +566,54 @@ class TestLayerObserver(common.TestCase):
         self.action_log.redo()
         self.assertEqual(clip2.get_start(), 20 * Gst.SECOND)
         self.assertEqual(len(self.layer.get_clips()), 2)
+
+    @common.setup_project(assets_names=["mp3_sample.mp3"])
+    def test_move_transition_to_different_layer_audio(self):
+        uri = common.get_sample_uri("mp3_sample.mp3")
+        asset = GES.UriClipAsset.request_sync(uri)
+        self.__check_move_transition_to_different_layer(asset)
+
+    @common.setup_project(assets_names=["30fps_numeroted_frames_red.mkv"])
+    def test_move_transition_to_different_layer_video(self):
+        uri = common.get_sample_uri("30fps_numeroted_frames_red.mkv")
+        asset = GES.UriClipAsset.request_sync(uri)
+        self.__check_move_transition_to_different_layer(asset)
+
+    def __check_move_transition_to_different_layer(self, asset):
+        clip1 = asset.extract()
+        clip1.set_start(0 * Gst.SECOND)
+        self.layer.add_clip(clip1)
+        self.assertEqual(len(self.layer.get_clips()), 1)
+
+        clip2 = asset.extract()
+        clip2.set_start(clip1.props.duration * 9 // 10)
+        self.layer.add_clip(clip2)
+        clips = self.layer.get_clips()
+        self.assertEqual(len(clips), 3)
+
+        # Click all three clips including the transition clip to make sure
+        # it's not included in the group.
+        for clip in clips:
+            self.click_clip(clip, expect_selected=True, ctrl_key=True)
+        self.timeline_container.group_action.activate()
+
+        layer2 = self.timeline.append_layer()
+        with self.action_log.started("move clips to different layer"):
+            editing_context = EditingContext(clip1, self.timeline, GES.EditMode.EDIT_NORMAL, GES.Edge.EDGE_NONE, self.app)
+            editing_context.edit_to(0, layer2)
+            editing_context.finish()
+        self.assertEqual(len(self.layer.get_clips()), 0)
+        self.assertEqual(len(layer2.get_clips()), 3)
+
+        with self.project.pipeline.commit_timeline_after():
+            self.action_log.undo()
+        self.assertEqual(len(self.layer.get_clips()), 3)
+        self.assertEqual(len(layer2.get_clips()), 0)
+
+        with self.project.pipeline.commit_timeline_after():
+            self.action_log.redo()
+        self.assertEqual(len(self.layer.get_clips()), 0)
+        self.assertEqual(len(layer2.get_clips()), 3)
 
     @common.setup_timeline
     def test_transition_type(self):

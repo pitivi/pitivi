@@ -406,7 +406,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Which handle of the dragging_element has been clicked, if any.
         # If set, it means we are in a trim operation.
         self.__clicked_handle = None
-        # The GES object for controlling the operation.
+        # The object keeping track of the current operation being performed.
         self.editing_context = None
         # Whether dragging_element really got dragged.
         self.__got_dragged = False
@@ -1281,7 +1281,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self.hadj.set_value(0)
 
-    def __get_editing_mode(self):
+    def __get_editing_mode(self) -> GES.EditMode:
         if not self.editing_context:
             is_handle = False
         else:
@@ -1384,7 +1384,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                                   self.app,
                                                   not self.dropping_clips)
 
-        mode = self.__get_editing_mode()
+        mode: GES.EditMode = self.__get_editing_mode()
         self.editing_context.set_mode(mode)
 
         if self.editing_context.edge is GES.Edge.EDGE_END:

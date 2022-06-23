@@ -28,6 +28,10 @@ class UndoWrongStateError(UndoError):
     """Exception related to the current state of the undo/redo stack."""
 
 
+class ConditionsNotReadyYetError(UndoError):
+    """The operation cannot be performed at the moment, maybe later."""
+
+
 class Action(GObject.Object, Loggable):
     """Something which might worth logging in a scenario."""
 

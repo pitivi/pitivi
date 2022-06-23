@@ -19,16 +19,11 @@ import contextlib
 
 from gi.repository import GObject
 
+from pitivi.undo.base import ConditionsNotReadyYetError
 from pitivi.undo.base import UndoableAction
+from pitivi.undo.base import UndoError
+from pitivi.undo.base import UndoWrongStateError
 from pitivi.utils.loggable import Loggable
-
-
-class UndoError(Exception):
-    """Base class for undo/redo exceptions."""
-
-
-class UndoWrongStateError(UndoError):
-    """Exception related to the current state of the undo/redo stack."""
 
 
 class UndoableActionStack(UndoableAction, Loggable):
@@ -91,18 +86,37 @@ class UndoableActionStack(UndoableAction, Loggable):
 
         self.done_actions.append(action)
 
-    def _run_action(self, actions, method_name):
+    def _perform_actions(self, actions, method_name):
+        delayed_actions = []
+        delayed_reasons = {}
         for action in actions:
             self.log("Performing %s.%s()", action, method_name)
             method = getattr(action, method_name)
-            method()
+            try:
+                method()
+                for delayed_action in list(delayed_actions):
+                    self.log("Performing delayed %s.%s()", action, method_name)
+                    delayed_method = getattr(delayed_action, method_name)
+                    try:
+                        delayed_method()
+                        self.log("Succeeded performing action")
+                        delayed_actions.remove(delayed_action)
+                        delayed_reasons.pop(delayed_action)
+                    except ConditionsNotReadyYetError:
+                        self.log("Further delaying action")
+            except ConditionsNotReadyYetError as e:
+                self.log("Delaying action")
+                delayed_actions.append(action)
+                delayed_reasons[action] = e
+        if delayed_actions:
+            raise UndoError("Delayable actions failed to apply: {} {}".format(delayed_actions, delayed_reasons))
         self.finish_operation()
 
     def do(self):
-        self._run_action(self.done_actions, "do")
+        self._perform_actions(self.done_actions, "do")
 
     def undo(self):
-        self._run_action(self.done_actions[::-1], "undo")
+        self._perform_actions(self.done_actions[::-1], "undo")
 
     def finish_operation(self):
         if not self.finalizing_action:

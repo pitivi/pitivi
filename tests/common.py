@@ -652,7 +652,7 @@ def cloned_sample(*samples):
             module["get_sample_uri"] = original_get_sample_uri
 
 
-def get_clip_children(ges_clip, *track_types, recursive=False):
+def get_clip_children(ges_clip: GES.Clip, *track_types: List[GES.TrackType], recursive: bool = False):
     for ges_timeline_element in ges_clip.get_children(recursive):
         if not track_types or ges_timeline_element.get_track_type() in track_types:
             yield ges_timeline_element

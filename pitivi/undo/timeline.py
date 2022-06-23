@@ -21,6 +21,7 @@ from gi.repository import GObject
 from gi.repository import Gst
 
 from pitivi.effects import PROPS_TO_IGNORE
+from pitivi.undo.base import ConditionsNotReadyYetError
 from pitivi.undo.base import FinalizingAction
 from pitivi.undo.base import GObjectObserver
 from pitivi.undo.base import UndoableAction
@@ -383,14 +384,19 @@ class ClipRemoved(ClipAction):
 
 
 class TransitionClipAction(UndoableAction):
-    # pylint: disable=abstract-method
 
-    def __init__(self, ges_layer, ges_clip, track_element):
+    def __init__(self, ges_layer: GES.Layer, ges_clip: GES.TransitionClip, track_element: GES.Transition):
         UndoableAction.__init__(self)
         self.ges_layer = ges_layer
         self.start = ges_clip.props.start
         self.duration = ges_clip.props.duration
         self.track_element = track_element
+
+    def do(self):
+        raise NotImplementedError()
+
+    def undo(self):
+        raise NotImplementedError()
 
     @staticmethod
     def get_video_element(ges_clip: GES.TransitionClip) -> Optional[GES.VideoTransition]:
@@ -426,7 +432,9 @@ class TransitionClipAddedAction(TransitionClipAction):
     def do(self):
         """Searches the transition clip created automatically to update it."""
         track_element = self.find_video_transition()
-        assert track_element
+        if not track_element:
+            raise ConditionsNotReadyYetError("transition missing when re-doing ADD")
+
         UndoableAutomaticObjectAction.update_object(self.track_element, track_element)
 
     def undo(self):
@@ -460,7 +468,7 @@ class TransitionClipRemovedAction(TransitionClipAction):
         # Search the transition clip created automatically to update it.
         track_element = self.find_video_transition()
         if not track_element:
-            return
+            raise ConditionsNotReadyYetError("transition missing when un-doing REMOVE")
 
         UndoableAutomaticObjectAction.update_object(self.track_element, track_element)
         for prop_name, value in self.properties:
