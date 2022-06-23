@@ -577,9 +577,12 @@ class TestLayerObserver(common.TestCase):
     def test_move_transition_to_different_layer_video(self):
         uri = common.get_sample_uri("30fps_numeroted_frames_red.mkv")
         asset = GES.UriClipAsset.request_sync(uri)
-        self.__check_move_transition_to_different_layer(asset)
+        self.__check_move_transition_to_different_layer(asset,
+                                                        border=123,
+                                                        invert=True,
+                                                        transition_type=GES.VideoStandardTransitionType.BAR_WIPE_LR)
 
-    def __check_move_transition_to_different_layer(self, asset):
+    def __check_move_transition_to_different_layer(self, asset, **props):
         clip1 = asset.extract()
         clip1.set_start(0 * Gst.SECOND)
         self.layer.add_clip(clip1)
@@ -597,6 +600,10 @@ class TestLayerObserver(common.TestCase):
             self.click_clip(clip, expect_selected=True, ctrl_key=True)
         self.timeline_container.group_action.activate()
 
+        track_element = self.get_transition_element(self.layer)
+        for name, value in props.items():
+            track_element.set_property(name, value)
+
         layer2 = self.timeline.append_layer()
         with self.action_log.started("move clips to different layer"):
             editing_context = EditingContext(clip1, self.timeline, GES.EditMode.EDIT_NORMAL, GES.Edge.EDGE_NONE, self.app)
@@ -604,16 +611,24 @@ class TestLayerObserver(common.TestCase):
             editing_context.finish()
         self.assertEqual(len(self.layer.get_clips()), 0)
         self.assertEqual(len(layer2.get_clips()), 3)
+        self.__check_transition_element(layer2, props)
 
         with self.project.pipeline.commit_timeline_after():
             self.action_log.undo()
         self.assertEqual(len(self.layer.get_clips()), 3)
         self.assertEqual(len(layer2.get_clips()), 0)
+        self.__check_transition_element(self.layer, props)
 
         with self.project.pipeline.commit_timeline_after():
             self.action_log.redo()
         self.assertEqual(len(self.layer.get_clips()), 0)
         self.assertEqual(len(layer2.get_clips()), 3)
+        self.__check_transition_element(layer2, props)
+
+    def __check_transition_element(self, layer: GES.Layer, props):
+        track_element = self.get_transition_element(layer)
+        for name, value in props.items():
+            self.assertEqual(track_element.get_property(name), value)
 
     @common.setup_timeline
     def test_transition_type(self):

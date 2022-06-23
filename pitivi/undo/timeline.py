@@ -392,6 +392,12 @@ class TransitionClipAction(UndoableAction):
         self.duration = ges_clip.props.duration
         self.track_element = track_element
 
+        self.properties = []
+        for property_name in TRANSITION_PROPS:
+            field_name = property_name.replace("-", "_")
+            value = self.track_element.get_property(field_name)
+            self.properties.append((property_name, value))
+
     def do(self):
         raise NotImplementedError()
 
@@ -419,6 +425,28 @@ class TransitionClipAction(UndoableAction):
                 return track_element
         return None
 
+    def find_and_update_track_element(self):
+        """Searches the transition clip created automatically to update it.
+
+        When the user moves clips forming a transition to a different layer,
+        the transition clip is removed and recreated automatically and the
+        props are also copied automatically by GES.
+
+        When we undo/redo such an operation, we have to:
+         - identify the corresponding transition object created automatically,
+         - remember the link between the initial object and the new object,
+         - copy the transition element props ourselves from the obsolete to
+           the new element, as GES has no idea what's going on.
+        """
+        track_element = self.find_video_transition()
+        if not track_element:
+            raise ConditionsNotReadyYetError("transition has not been created yet")
+
+        UndoableAutomaticObjectAction.update_object(self.track_element, track_element)
+
+        for prop_name, value in self.properties:
+            track_element.set_property(prop_name, value)
+
 
 class TransitionClipAddedAction(TransitionClipAction):
 
@@ -430,12 +458,7 @@ class TransitionClipAddedAction(TransitionClipAction):
         return cls(ges_layer, ges_clip, track_element)
 
     def do(self):
-        """Searches the transition clip created automatically to update it."""
-        track_element = self.find_video_transition()
-        if not track_element:
-            raise ConditionsNotReadyYetError("transition missing when re-doing ADD")
-
-        UndoableAutomaticObjectAction.update_object(self.track_element, track_element)
+        self.find_and_update_track_element()
 
     def undo(self):
         # The transition will be removed automatically, no need to do it here.
@@ -443,15 +466,6 @@ class TransitionClipAddedAction(TransitionClipAction):
 
 
 class TransitionClipRemovedAction(TransitionClipAction):
-
-    def __init__(self, ges_layer, ges_clip, track_element):
-        TransitionClipAction.__init__(self, ges_layer, ges_clip, track_element)
-
-        self.properties = []
-        for property_name in TRANSITION_PROPS:
-            field_name = property_name.replace("-", "_")
-            value = self.track_element.get_property(field_name)
-            self.properties.append((property_name, value))
 
     @classmethod
     def new(cls, ges_layer, ges_clip):
@@ -465,14 +479,7 @@ class TransitionClipRemovedAction(TransitionClipAction):
         pass
 
     def undo(self):
-        # Search the transition clip created automatically to update it.
-        track_element = self.find_video_transition()
-        if not track_element:
-            raise ConditionsNotReadyYetError("transition missing when un-doing REMOVE")
-
-        UndoableAutomaticObjectAction.update_object(self.track_element, track_element)
-        for prop_name, value in self.properties:
-            track_element.set_property(prop_name, value)
+        self.find_and_update_track_element()
 
 
 class LayerAdded(UndoableAction):
