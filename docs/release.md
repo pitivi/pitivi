@@ -29,7 +29,7 @@ $ source bin/pitivi-env
     in **one week** the release will be cut.
     * It would be good to start preparing a blogpost already.
 
-1. Check [GitLab](https://gitlab.gnome.org/GNOME/pitivi/milestones)
+1. Check [GitLab](https://gitlab.gnome.org/GNOME/pitivi/-/milestones)
     * Make sure there are no significant issues open against the current milestone.
     * Move the remaining open issues somewhere else, for example to the next milestone.
     * Close the current milestone.

@@ -41,6 +41,21 @@
   <developer_name>The Pitivi Team</developer_name>
 
   <releases>
+    <release version="2022.06" date="2021-06-25">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>Object tracking and blurring.</li>
+          <li>Beat detection and snapping clips to detected beats.</li>
+          <li>Title clip text border and shadow.</li>
+          <li>Allow maintaining aspect-ratio when resizing clips.</li>
+          <li>Added Source blending mode.</li>
+          <li>Easier to fade in/out a clip.</li>
+          <li>Playback sound VU meter.</li>
+          <li>Cut clips to paste them at a different position.</li>
+        </ul>
+      </description>
+    </release>
     <release version="2021.05" date="2021-05-30">
       <description>
         <p>This release adds the following features:</p>
