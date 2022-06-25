@@ -77,6 +77,7 @@ If there are new maintainers.
    Install it on a real system and give it a spin. For example on Archlinux:
    ```
    $ cd /tmp
+   $ asp update pitivi
    $ asp checkout pitivi
    $ cd /tmp/pitivi/repos/community-x86_64/
    $ cp .../pitivi-YYYY.MM.Z.tar.xz .
@@ -114,7 +115,7 @@ If there are new maintainers.
     * Send an [email](https://mail.gnome.org/archives/gnome-i18n/2017-September/msg00136.html) to gnome-i18n@gnome.org thanking translators.
     * [Archlinux](https://www.archlinux.org/packages/community/x86_64/pitivi/), click "Flag Package Out-of-Date".
     * [Debian](https://packages.debian.org/pitivi), click the "unstable" Debian version and look for "maintainer".
-    * [Fedora](https://apps.fedoraproject.org/packages/pitivi), look for Point of Contact.
+    * [Fedora](https://packages.fedoraproject.org/pkgs/pitivi/pitivi/), look for "You can contact the maintainers of this package via email at".
 
 9. Update the [releases.txt](https://www.pitivi.org/releases.txt) file for the
    app's update notification feature in
