@@ -36,19 +36,6 @@ Deadlines for applying are approaching fast, hurry up!
   [GSoC application template]: GSoC_Application.md
 
 
-## Cut perspective
-
-The most tedious process of video editing is the initial cutting and structuring
-of the global timeline. A new perspective similar to the
-[EditorPerspective](https://gitlab.gnome.org/GNOME/pitivi/blob/master/pitivi/editorperspective.py)
-will offer a [second timeline
-representation](https://gitlab.gnome.org/GNOME/pitivi/issues/2381) above the
-timeline, that is always zoom-fitted.
-
-**Requirements**: Python. Minimal experience contributing to Pitivi including
-unit tests.
-
-
 ## Timeline enhancements
 
 Fixing timeline issues and making small enhancements would improve a lot the
@@ -56,18 +43,6 @@ timeline usability, making it a delight to use Pitivi. See
 [GitLab](https://gitlab.gnome.org/GNOME/pitivi/-/issues?label_name%5B%5D=6.+Component%3A+Timeline).
 
 **Requirements**: Python. Minimal experience contributing to Pitivi including
-unit tests.
-
-
-## Focus on the music
-
-Often people want to pick a nice tune and then sync their weekend clips on it.
-To make this easy, Pitivi can detect the beats using a 3rd party library such as
-[librosa](https://librosa.org/) and allow aligning and cutting the clips to the
-beat. It might sound easy, but the entire experience should be super-polished so
-it works nice and everybody can do it.
-
-**Requirements**: Python, C. Minimal experience contributing to Pitivi including
 unit tests.
 
 

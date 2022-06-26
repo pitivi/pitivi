@@ -4,8 +4,20 @@ short-description: What the GSoC students did in the previous years
 
 # Past GSoCs
 
-See [Google Summer of Code](Google_Summer_of_Code.md) for how to
-get involved.
+See [Google Summer of Code](Google_Summer_of_Code.md) for how to get involved.
+
+## 2021
+
+-   [Piotrek Brzeziński](https://thewildtree.github.io/) integrated
+    [librosa](https://librosa.org/) to allow [detecting music
+    beats](https://thewildtree.github.io/2021/08/22/gsoc-summary/). The beats
+    are displayed as markers on the clip. GES had to be extended so that clips
+    snap to these markers when dragged.
+-   [Pratyush Tiwari](https://unhired-coder.github.io/index.html) refactored the
+    timeline to be able to introduce, in addition to the zoomed-in timeline, a
+    second timeline which is always zoom-fitted. This allows [quick operations
+    across different regions of the
+    timeline](https://unhired-coder.github.io/project.html).
 
 ## 2020
 
@@ -26,7 +38,7 @@ get involved.
     A new UI perspective allows tracking objects and editing the tracked data.
     For now it's possible to [cover each tracked
     object](https://123vivekr.github.io/2020/08/29/pitivi-gsoc-work-product.html)
-    with a black rectangle.
+    with a colored rectangle.
 
 ## 2019
 
@@ -111,7 +123,7 @@ get involved.
 In addition, we also co-mentored Pēteris Krišjānis who worked on an
 audio waveform generation and display library for GStreamer (see his
 [post-summer
-report](http://pecisk.blogspot.ca/2012/11/state-of-libwaveform-after-gsoc.html)).
+report](https://pecisk.blogspot.com/2012/11/state-of-libwaveform-after-gsoc.html)).
 
 ## 2011
 
@@ -127,16 +139,15 @@ report](http://pecisk.blogspot.ca/2012/11/state-of-libwaveform-after-gsoc.html))
 
 -   [Thibault Saunier](https://blogs.gnome.org/tsaunier/) implemented
     with the core backend developers special effects. He also worked in
-    close collaboration with nekohayo for the user interface and
-    testing.
+    close collaboration with [Jeff](https://gitlab.gnome.org/jfft) on the user
+    interface and testing.
 
 ## 2008
 
 -   [Brandon Lewis](https://dotsony.blogspot.com/) worked on the [advanced
-    timeline](http://dotsony.blogspot.ch/search?updated-min=2008-01-01T00:00:00-08:00&updated-max=2009-01-01T00:00:00-08:00&max-results=41).
+    timeline](https://dotsony.blogspot.com/search?updated-min=2008-01-01T00:00:00-08:00&updated-max=2009-01-01T00:00:00-08:00&max-results=41).
 -   [Sarath Lakshman](http://www.sarathlakshman.com/about/) implemented
-    [webcam
-    capture](http://www.sarathlakshman.com/2008/09/28/pitivi-hacks).
+    [webcam capture](http://www.sarathlakshman.com/2008/09/28/pitivi-hacks).
 
 ## 2007
 
