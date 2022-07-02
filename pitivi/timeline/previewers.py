@@ -1305,7 +1305,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         rate = internal_duration / duration
 
         inpoint_px = self.ns_to_pixel(start) - self.ns_to_pixel(start - inpoint / rate)
-        max_duration_px = self.ns_to_pixel(clip.maxduration)
+        max_duration_px = self.ns_to_pixel(clip.maxduration / rate)
 
         start_px = min(max(0, inpoint_px + rect.x), max_duration_px)
         end_px = min(max(0, inpoint_px + rect.x + rect.width), max_duration_px)
