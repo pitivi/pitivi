@@ -56,7 +56,12 @@ except ImportError:
     import renderer
 
 
-SAMPLE_DURATION = Gst.SECOND / 100
+# This decides how much data we are collecting for AudioPreviewer.
+# We divide the clip into multiple samples of length SAMPLE_DURATION
+# and then fetch average peak data for each sample using 'level'
+# element. Lowering the value results in more detailed waveform
+# but also increases the time it takes to collect all data.
+SAMPLE_DURATION = Gst.SECOND // 50
 
 # Horizontal space between thumbs.
 THUMB_MARGIN_PX = 3
@@ -176,7 +181,8 @@ class WaveformPreviewer(PreviewerBin):
     def __init__(self):
         PreviewerBin.__init__(self,
                               "tee name=at ! queue ! audioconvert ! audioresample ! "
-                              "audio/x-raw,channels=1 ! level name=level"
+                              "audio/x-raw,channels=1 ! level name=level "
+                              f"interval={SAMPLE_DURATION}"
                               " ! fakesink at. ! queue")
         self.level = self.internal_bin.get_by_name("level")
         self.debug("Creating waveforms!!")
@@ -1125,9 +1131,12 @@ class ThumbnailCache(Loggable):
 
 def delete_all_files_in_dir(path):
     """Deletes the files in path without descending into subdirectories."""
-    for dir_entry in os.scandir(path):
-        if dir_entry.is_file() or dir_entry.is_symlink():
-            os.unlink(dir_entry.path)
+    try:
+        for dir_entry in os.scandir(path):
+            if dir_entry.is_file() or dir_entry.is_symlink():
+                os.unlink(dir_entry.path)
+    except FileNotFoundError:
+        pass
 
 
 def gen_filename(uri, extension):
@@ -1142,11 +1151,12 @@ def get_wavefile_location_for_uri(uri):
         uri = ProxyManager.get_target_uri(uri)
     filename = gen_filename(Gst.uri_get_location(uri), "wave.npy")
     waves_dir = xdg_cache_home("waves")
-    cache_dir = os.path.join(waves_dir, "v1")
+    cache_dir = os.path.join(waves_dir, "v2")
 
     if not os.path.exists(cache_dir):
         os.makedirs(cache_dir)
-        GLib.idle_add(delete_all_files_in_dir, waves_dir)
+        for old_cache_dir in (waves_dir, os.path.join(waves_dir, "v1")):
+            GLib.idle_add(delete_all_files_in_dir, old_cache_dir)
 
     return os.path.join(cache_dir, filename)
 
