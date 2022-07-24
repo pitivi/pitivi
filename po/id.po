@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2022-04-10 23:42+0000\n"
-"PO-Revision-Date: 2022-04-19 10:26+0700\n"
+"POT-Creation-Date: 2022-05-07 22:53+0000\n"
+"PO-Revision-Date: 2022-07-24 11:43+0700\n"
 "Last-Translator: Kukuh Syafaat <kukuhsyafaat@gnome.org>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural= n!=1;\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.1.1\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
 msgid "Pitivi video project (legacy)"
@@ -130,29 +130,33 @@ msgstr "Hapus ketukan yang terdeteksi"
 msgid "Detecting..."
 msgstr "Mendeteksi..."
 
-#: data/ui/clipcolor.ui:21
+#: data/ui/clipcolor.ui:21 data/ui/customwidgets/pitivi:object_effect.ui:37
 msgid "Pick the clip color"
 msgstr "Pilih warna klip"
 
-#: data/ui/clipcompositing.ui:43
+#: data/ui/clipcompositing.ui:42
 msgid "Fade-in:"
 msgstr "Fade-in:"
 
-#: data/ui/clipcompositing.ui:55 data/ui/clipcompositing.ui:123
+#: data/ui/clipcompositing.ui:54 data/ui/clipcompositing.ui:122
 msgid "seconds"
 msgstr "detik"
 
-#: data/ui/clipcompositing.ui:98
+#: data/ui/clipcompositing.ui:97
 msgid "Fade-out:"
 msgstr "Fade-out:"
 
-#: data/ui/clipcompositing.ui:151
+#: data/ui/clipcompositing.ui:150
 msgid "Reset fade-in"
 msgstr "Reset fade-in"
 
 #: data/ui/clipcompositing.ui:166
 msgid "Reset fade-out"
 msgstr "Reset fade-out"
+
+#: data/ui/clipcompositing.ui:181
+msgid "Blending:"
+msgstr "Pencampuran:"
 
 #: data/ui/clipmediaprops.ui:8
 msgid "Clip Properties"
@@ -330,6 +334,10 @@ msgstr "alfa min"
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:413
 msgid "max alpha"
 msgstr "alfa maks"
+
+#: data/ui/customwidgets/pitivi:object_effect.ui:19
+msgid "Color:"
+msgstr "Warna:"
 
 #: data/ui/effectslibrary.ui:16
 msgid "Favorites"
@@ -553,7 +561,7 @@ msgstr "Laju bingkai:"
 
 #. The title of the section with the video settings
 #: data/ui/projectsettings.ui:383 data/ui/renderingdialog.ui:752
-#: pitivi/clip_properties/markers.py:45 pitivi/effects.py:246
+#: pitivi/clip_properties/markers.py:45 pitivi/effects.py:249
 msgid "Video"
 msgstr "Video"
 
@@ -679,7 +687,7 @@ msgid "Sample rate:"
 msgstr "Laju cuplikan:"
 
 #: data/ui/renderingdialog.ui:527 pitivi/clip_properties/markers.py:46
-#: pitivi/effects.py:122 pitivi/effects.py:246
+#: pitivi/effects.py:126 pitivi/effects.py:249
 msgid "Audio"
 msgstr "Audio"
 
@@ -719,12 +727,13 @@ msgstr "Path berkas:"
 msgid "Rendering"
 msgstr "Perenderan"
 
-#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:774
+#: data/ui/renderingprogress.ui:27 data/ui/trackerperspective.ui:19
+#: pitivi/viewer/viewer.py:839
 msgid "Pause"
 msgstr "Jeda"
 
-#: data/ui/renderingprogress.ui:55 pitivi/timeline/timeline.py:1913
-#: pitivi/viewer/viewer.py:766
+#: data/ui/renderingprogress.ui:55 data/ui/trackerperspective.ui:25
+#: pitivi/timeline/timeline.py:1915 pitivi/viewer/viewer.py:831
 msgid "Play"
 msgstr "Putar"
 
@@ -859,6 +868,30 @@ msgstr "Horisontal:"
 msgid "Vertical:"
 msgstr "Vertikal:"
 
+#: data/ui/trackerperspective.ui:66
+msgid "Tracked Objects:"
+msgstr "Objek yang Dilacak:"
+
+#: data/ui/trackerperspective.ui:195
+msgid "Drag&drop on the video to delimit an object to be tracked."
+msgstr "Seret & jatuhkan pada video untuk membatasi objek yang akan dilacak."
+
+#: data/ui/trackerperspective.ui:288
+msgid "Go back one frame"
+msgstr "Kembali satu bingkai"
+
+#: data/ui/trackerperspective.ui:318
+msgid "Go forward one frame"
+msgstr "Maju satu bingkai"
+
+#: data/ui/trackerperspective.ui:374
+msgid "Tracking Algorithm"
+msgstr "Algoritma Pelacakan"
+
+#: data/ui/trackerperspective.ui:402
+msgid "Track"
+msgstr "Lacak"
+
 #: pitivi/action_search_bar.py:46
 msgid "Search Action"
 msgstr "Aksi Pencarian"
@@ -883,26 +916,26 @@ msgstr "Keluar"
 msgid "Show the Shortcuts Window"
 msgstr "Tampilkan Jendela Pintasan"
 
-#. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:113
+#. Translators: %s is a Python module name or another OS component
+#: pitivi/check.py:115
 #, python-format
 msgid "- %s not found on the system"
 msgstr "- %s tidak ditemukan pada sistem"
 
-#. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:116
+#. Translators: %s is a Python module name or another OS component
+#: pitivi/check.py:118
 #, python-format
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgstr "- %s versi %s terpasang tapi Pitivi memerlukan paling tidak versi %s"
 
-#. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:191
+#. Translators: %s is a Python module name or another OS component
+#: pitivi/check.py:193
 #, python-format
 msgid "- %s GStreamer plug-in not found on the system"
 msgstr "- %s pengaya GStreamer tidak ditemukan pada sistem"
 
-#. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:194
+#. Translators: %s is a Python module name or another OS component
+#: pitivi/check.py:196
 #, python-format
 msgid ""
 "- %s Gstreamer plug-in version %s is installed but Pitivi requires at least "
@@ -911,15 +944,21 @@ msgstr ""
 "- %s pengaya GStreamer versi %s terpasang tapi Pitivi memerlukan paling "
 "tidak versi %s"
 
-#: pitivi/check.py:303
+#. Translators: %s is a Python module name or another OS component
+#: pitivi/check.py:224
+#, python-format
+msgid "- %s GStreamer element not found on the system"
+msgstr "- %s elemen GStreamer tidak ditemukan pada sistem"
+
+#: pitivi/check.py:332
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "KESALAHAN - Kebergantungan kuat berikut tak terpenuhi:"
 
-#: pitivi/check.py:311
+#: pitivi/check.py:340
 msgid "Missing soft dependency:"
 msgstr "Kurang kebergantungan lunak:"
 
-#: pitivi/check.py:318
+#: pitivi/check.py:347
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
@@ -927,7 +966,7 @@ msgstr ""
 "KESALAHAN — Tidak bisa membuat suatu Gst.Fraction — ini berarti gst-python "
 "tidak terpasang secara benar."
 
-#: pitivi/check.py:323
+#: pitivi/check.py:352
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -935,34 +974,34 @@ msgstr ""
 "Tidak bisa membuat muara keluaran audio. Pastikan bahwa Anda punya yang "
 "valid (pulsesink, alsasink, atau osssink)."
 
-#: pitivi/check.py:328
+#: pitivi/check.py:357
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
 "Tidak bisa membuat muara keluaran video. Pastikan bahwa Anda punya gtksink."
 
-#: pitivi/check.py:343
+#: pitivi/check.py:372
 #, python-format
 msgid "Could not import '%s'. Make sure you have it available."
 msgstr "Tidak bisa mengimpor '%s'. Pastikan bahwa itu tersedia."
 
-#: pitivi/check.py:357
+#: pitivi/check.py:386
 msgid "Could not import 'gi'. Make sure you have pygobject available."
 msgstr "Tidak bisa mengimpor 'gi'. Pastikan bahwa pygobject tersedia."
 
-#: pitivi/check.py:456
+#: pitivi/check.py:485
 msgid "enables sound notifications when rendering is complete"
 msgstr "memfungsikan pemberitahuan suara ketika perenderan selesai"
 
-#: pitivi/check.py:458
+#: pitivi/check.py:487
 msgid "enables visual notifications when rendering is complete"
 msgstr "memfungsikan pemberitahuan visual ketika perenderan selesai"
 
-#: pitivi/check.py:460
+#: pitivi/check.py:489
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "kodek multimedia tambahan melalui pustaka GStreamer Libav"
 
-#: pitivi/check.py:462
+#: pitivi/check.py:491
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -970,16 +1009,20 @@ msgstr ""
 "memfungsikan suatu watchdong dalam pipeline GStreamer. Digunakan untuk "
 "mendeteksi kesalahan yang terjadi dalam GStreamer dan memulihkannya"
 
-#: pitivi/check.py:465
+#: pitivi/check.py:495
+msgid "enables object tracking"
+msgstr "memungkinkan pelacakan objek"
+
+#: pitivi/check.py:496
 msgid "enables beat detection functionality"
 msgstr "memungkinkan fungsi deteksi ketukan"
 
 #. Translators: This is the default text of a title clip.
-#: pitivi/clipproperties.py:66
+#: pitivi/clipproperties.py:69
 msgid "Title Clip"
 msgstr "Klip Judul"
 
-#: pitivi/clipproperties.py:158
+#: pitivi/clipproperties.py:162
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
@@ -987,37 +1030,37 @@ msgstr ""
 "Pilih suatu klip pada lini masa untuk mengonfigurasi properti dan efeknya "
 "atau membuat klip baru:"
 
-#: pitivi/clipproperties.py:164
+#: pitivi/clipproperties.py:168
 msgid "Create a title clip"
 msgstr "Buat klip judul"
 
-#: pitivi/clipproperties.py:169
+#: pitivi/clipproperties.py:173
 msgid "Create a color clip"
 msgstr "Buat klip warna"
 
-#: pitivi/clipproperties.py:272 pitivi/effects.py:118
+#: pitivi/clipproperties.py:276 pitivi/effects.py:122
 msgid "Time"
 msgstr "Waktu"
 
-#: pitivi/clipproperties.py:315
+#: pitivi/clipproperties.py:319
 msgid "Speed"
 msgstr "Laju"
 
-#: pitivi/clipproperties.py:330 pitivi/utils/widgets.py:800
+#: pitivi/clipproperties.py:334 pitivi/utils/widgets.py:800
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: pitivi/clipproperties.py:333 pitivi/dialogs/prefs.py:286
+#: pitivi/clipproperties.py:337 pitivi/dialogs/prefs.py:286
 #: pitivi/utils/widgets.py:976
 msgid "Reset to default value"
 msgstr "Menata ulang ke nilai-nilai bawaan"
 
-#: pitivi/clipproperties.py:568
+#: pitivi/clipproperties.py:572
 msgid "Effects"
 msgstr "Efek"
 
-#: pitivi/clipproperties.py:584
+#: pitivi/clipproperties.py:590
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
@@ -1025,23 +1068,27 @@ msgstr ""
 "Untuk menerapkan suatu efek ke klip, seret saja dari Pustaka Efek atau "
 "gunakan tombol di bawah ini."
 
-#: pitivi/clipproperties.py:592
+#: pitivi/clipproperties.py:598
 msgid "Add Effect"
 msgstr "Tambah Efek"
 
-#: pitivi/clipproperties.py:913
+#: pitivi/clipproperties.py:608
+msgid "Cover Object"
+msgstr "Menutupi Objek"
+
+#: pitivi/clipproperties.py:938
 msgid "Transformation"
 msgstr "Transformasi"
 
-#: pitivi/clipproperties.py:1042
+#: pitivi/clipproperties.py:1067
 msgid "Show keyframes"
 msgstr "Tampilkan bingkai kunci"
 
-#: pitivi/clipproperties.py:1045
+#: pitivi/clipproperties.py:1070
 msgid "Activate keyframes"
 msgstr "Aktifkan bingkai kunci"
 
-#: pitivi/clipproperties.py:1050
+#: pitivi/clipproperties.py:1075
 msgid "Hide keyframes"
 msgstr "Sembunyikan bingkai kunci"
 
@@ -1049,9 +1096,20 @@ msgstr "Sembunyikan bingkai kunci"
 msgid "Color"
 msgstr "Warna"
 
-#: pitivi/clip_properties/compositing.py:53 pitivi/effects.py:77
+#: pitivi/clip_properties/compositing.py:57 pitivi/effects.py:81
 msgid "Compositing"
 msgstr "Pengkompositan"
+
+#. Translators: These are compositing operators.
+#. See https://www.cairographics.org/operators/ for explanation and
+#. visualizations.
+#: pitivi/clip_properties/compositing.py:80
+msgid "Source"
+msgstr "Sumber"
+
+#: pitivi/clip_properties/compositing.py:81
+msgid "Over"
+msgstr "Lewat"
 
 #: pitivi/clip_properties/markers.py:47
 msgid "Text"
@@ -1196,7 +1254,7 @@ msgstr "berkas %s"
 msgid "All files"
 msgstr "Semua berkas"
 
-#: pitivi/dialogs/prefs.py:61 pitivi/timeline/timeline.py:1745
+#: pitivi/dialogs/prefs.py:61 pitivi/timeline/timeline.py:1747
 msgid "Timeline"
 msgstr "Alur Waktu"
 
@@ -1331,7 +1389,7 @@ msgstr "Tak Jadi"
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/editorperspective.py:323 pitivi/editorperspective.py:536
 #: pitivi/editorperspective.py:680 pitivi/editorperspective.py:728
-#: pitivi/editorperspective.py:781 pitivi/preset.py:113 pitivi/project.py:194
+#: pitivi/editorperspective.py:781 pitivi/preset.py:113 pitivi/project.py:195
 #: pitivi/render.py:226
 msgid "Save"
 msgstr "Simpan"
@@ -1357,7 +1415,7 @@ msgstr "Perkenalan cepat ke Pitivi"
 msgid "Unable to save project \"%s\""
 msgstr "Tidak bisa menyimpan proyek \"%s\""
 
-#: pitivi/editorperspective.py:538 pitivi/project.py:193
+#: pitivi/editorperspective.py:538 pitivi/project.py:194
 msgid "Save as..."
 msgstr "Simpan Sebagai..."
 
@@ -1415,7 +1473,7 @@ msgid "Detect automatically"
 msgstr "Deteksi secara otomatis"
 
 #: pitivi/editorperspective.py:737 pitivi/editorperspective.py:784
-#: pitivi/project.py:61 pitivi/render.py:821
+#: pitivi/project.py:62 pitivi/render.py:821
 msgid "Untitled"
 msgstr "Tanpa judul"
 
@@ -1431,40 +1489,51 @@ msgstr "Citra JPEG"
 msgid "Preview"
 msgstr "Pratinjau"
 
-#: pitivi/effects.py:61
+#: pitivi/effects.py:65
 msgid "Colors"
 msgstr "Warna"
 
-#: pitivi/effects.py:84
+#: pitivi/effects.py:88
 msgid "Noise & blur"
 msgstr "Derau & kabur"
 
-#: pitivi/effects.py:89
+#: pitivi/effects.py:93
 msgid "Analysis"
 msgstr "Analisis"
 
-#: pitivi/effects.py:96
+#: pitivi/effects.py:100
 msgid "Geometry"
 msgstr "Geometri"
 
-#: pitivi/effects.py:107
+#: pitivi/effects.py:111
 msgid "Fancy"
 msgstr "Kesukaan"
 
-#: pitivi/effects.py:246
+#: pitivi/effects.py:249
 msgid "effect"
 msgstr "efek"
 
+#. Translators: How the video effect which covers/hides a
+#. tracked object is listed. The {} is entered by the user
+#. and denotes the tracked object.
+#: pitivi/effects.py:330
+msgid "{} cover"
+msgstr "{} menutupi"
+
+#: pitivi/effects.py:331
+msgid "Object cover effect"
+msgstr "Efek penutup objek"
+
 #. Add Uncategorized only if there are other categories defined.
-#: pitivi/effects.py:337 pitivi/effects.py:351
+#: pitivi/effects.py:354 pitivi/effects.py:368
 msgid "Uncategorized"
 msgstr "Tanpa kategori"
 
-#: pitivi/effects.py:393 pitivi/effects.py:660
+#: pitivi/effects.py:410 pitivi/effects.py:677
 msgid "No effects"
 msgstr "Tidak ada efek"
 
-#: pitivi/effects.py:481
+#: pitivi/effects.py:498
 msgid "Add to Favorites"
 msgstr "Tambah ke Favorit"
 
@@ -1589,7 +1658,7 @@ msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Resolusi</b>: %d×%d"
 
 #: pitivi/mediafilespreviewer.py:271 pitivi/mediafilespreviewer.py:288
-#: pitivi/utils/ui.py:566
+#: pitivi/utils/ui.py:568
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Durasi</b>: %s"
@@ -1760,11 +1829,11 @@ msgstr "Prasetel baru %d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:177 pitivi/render.py:1320
+#: pitivi/project.py:178 pitivi/render.py:1320
 msgid "Sorry, something didn’t work right."
 msgstr "Maaf, ada yang tidak bekerja dengan benar."
 
-#: pitivi/project.py:180
+#: pitivi/project.py:181
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1790,11 +1859,11 @@ msgstr ""
 "Sebelum menutup Pitivi, Anda dapat menyimpan perubah ke berkas proyek yang "
 "ada atau sebagai suatu berkas proyek terpisah."
 
-#: pitivi/project.py:195
+#: pitivi/project.py:196
 msgid "Close Pitivi"
 msgstr "Tutup Pitivi"
 
-#: pitivi/project.py:265
+#: pitivi/project.py:266
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1804,15 +1873,15 @@ msgstr ""
 "Bila Anda mencoba menambahkan suatu berkas media ke proyek Anda, gunakan "
 "tombol \"Impor\" sebagai pengganti."
 
-#: pitivi/project.py:287
+#: pitivi/project.py:288
 msgid "Ignore backup"
 msgstr "Abaikan salinan cadangan"
 
-#: pitivi/project.py:289
+#: pitivi/project.py:290
 msgid "Restore from backup"
 msgstr "Pulihkan dari cadangan"
 
-#: pitivi/project.py:300
+#: pitivi/project.py:301
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1825,16 +1894,16 @@ msgstr ""
 "\n"
 "Apakah Anda hendak memuatnya sebagai pengganti?"
 
-#: pitivi/project.py:373
+#: pitivi/project.py:374
 msgid "You do not have permissions to write to this folder."
 msgstr "Anda tidak berhak untuk menulis ke folder ini."
 
 #. Save the project to a temporary file.
-#: pitivi/project.py:406
+#: pitivi/project.py:407
 msgid "project"
 msgstr "proyek"
 
-#: pitivi/project.py:706
+#: pitivi/project.py:700
 msgid "Pitivi encoding profile"
 msgstr "Profil pengkodean Pitivi"
 
@@ -1957,7 +2026,7 @@ msgstr "\"%s\" telah selesai merender."
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:451
+#: pitivi/timeline/elements.py:446
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1968,12 +2037,12 @@ msgstr ""
 "Stempel Waktu: %s\n"
 "Nilai: %s"
 
-#: pitivi/timeline/elements.py:639
+#: pitivi/timeline/elements.py:634
 #, python-format
 msgid "Timestamp: %s"
 msgstr "Stempel waktu: %s"
 
-#: pitivi/timeline/elements.py:1605
+#: pitivi/timeline/elements.py:1603
 msgid "Audio crossfade"
 msgstr "Crossfade audio"
 
@@ -2002,7 +2071,7 @@ msgstr "Hapus lapisan"
 msgid "Layer %d"
 msgstr "Lapisan %d"
 
-#: pitivi/timeline/ruler.py:232
+#: pitivi/timeline/ruler.py:239
 #, python-format
 msgid "Frame #%d"
 msgstr "Bingkai #%d"
@@ -2049,121 +2118,133 @@ msgstr "Klik kiri juga seek"
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr "Apakah mengklik kiri juga seek selain memilih dan menyunting klip."
 
-#: pitivi/timeline/timeline.py:356 pitivi/timeline/timeline.py:1809
+#: pitivi/timeline/timeline.py:356 pitivi/timeline/timeline.py:1811
 msgid "Add layer"
 msgstr "Tambah lapisan"
 
-#: pitivi/timeline/timeline.py:1752
+#: pitivi/timeline/timeline.py:1754
 msgid "Action Search"
 msgstr "Pencarian Aksi"
 
-#: pitivi/timeline/timeline.py:1760
+#: pitivi/timeline/timeline.py:1762
 msgid "Delete selected clips"
 msgstr "Hapus klip yang dipilih"
 
-#: pitivi/timeline/timeline.py:1767
+#: pitivi/timeline/timeline.py:1769
 msgid "Delete selected clips and shift following ones"
 msgstr "Hapus klip yang dipilih dan geser yang selanjutnya"
 
-#: pitivi/timeline/timeline.py:1774
+#: pitivi/timeline/timeline.py:1776
 msgid "Group selected clips together"
 msgstr "Kelompokkan klip yang dipilih menjadi satu"
 
-#: pitivi/timeline/timeline.py:1781
+#: pitivi/timeline/timeline.py:1783
 msgid "Ungroup selected clips"
 msgstr "Bongkar kelompok klip yang dipilih"
 
-#: pitivi/timeline/timeline.py:1788
+#: pitivi/timeline/timeline.py:1790
 msgid "Cut selected clips"
 msgstr "Potong klip yang dipilih"
 
-#: pitivi/timeline/timeline.py:1795
+#: pitivi/timeline/timeline.py:1797
 msgid "Copy selected clips"
 msgstr "Salin klip yang dipilih"
 
-#: pitivi/timeline/timeline.py:1802
+#: pitivi/timeline/timeline.py:1804
 msgid "Paste selected clips"
 msgstr "Tempelkan klip yang dipilih"
 
-#: pitivi/timeline/timeline.py:1816
+#: pitivi/timeline/timeline.py:1818
 msgid "Seek to the first clip edge after the playhead"
 msgstr "Lompat ke klip pertama setelah playhead"
 
-#: pitivi/timeline/timeline.py:1823
+#: pitivi/timeline/timeline.py:1825
 msgid "Seek to the first clip edge before the playhead"
 msgstr "Lompat ke klip pertama sebelum playhead"
 
-#: pitivi/timeline/timeline.py:1830
+#: pitivi/timeline/timeline.py:1832
 msgid "Shift selected clips one frame forward"
 msgstr "Menggeser klip yang dipilih satu bingkai ke depan"
 
-#: pitivi/timeline/timeline.py:1837
+#: pitivi/timeline/timeline.py:1839
 msgid "Shift selected clips one frame backward"
 msgstr "Menggeser klip yang dipilih satu bingkai ke belakang"
 
-#: pitivi/timeline/timeline.py:1844
+#: pitivi/timeline/timeline.py:1846
 msgid "Snap selected clips to the next clip"
 msgstr "Lengketkan klip yang dipilih ke klip selanjutnya"
 
-#: pitivi/timeline/timeline.py:1851
+#: pitivi/timeline/timeline.py:1853
 msgid "Snap selected clips to the previous clip"
 msgstr "Lengketkan klip yang dipilih ke klip sebelumnya"
 
-#: pitivi/timeline/timeline.py:1858
+#: pitivi/timeline/timeline.py:1860
 msgid "Add an effect to the selected clip"
 msgstr "Tambah efek ke klip yang dipilih"
 
-#: pitivi/timeline/timeline.py:1871
+#: pitivi/timeline/timeline.py:1873
 msgid "Split the clip at the position"
 msgstr "Belah klip pada posisi"
 
-#: pitivi/timeline/timeline.py:1878
+#: pitivi/timeline/timeline.py:1880
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Menambah bingkai kunci ke kurva bingkai kunci dari klip yang dipilih"
 
-#: pitivi/timeline/timeline.py:1883
+#: pitivi/timeline/timeline.py:1885
 msgid "Timeline Navigation"
 msgstr "Navigasi Alur Waktu"
 
-#: pitivi/timeline/timeline.py:1891
+#: pitivi/timeline/timeline.py:1893
 msgid "Zoom in"
 msgstr "Perbesar"
 
-#: pitivi/timeline/timeline.py:1899
+#: pitivi/timeline/timeline.py:1901
 msgid "Zoom out"
 msgstr "Perkecil"
 
-#: pitivi/timeline/timeline.py:1907
+#: pitivi/timeline/timeline.py:1909
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Atur zum agar seluruh proyek pas ke jendela"
 
-#: pitivi/timeline/timeline.py:1920
+#: pitivi/timeline/timeline.py:1922
 msgid "Seek backward one frame"
 msgstr "Seek mundur satu bingkai"
 
-#: pitivi/timeline/timeline.py:1927
+#: pitivi/timeline/timeline.py:1929
 msgid "Seek forward one frame"
 msgstr "Maju satu bingkai"
 
-#: pitivi/timeline/timeline.py:1935
+#: pitivi/timeline/timeline.py:1937
 msgid "Seek backward one second"
 msgstr "Mundur satu detik"
 
-#: pitivi/timeline/timeline.py:1943
+#: pitivi/timeline/timeline.py:1945
 msgid "Seek forward one second"
 msgstr "Maju satu detik"
 
-#: pitivi/timeline/timeline.py:1951
+#: pitivi/timeline/timeline.py:1953
 msgid "Add a marker"
 msgstr "Tambah penanda"
 
-#: pitivi/timeline/timeline.py:1958
+#: pitivi/timeline/timeline.py:1960
 msgid "Seek to the first marker before the playhead"
 msgstr "Lompat ke klip pertama sebelum playhead"
 
-#: pitivi/timeline/timeline.py:1965
+#: pitivi/timeline/timeline.py:1967
 msgid "Seek to the first marker after the playhead"
 msgstr "Lompat ke klip pertama setelah playhead"
+
+#: pitivi/trackerperspective.py:403
+msgid "Object {}"
+msgstr "Objek {}"
+
+#: pitivi/trackerperspective.py:665
+msgid "Go back"
+msgstr "Mundur"
+
+#: pitivi/trackerperspective.py:739
+msgid "Track objects"
+msgstr "Lacak objek"
 
 #: pitivi/transitions.py:77
 msgid "Normal"
@@ -2248,117 +2329,117 @@ msgid "Max CPU usage dedicated to transcoding"
 msgstr "Penggunaan CPU maks yang didedikasikan untuk transcoding"
 
 #. Translators: 'fps' is for 'frames per second'
-#: pitivi/utils/ui.py:382
+#: pitivi/utils/ui.py:390
 msgid "{0:s} fps"
 msgstr "{0:s} fps"
 
-#: pitivi/utils/ui.py:402
+#: pitivi/utils/ui.py:410
 #, python-brace-format
 msgid "{0:n} kHz"
 msgstr "{0:n} kHz"
 
-#: pitivi/utils/ui.py:411
+#: pitivi/utils/ui.py:419
 msgid "Mono"
 msgstr "Mono"
 
-#: pitivi/utils/ui.py:412
+#: pitivi/utils/ui.py:420
 msgid "Stereo"
 msgstr "Stereo"
 
-#: pitivi/utils/ui.py:413
+#: pitivi/utils/ui.py:421
 msgid "6 (5.1)"
 msgstr "6 (5.1)"
 
-#: pitivi/utils/ui.py:414
+#: pitivi/utils/ui.py:422
 msgid "8 (7.1)"
 msgstr "8 (7.1)"
 
-#: pitivi/utils/ui.py:545
+#: pitivi/utils/ui.py:547
 #, python-format
 msgid "<b>Duration:</b> %s"
 msgstr "<b>Durasi:</b> %s"
 
-#: pitivi/utils/ui.py:548
+#: pitivi/utils/ui.py:550
 #, python-format
 msgid "<b>Proxy creation progress:</b> %d%%"
 msgstr "<b>Kemajuan pembuatan proksi:</b> %d%%"
 
-#: pitivi/utils/ui.py:562
+#: pitivi/utils/ui.py:564
 #, python-format
 msgid "<b>Path</b>: %s"
 msgstr "<b>Path</b>: %s"
 
-#: pitivi/utils/ui.py:572
+#: pitivi/utils/ui.py:574
 #, python-format
 msgid "<b>Size</b>: %s"
 msgstr "<b>Ukuran</b>: %s"
 
-#: pitivi/utils/ui.py:608
+#: pitivi/utils/ui.py:610
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[0] "<b>Audio:</b> %d kanal pada %d <i>Hz</i> (%d <i>bit</i>)"
 msgstr[1] "<b>Audio:</b> %d kanal pada %d <i>Hz</i> (%d <i>bit</i>)"
 
-#: pitivi/utils/ui.py:620
+#: pitivi/utils/ui.py:622
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
 msgstr "<b>Video:</b> %d×%d <i>piksel</i> pada %s <i>fps</i>"
 
-#: pitivi/utils/ui.py:623
+#: pitivi/utils/ui.py:625
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>Citra:</b> %d×%d <i>piksel</i>"
 
-#: pitivi/utils/ui.py:677 pitivi/utils/ui.py:704 pitivi/utils/ui.py:728
+#: pitivi/utils/ui.py:679 pitivi/utils/ui.py:706 pitivi/utils/ui.py:730
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d jam"
 msgstr[1] "%d jam"
 
-#: pitivi/utils/ui.py:680 pitivi/utils/ui.py:707 pitivi/utils/ui.py:731
+#: pitivi/utils/ui.py:682 pitivi/utils/ui.py:709 pitivi/utils/ui.py:733
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d menit"
 msgstr[1] "%d menit"
 
-#: pitivi/utils/ui.py:683 pitivi/utils/ui.py:710 pitivi/utils/ui.py:734
+#: pitivi/utils/ui.py:685 pitivi/utils/ui.py:712 pitivi/utils/ui.py:736
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d detik"
 msgstr[1] "%d detik"
 
-#: pitivi/utils/ui.py:702
+#: pitivi/utils/ui.py:704
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d hari"
 msgstr[1] "%d hari"
 
-#: pitivi/utils/ui.py:743
+#: pitivi/utils/ui.py:745
 msgid "Just now"
 msgstr "Baru saja"
 
-#: pitivi/utils/ui.py:746
+#: pitivi/utils/ui.py:748
 msgid "An hour ago"
 msgstr "Satu jam yang lalu"
 
-#: pitivi/utils/ui.py:749
+#: pitivi/utils/ui.py:751
 msgid "Today"
 msgstr "Hari ini"
 
-#: pitivi/utils/ui.py:752
+#: pitivi/utils/ui.py:754
 msgid "Yesterday"
 msgstr "Kemarin"
 
-#: pitivi/utils/ui.py:761
+#: pitivi/utils/ui.py:763
 msgid "About a year ago"
 msgstr "Sekitar satu tahun yang lalu"
 
-#: pitivi/utils/ui.py:764
+#: pitivi/utils/ui.py:766
 #, python-format
 msgid "About %d year ago"
 msgid_plural "About %d years ago"
@@ -2418,31 +2499,31 @@ msgstr "Diagonal"
 msgid "Composition Guidelines"
 msgstr "Pedoman Komposisi"
 
-#: pitivi/viewer/viewer.py:77
+#: pitivi/viewer/viewer.py:81
 msgid "Currently playing"
 msgstr "Sedang memutar"
 
-#: pitivi/viewer/viewer.py:252
+#: pitivi/viewer/viewer.py:299
 msgid "Select composition guidelines"
 msgstr "Pilih pedoman komposisi"
 
-#: pitivi/viewer/viewer.py:260
+#: pitivi/viewer/viewer.py:307
 msgid "Go to the beginning of the timeline"
 msgstr "Ke awal lini masa"
 
-#: pitivi/viewer/viewer.py:269
+#: pitivi/viewer/viewer.py:316
 msgid "Go back one second"
 msgstr "Mundur satu detik"
 
-#: pitivi/viewer/viewer.py:282
+#: pitivi/viewer/viewer.py:329
 msgid "Go forward one second"
 msgstr "Maju satu detik"
 
-#: pitivi/viewer/viewer.py:291
+#: pitivi/viewer/viewer.py:338
 msgid "Go to the end of the timeline"
 msgstr "Ke akhir lini masa"
 
-#: pitivi/viewer/viewer.py:298
+#: pitivi/viewer/viewer.py:345
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -2450,7 +2531,7 @@ msgstr ""
 "Masukkan suatu kode waktu atau nomor bingkai\n"
 "dan tekan \"Enter\" untuk pergi ke posisi itu"
 
-#: pitivi/viewer/viewer.py:309
+#: pitivi/viewer/viewer.py:356
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -2458,23 +2539,23 @@ msgstr ""
 "Copot penilik\n"
 "Anda dapat merekatkannya lagi dengan menutup jendela yang baru dibuat."
 
-#: pitivi/viewer/viewer.py:336
+#: pitivi/viewer/viewer.py:383
 msgid "Viewer"
 msgstr "Penampil"
 
-#: pitivi/viewer/viewer.py:344
+#: pitivi/viewer/viewer.py:391
 msgid "Toggle the currently selected composition guidelines"
 msgstr "Jungkitkan pedoman komposisi yang saat ini dipilih"
 
-#: pitivi/viewer/viewer.py:352
+#: pitivi/viewer/viewer.py:399
 msgid "Toggle safe areas on viewer"
 msgstr "Jungkitkan area aman pada penampil"
 
-#: pitivi/viewer/viewer.py:478 pitivi/viewer/viewer.py:536
+#: pitivi/viewer/viewer.py:541 pitivi/viewer/viewer.py:600
 msgid "Show this window in fullscreen"
 msgstr "Tampilkan jendela ini dalam layar penuh"
 
-#: pitivi/viewer/viewer.py:533
+#: pitivi/viewer/viewer.py:597
 msgid "Exit fullscreen mode"
 msgstr "Keluar mode layar penuh"
 
