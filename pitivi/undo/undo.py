@@ -172,6 +172,15 @@ class UndoableActionLog(GObject.Object, Loggable):
 
         The operation will be composed of all the actions which have been
         pushed and also of the committed sub-operations.
+
+        Args:
+            action_group_name (str): The name of the operation.
+            finalizing_action (FinalizingAction): The action to be performed
+                at the end of undoing or redoing the stacked actions.
+            mergeable (bool): Whether this stack accepts merges with future
+                compatible stacks.
+            toplevel (bool): If true, throws error if this operation is
+                started while another one is being recorded.
         """
         if self.running:
             self.debug("Abort because running")

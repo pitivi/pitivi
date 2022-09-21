@@ -27,7 +27,6 @@ repos:
         args:
           # http://www.pydocstyle.org/en/latest/error_codes.html
           - --ignore=D1,D203,D213,D401,D406,D407,D413
-        exclude: '.*pitivi/utils/extract.py$|.*pitivi/autoaligner.py$'
   - repo: https://gitlab.com/PyCQA/flake8
     rev: 3.9.2
     hooks:
@@ -36,16 +35,16 @@ repos:
           # http://flake8.pycqa.org/en/latest/user/error-codes.html
           # https://pycodestyle.readthedocs.io/en/latest/intro.html#error-codes
           - --ignore=E402,E501,E722,F401,F841,W504
-        exclude: >
-          (?x)^(
-            pitivi/utils/extract.py|
-            pitivi/autoaligner.py|
-          )$
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: 'v0.910-1'
     hooks:
       - id: mypy
-        files: '^pitivi/(clipproperties.py|timeline/timeline.py)$'
+        files: >
+          (?x)^pitivi/(
+            autoaligner.py|
+            clipproperties.py|
+            timeline/timeline.py
+          )$
         args:
           - --no-strict-optional
   - repo: local
@@ -57,8 +56,6 @@ repos:
         types: [python]
         exclude: >
           (?x)^(
-            pitivi/utils/extract.py|
-            pitivi/autoaligner.py|
             tests/validate-tests/manager.py|
             bin/pitivi.in
           )$

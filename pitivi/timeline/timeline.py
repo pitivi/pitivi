@@ -28,7 +28,6 @@ from gi.repository import Gst
 from gi.repository import Gtk
 
 from pitivi.action_search_bar import ActionSearchBar
-from pitivi.autoaligner import AlignmentProgressDialog
 from pitivi.autoaligner import AutoAligner
 from pitivi.configure import get_ui_dir
 from pitivi.configure import in_devel
@@ -1670,6 +1669,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.forward_one_frame_action.set_enabled(project_loaded)
         self.backward_one_second_action.set_enabled(project_loaded)
         self.forward_one_second_action.set_enabled(project_loaded)
+        self.align_clips_action.set_enabled(AutoAligner.can_align(selection))
 
     # Internal API
 
@@ -1860,6 +1860,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.app.shortcuts.add("timeline.add-effect", ["<Primary>e"],
                                self.add_effect_action,
                                _("Add an effect to the selected clip"))
+
+        self.align_clips_action = Gio.SimpleAction.new("align-clips", None)
+        self.align_clips_action.connect("activate", self._align_selected_cb)
+        group.add_action(self.align_clips_action)
 
         if in_devel():
             self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
@@ -2184,18 +2188,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if not self.ges_timeline:
             return
 
-        progress_dialog = AlignmentProgressDialog(self.app)
-        progress_dialog.window.show()
-        self.app.action_log.begin("align", toplevel=True)
-
-        def aligned_cb():  # Called when alignment is complete
-            self.app.action_log.commit()
-            self._project.pipeline.commit_timeline()
-            progress_dialog.window.destroy()
-
-        auto_aligner = AutoAligner(self.timeline.selection, aligned_cb)
-        progress_meter = auto_aligner.start()
-        progress_meter.add_watcher(progress_dialog.update_position)
+        with self.app.action_log.started("Align clips",
+                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                         toplevel=True):
+            auto_aligner = AutoAligner(self.timeline.selection)
+            auto_aligner.run()
 
     def _split_cb(self, unused_action, unused_parameter):
         """Splits clips.
