@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the pitivi package.
 #
 # Andrej Žnidaršič <andrej.znidarsic@gmail.com>, 2009–2011.
-# Martin Srebotnjak  <miles@filmsi.net>, 2011–2014.
+# Martin Srebotnjak  <miles@filmsi.net>, 2011–2014,2022.
 # Matej Urbančič <mateju@svn.gnome.org>, 2012–2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2022-07-24 04:44+0000\n"
+"POT-Creation-Date: 2022-10-03 13:56+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -67,7 +67,7 @@ msgstr "Med drugimi novostmi so tudi:"
 #: data/org.pitivi.Pitivi.appdata.xml.in:15
 msgid ""
 "Accepts any file formats supported by the GStreamer multimedia framework"
-msgstr "Sprejmi katerikoli zapis, podprt v okolju GStreamer"
+msgstr "Sprejme poljuben zapis, podprt v večpredstavnostnem okolju GStreamer"
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:16
 msgid ""
@@ -89,7 +89,7 @@ msgstr ""
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:41
 msgid "The Pitivi Team"
-msgstr "Skupina Pitivi"
+msgstr "Ekipa Pitivi"
 
 #: data/org.pitivi.Pitivi.desktop.in:5
 msgid "Video Editor"
@@ -113,12 +113,14 @@ msgid "Estimating..."
 msgstr "Poteka ocenjevanje ..."
 
 #: data/ui/beatdetection.ui:18
+#, fuzzy
 msgid "Detect beats"
-msgstr ""
+msgstr "Zaznaj udarce"
 
 #: data/ui/beatdetection.ui:35
+#, fuzzy
 msgid "Clear detected beats"
-msgstr ""
+msgstr "Počisti zaznane udarce"
 
 #: data/ui/beatdetection.ui:66
 msgid "Detecting..."
@@ -129,7 +131,6 @@ msgid "Pick the clip color"
 msgstr "Izbor barve posnetka"
 
 #: data/ui/clipcompositing.ui:42
-#, fuzzy
 msgid "Fade-in:"
 msgstr "Odtemnitev:"
 
@@ -138,21 +139,16 @@ msgid "seconds"
 msgstr "sekund"
 
 #: data/ui/clipcompositing.ui:97
-#, fuzzy
 msgid "Fade-out:"
 msgstr "Zatemnitev:"
 
 #: data/ui/clipcompositing.ui:150
-#, fuzzy
-#| msgid "Reset all"
 msgid "Reset fade-in"
-msgstr "Ponastavi vse"
+msgstr "Ponastavi odtemnitev"
 
 #: data/ui/clipcompositing.ui:166
-#, fuzzy
-#| msgid "Reset all"
 msgid "Reset fade-out"
-msgstr "Ponastavi vse"
+msgstr "Ponastavi zatemnitev"
 
 #: data/ui/clipcompositing.ui:181
 msgid "Blending:"
@@ -209,9 +205,8 @@ msgstr "Višina:"
 
 #: data/ui/cliptransformation.ui:141
 #, fuzzy
-#| msgid "Clip Properties"
 msgid "Constrain Proportions"
-msgstr "Lastnosti posnetka"
+msgstr "Omeji razmerja"
 
 #: data/ui/cliptransformation.ui:157
 msgid "X:"
@@ -437,7 +432,7 @@ msgstr "Uporabniški priročnik"
 
 #: data/ui/mainmenubutton.ui:193
 msgid "Start the intro to Pitivi for new users"
-msgstr ""
+msgstr "Zaženi predstavitev Pitivi za nove uporabnike"
 
 #: data/ui/mainmenubutton.ui:197
 msgid "Interactive Intro"
@@ -461,9 +456,8 @@ msgstr "Lastnosti posnetka ..."
 
 #: data/ui/medialibrary.ui:59
 #, fuzzy
-#| msgid "Paste selected clips"
 msgid "Show tags associated with selected clips"
-msgstr "Prilepi izbrane posnetke"
+msgstr "Pokaži oznake, povezane z izbranimi posnetki"
 
 #: data/ui/medialibrary.ui:78
 msgid "Insert the selected clips at the end of the timeline"
@@ -552,8 +546,9 @@ msgstr "točke"
 
 #. When checked, changing the width or height affects also the other so that the aspect ratio value (width / height) does not change.
 #: data/ui/projectsettings.ui:295 data/ui/projectsettings.ui:623
+#, fuzzy
 msgid "Constrain proportions"
-msgstr ""
+msgstr "Omeji razmerja"
 
 #: data/ui/projectsettings.ui:299
 msgid "Maintain aspect ratio"
@@ -643,7 +638,7 @@ msgstr ""
 
 #: data/ui/renderingdialog.ui:330
 msgid "Always render from proxy files"
-msgstr ""
+msgstr "Vedno upodabljaj iz datotek posrednih posnetkov"
 
 #: data/ui/renderingdialog.ui:334
 msgid ""
@@ -653,7 +648,7 @@ msgstr ""
 
 #: data/ui/renderingdialog.ui:347
 msgid "Never render from proxy files"
-msgstr ""
+msgstr "Nikoli ne upodabljaj iz datotek posrednih posnetkov"
 
 #: data/ui/renderingdialog.ui:351
 msgid ""
@@ -730,7 +725,7 @@ msgid "Pause"
 msgstr "Premor"
 
 #: data/ui/renderingprogress.ui:55 data/ui/trackerperspective.ui:25
-#: pitivi/timeline/timeline.py:1917 pitivi/viewer/viewer.py:836
+#: pitivi/timeline/timeline.py:1921 pitivi/viewer/viewer.py:836
 msgid "Play"
 msgstr "Predvajaj"
 
@@ -789,16 +784,12 @@ msgid "Ungroup"
 msgstr "Razdruži"
 
 #: data/ui/timelinetoolbar.ui:76
-#, fuzzy
-#| msgid "Copy clips"
 msgid "Cut clips"
-msgstr "Kopiraj posnetke"
+msgstr "Izreži posnetke"
 
 #: data/ui/timelinetoolbar.ui:78
-#, fuzzy
-#| msgid "Custom"
 msgid "Cut"
-msgstr "Po meri"
+msgstr "Izreži"
 
 #: data/ui/timelinetoolbar.ui:91
 msgid "Copy clips"
@@ -820,11 +811,11 @@ msgstr "Prilepi izbor"
 msgid "Align clips based on their soundtracks"
 msgstr "Poravna posnetke na osnovi njihovih zvočnih sledi"
 
-#: data/ui/timelinetoolbar.ui:124
+#: data/ui/timelinetoolbar.ui:123
 msgid "Align"
 msgstr "Poravnaj"
 
-#: data/ui/timelinetoolbar.ui:137
+#: data/ui/timelinetoolbar.ui:136
 msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
@@ -833,7 +824,7 @@ msgstr ""
 "Izbrana možnost omogoča, da se sosednji posnetki samodejno premaknejo, da "
 "zapolnijo vrzeli."
 
-#: data/ui/timelinetoolbar.ui:140
+#: data/ui/timelinetoolbar.ui:139
 msgid "Gapless mode"
 msgstr "Zvezni način"
 
@@ -850,16 +841,12 @@ msgid "Pick a background color"
 msgstr "Izbor barve ozadja"
 
 #: data/ui/titleeditor.ui:157
-#, fuzzy
-#| msgid "Pick a text color"
 msgid "Pick an outline color"
-msgstr "Izbor barve pisave"
+msgstr "Izberite barvo orisa"
 
 #: data/ui/titleeditor.ui:193
-#, fuzzy
-#| msgid "Shadows"
 msgid "Drop Shadow"
-msgstr "Sence"
+msgstr "Vrzi senco"
 
 #: data/ui/titleeditor.ui:215
 msgid "Alignment"
@@ -899,9 +886,8 @@ msgstr "Sledi"
 
 #: pitivi/action_search_bar.py:46
 #, fuzzy
-#| msgid "Section"
 msgid "Search Action"
-msgstr "Odsek"
+msgstr "Dejanje iskanja"
 
 #: pitivi/application.py:160
 msgid "General"
@@ -954,10 +940,9 @@ msgstr ""
 
 #. Translators: %s is a Python module name or another OS component
 #: pitivi/check.py:224
-#, fuzzy, python-format
-#| msgid "- %s GStreamer plug-in not found on the system"
+#, python-format
 msgid "- %s GStreamer element not found on the system"
-msgstr "– vstavka GStreamer %s ni mogoče najti v sistemu"
+msgstr "– elementa GStreamer %s ni mogoče najti v sistemu"
 
 #: pitivi/check.py:332
 msgid "ERROR - The following hard dependencies are unmet:"
@@ -987,7 +972,7 @@ msgstr ""
 #: pitivi/check.py:372
 #, python-format
 msgid "Could not import '%s'. Make sure you have it available."
-msgstr ""
+msgstr "Ni bilo mogoče uvoziti »%s«. Prepričajte se, da je na voljo."
 
 #: pitivi/check.py:386
 msgid "Could not import 'gi'. Make sure you have pygobject available."
@@ -1013,11 +998,12 @@ msgstr ""
 
 #: pitivi/check.py:495
 msgid "enables object tracking"
-msgstr ""
+msgstr "Omogoča sledenje predmetom"
 
 #: pitivi/check.py:496
+#, fuzzy
 msgid "enables beat detection functionality"
-msgstr ""
+msgstr "Omogoča funkcijo zaznavanja udarcev"
 
 #. Translators: This is the default text of a title clip.
 #: pitivi/clipproperties.py:69
@@ -1076,7 +1062,7 @@ msgstr "Dodaj učinek"
 
 #: pitivi/clipproperties.py:608
 msgid "Cover Object"
-msgstr ""
+msgstr "Prekrij predmet"
 
 #: pitivi/clipproperties.py:938
 msgid "Transformation"
@@ -1088,9 +1074,8 @@ msgstr "Pokaži ključne sličice"
 
 #: pitivi/clipproperties.py:1070
 #, fuzzy
-#| msgid "Add a keyframe"
 msgid "Activate keyframes"
-msgstr "Dodaj ključno sličico"
+msgstr "Aktiviraj ključne sličice"
 
 #: pitivi/clipproperties.py:1075
 msgid "Hide keyframes"
@@ -1121,9 +1106,8 @@ msgstr "Besedilo"
 
 #: pitivi/clip_properties/markers.py:64
 #, fuzzy
-#| msgid "Clip Properties"
 msgid "Clip markers"
-msgstr "Lastnosti posnetka"
+msgstr "Označevalci posnetkov"
 
 #: pitivi/clip_properties/markers.py:125
 msgid "Magnetic"
@@ -1246,13 +1230,8 @@ msgstr "Navedene datoteke ni mogoče najti:"
 
 #: pitivi/dialogs/missingasset.py:82
 #, fuzzy
-#| msgid ""
-#| "The following file has moved: \"<b>%s</b>\"\n"
-#| "Please specify its new location:"
 msgid "Please specify its new location:"
-msgstr ""
-"Datoteka je bila premaknjena: \"<b>%s</b>\"\n"
-"Navedite njeno novo mesto:"
+msgstr "Navedite njeno novo mesto:"
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI files"
 #: pitivi/dialogs/missingasset.py:113
@@ -1278,7 +1257,7 @@ msgstr "Tipkovne bližnjice"
 
 #: pitivi/dialogs/prefs.py:64
 msgid "Proxies"
-msgstr ""
+msgstr "Posredni posnetki"
 
 #: pitivi/dialogs/prefs.py:65
 msgid "Other"
@@ -1300,10 +1279,8 @@ msgid "Proxy resolution for the current project is %d×%d px"
 msgstr ""
 
 #: pitivi/dialogs/prefs.py:459
-#, fuzzy
-#| msgid "Reset all settings to their default values"
 msgid "Reset the shortcut to the default accelerator"
-msgstr "Ponastavi vse nastavitve na privzeto vrednost"
+msgstr "Ponastavi bližnjico na privzeto vrednost"
 
 #: pitivi/dialogs/prefs.py:616
 msgid "Set Shortcut"
@@ -1592,8 +1569,9 @@ msgstr ""
 
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/interactiveintro.py:154
+#, fuzzy
 msgid "Start Overview"
-msgstr ""
+msgstr "Začni pregled"
 
 #: pitivi/interactiveintro.py:212
 msgid "Welcome to Pitivi!"
@@ -1608,8 +1586,10 @@ msgid "Drag clips in the timeline to arrange them"
 msgstr "Potegnite posnetke v časovnici in jih tako preuredite"
 
 #: pitivi/interactiveintro.py:218
+#, fuzzy
 msgid "Right-click anywhere to move the playhead"
 msgstr ""
+"Z desno tipko miške kliknite kjerkoli, če želite premakniti predvajalno glavo"
 
 #: pitivi/interactiveintro.py:220
 msgid "Preview with the play button"
@@ -1629,7 +1609,7 @@ msgstr "Temna tema"
 
 #: pitivi/mainwindow.py:75
 msgid "Whether or not to use a dark theme."
-msgstr ""
+msgstr "Ali želite uporabiti temno temo ali ne."
 
 #: pitivi/mainwindow.py:189
 msgid "Project"
@@ -1645,7 +1625,7 @@ msgstr "O programu"
 
 #: pitivi/mainwindow.py:210
 msgid "Show the menu button content"
-msgstr ""
+msgstr "Pokaži vsebino gumba menija"
 
 #: pitivi/mainwindow.py:262
 #, python-format
@@ -1685,7 +1665,7 @@ msgstr "Ohrani pogovorno okno odprto"
 
 #: pitivi/medialibrary.py:148
 msgid "When importing files keep the dialog open"
-msgstr ""
+msgstr "Pri uvozu datotek ohrani pogovorno okno odprto"
 
 #. Translators: Create optimized media for unsupported files.
 #: pitivi/medialibrary.py:154
@@ -1715,9 +1695,8 @@ msgstr "Odstrani izbrane vire"
 
 #: pitivi/medialibrary.py:637
 #, fuzzy
-#| msgid "Insert the selected clips at the end of the timeline"
 msgid "Insert selected assets at the end of the timeline"
-msgstr "Vstavi izbrane posnetke na konec časovnice"
+msgstr "Vstavi izbrane predmete na konec časovnice"
 
 #: pitivi/medialibrary.py:853
 msgid "Select One or More Files"
@@ -1767,7 +1746,7 @@ msgstr[3] "Med uvažanjem je prišlo do {0:d} napak."
 #: pitivi/medialibrary.py:1114
 #, python-format
 msgid "The project settings have been set to match file '%s'"
-msgstr ""
+msgstr "Nastavitve projekta so nastavljene tako, da se ujemajo z datoteko »%s«"
 
 #: pitivi/medialibrary.py:1210
 #, fuzzy
@@ -1781,11 +1760,11 @@ msgstr[3] "Pitivi ne more uporabiti naslednje datoteke."
 
 #: pitivi/medialibrary.py:1240
 msgid "Tag as:"
-msgstr ""
+msgstr "Označi kot:"
 
 #: pitivi/medialibrary.py:1278
 msgid "Enter tag"
-msgstr ""
+msgstr "Vnesite značko"
 
 #: pitivi/medialibrary.py:1438
 msgid "Open containing folder"
@@ -1976,7 +1955,7 @@ msgstr "srednje"
 #: pitivi/render.py:965
 #, fuzzy
 msgid "high"
-msgstr "visok"
+msgstr "visoko"
 
 #. Translators: This item appears in a combobox's popup and
 #. contains as children the unsupported (but still available)
@@ -2030,7 +2009,6 @@ msgid ""
 msgstr ""
 
 #: pitivi/render.py:1485
-#, fuzzy
 msgid "Select file path to render"
 msgstr "Izberite pot datoteke, ki jo želite upodobiti"
 
@@ -2063,10 +2041,8 @@ msgid "Timestamp: %s"
 msgstr "Časovni žig: %s"
 
 #: pitivi/timeline/elements.py:1603
-#, fuzzy
-#| msgid "Audio Preset"
 msgid "Audio crossfade"
-msgstr "Nastavitev zvoka"
+msgstr "Zvočni preliv"
 
 #: pitivi/timeline/layer.py:196
 msgid "Move layer to top"
@@ -2098,20 +2074,21 @@ msgstr "Steza %d"
 msgid "Frame #%d"
 msgstr "Sličica #%d"
 
-#: pitivi/timeline/timeline.py:86
+#: pitivi/timeline/timeline.py:85
+#, fuzzy
 msgid "Markers magnetic by default"
-msgstr ""
+msgstr "Označevalci naj bodo privzeto magnetni"
 
-#: pitivi/timeline/timeline.py:88
+#: pitivi/timeline/timeline.py:87
 msgid ""
 "Whether markers created on new clips will be snapping targets by default."
 msgstr ""
 
-#: pitivi/timeline/timeline.py:98
+#: pitivi/timeline/timeline.py:97
 msgid "Snap distance"
 msgstr "Razdalja pripenjanja"
 
-#: pitivi/timeline/timeline.py:99
+#: pitivi/timeline/timeline.py:98
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -2119,25 +2096,25 @@ msgstr ""
 "Prag (v točkah) pri katerem bosta dva posnetka pripeta skupaj pri vlečenju "
 "ali obrazovanju."
 
-#: pitivi/timeline/timeline.py:111
+#: pitivi/timeline/timeline.py:110
 msgid "Image clip duration"
 msgstr "Trajanje slikovnega posnetka"
 
-#: pitivi/timeline/timeline.py:113
+#: pitivi/timeline/timeline.py:112
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
 msgstr "Privzeta dolžina posnetka slik (v ms) ob vstavljanju na časovnico."
 
-#: pitivi/timeline/timeline.py:124
+#: pitivi/timeline/timeline.py:123
 msgid "Left click also seeks"
 msgstr "Klik levega gumba miške začne iskanje"
 
-#: pitivi/timeline/timeline.py:126
+#: pitivi/timeline/timeline.py:125
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
 
-#: pitivi/timeline/timeline.py:357 pitivi/timeline/timeline.py:1813
+#: pitivi/timeline/timeline.py:356 pitivi/timeline/timeline.py:1813
 msgid "Add layer"
 msgstr "Dodaj stezo"
 
@@ -2162,10 +2139,8 @@ msgid "Ungroup selected clips"
 msgstr "Razdruži izbrane posnetke"
 
 #: pitivi/timeline/timeline.py:1792
-#, fuzzy
-#| msgid "Copy selected clips"
 msgid "Cut selected clips"
-msgstr "Kopiraj izbrane posnetke"
+msgstr "Izreži izbrane posnetke"
 
 #: pitivi/timeline/timeline.py:1799
 msgid "Copy selected clips"
@@ -2185,83 +2160,79 @@ msgstr ""
 
 #: pitivi/timeline/timeline.py:1834
 msgid "Shift selected clips one frame forward"
-msgstr ""
+msgstr "Zamakni izbrane posnetke za eno sličico naprej"
 
 #: pitivi/timeline/timeline.py:1841
 msgid "Shift selected clips one frame backward"
-msgstr ""
+msgstr "Zamakni izbrane posnetke za eno sličico nazaj"
 
 #: pitivi/timeline/timeline.py:1848
-#, fuzzy
-#| msgid "Group selected clips together"
 msgid "Snap selected clips to the next clip"
-msgstr "Združi izbrane posnetke v skupino"
+msgstr "Pripni izbrane posnetke na naslednji posnetek"
 
 #: pitivi/timeline/timeline.py:1855
-#, fuzzy
-#| msgid "Remove selected clips from the project"
 msgid "Snap selected clips to the previous clip"
-msgstr "Odstrani izbrane posnetke iz projekta"
+msgstr "Pripni izbrane posnetke na prejšnji posnetek"
 
 #: pitivi/timeline/timeline.py:1862
 msgid "Add an effect to the selected clip"
 msgstr "Dodaj učinek izbranemu posnetku"
 
-#: pitivi/timeline/timeline.py:1875
+#: pitivi/timeline/timeline.py:1879
 msgid "Split the clip at the position"
 msgstr "Razdeli posnetek na označenem mestu"
 
-#: pitivi/timeline/timeline.py:1882
+#: pitivi/timeline/timeline.py:1886
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr ""
 
-#: pitivi/timeline/timeline.py:1887
+#: pitivi/timeline/timeline.py:1891
 msgid "Timeline Navigation"
 msgstr "Krmarjenje po časovnici"
 
-#: pitivi/timeline/timeline.py:1895
+#: pitivi/timeline/timeline.py:1899
 msgid "Zoom in"
 msgstr "Približa pogled"
 
-#: pitivi/timeline/timeline.py:1903
+#: pitivi/timeline/timeline.py:1907
 msgid "Zoom out"
 msgstr "Oddalji pogled"
 
-#: pitivi/timeline/timeline.py:1911
+#: pitivi/timeline/timeline.py:1915
 msgid "Adjust zoom to fit the project to the window"
 msgstr ""
 
-#: pitivi/timeline/timeline.py:1924
-msgid "Seek backward one frame"
-msgstr ""
-
-#: pitivi/timeline/timeline.py:1931
+#: pitivi/timeline/timeline.py:1928
 #, fuzzy
-#| msgid "Go forward one second"
-msgid "Seek forward one frame"
-msgstr "Pojdi naprej eno sekundo"
+msgid "Seek backward one frame"
+msgstr "Pojdi nazaj eno sličico"
 
-#: pitivi/timeline/timeline.py:1939
+#: pitivi/timeline/timeline.py:1935
+#, fuzzy
+msgid "Seek forward one frame"
+msgstr "Pojdi naprej eno sličico"
+
+#: pitivi/timeline/timeline.py:1943
 #, fuzzy
 #| msgid "Go back one second"
 msgid "Seek backward one second"
 msgstr "Pojdi nazaj eno sekundo"
 
-#: pitivi/timeline/timeline.py:1947
+#: pitivi/timeline/timeline.py:1951
 #, fuzzy
 #| msgid "Go forward one second"
 msgid "Seek forward one second"
 msgstr "Pojdi naprej eno sekundo"
 
-#: pitivi/timeline/timeline.py:1955
+#: pitivi/timeline/timeline.py:1959
 msgid "Add a marker"
 msgstr "Dodaj marker"
 
-#: pitivi/timeline/timeline.py:1962
+#: pitivi/timeline/timeline.py:1966
 msgid "Seek to the first marker before the playhead"
 msgstr ""
 
-#: pitivi/timeline/timeline.py:1969
+#: pitivi/timeline/timeline.py:1973
 msgid "Seek to the first marker after the playhead"
 msgstr ""
 
@@ -2270,16 +2241,12 @@ msgid "Object {}"
 msgstr "Predmet {}"
 
 #: pitivi/trackerperspective.py:665
-#, fuzzy
-#| msgid "Ignore backup"
 msgid "Go back"
-msgstr "Prezri varnostno kopijo"
+msgstr "Pojdi nazaj"
 
 #: pitivi/trackerperspective.py:739
-#, fuzzy
-#| msgid "Project"
 msgid "Track objects"
-msgstr "Projekt"
+msgstr "Sledi predmetom"
 
 #: pitivi/transitions.py:77
 msgid "Normal"
@@ -2323,21 +2290,22 @@ msgstr "Gladko"
 
 #. Translators: The list of markers created by the user.
 #: pitivi/utils/markers.py:34
-#, fuzzy
-#| msgid "Markers"
 msgid "User markers"
-msgstr "Oznake"
+msgstr "Uporabniške oznake"
 
 #. Translators: The list of markers representing detected audio beats.
 #: pitivi/utils/markers.py:36
+#, fuzzy
 msgid "Beats"
-msgstr ""
+msgstr "Udarci"
 
 #: pitivi/utils/misc.py:281
 msgid ""
 "Failed to open the user manual. Make sure to have either the `yelp` GNOME "
 "documentation viewer or a web browser installed"
 msgstr ""
+"Odpiranje uporabniškega priročnika ni uspelo. Poskrbite, da je nameščen "
+"pregledovalnik dokumentacije GNOME »yelp« ali spletni brskalnik"
 
 #: pitivi/utils/misc.py:290
 msgid ""
@@ -2539,10 +2507,8 @@ msgid "Diagonals"
 msgstr "Diagonali"
 
 #: pitivi/viewer/guidelines.py:92
-#, fuzzy
-#| msgid "Compositing"
 msgid "Composition Guidelines"
-msgstr "Sestavljanje"
+msgstr "Smernice za sestavo"
 
 #: pitivi/viewer/viewer.py:81
 msgid "Currently playing"
@@ -2550,7 +2516,7 @@ msgstr "Trenutno se predvaja"
 
 #: pitivi/viewer/viewer.py:304
 msgid "Select composition guidelines"
-msgstr ""
+msgstr "Izberite smernice za sestavo"
 
 #: pitivi/viewer/viewer.py:312
 msgid "Go to the beginning of the timeline"
@@ -2588,11 +2554,11 @@ msgstr "Pregledovalnik"
 
 #: pitivi/viewer/viewer.py:396
 msgid "Toggle the currently selected composition guidelines"
-msgstr ""
+msgstr "Preklopi trenutno izbrane smernice sestave"
 
 #: pitivi/viewer/viewer.py:404
 msgid "Toggle safe areas on viewer"
-msgstr ""
+msgstr "Preklopi varna območja v pregledovalniku"
 
 #: pitivi/viewer/viewer.py:546 pitivi/viewer/viewer.py:605
 msgid "Show this window in fullscreen"
@@ -2630,7 +2596,7 @@ msgstr "Konzola Pitivi"
 
 #: plugins/console/console.py:199
 msgid "You can use the following shortcuts:"
-msgstr ""
+msgstr "Uporabite lahko naslednje bližnjice:"
 
 #: plugins/console/console.py:204
 #, python-brace-format
