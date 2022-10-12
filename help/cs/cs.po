@@ -2,25 +2,33 @@
 # Copyright (C) 2013 pitivi's COPYRIGHT HOLDER
 # This file is distributed under the same license as the pitivi package.
 # Marek Černocký <marek@manet.cz>, 2013, 2014, 2016, 2018, 2019, 2020.
+# Vojtěch Perník <translations@pervoj.cz>, 2022.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
-"POT-Creation-Date: 2020-09-17 20:13+0000\n"
-"PO-Revision-Date: 2020-10-15 11:33+0200\n"
-"Last-Translator: Marek Černocký <marek@manet.cz>\n"
-"Language-Team: čeština <gnome-cs-list@gnome.org>\n"
+"POT-Creation-Date: 2021-03-04 20:52+0000\n"
+"PO-Revision-Date: 2022-02-21 15:45+0100\n"
+"Last-Translator: Vojtěch Perník <translations@pervoj.cz>\n"
+"Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
+"X-Generator: Gtranslator 41.0\n"
+"X-DL-Team: cs\n"
+"X-DL-Module: pitivi\n"
+"X-DL-Branch: master\n"
+"X-DL-Domain: help\n"
+"X-DL-State: Translating\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
 msgid "translator-credits"
-msgstr "Marek Černocký <marek@manet.cz>"
+msgstr ""
+"Marek Černocký <marek@manet.cz>\n"
+"Vojtěch Perník <translations@pervoj.cz>"
 
 #. (itstool) path: credit/name
 #: C/about.page:7 C/cheatsheet.page:8 C/codecscontainers.page:7
@@ -809,9 +817,10 @@ msgstr ""
 "Díky tomu je může <app>Pitivi</app> překódovat do podporovaných formátů. "
 "Výsledkem překódování je samostatný soubor umístěný ve stejné složce jako "
 "originál. Automatické vytváření <em>optimalizovaných multimédií</em> se řídí "
-"pomocí zaškrtávacího políčka <gui>Optimalizovat</gui> ve spodní části <gui>"
-"dialogového okna pro výběr souboru</gui>. <em>Optimalizovaná multimédia</em> "
-"lze kdykoliv spravovat přes <link xref=\"medialibrary\">knihovnu multimédií</link>."
+"pomocí zaškrtávacího políčka <gui>Optimalizovat</gui> ve spodní části "
+"<gui>dialogového okna pro výběr souboru</gui>. <em>Optimalizovaná "
+"multimédia</em> lze kdykoliv spravovat přes <link xref=\"medialibrary"
+"\">knihovnu multimédií</link>."
 
 #. (itstool) path: note/p
 #: C/importing.page:48
@@ -821,10 +830,10 @@ msgid ""
 "optimal for video editing. This media is not supported as such and must be "
 "<em>optimized</em> for a smooth editing experience."
 msgstr ""
-"Většina současných kamer vytváří soubory <code>.mts</code> a <code>.m2ts"
-"</code>, které používají kontejner MPEG Transport Stream. Tento kontejner "
-"není úplně optimální pro úpravy videa. Proto tento typ multimédií není "
-"podporován a musí být pro možnost plynulé práce <em>optimlizován</em>."
+"Většina současných kamer vytváří soubory <code>.mts</code> a <code>.m2ts</"
+"code>, které používají kontejner MPEG Transport Stream. Tento kontejner není "
+"úplně optimální pro úpravy videa. Proto tento typ multimédií není podporován "
+"a musí být pro možnost plynulé práce <em>optimlizován</em>."
 
 #. (itstool) path: section/title
 #: C/importing.page:52
@@ -1112,8 +1121,14 @@ msgstr "Odstranit klíčový snímek tím, že na něj dvojitě kliknete."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:63
-msgid "Adjust the time and value of a keyframe by moving it with the mouse."
-msgstr "Změnit čas a hodnotu klíčového snímku jeho přesunem pomocí myši."
+msgid ""
+"Adjust the time and value of a keyframe by moving it with the mouse. When "
+"moving the keyframe, hold down <key>Ctrl</key> to lock the keyframe "
+"horizontally or vertically."
+msgstr ""
+"Čas a hodnotu klíčového snímku upravíte jeho posunutím myší. Pokud chcete "
+"při přesouvání klíčového snímku snímek uzamknout horizontálně nebo "
+"vertikálně, podržte stisknutou klávesu <key>Ctrl</key>."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:66
@@ -1261,10 +1276,10 @@ msgid ""
 "position higher in the layer order, click <guiseq><gui>Layer icon</"
 "gui><gui>Move layer up</gui></guiseq>."
 msgstr ""
-"Když chcete vrstvu posunout v pořadí vrstev úplně nahoru, klikněte na <guiseq>"
-"<gui>ikonu vrstvy</gui><gui>Přesunout vrstvu nahoru</gui></guiseq>. Pokud ji "
-"chcete posunout jen o jednu pozici výš, klikněte na <guiseq><gui>ikonu vrstvy"
-"</gui><gui>Přesunout vrstvu výš</gui></guiseq>."
+"Když chcete vrstvu posunout v pořadí vrstev úplně nahoru, klikněte na "
+"<guiseq><gui>ikonu vrstvy</gui><gui>Přesunout vrstvu nahoru</gui></guiseq>. "
+"Pokud ji chcete posunout jen o jednu pozici výš, klikněte na "
+"<guiseq><gui>ikonu vrstvy</gui><gui>Přesunout vrstvu výš</gui></guiseq>."
 
 #. (itstool) path: section/p
 #: C/layers.page:50
@@ -1274,10 +1289,10 @@ msgid ""
 "layer to the bottom of the layer order, click <guiseq><gui>Layer icon</"
 "gui><gui>Move layer to bottom</gui></guiseq>."
 msgstr ""
-"Když chcete vrstvu posunout v pořadí vrstev o pozici níž, klikněte na <guiseq>"
-"<gui>ikonu vrstvy</gui><gui>Přesunout vrstvu níž</gui></guiseq>. Pokud ji "
-"chcete posunout úplně dolů, klikněte na <guiseq><gui>ikonu vrstvy</gui><gui>"
-"Přesunout vrstvu dolů</gui></guiseq>."
+"Když chcete vrstvu posunout v pořadí vrstev o pozici níž, klikněte na "
+"<guiseq><gui>ikonu vrstvy</gui><gui>Přesunout vrstvu níž</gui></guiseq>. "
+"Pokud ji chcete posunout úplně dolů, klikněte na <guiseq><gui>ikonu vrstvy</"
+"gui><gui>Přesunout vrstvu dolů</gui></guiseq>."
 
 #. (itstool) path: section/title
 #: C/layers.page:53
@@ -2689,27 +2704,44 @@ msgstr "Seskupování a rušení seskupení klipů"
 
 #. (itstool) path: section/p
 #: C/selectiongrouping.page:57
-msgid ""
-"The grouping and ungrouping functions are useful when you want to add or "
-"separate audio tracks from video clips, or when you want to create a block "
-"of clips that you can select, edit and move all at once."
-msgstr ""
-"Funkce seskupování a rušení seskupení je užitečná, když chcete přidat nebo "
-"oddělit zvukové stopy z videoklipů nebo když chcete vytvořit blok klipů, "
-"které pak můžete vybírat, upravovat a posouvat naráz."
+msgid "Pitivi allows you to combine"
+msgstr "Díky Pitivi můžete kombinovat:"
+
+#. (itstool) path: item/p
+#: C/selectiongrouping.page:59
+msgid "audio and video into clips, and"
+msgstr "audio a video do klipů"
+
+#. (itstool) path: item/p
+#: C/selectiongrouping.page:60
+#| msgid "Select multiple clips in the timeline."
+msgid "multiple clips into groups."
+msgstr "více klipů do skupin"
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:58
+#: C/selectiongrouping.page:62
+msgid ""
+"This means you can edit multiple pieces of media together, such as moving "
+"them along the timeline together. This section shows you how to group and "
+"ungroup audio and video tracks within clips, and also how to group and "
+"ungroup multiple clips together."
+msgstr ""
+"To znamená, že můžete jednotlivé kusy medií upravovat dohromady, např. je "
+"dohromady posouvat po časové ose. Tato sekce vám vysvětlí, jak seskupit a "
+"rozeskupit audio a video do klipů a více klipů do skupin."
+
+#. (itstool) path: section/p
+#: C/selectiongrouping.page:63
 msgid "Grouping clips in timeline:"
 msgstr "Pro seskupení klipů na časové ose:"
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:61
+#: C/selectiongrouping.page:66
 msgid "Select multiple clips in the timeline."
 msgstr "Vyberte na časové ose několik klipů."
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:64
+#: C/selectiongrouping.page:69
 msgid ""
 "Click the <gui>Group clips</gui> button on the timeline toolbar, or press "
 "<keyseq><key>Ctrl</key><key>G</key></keyseq>."
@@ -2718,22 +2750,22 @@ msgstr ""
 "nebo zmáčkněte <keyseq><key>Ctrl</key><key>G</key></keyseq>."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:67
+#: C/selectiongrouping.page:72
 msgid "You can now select, edit and move the clips all at once."
 msgstr "Od této chvíle můžete vybírat, upravovat a přesouvat klipy naráz."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:68
+#: C/selectiongrouping.page:73
 msgid "Ungrouping clips in timeline:"
 msgstr "Pro zrušení seskupení na časové ose:"
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:71
+#: C/selectiongrouping.page:76
 msgid "Select a group of clips in the timeline."
 msgstr "Vyberte na časové ose skupinu klipů"
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:74
+#: C/selectiongrouping.page:79
 msgid ""
 "Click the <gui>Ungroup clips</gui> button on the timeline toolbar, or press "
 "<keyseq><key>Ctrl</key><key>Shift</key><key>G</key></keyseq>."
@@ -2743,7 +2775,7 @@ msgstr ""
 "key></keyseq>."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:77
+#: C/selectiongrouping.page:82
 msgid "You can now select, edit and move the clips independently."
 msgstr "Od této chvíle můžete vybírat, upravovat a přesouvat klipy nezávisle."
 
@@ -3677,8 +3709,8 @@ msgid ""
 "\"selectiongrouping#selection\">selected</link>."
 msgstr ""
 "Můžete vytvořit vlastní barevný klip pomocí tlačítka <gui>Vytvořit barevný "
-"klip</gui> nacházejícího se v kartě <gui>Klip</gui> v <gui>prostředním panelu"
-"</gui>. Tlačítko je dostupné, když není žádný klip <link xref="
+"klip</gui> nacházejícího se v kartě <gui>Klip</gui> v <gui>prostředním "
+"panelu</gui>. Tlačítko je dostupné, když není žádný klip <link xref="
 "\"selectiongrouping#selection\">vybrán</link>."
 
 #. (itstool) path: section/p
@@ -3692,8 +3724,8 @@ msgid ""
 "screen can be picked by using the <gui>color picker</gui> button."
 msgstr ""
 "Když chcete barevnému klipu změnit barvu, vyberte jej. Když je vytvořen nový "
-"barevný klip, je vybrán automaticky. Barva se mění pomocí <guiseq><gui>Klip"
-"</gui><gui>Barva</gui></guiseq> v <gui>prostředním panelu</gui>. Tlačítko "
+"barevný klip, je vybrán automaticky. Barva se mění pomocí <guiseq><gui>Klip</"
+"gui><gui>Barva</gui></guiseq> v <gui>prostředním panelu</gui>. Tlačítko "
 "<gui>Barva</gui> otevře dialogové okno, ve kterém můžete barvu vybrat, nebo "
 "zadat jako šestnáctkovou hodnotu. Případně se dá vybrat barva kdekoliv na "
 "obrazovce pomocí <gui>Barevné pipety</gui>."
@@ -3939,12 +3971,11 @@ msgid ""
 "area</em> to prevent the text sticking to the screen edges."
 msgstr ""
 "V závislosti na tom, jak je stavěná televize, může dojít k ořezání videa při "
-"zobrazení na její obrazovce. Podstatný obsah by proto měl být umístěn v <em>"
-"bezpečné oblasti pro akce</em>, což je obdélníková oblast uprostřed, která je "
-"ořezní uchráněna. Obdobně, titulky mohou být umístěny v malé <em>bezpečné "
-"oblasti pro titulky</em>, aby se ve výsledku nelepily na spodní hranu "
-"obrazovky."
-
+"zobrazení na její obrazovce. Podstatný obsah by proto měl být umístěn v "
+"<em>bezpečné oblasti pro akce</em>, což je obdélníková oblast uprostřed, "
+"která je ořezní uchráněna. Obdobně, titulky mohou být umístěny v malé "
+"<em>bezpečné oblasti pro titulky</em>, aby se ve výsledku nelepily na spodní "
+"hranu obrazovky."
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:50
@@ -3960,15 +3991,26 @@ msgid ""
 msgstr ""
 "Bezpečné oblasti se zobrazují v <gui>prohlížeči</gui> přes video a nemají "
 "vliv na výsledné video projektu. Velikost bezpečných oblastí pro akce a "
-"titulky se dá určit v <link xref=\"#projectsettings\">Nastavení projektu"
-"</link>. Například velikost 90 % svisle × 80 % vodorovně dopovídá 5% okraji "
+"titulky se dá určit v <link xref=\"#projectsettings\">Nastavení projektu</"
+"link>. Například velikost 90 % svisle × 80 % vodorovně dopovídá 5% okraji "
 "nahoře a dole a 10% okraji vlevo a vpravo. Postup používá vlastní vodicí "
-"linky, protože žádný televizní standard <link href=\"https://"
-"en.wikipedia.org/wiki/Safe_area_(television)\">bezpečné oblasti</link> "
-"nedefinuje."
+"linky, protože žádný televizní standard <link href=\"https://en.wikipedia."
+"org/wiki/Safe_area_(television)\">bezpečné oblasti</link> nedefinuje."
 
 #. (itstool) path: note/p
 #: C/workwithprojects.page:52
 msgid "To toggle Safe Areas on and off, press <key>'</key>."
 msgstr ""
 "Když chcete zapnout, čí vypnout, bezpečné oblasti, zmáčkněte <key>'</key>."
+
+#~ msgid "Adjust the time and value of a keyframe by moving it with the mouse."
+#~ msgstr "Změnit čas a hodnotu klíčového snímku jeho přesunem pomocí myši."
+
+#~ msgid ""
+#~ "The grouping and ungrouping functions are useful when you want to add or "
+#~ "separate audio tracks from video clips, or when you want to create a "
+#~ "block of clips that you can select, edit and move all at once."
+#~ msgstr ""
+#~ "Funkce seskupování a rušení seskupení je užitečná, když chcete přidat "
+#~ "nebo oddělit zvukové stopy z videoklipů nebo když chcete vytvořit blok "
+#~ "klipů, které pak můžete vybírat, upravovat a posouvat naráz."
