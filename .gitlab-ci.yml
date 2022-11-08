@@ -8,7 +8,7 @@ variables:
   MANIFEST: /build/pitivi/build/flatpak/org.pitivi.Pitivi.json
   DBUS_ID: org.pitivi.Pitivi
   GST_DEBUG_NO_COLOR: "true"
-  GNOME_SDK: 42
+  GNOME_SDK: 43
 
 
 pitivi:master:
@@ -24,10 +24,10 @@ pitivi:master:
   before_script:
     - docker info
   script:
-    # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
+    # GNOME -> gnome
     - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
     - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:master-sdk_${GNOME_SDK}"
-    - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:${GNOME_SDK}"
+    - export BASE_IMAGE="quay.io/gnome_infrastructure/gnome-runtime-images:x86_64-gnome-${GNOME_SDK}"
 
     # Commands to be run in the Docker image.
     # Clone the Pitivi repo.

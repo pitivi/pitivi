@@ -630,13 +630,21 @@ class PitiviFlatpak:
         if not args:
             return
 
-        flatpak_command = ["flatpak", "build", "--socket=x11", "--socket=wayland",
-                           "--talk-name=org.freedesktop.Flatpak",
-                           "--socket=session-bus", "--socket=pulseaudio",
-                           "--share=network", "--env=PITIVI_DEVELOPMENT=1",
+        flatpak_command = ["flatpak",
+                           "build",
+                           "--device=dri",
+                           "--env=PITIVI_DEVELOPMENT=1",
                            "--env=PYTHONUSERBASE=/app/",
                            "--env=CC=ccache gcc",
-                           "--env=CXX=ccache g++", "--device=dri"]
+                           "--env=CXX=ccache g++",
+                           "--filesystem=xdg-run/gvfsd",
+                           "--filesystem=xdg-run/at-spi/bus",
+                           "--share=network",
+                           "--socket=pulseaudio",
+                           "--socket=session-bus",
+                           "--socket=wayland",
+                           "--socket=x11",
+                           "--talk-name=org.freedesktop.Flatpak"]
         if mount_tmp:
             flatpak_command.append("--filesystem=/tmp/")
 

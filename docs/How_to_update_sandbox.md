@@ -20,7 +20,7 @@ To update the flatpak runtime version, look in `org.pitivi.Pitivi.json` for the
 current version:
 
 ```
-    "runtime-version": "42",
+    "runtime-version": "43",
 ```
 
 Check out what is the latest flatpak runtime version. For example:
@@ -28,8 +28,8 @@ Check out what is the latest flatpak runtime version. For example:
 ```
 $ flatpak remote-ls flathub --system | grep org.gnome.Platform
 GNOME Application Platform version 3.38	org.gnome.Platform		3.38
-GNOME Application Platform version 41	org.gnome.Platform		41
 GNOME Application Platform version 42	org.gnome.Platform		42
+GNOME Application Platform version 43	org.gnome.Platform		43
 ```
 
 Check out in the git history how we updated the runtime version in the past and
@@ -47,9 +47,27 @@ $ flatpak run --filesystem=$HOME/dev/pitivi/pitivi org.flathub.flatpak-external-
 
 Others have to be checked and updated manually.
 
-Most of the [Python dependencies](Updating_Python_dependencies.md) can be
-updated with `flatpak-pip-generator`.
+## Check the Python version
 
+Check the Python version in the sandbox. Last time it was:
+
+```
+$ flatpak run --user --command=bash --devel org.gnome.Sdk/x86_64/43
+[📦 org.gnome.Sdk ~]$ python --version
+Python 3.10
+```
+
+When the Python version changes, update the `/app/lib/python3.10` occurrences
+in the [flatpak
+manifest](https://gitlab.gnome.org/GNOME/pitivi/blob/master/build/flatpak/org.pitivi.Pitivi.json)
+and also update the [Python dependencies](Updating_Python_dependencies.md).
+
+When updating pylint, make a separate commit to fix the issues it complains
+about:
+
+```
+(ptv-flatpak) $ ptvenv pre-commit run -a pylint
+```
 
 ## Sync with flathub
 
@@ -58,14 +76,6 @@ manifest](https://github.com/flathub/org.pitivi.Pitivi) need to be ported over.
 
 In particular, pay attention to the `shared-modules` git submodule to copy
 `libcanberra` into `build/flatpak`.
-
-## Check the Python version
-
-The "gst-python" module in the manifest specifies the "pygi-overrides-dir"
-parameter which contains a path which must target the correct Python version.
-
-Pay attention to update this path when the Python version changes.
-
 
 ## Rebuild your local dev env
 

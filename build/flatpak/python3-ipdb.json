@@ -7,53 +7,8 @@
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/0c/3c/548d361162702df85a0301f0cd0c47d05176b20bb086077a0fda740daf41/setuptools-62.0.0-py3-none-any.whl",
-            "sha256": "a65e3802053e99fc64c6b3b29c11132943d5b8c8facbcc461157511546510967"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/59/7c/e39aca596badaf1b78e8f547c807b04dae603a433d3e7a7e04d67f2ef3e5/wcwidth-0.2.5-py2.py3-none-any.whl",
-            "sha256": "beb4802a9cebb9144e99086eff703a642a13d6a0052920003a230f3294bbe784"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/2b/27/77f9d5684e6bce929f5cfe18d6cfbe5133013c06cb2fbf5933670e60761d/pure_eval-0.2.2-py3-none-any.whl",
-            "sha256": "01eaab343580944bc56080ebe0a674b39ec44a945e6d09ba7db3cb8cec289350"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/61/d8/ad89910dc1da01a24135cb3dce702c72a8172f7b8f896ac0c4c34bcaf323/executing-0.8.3-py2.py3-none-any.whl",
-            "sha256": "d1eef132db1b83649a3905ca6dd8897f71ac6f8cac79a7e58a1a09cf137546c9"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/16/d5/b0ad240c22bba2f4591693b0ca43aae94fbd77fb1e2b107d54fff1462b6f/asttokens-2.0.5-py2.py3-none-any.whl",
-            "sha256": "0844691e88552595a6f4a4281a9f7f79b8dd45ca4ccea82e5e05b4bbdb76705c"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/22/a6/858897256d0deac81a172289110f31629fc4cee19b6f01283303e18c8db3/ptyprocess-0.7.0-py2.py3-none-any.whl",
-            "sha256": "4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/05/63/8011bd08a4111858f79d2b09aad86638490d62fbf881c44e434a6dfca87b/parso-0.8.3-py2.py3-none-any.whl",
-            "sha256": "c001d4636cd3aecdaf33cbb40aebb59b094be2a74c556778ef5576c175e19e75"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/6b/25/9a454b432df53ffbbb4f03198c3347f393c34f4de07fb652563bdbdf91e8/stack_data-0.2.0-py3-none-any.whl",
-            "sha256": "999762f9c3132308789affa03e9271bbbe947bf78311851f4d485d8402ed858e"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/9a/41/220f49aaea88bc6fa6cba8d05ecf24676326156c23b991e80b3f2fc24c77/pickleshare-0.7.5-py2.py3-none-any.whl",
-            "sha256": "9649af414d74d4df115d5d718f82acb59c9d418196b7b4290ed47a12ce62df56"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/a6/2d/2230afd570c70074e80fd06857ba2bdc5f10c055bd9125665fe276fadb67/matplotlib_inline-0.1.3-py3-none-any.whl",
-            "sha256": "aed605ba3b72462d64d475a21a9296f400a19c4f74a31b59103d2a99ffd5aa5c"
+            "url": "https://files.pythonhosted.org/packages/23/f7/19e20888d0b1e44b40c2795894a05e7be1f631c09949f7e0b177df1ab7a2/asttokens-2.1.0-py2.py3-none-any.whl",
+            "sha256": "1b28ed85e254b724439afc783d4bee767f780b936c3fe8b3275332f42cf5f561"
         },
         {
             "type": "file",
@@ -62,18 +17,23 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/37/46/be8a3c030bd3673f4800fa7f46eda972dfa2990089a51ec5dd0a26ed33e9/traitlets-5.1.1-py3-none-any.whl",
-            "sha256": "2d313cc50a42cd6c277e7d7dc8d4d7fedd06a2c215f78766ae7b1a66277e0033"
+            "url": "https://files.pythonhosted.org/packages/d5/50/83c593b07763e1161326b3b8c6686f0f4b0f24d5526546bee538c89837d6/decorator-5.1.1-py3-none-any.whl",
+            "sha256": "b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/3f/2d/dcb44d69f388ca2ee1a4a4d3c204ab66b36975c0d5166781eaeeff76b882/prompt_toolkit-3.0.29-py3-none-any.whl",
-            "sha256": "62291dad495e665fca0bda814e342c69952086afb0f4094d0893d357e5c78752"
+            "url": "https://files.pythonhosted.org/packages/28/3c/bc3819dd8b1a1588c9215a87271b6178cc5498acaa83885211f5d4d9e693/executing-1.2.0-py2.py3-none-any.whl",
+            "sha256": "0314a69e37426e3608aada02473b4161d4caf5a4b244d1d0c48072b8fee7bacc"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/39/7b/88dbb785881c28a102619d46423cb853b46dbccc70d3ac362d99773a78ce/pexpect-4.8.0-py2.py3-none-any.whl",
-            "sha256": "0b48a55dcb3c05f3329815901ea4fc1537514d6ba867a152b581d69ae3710937"
+            "url": "https://files.pythonhosted.org/packages/fc/56/9f67dcd4a4b9960373173a31be1b8c47fe351a1c9385677a7bdd82810e57/ipdb-0.13.9.tar.gz",
+            "sha256": "951bd9a64731c444fd907a5ce268543020086a697f6be08f7cc2c9a752a278c5"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/c7/53/072d677a16fd61f5806d80218c65202cc0ee77b831088af8f79ef59efcf2/ipython-8.6.0-py3-none-any.whl",
+            "sha256": "91ef03016bcf72dd17190f863476e7c799c6126ec7e8be97719d1bc9a78a59a4"
         },
         {
             "type": "file",
@@ -82,8 +42,43 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/d5/50/83c593b07763e1161326b3b8c6686f0f4b0f24d5526546bee538c89837d6/decorator-5.1.1-py3-none-any.whl",
-            "sha256": "b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"
+            "url": "https://files.pythonhosted.org/packages/f2/51/c34d7a1d528efaae3d8ddb18ef45a41f284eacf9e514523b191b7d0872cc/matplotlib_inline-0.1.6-py3-none-any.whl",
+            "sha256": "f1f41aab5328aa5aaea9b16d083b128102f8712542f819fe7e6a420ff581b311"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/05/63/8011bd08a4111858f79d2b09aad86638490d62fbf881c44e434a6dfca87b/parso-0.8.3-py2.py3-none-any.whl",
+            "sha256": "c001d4636cd3aecdaf33cbb40aebb59b094be2a74c556778ef5576c175e19e75"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/39/7b/88dbb785881c28a102619d46423cb853b46dbccc70d3ac362d99773a78ce/pexpect-4.8.0-py2.py3-none-any.whl",
+            "sha256": "0b48a55dcb3c05f3329815901ea4fc1537514d6ba867a152b581d69ae3710937"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/9a/41/220f49aaea88bc6fa6cba8d05ecf24676326156c23b991e80b3f2fc24c77/pickleshare-0.7.5-py2.py3-none-any.whl",
+            "sha256": "9649af414d74d4df115d5d718f82acb59c9d418196b7b4290ed47a12ce62df56"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/03/22/784990e865d847384c28a05ff33ed09791251b320c212f957c62a11bd2ab/prompt_toolkit-3.0.32-py3-none-any.whl",
+            "sha256": "24becda58d49ceac4dc26232eb179ef2b21f133fecda7eed6018d341766ed76e"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/22/a6/858897256d0deac81a172289110f31629fc4cee19b6f01283303e18c8db3/ptyprocess-0.7.0-py2.py3-none-any.whl",
+            "sha256": "4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/2b/27/77f9d5684e6bce929f5cfe18d6cfbe5133013c06cb2fbf5933670e60761d/pure_eval-0.2.2-py3-none-any.whl",
+            "sha256": "01eaab343580944bc56080ebe0a674b39ec44a945e6d09ba7db3cb8cec289350"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/0b/d3/87a41424a1d24d2cb9f5ae4ef4a97c7437ad81eb37d21049ce5decd13d70/stack_data-0.6.0-py3-none-any.whl",
+            "sha256": "b92d206ef355a367d14316b786ab41cb99eb453a21f2cb216a4204625ff7bc07"
         },
         {
             "type": "file",
@@ -92,13 +87,13 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/c6/51/d281fd3995507e01dab71af946c659e4ef80d07cd53e8bb17e6d23f8dd60/ipython-8.2.0-py3-none-any.whl",
-            "sha256": "1b672bfd7a48d87ab203d9af8727a3b0174a4566b4091e9447c22fb63ea32857"
+            "url": "https://files.pythonhosted.org/packages/ed/f9/caefd8c90955184e7426ef930e38c185e047169b520b35bdd57d341d03f4/traitlets-5.5.0-py3-none-any.whl",
+            "sha256": "1201b2c9f76097195989cdf7f65db9897593b0dfd69e4ac96016661bb6f0d30f"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/fc/56/9f67dcd4a4b9960373173a31be1b8c47fe351a1c9385677a7bdd82810e57/ipdb-0.13.9.tar.gz",
-            "sha256": "951bd9a64731c444fd907a5ce268543020086a697f6be08f7cc2c9a752a278c5"
+            "url": "https://files.pythonhosted.org/packages/59/7c/e39aca596badaf1b78e8f547c807b04dae603a433d3e7a7e04d67f2ef3e5/wcwidth-0.2.5-py2.py3-none-any.whl",
+            "sha256": "beb4802a9cebb9144e99086eff703a642a13d6a0052920003a230f3294bbe784"
         }
     ]
 }

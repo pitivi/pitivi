@@ -8,7 +8,7 @@ repos:
       # Hooks able to fix small things.
       - id: trailing-whitespace
       - id: end-of-file-fixer
-        exclude: ".svg$|.po$"
+        exclude: ".svg$|.patch$|.po$"
       - id: fix-encoding-pragma
       # Hooks doing lightweight Python checks.
       - id: check-docstring-first
@@ -20,14 +20,14 @@ repos:
         args:
           - --py3-plus
           - --unclassifiable-application-module=tests
-  - repo: https://github.com/pycqa/pydocstyle
+  - repo: https://github.com/PyCQA/pydocstyle.git
     rev: 6.1.1
     hooks:
       - id: pydocstyle
         args:
           # http://www.pydocstyle.org/en/latest/error_codes.html
           - --ignore=D1,D203,D213,D401,D406,D407,D413
-  - repo: https://gitlab.com/PyCQA/flake8
+  - repo: https://github.com/PyCQA/flake8.git
     rev: 3.9.2
     hooks:
       - id: flake8
@@ -35,7 +35,7 @@ repos:
           # http://flake8.pycqa.org/en/latest/user/error-codes.html
           # https://pycodestyle.readthedocs.io/en/latest/intro.html#error-codes
           - --ignore=E402,E501,E722,F401,F841,W504
-  - repo: https://github.com/pre-commit/mirrors-mypy
+  - repo: https://github.com/pre-commit/mirrors-mypy.git
     rev: 'v0.910-1'
     hooks:
       - id: mypy
