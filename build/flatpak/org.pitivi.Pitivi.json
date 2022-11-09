@@ -348,178 +348,60 @@
             ]
         },
         {
+            "name": "libdv",
+            "buildsystem": "meson",
+            "sources": [
+                {
+                    "type": "git",
+                    "branch": "meson",
+                    "url": "https://gitlab.freedesktop.org/gstreamer/meson-ports/libdv.git"
+                }
+            ]
+        },
+        {
             "name": "gstreamer",
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Ddoc=disabled",
-                "--libdir=lib"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "branch": "master",
-                    "url": "https://gitlab.freedesktop.org/gstreamer/gstreamer.git"
-                }
-            ]
-        },
-        {
-            "name": "gst-plugins-base",
-            "buildsystem": "meson",
-            "config-opts": [
-                "-Ddoc=disabled",
-                "-Dorc=enabled",
                 "--libdir=lib",
-                "--wrap-mode=nodownload"
-            ],
-            "builddir": true,
-            "sources": [
-                {
-                    "type": "git",
-                    "branch": "master",
-                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-plugins-base.git"
-                }
-            ]
-        },
-        {
-            "name": "gst-plugins-good",
-            "buildsystem": "meson",
-            "builddir": true,
-            "config-opts": [
+                "--wrap-mode=nodownload",
+                "-Dbad=enabled",
+                "-Dbase=enabled",
+                "-Ddevtools=enabled",
                 "-Ddoc=disabled",
-                "--libdir=lib"
+                "-Dges=enabled",
+                "-Dgood=enabled",
+                "-Dgpl=enabled",
+                "-Dgst-devtools:doc=disabled",
+                "-Dgst-editing-services:doc=disabled",
+                "-Dgst-editing-services:pygi-overrides-dir=/app/lib/python3.10/site-packages/gi/overrides/",
+                "-Dgst-libav:doc=disabled",
+                "-Dgst-plugins-bad:aom=disabled",
+                "-Dgst-plugins-bad:doc=disabled",
+                "-Dgst-plugins-bad:frei0r=enabled",
+                "-Dgst-plugins-bad:soundtouch=enabled",
+                "-Dgst-plugins-bad:voaacenc=enabled",
+                "-Dgst-plugins-bad:x265=enabled",
+                "-Dgst-plugins-base:doc=disabled",
+                "-Dgst-plugins-base:orc=enabled",
+                "-Dgst-plugins-good:doc=disabled",
+                "-Dgst-plugins-good:dv=enabled",
+                "-Dgst-plugins-ugly:doc=disabled",
+                "-Dgst-plugins-ugly:x264=enabled",
+                "-Dgst-python:pygi-overrides-dir=/app/lib/python3.10/site-packages/gi/overrides/",
+                "-Dgstreamer-vaapi:doc=disabled",
+                "-Dintrospection=enabled",
+                "-Dlibav=enabled",
+                "-Dpython=enabled",
+                "-Dugly=enabled",
+                "-Dvaapi=enabled"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "branch": "master",
-                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-plugins-good.git"
-                }
-            ]
-        },
-        {
-            "name": "gst-plugins-ugly",
-            "buildsystem": "meson",
-            "builddir": true,
-            "config-opts": [
-                "-Ddoc=disabled",
-                "--libdir=lib"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "branch": "master",
-                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-plugins-ugly.git"
-                }
-            ]
-        },
-        {
-            "name": "gst-plugins-bad",
-            "buildsystem": "meson",
-            "builddir": true,
-            "config-opts": [
-                "-Daom=disabled",
-                "-Ddoc=disabled",
-                "--libdir=lib"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "branch": "master",
-                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad.git"
-                }
-            ]
-        },
-        {
-            "name": "gst-libav",
-            "buildsystem": "meson",
-            "builddir": true,
-            "config-opts": [
-                "-Ddoc=disabled",
-                "--libdir=lib"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "branch": "master",
-                    "disable-shallow-clone": true,
-                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-libav.git"
-                },
-                {
-                    "type": "git",
-                    "url": "https://git.ffmpeg.org/ffmpeg.git",
-                    "disable-shallow-clone": true,
-                    "branch": "master"
-                },
-                {
-                    "type": "git",
-                    "url": "git://git.libav.org/gas-preprocessor.git",
-                    "disable-shallow-clone": true,
-                    "branch": "master"
-                }
-            ]
-        },
-        {
-            "name": "gst-python",
-            "buildsystem": "meson",
-            "builddir": true,
-            "config-opts": [
-                "-Dpygi-overrides-dir=/app/lib/python3.9/site-packages/gi/overrides/",
-                "--libdir=lib"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "branch": "master",
-                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-python.git"
-                }
-            ]
-        },
-        {
-            "name": "gst-devtools",
-            "buildsystem": "meson",
-            "builddir": true,
-            "config-opts": [
-                "-Ddoc=disabled",
-                "--libdir=lib"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "branch": "master",
-                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-devtools.git"
-                }
-            ]
-        },
-        {
-            "name": "gstreamer-vaapi",
-            "buildsystem": "meson",
-            "builddir": true,
-            "config-opts": [
-                "-Ddoc=disabled",
-                "--libdir=lib"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "branch": "master",
-                    "url": "https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git"
-                }
-            ]
-        },
-        {
-            "name": "gst-editing-services",
-            "buildsystem": "meson",
-            "builddir": true,
-            "config-opts": [
-                "-Ddoc=disabled",
-                "--libdir=lib"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "branch": "master",
-                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-editing-services.git"
+                    "url": "https://gitlab.freedesktop.org/gstreamer/gstreamer.git",
+                    "branch": "main",
+                    "disable-submodules": true
                 }
             ]
         },

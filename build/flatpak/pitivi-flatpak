@@ -38,7 +38,7 @@ FLATPAK_REQ = [
     ("flatpak-builder", "0.10.0"),
 ]
 FLATPAK_VERSION = {}
-DEFAULT_GST_BRANCH = 'master'
+DEFAULT_GST_BRANCH = 'main'
 
 
 class Colors:
@@ -122,11 +122,6 @@ def expand_manifest(manifest_path, outfile, basedir, gst_version, branchname):
 
         if module["sources"][0]["type"] != "git":
             continue
-
-        if module["name"].startswith("gst"):
-            module["sources"][0]["branch"] = gst_version
-            if gst_version != DEFAULT_GST_BRANCH:
-                continue
 
         repo = os.path.join(basedir, module["name"])
         if not os.path.exists(os.path.join(repo, ".git")):
@@ -593,8 +588,7 @@ class PitiviFlatpak:
         if not os.path.isdir("mesonbuild/"):
             # Create the build directory.
             meson_args = ["meson", "mesonbuild/", "--prefix=/app",
-                          "--libdir=lib", "-Ddisable_gtkdoc=true",
-                          "-Ddisable_doc=true"]
+                          "--libdir=lib"]
             self.run_in_sandbox(*meson_args, exit_on_failure=True,
                                 cwd=self.topdir)
 

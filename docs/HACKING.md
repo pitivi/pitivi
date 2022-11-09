@@ -120,7 +120,7 @@ to be done only once:
 (ptv-flatpak) $ cd pitivi-dev/gst-editing-services
 (ptv-flatpak) $ setup
 Using Pitivi prefix in /.../pitivi-dev/pitivi-prefix
-Running in sandbox: meson mesonbuild/ --prefix=/app --libdir=lib -Ddisable_gtkdoc=true -Ddisable_doc=true
+Running in sandbox: meson mesonbuild/ --prefix=/app --libdir=lib
 ```
 
 Build and install it in the sandbox:
