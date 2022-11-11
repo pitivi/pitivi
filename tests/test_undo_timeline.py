@@ -784,8 +784,7 @@ class TestControlSourceObserver(common.TestCase):
         asset = GES.UriClipAsset.request_sync(uri)
         clip = asset.extract()
         self.layer.add_clip(clip)
-        source = clip.get_children(False)[1]
-        self.assertTrue(isinstance(source, GES.VideoUriSource))
+        source = self.get_clip_element(clip, GES.VideoUriSource)
 
         control_source = GstController.InterpolationControlSource()
         control_source.props.mode = GstController.InterpolationMode.LINEAR
@@ -810,8 +809,7 @@ class TestControlSourceObserver(common.TestCase):
         asset = GES.UriClipAsset.request_sync(uri)
         clip = asset.extract()
         self.layer.add_clip(clip)
-        source = clip.get_children(False)[1]
-        self.assertTrue(isinstance(source, GES.VideoUriSource))
+        source = self.get_clip_element(clip, GES.VideoUriSource)
 
         control_source = GstController.InterpolationControlSource()
         control_source.props.mode = GstController.InterpolationMode.LINEAR
@@ -839,8 +837,7 @@ class TestControlSourceObserver(common.TestCase):
         asset = GES.UriClipAsset.request_sync(uri)
         clip = asset.extract()
         self.layer.add_clip(clip)
-        source = clip.get_children(False)[1]
-        self.assertTrue(isinstance(source, GES.VideoUriSource))
+        source = self.get_clip_element(clip, GES.VideoUriSource)
 
         control_source = GstController.InterpolationControlSource()
         control_source.props.mode = GstController.InterpolationMode.LINEAR
