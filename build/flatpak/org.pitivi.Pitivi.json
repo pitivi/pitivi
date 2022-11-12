@@ -209,7 +209,7 @@
             ]
         },
         {
-            "name": "libsoundtouch",
+            "name": "soundtouch",
             "sources": [
                 {
                     "type": "git",
@@ -220,6 +220,10 @@
                         "type": "git",
                         "tag-pattern": "^([\\d.]+)$"
                     }
+                },
+                {
+                    "type": "patch",
+                    "path": "disable-fast-math-as-it-affects-the-entire-process.patch"
                 }
             ]
         },
