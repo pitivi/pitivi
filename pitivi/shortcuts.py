@@ -58,10 +58,12 @@ class ShortcutsManager(GObject.Object):
 
         with open(self.config_path, "r", encoding="UTF-8") as conf_file:
             for line in conf_file:
-                action_name, accelerators = line.split(":", 1)
+                action, accelerators = line.split(":", 1)
                 accelerators = accelerators.strip("\n").split(",")
-                self.app.set_accels_for_action(action_name, accelerators)
-                yield action_name
+                # Filter out invalid accelerators coming from the config file.
+                accelerators = [a for a in accelerators if Gtk.accelerator_parse(a).accelerator_key]
+                self.app.set_accels_for_action(action, accelerators)
+                yield action
 
     def save(self):
         """Saves the accelerators for each action to the config file.
