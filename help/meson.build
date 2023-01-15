@@ -27,13 +27,13 @@ sources = [
 ]
 
 media = [
+  'figures/Pitivi.svg',
   'figures/codecscontainers.jpg',
   'figures/fadestep1.png',
   'figures/fadestep2.png',
   'figures/fadestep3.png',
   'figures/keyframecurves.png',
   'figures/layers.png',
-  'figures/logo.png',
   'figures/mainwindow.jpg',
   'figures/ripple-after.png',
   'figures/ripple-before.png',

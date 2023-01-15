@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="guide" id="index">
   <info>
+    <title type="link" role="trail">Pitivi Quick Start Manual</title>
     <title type="link">Pitivi Quick Start Manual</title>
     <title type="text">Pitivi Quick Start Manual</title>
     <revision pkgversion="0.14.0" version="0.2" date="2011-06-05" status="complete"/>
@@ -16,7 +17,8 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-  <title><media type="image" mime="image/png" src="figures/logo.png">Pitivi logo</media>
+  <title>
+    <media type="image" width="48px" height="48px" src="figures/Pitivi.svg" />
     Pitivi Video Editor
   </title>
   <p>Built upon the <link href="http://en.wikipedia.org/wiki/GStreamer"><app>GStreamer</app></link> multimedia framework, <app>Pitivi</app> aims to be an intuitive and flexible video editor that integrates well with <link href="http://gnome.org"><app>GNOME</app></link> and can appeal to newbies and professionals alike.</p>
