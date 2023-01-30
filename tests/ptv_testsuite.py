@@ -48,7 +48,7 @@ def setup_tests(
     """Sets up Pitivi unit testsuite."""
     if os.environ.get("PITIVI_VSCODE_DEBUG", False):
         import debugpy
-        debugpy.listen(5678)
+        debugpy.listen(("0.0.0.0", 5678))
         print("Waiting for the debugger to attach...")
         debugpy.wait_for_client()
 
