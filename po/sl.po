@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2022-10-03 13:56+0000\n"
+"POT-Creation-Date: 2023-01-25 07:38+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -18,10 +18,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
-"%100==4 ? 3 : 0);\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
+"n%100==4 ? 3 : 0);\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
 msgid "Pitivi video project (legacy)"
@@ -318,7 +318,7 @@ msgstr "Opravilo:"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:380
 msgid "tilt"
-msgstr ""
+msgstr "nagib"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:391
 msgid "trans. width"
@@ -326,11 +326,11 @@ msgstr ""
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:402
 msgid "min alpha"
-msgstr ""
+msgstr "najm alfa"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:413
 msgid "max alpha"
-msgstr ""
+msgstr "najv alfa"
 
 #: data/ui/customwidgets/pitivi:object_effect.ui:19
 msgid "Color:"
@@ -455,9 +455,8 @@ msgid "Clip properties..."
 msgstr "Lastnosti posnetka ..."
 
 #: data/ui/medialibrary.ui:59
-#, fuzzy
 msgid "Show tags associated with selected clips"
-msgstr "Pokaži oznake, povezane z izbranimi posnetki"
+msgstr "Pokaži značke, povezane z izbranimi posnetki"
 
 #: data/ui/medialibrary.ui:78
 msgid "Insert the selected clips at the end of the timeline"
@@ -1073,7 +1072,6 @@ msgid "Show keyframes"
 msgstr "Pokaži ključne sličice"
 
 #: pitivi/clipproperties.py:1070
-#, fuzzy
 msgid "Activate keyframes"
 msgstr "Aktiviraj ključne sličice"
 
@@ -1105,9 +1103,8 @@ msgid "Text"
 msgstr "Besedilo"
 
 #: pitivi/clip_properties/markers.py:64
-#, fuzzy
 msgid "Clip markers"
-msgstr "Označevalci posnetkov"
+msgstr "Označevalniki posnetkov"
 
 #: pitivi/clip_properties/markers.py:125
 msgid "Magnetic"
@@ -1229,7 +1226,6 @@ msgid "The following file could not be found:"
 msgstr "Navedene datoteke ni mogoče najti:"
 
 #: pitivi/dialogs/missingasset.py:82
-#, fuzzy
 msgid "Please specify its new location:"
 msgstr "Navedite njeno novo mesto:"
 
@@ -1264,10 +1260,13 @@ msgid "Other"
 msgstr "Drugi"
 
 #: pitivi/dialogs/prefs.py:332
+#, fuzzy
 msgid ""
 "This resolution will be used as the default target resolution for new "
 "projects and projects missing scaled proxy meta-data."
 msgstr ""
+"Ta ločljivost bo uporabljena kot privzeta ciljna ločljivost za nove projekte "
+"in projekte, katerim manjkajo metapodatki preumerjenih nadomestnih posnetkov."
 
 #: pitivi/dialogs/prefs.py:345
 msgid "Initial proxy size for new projects"
@@ -1586,7 +1585,6 @@ msgid "Drag clips in the timeline to arrange them"
 msgstr "Potegnite posnetke v časovnici in jih tako preuredite"
 
 #: pitivi/interactiveintro.py:218
-#, fuzzy
 msgid "Right-click anywhere to move the playhead"
 msgstr ""
 "Z desno tipko miške kliknite kjerkoli, če želite premakniti predvajalno glavo"
@@ -1694,7 +1692,6 @@ msgid "Remove the selected assets"
 msgstr "Odstrani izbrane vire"
 
 #: pitivi/medialibrary.py:637
-#, fuzzy
 msgid "Insert selected assets at the end of the timeline"
 msgstr "Vstavi izbrane predmete na konec časovnice"
 
@@ -1945,15 +1942,13 @@ msgstr "Preostalo je še približno %s"
 
 #: pitivi/render.py:781
 msgid "Currently rendering"
-msgstr "Trenutno poteka pretvarjanje"
+msgstr "Trenutno poteka izrisovanje"
 
 #: pitivi/render.py:964
-#, fuzzy
 msgid "medium"
 msgstr "srednje"
 
 #: pitivi/render.py:965
-#, fuzzy
 msgid "high"
 msgstr "visoko"
 
@@ -1974,7 +1969,7 @@ msgid ""
 "If you don't want to overwrite it, choose a different file name or folder."
 msgstr ""
 "Ta datoteka že obstaja.\n"
-"V primeru da je ne želite prepisati, izberite drugo ime datoteke ali mapo."
+"Če je ne želite prepisati, izberite drugo ime datoteke ali mapo."
 
 #: pitivi/render.py:1140
 msgid "Invalid file path"
@@ -2000,7 +1995,7 @@ msgstr ""
 
 #: pitivi/render.py:1322
 msgid "An error occurred while trying to render your project."
-msgstr "Pri poskusu upodabljanja projekta je prišlo do napake."
+msgstr "Pri poskusu izrisovanja projekta je prišlo do napake."
 
 #: pitivi/render.py:1324
 msgid ""
@@ -2010,7 +2005,7 @@ msgstr ""
 
 #: pitivi/render.py:1485
 msgid "Select file path to render"
-msgstr "Izberite pot datoteke, ki jo želite upodobiti"
+msgstr "Izberite pot datoteke, ki jo želite izrisatii"
 
 #: pitivi/render.py:1595 pitivi/render.py:1596 pitivi/render.py:1602
 msgid "Render complete"
@@ -2075,9 +2070,8 @@ msgid "Frame #%d"
 msgstr "Sličica #%d"
 
 #: pitivi/timeline/timeline.py:85
-#, fuzzy
 msgid "Markers magnetic by default"
-msgstr "Označevalci naj bodo privzeto magnetni"
+msgstr "Označevalniki naj bodo privzeto magnetni"
 
 #: pitivi/timeline/timeline.py:87
 msgid ""
@@ -2152,11 +2146,11 @@ msgstr "Prilepi izbrane posnetke"
 
 #: pitivi/timeline/timeline.py:1820
 msgid "Seek to the first clip edge after the playhead"
-msgstr ""
+msgstr "Poišči prvi rez posnetka za predvajalno glavo"
 
 #: pitivi/timeline/timeline.py:1827
 msgid "Seek to the first clip edge before the playhead"
-msgstr ""
+msgstr "Poišči prvi rez posnetka pred predvajalno glavo"
 
 #: pitivi/timeline/timeline.py:1834
 msgid "Shift selected clips one frame forward"
@@ -2184,7 +2178,7 @@ msgstr "Razdeli posnetek na označenem mestu"
 
 #: pitivi/timeline/timeline.py:1886
 msgid "Add keyframe to the keyframe curve of selected clip"
-msgstr ""
+msgstr "Dodaj ključno sličico na krivuljo ključnih sličic izbranega posnetka"
 
 #: pitivi/timeline/timeline.py:1891
 msgid "Timeline Navigation"
@@ -2200,27 +2194,21 @@ msgstr "Oddalji pogled"
 
 #: pitivi/timeline/timeline.py:1915
 msgid "Adjust zoom to fit the project to the window"
-msgstr ""
+msgstr "Prilagodi pogled na velikost projekta"
 
 #: pitivi/timeline/timeline.py:1928
-#, fuzzy
 msgid "Seek backward one frame"
 msgstr "Pojdi nazaj eno sličico"
 
 #: pitivi/timeline/timeline.py:1935
-#, fuzzy
 msgid "Seek forward one frame"
 msgstr "Pojdi naprej eno sličico"
 
 #: pitivi/timeline/timeline.py:1943
-#, fuzzy
-#| msgid "Go back one second"
 msgid "Seek backward one second"
 msgstr "Pojdi nazaj eno sekundo"
 
 #: pitivi/timeline/timeline.py:1951
-#, fuzzy
-#| msgid "Go forward one second"
 msgid "Seek forward one second"
 msgstr "Pojdi naprej eno sekundo"
 
@@ -2230,11 +2218,11 @@ msgstr "Dodaj marker"
 
 #: pitivi/timeline/timeline.py:1966
 msgid "Seek to the first marker before the playhead"
-msgstr ""
+msgstr "Poišči prvi označevalnik pred predvajalno glavo"
 
 #: pitivi/timeline/timeline.py:1973
 msgid "Seek to the first marker after the playhead"
-msgstr ""
+msgstr "Poišči prvi označevalnik za predvajalno glavo"
 
 #: pitivi/trackerperspective.py:403
 msgid "Object {}"
@@ -2321,11 +2309,11 @@ msgstr "Napaka med razčlenjevanjem niza"
 
 #: pitivi/utils/proxy.py:64
 msgid "Max number of parallel transcoding jobs"
-msgstr ""
+msgstr "Največje število vzporednih opravil prekodiranja"
 
 #: pitivi/utils/proxy.py:75
 msgid "Max CPU usage dedicated to transcoding"
-msgstr ""
+msgstr "Največja raba CPE, posvečena prekodiranju"
 
 #. Translators: 'fps' is for 'frames per second'
 #: pitivi/utils/ui.py:390
@@ -2601,7 +2589,7 @@ msgstr "Uporabite lahko naslednje bližnjice:"
 #: plugins/console/console.py:204
 #, python-brace-format
 msgid "Type \"{help}(<command>)\" for more information."
-msgstr ""
+msgstr "Vnesite »{help}(<ukaz>)« za več informacij."
 
 #: plugins/console/utils.py:81
 #, python-brace-format
