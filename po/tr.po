@@ -1,29 +1,29 @@
 # Turkish translation of pitivi.
 # Copyright (C) 2010-2013 The Free Software Foundation.
-# Copyright (C) 2014-2022 pitivi'S COPYRIGHT HOLDER
+# Copyright (C) 2014-2023 pitivi'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the pitivi package.
 #
 # Launchpad Katkıcıları <https://translations.launchpad.net/ubuntu/saucy/+source/pitivi/+pots/pitivi/tr/+translate>, 2013.
 # İşbaran Akçayır <isbaran@gmail.com>, 2015.
 # Muhammet Kara <muhammetk@gmail.com>, 2013, 2016.
 # Serdar Sağlam <teknomobil@yandex.com>, 2019.
-# Sabri Ünal <libreajans@gmail.com>, 2019, 2022.
-# Emin Tufan Çetin <etcetin@gmail.com>, 2020, 2022.
+# Sabri Ünal <libreajans@gmail.com>, 2019, 2022, 2023.
+# Emin Tufan Çetin <etcetin@gmail.com>, 2020, 2022, 2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2022-05-09 14:58+0000\n"
-"PO-Revision-Date: 2022-05-12 15:30+0300\n"
-"Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
+"POT-Creation-Date: 2023-01-25 07:38+0000\n"
+"PO-Revision-Date: 2023-02-14 04:36+0300\n"
+"Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
 "Language-Team: Turkish <gnome-turk@gnome.org>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.1.1\n"
 "X-POOTLE-MTIME: 1425887223.000000\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
@@ -561,12 +561,12 @@ msgstr "Oranları sabitle"
 msgid "Maintain aspect ratio"
 msgstr "En-boy oranını koru"
 
-#: data/ui/projectsettings.ui:330 data/ui/renderingdialog.ui:734
+#: data/ui/projectsettings.ui:330 data/ui/renderingdialog.ui:732
 msgid "Frame rate:"
 msgstr "Çerçeve oranı:"
 
 #. The title of the section with the video settings
-#: data/ui/projectsettings.ui:383 data/ui/renderingdialog.ui:752
+#: data/ui/projectsettings.ui:383 data/ui/renderingdialog.ui:750
 #: pitivi/clip_properties/markers.py:45 pitivi/effects.py:249
 msgid "Video"
 msgstr "Video"
@@ -621,20 +621,20 @@ msgstr "Oluştur"
 msgid "Quality:"
 msgstr "Nitelik:"
 
-#: data/ui/renderingdialog.ui:179 pitivi/clip_properties/markers.py:48
+#: data/ui/renderingdialog.ui:177 pitivi/clip_properties/markers.py:48
 #: pitivi/render.py:74
 msgid "Custom"
 msgstr "Özel"
 
-#: data/ui/renderingdialog.ui:246
+#: data/ui/renderingdialog.ui:244
 msgid "Container format:"
 msgstr "Kapsayıcı biçimi:"
 
-#: data/ui/renderingdialog.ui:313
+#: data/ui/renderingdialog.ui:311
 msgid "Automatically render from proxy files"
 msgstr "Vekil dosyalarından kendiliğinden hazırla"
 
-#: data/ui/renderingdialog.ui:317
+#: data/ui/renderingdialog.ui:315
 msgid ""
 "Use proxy files if they are available and the source asset media format is "
 "not officially supported.\n"
@@ -648,11 +648,11 @@ msgstr ""
 "Bu seçenek, oluşturulan videonun niteliğiyle kararlılık arasında iyi bir "
 "denge kurar."
 
-#: data/ui/renderingdialog.ui:332
+#: data/ui/renderingdialog.ui:330
 msgid "Always render from proxy files"
 msgstr "Her zaman vekil dosyalarından oluştur"
 
-#: data/ui/renderingdialog.ui:336
+#: data/ui/renderingdialog.ui:334
 msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
@@ -660,11 +660,11 @@ msgstr ""
 "Tüm vekil klipleri vekil varlıklarından oluştur. Oluşturma işlemi sırasında "
 "bazı nitelik yitimleri olabilir."
 
-#: data/ui/renderingdialog.ui:349
+#: data/ui/renderingdialog.ui:347
 msgid "Never render from proxy files"
 msgstr "Asla vekil dosyalarından oluşturma"
 
-#: data/ui/renderingdialog.ui:353
+#: data/ui/renderingdialog.ui:351
 msgid ""
 "Always use source assets for rendering. It is the best choice for the "
 "quality of the rendered video, but you might hit some bugs because of the "
@@ -676,56 +676,56 @@ msgstr ""
 "biçimleri kullanımı nedeniyle bazı hatalar olabilir.\n"
 "<i>Kendi sorumluluğunuzdadır!</i>"
 
-#: data/ui/renderingdialog.ui:400
+#: data/ui/renderingdialog.ui:398
 msgid "Channels:"
 msgstr "Kanallar:"
 
-#: data/ui/renderingdialog.ui:432 data/ui/renderingdialog.ui:653
+#: data/ui/renderingdialog.ui:430 data/ui/renderingdialog.ui:651
 msgid "Advanced..."
 msgstr "Gelişmiş..."
 
-#: data/ui/renderingdialog.ui:472 data/ui/renderingdialog.ui:692
+#: data/ui/renderingdialog.ui:470 data/ui/renderingdialog.ui:690
 msgid "Codec:"
 msgstr "Çözücü:"
 
-#: data/ui/renderingdialog.ui:509
+#: data/ui/renderingdialog.ui:507
 msgid "Sample rate:"
 msgstr "Örnekleme hızı:"
 
-#: data/ui/renderingdialog.ui:527 pitivi/clip_properties/markers.py:46
+#: data/ui/renderingdialog.ui:525 pitivi/clip_properties/markers.py:46
 #: pitivi/effects.py:126 pitivi/effects.py:249
 msgid "Audio"
 msgstr "Ses"
 
-#: data/ui/renderingdialog.ui:566
+#: data/ui/renderingdialog.ui:564
 msgid "Scale:"
 msgstr "Ölçek:"
 
-#: data/ui/renderingdialog.ui:599
+#: data/ui/renderingdialog.ui:597
 msgid "Scale"
 msgstr "Ölçek"
 
-#: data/ui/renderingdialog.ui:619
+#: data/ui/renderingdialog.ui:617
 msgid "Height"
 msgstr "Yükseklik"
 
-#: data/ui/renderingdialog.ui:638
+#: data/ui/renderingdialog.ui:636
 msgid "Project Settings..."
 msgstr "Proje Ayarları..."
 
-#: data/ui/renderingdialog.ui:718
+#: data/ui/renderingdialog.ui:716
 msgid "Framerate"
 msgstr "Kare hızı"
 
-#: data/ui/renderingdialog.ui:781
+#: data/ui/renderingdialog.ui:779
 msgid "Advanced"
 msgstr "Gelişmiş"
 
-#: data/ui/renderingdialog.ui:792
+#: data/ui/renderingdialog.ui:790
 msgid "Select file"
 msgstr "Dosya seç"
 
-#: data/ui/renderingdialog.ui:809
+#: data/ui/renderingdialog.ui:807
 msgid "File path:"
 msgstr "Dosya yolu:"
 
@@ -739,7 +739,7 @@ msgid "Pause"
 msgstr "Duraklat"
 
 #: data/ui/renderingprogress.ui:55 data/ui/trackerperspective.ui:25
-#: pitivi/timeline/timeline.py:1915 pitivi/viewer/viewer.py:836
+#: pitivi/timeline/timeline.py:1921 pitivi/viewer/viewer.py:836
 msgid "Play"
 msgstr "Oynat"
 
@@ -825,11 +825,11 @@ msgstr "Yapıştır"
 msgid "Align clips based on their soundtracks"
 msgstr "Klipleri ses parçalarına göre hizala"
 
-#: data/ui/timelinetoolbar.ui:124
+#: data/ui/timelinetoolbar.ui:123
 msgid "Align"
 msgstr "Hizala"
 
-#: data/ui/timelinetoolbar.ui:137
+#: data/ui/timelinetoolbar.ui:136
 msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
@@ -837,7 +837,7 @@ msgstr ""
 "Boşluksuz kipini aç/kapat\n"
 "Etkinleştirildiğinde komşu klipler boşlukları kendiliğinden dolduracaktır."
 
-#: data/ui/timelinetoolbar.ui:140
+#: data/ui/timelinetoolbar.ui:139
 msgid "Gapless mode"
 msgstr "Boşluksuz kip"
 
@@ -893,7 +893,7 @@ msgstr "Bir kare ileri git"
 msgid "Tracking Algorithm"
 msgstr "İzleme Algoritması"
 
-#: data/ui/trackerperspective.ui:402
+#: data/ui/trackerperspective.ui:401
 msgid "Track"
 msgstr "İzle"
 
@@ -1264,7 +1264,7 @@ msgstr "%s dosyaları"
 msgid "All files"
 msgstr "Tüm dosyalar"
 
-#: pitivi/dialogs/prefs.py:61 pitivi/timeline/timeline.py:1747
+#: pitivi/dialogs/prefs.py:61 pitivi/timeline/timeline.py:1749
 msgid "Timeline"
 msgstr "Zaman çizgisi"
 
@@ -2070,27 +2070,27 @@ msgstr "Katmanı sil"
 msgid "Layer %d"
 msgstr "Katman %d"
 
-#: pitivi/timeline/ruler.py:239
+#: pitivi/timeline/ruler.py:241
 #, python-format
 msgid "Frame #%d"
 msgstr "Kare #%d"
 
-#: pitivi/timeline/timeline.py:86
+#: pitivi/timeline/timeline.py:85
 msgid "Markers magnetic by default"
 msgstr "Öntanımlı manyetik işaretleyiciler"
 
-#: pitivi/timeline/timeline.py:88
+#: pitivi/timeline/timeline.py:87
 msgid ""
 "Whether markers created on new clips will be snapping targets by default."
 msgstr ""
 "Yeni kliplerde oluşturulan işaretçilerin öntanımlı olarak hedefleri yakalama "
 "durumu."
 
-#: pitivi/timeline/timeline.py:98
+#: pitivi/timeline/timeline.py:97
 msgid "Snap distance"
 msgstr "Yapışma mesafesi"
 
-#: pitivi/timeline/timeline.py:99
+#: pitivi/timeline/timeline.py:98
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -2098,141 +2098,141 @@ msgstr ""
 "Sürüklerken veya kırparken iki klibin birbirine yapıştırılacağı eşik değer "
 "(piksel türünde)."
 
-#: pitivi/timeline/timeline.py:111
+#: pitivi/timeline/timeline.py:110
 msgid "Image clip duration"
 msgstr "Resim klip süresi"
 
-#: pitivi/timeline/timeline.py:113
+#: pitivi/timeline/timeline.py:112
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
 msgstr ""
-"Zaman çizelgesine eklerken görüntülerin varsayılan klip uzunluğu (milisaniye "
+"Zaman çizelgesine eklerken görüntülerin öntanımlı klip uzunluğu (milisaniye "
 "türünde)."
 
-#: pitivi/timeline/timeline.py:124
+#: pitivi/timeline/timeline.py:123
 msgid "Left click also seeks"
 msgstr "Sol tıklamada sar"
 
-#: pitivi/timeline/timeline.py:126
+#: pitivi/timeline/timeline.py:125
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
 "Sol tıklamanın klipleri seçip düzenlemenin yanı sıra ileri geri sarma için "
 "kullanılması."
 
-#: pitivi/timeline/timeline.py:356 pitivi/timeline/timeline.py:1811
+#: pitivi/timeline/timeline.py:356 pitivi/timeline/timeline.py:1813
 msgid "Add layer"
 msgstr "Katman ekle"
 
-#: pitivi/timeline/timeline.py:1754
+#: pitivi/timeline/timeline.py:1756
 msgid "Action Search"
 msgstr "Eylem Ara"
 
-#: pitivi/timeline/timeline.py:1762
+#: pitivi/timeline/timeline.py:1764
 msgid "Delete selected clips"
 msgstr "Seçilen klipleri sil"
 
-#: pitivi/timeline/timeline.py:1769
+#: pitivi/timeline/timeline.py:1771
 msgid "Delete selected clips and shift following ones"
 msgstr "Seçili klipleri sil ve aşağıdaki klipleri değiştir"
 
-#: pitivi/timeline/timeline.py:1776
+#: pitivi/timeline/timeline.py:1778
 msgid "Group selected clips together"
 msgstr "Seçili klipleri kümele"
 
-#: pitivi/timeline/timeline.py:1783
+#: pitivi/timeline/timeline.py:1785
 msgid "Ungroup selected clips"
 msgstr "Seçili klipleri kümeden çıkar"
 
-#: pitivi/timeline/timeline.py:1790
+#: pitivi/timeline/timeline.py:1792
 msgid "Cut selected clips"
 msgstr "Seçili klipleri kes"
 
-#: pitivi/timeline/timeline.py:1797
+#: pitivi/timeline/timeline.py:1799
 msgid "Copy selected clips"
 msgstr "Seçili klipleri kopyala"
 
-#: pitivi/timeline/timeline.py:1804
+#: pitivi/timeline/timeline.py:1806
 msgid "Paste selected clips"
 msgstr "Seçili klipleri yapıştır"
 
-#: pitivi/timeline/timeline.py:1818
+#: pitivi/timeline/timeline.py:1820
 msgid "Seek to the first clip edge after the playhead"
 msgstr "Oynatma başından sonraki ilk klip kenarına sarar"
 
-#: pitivi/timeline/timeline.py:1825
+#: pitivi/timeline/timeline.py:1827
 msgid "Seek to the first clip edge before the playhead"
 msgstr "Oynatma başından önceki ilk klip kenarına sarar"
 
-#: pitivi/timeline/timeline.py:1832
+#: pitivi/timeline/timeline.py:1834
 msgid "Shift selected clips one frame forward"
 msgstr "Seçili klipleri bir kare ileri kaydır"
 
-#: pitivi/timeline/timeline.py:1839
+#: pitivi/timeline/timeline.py:1841
 msgid "Shift selected clips one frame backward"
 msgstr "Seçili klipleri bir kare geri kaydır"
 
-#: pitivi/timeline/timeline.py:1846
+#: pitivi/timeline/timeline.py:1848
 msgid "Snap selected clips to the next clip"
 msgstr "Seçili klipleri sonraki klipe yapıştır"
 
-#: pitivi/timeline/timeline.py:1853
+#: pitivi/timeline/timeline.py:1855
 msgid "Snap selected clips to the previous clip"
 msgstr "Seçili klipleri önceki klipe yapıştır"
 
-#: pitivi/timeline/timeline.py:1860
+#: pitivi/timeline/timeline.py:1862
 msgid "Add an effect to the selected clip"
 msgstr "Seçili klibe efekt ekle"
 
-#: pitivi/timeline/timeline.py:1873
+#: pitivi/timeline/timeline.py:1879
 msgid "Split the clip at the position"
 msgstr "Klibi geçerli konumda böl"
 
-#: pitivi/timeline/timeline.py:1880
+#: pitivi/timeline/timeline.py:1886
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Seçilen klibin anahtar karesi eğrisine anahtar karesi ekle"
 
-#: pitivi/timeline/timeline.py:1885
+#: pitivi/timeline/timeline.py:1891
 msgid "Timeline Navigation"
 msgstr "Zaman Çizelgesi Gezintisi"
 
-#: pitivi/timeline/timeline.py:1893
+#: pitivi/timeline/timeline.py:1899
 msgid "Zoom in"
 msgstr "Yakınlaş"
 
-#: pitivi/timeline/timeline.py:1901
+#: pitivi/timeline/timeline.py:1907
 msgid "Zoom out"
 msgstr "Uzaklaş"
 
-#: pitivi/timeline/timeline.py:1909
+#: pitivi/timeline/timeline.py:1915
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Projeyi pencereye sığdırmak için yakınlaştırmayı ayarla"
 
-#: pitivi/timeline/timeline.py:1922
+#: pitivi/timeline/timeline.py:1928
 msgid "Seek backward one frame"
 msgstr "Bir kare geriye git"
 
-#: pitivi/timeline/timeline.py:1929
+#: pitivi/timeline/timeline.py:1935
 msgid "Seek forward one frame"
 msgstr "Bir kare ileri git"
 
-#: pitivi/timeline/timeline.py:1937
+#: pitivi/timeline/timeline.py:1943
 msgid "Seek backward one second"
 msgstr "Bir saniye geri git"
 
-#: pitivi/timeline/timeline.py:1945
+#: pitivi/timeline/timeline.py:1951
 msgid "Seek forward one second"
 msgstr "Bir saniye ileri git"
 
-#: pitivi/timeline/timeline.py:1953
+#: pitivi/timeline/timeline.py:1959
 msgid "Add a marker"
 msgstr "İşaretçi ekle"
 
-#: pitivi/timeline/timeline.py:1960
+#: pitivi/timeline/timeline.py:1966
 msgid "Seek to the first marker before the playhead"
 msgstr "Oynatma başından önceki ilk klip işaretçisine sarar"
 
-#: pitivi/timeline/timeline.py:1967
+#: pitivi/timeline/timeline.py:1973
 msgid "Seek to the first marker after the playhead"
 msgstr "Oynatma başından sonraki ilk klip işaretçisine sarar"
 
