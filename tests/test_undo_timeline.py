@@ -156,8 +156,8 @@ class TestTimelineObserver(common.TestCase):
 
         self.assertTrue(self.layer.add_clip(clip1))
         self.assertTrue(self.layer.add_clip(clip2))
-        self.assertEqual(clip1.props.timeline, self.layer.get_timeline())
-        self.assertEqual(clip2.props.timeline, self.layer.get_timeline())
+        self.assertEqual(clip1.get_timeline(), self.layer.get_timeline())
+        self.assertEqual(clip2.get_timeline(), self.layer.get_timeline())
 
         self.timeline_container.timeline.selection.select([clip1, clip2])
         self.timeline_container.group_action.activate(None)
