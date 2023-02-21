@@ -61,7 +61,7 @@ build:
   variables:
     XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
   script:
-    - export RUN_IN_SANDBOX="flatpak-builder --disable-rofiles-fuse --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --env=GST_DEBUG_NO_COLOR=true --env=PRE_COMMIT_HOME=/build/pre-commit-home --env=SKIP=gitlab-ci-linter --run /build/flatpak-build-dir ${MANIFEST}"
+    - export RUN_IN_SANDBOX="flatpak-builder --disable-rofiles-fuse --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --env=GST_DEBUG_NO_COLOR=true --env=PRE_COMMIT_HOME=/build/pre-commit-home --env=SKIP=gitlab-ci-linter --env=GITLAB_CI=${GITLAB_CI} --run /build/flatpak-build-dir ${MANIFEST}"
 
     - env
 
@@ -84,7 +84,7 @@ build:
     - ${RUN_IN_SANDBOX} pre-commit run --all-files
 
     # Run the unit tests.
-    - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher /build/pitivi/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH} --logs-dir ${CI_PROJECT_DIR}/tests-logs
+    - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher /build/pitivi/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 10 --xunit-file ${XUNIT_PATH} --logs-dir ${CI_PROJECT_DIR}/tests-logs
 
     # Create a flatpak repo.
     - flatpak build-export ${CI_PROJECT_DIR}/flatpak_repo /build/flatpak-build-dir --subject="Rolling update for Pitivi master" --body="See ${CI_JOB_URL}"

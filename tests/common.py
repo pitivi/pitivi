@@ -157,6 +157,9 @@ def create_main_loop():
         # Limit the test running time only when not debugging.
         debugging = os.environ.get("PITIVI_VSCODE_DEBUG", False)
         if not debugging:
+            if os.environ.get("GITLAB_CI", False):
+                # Disk access can take very long on the CI runners.
+                timeout_seconds *= 10
             source = GLib.timeout_source_new_seconds(timeout_seconds)
             source.set_callback(timeout_cb)
             source.attach()

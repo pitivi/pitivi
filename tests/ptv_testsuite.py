@@ -64,11 +64,17 @@ def setup_tests(
 
             # A test for each test_* method.
             for test in _tests:
+                env = {"PYTHONPATH": os.path.join(CDIR, "..")}
+                gitlab_ci = os.environ.get("GITLAB_CI")
+                if gitlab_ci:
+                    # The tests extend internal timeouts when they figure they
+                    # are running in the CI.
+                    env["GITLAB_CI"] = gitlab_ci
                 test_manager.add_test(PitiviTest(
                     sys.executable,
                     "tests." + test.id(),
                     options,
                     test_manager.reporter,
-                    extra_env_variables={"PYTHONPATH": os.path.join(CDIR, "..")}))
+                    extra_env_variables=env))
 
     return True
