@@ -31,16 +31,20 @@ import tests
 # pylint: disable=wrong-import-order
 from launcher.baseclasses import Test
 
+import launcher
+
 
 class PitiviTest(Test):
     """A Test corresponding to a module in our unit tests suite."""
 
     def build_arguments(self):
         """Builds subprocess arguments."""
-        self.add_arguments('-m', 'unittest', '.'.join(self.classname.split('.')[1:]))
+        self.add_arguments("-m", "unittest", ".".join(self.classname.split(".")[1:]))
 
 
-def setup_tests(test_manager, options):
+def setup_tests(
+        test_manager: launcher.baseclasses.GstValidateBaseTestManager,
+        options: "launcher.baseclasses.LauncherConfig"):
     """Sets up Pitivi unit testsuite."""
     if os.environ.get("PITIVI_VSCODE_DEBUG", False):
         import debugpy
@@ -49,18 +53,22 @@ def setup_tests(test_manager, options):
         debugpy.wait_for_client()
 
     loader = unittest.TestLoader()
-    testsuites = loader.discover(CDIR)
+    testsuites: unittest.suite.TestSuite = loader.discover(CDIR)
+    # A testsuite per each .py file.
     for testsuite in testsuites:
+        # A testsuite per each unittest.TestCase subclass.
         for _tests in testsuite:
-
             if isinstance(_tests, unittest.loader._FailedTest):  # pylint: disable=protected-access
                 print(_tests._exception)  # pylint: disable=protected-access
                 continue
+
+            # A test for each test_* method.
             for test in _tests:
                 test_manager.add_test(PitiviTest(
                     sys.executable,
-                    'tests.' + test.id(),
-                    options, test_manager.reporter,
-                    extra_env_variables={'PYTHONPATH': os.path.join(CDIR, '..')}))
+                    "tests." + test.id(),
+                    options,
+                    test_manager.reporter,
+                    extra_env_variables={"PYTHONPATH": os.path.join(CDIR, "..")}))
 
     return True
