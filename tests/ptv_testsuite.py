@@ -70,6 +70,9 @@ def setup_tests(
                     # The tests extend internal timeouts when they figure they
                     # are running in the CI.
                     env["GITLAB_CI"] = gitlab_ci
+                    # Workaround a segfault when GStreamer deinitializes
+                    # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1964
+                    env["GST_DEBUG"] = "*:5"
                 test_manager.add_test(PitiviTest(
                     sys.executable,
                     "tests." + test.id(),
