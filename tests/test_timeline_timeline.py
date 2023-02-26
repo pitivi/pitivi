@@ -538,8 +538,8 @@ class TestCutCopyPaste(common.TestCase):
 
         copied_clips = [clip for clip in new_clips if clip not in clips]
         self.assertEqual(len(copied_clips), 2)
-        self.assertEqual(copied_clips[0].props.start, position)
-        self.assertEqual(copied_clips[1].props.start, position + copied_clips[0].props.duration)
+        self.assertEqual(copied_clips[0].props.start, position, new_clips)
+        self.assertEqual(copied_clips[1].props.start, position + copied_clips[0].props.duration, new_clips)
 
         # Paste the same clips for the second time.
         position = self.project.pipeline.get_duration()
