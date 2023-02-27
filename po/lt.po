@@ -1,23 +1,23 @@
 # Lithuanian translation for pitivi.
 # Copyright (C) 2013 pitivi's COPYRIGHT HOLDER
 # This file is distributed under the same license as the pitivi package.
-# Aurimas Černius <aurisc4@gmail.com>, 2013-2021.
+# Aurimas Černius <aurisc4@gmail.com>, 2013-2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2021-08-28 11:32+0000\n"
-"PO-Revision-Date: 2021-09-06 14:18+0300\n"
+"POT-Creation-Date: 2023-01-25 07:38+0000\n"
+"PO-Revision-Date: 2023-02-27 22:38+0200\n"
 "Last-Translator: Aurimas Černius <aurisc4@gmail.com>\n"
 "Language-Team: Lietuvių <gnome-lt@lists.akl.lt>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
-"%100<10 || n%100>=20) ? 1 : 2)\n"
-"X-Generator: Gtranslator 40.0\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"(n%100<10 || n%100>=20) ? 1 : 2)\n"
+"X-Generator: Gtranslator 42.0\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
 msgid "Pitivi video project (legacy)"
@@ -117,9 +117,45 @@ msgstr "<b><big>Vykdomas auto-lygiavimas</big></b>"
 msgid "Estimating..."
 msgstr "Vertinama..."
 
-#: data/ui/clipcolor.ui:21
+#: data/ui/beatdetection.ui:18
+msgid "Detect beats"
+msgstr "Aptikti ritmą"
+
+#: data/ui/beatdetection.ui:35
+msgid "Clear detected beats"
+msgstr "Išvalyti aptiktą ritmą"
+
+#: data/ui/beatdetection.ui:66
+msgid "Detecting..."
+msgstr "Aptinkama..."
+
+#: data/ui/clipcolor.ui:21 data/ui/customwidgets/pitivi:object_effect.ui:37
 msgid "Pick the clip color"
 msgstr "Pasirinkite klipo spalvą"
+
+#: data/ui/clipcompositing.ui:42
+msgid "Fade-in:"
+msgstr "Atsiradimas:"
+
+#: data/ui/clipcompositing.ui:54 data/ui/clipcompositing.ui:122
+msgid "seconds"
+msgstr "sekundės"
+
+#: data/ui/clipcompositing.ui:97
+msgid "Fade-out:"
+msgstr "Išnykimas:"
+
+#: data/ui/clipcompositing.ui:150
+msgid "Reset fade-in"
+msgstr "Atstatyti atsiradimą"
+
+#: data/ui/clipcompositing.ui:166
+msgid "Reset fade-out"
+msgstr "Atstatyti išnykimą"
+
+#: data/ui/clipcompositing.ui:181
+msgid "Blending:"
+msgstr "Suliejama:"
 
 #: data/ui/clipmediaprops.ui:8
 msgid "Clip Properties"
@@ -171,7 +207,6 @@ msgid "Height:"
 msgstr "Aukštis:"
 
 #: data/ui/cliptransformation.ui:141
-#| msgid "Constrain proportions"
 msgid "Constrain Proportions"
 msgstr "Riboti proporcijas"
 
@@ -299,12 +334,16 @@ msgstr "min alfa"
 msgid "max alpha"
 msgstr "max alfa"
 
+#: data/ui/customwidgets/pitivi:object_effect.ui:19
+msgid "Color:"
+msgstr "Spalva:"
+
 #: data/ui/effectslibrary.ui:16
 msgid "Favorites"
 msgstr "Mėgiamiausi"
 
 #: data/ui/effectslibrary.ui:43 data/ui/medialibrary.ui:165
-#: pitivi/transitions.py:74
+#: pitivi/transitions.py:69
 msgid "Search..."
 msgstr "Ieškoti..."
 
@@ -376,13 +415,13 @@ msgid "Edit the project settings"
 msgstr "Redaguoti projekto nustatymus"
 
 #: data/ui/mainmenubutton.ui:119 data/ui/projectsettings.ui:61
-#: pitivi/medialibrary.py:173 pitivi/medialibrary.py:536
-#: pitivi/dialogs/prefs.py:339
+#: pitivi/dialogs/prefs.py:340 pitivi/medialibrary.py:173
+#: pitivi/medialibrary.py:538
 msgid "Project Settings"
 msgstr "Projekto nustatymai"
 
 #: data/ui/mainmenubutton.ui:148 data/ui/preferences.ui:7
-#: pitivi/mainwindow.py:216
+#: pitivi/mainwindow.py:217
 msgid "Preferences"
 msgstr "Nuostatos"
 
@@ -488,10 +527,10 @@ msgid "Some changes will not take effect until you restart Pitivi"
 msgstr "Kai kurie pakeitimai įsigalios tik perleidus Pitivi"
 
 #: data/ui/projectsettings.ui:78 data/ui/renderingprogress.ui:41
+#: pitivi/dialogs/browseprojects.py:38 pitivi/dialogs/missingasset.py:46
 #: pitivi/editorperspective.py:544 pitivi/editorperspective.py:679
 #: pitivi/editorperspective.py:727 pitivi/editorperspective.py:780
-#: pitivi/greeterperspective.py:241 pitivi/medialibrary.py:854
-#: pitivi/dialogs/browseprojects.py:38 pitivi/dialogs/missingasset.py:46
+#: pitivi/greeterperspective.py:241 pitivi/medialibrary.py:856
 msgid "Cancel"
 msgstr "Atsisakyti"
 
@@ -516,13 +555,13 @@ msgstr "Riboti proporcijas"
 msgid "Maintain aspect ratio"
 msgstr "Išlaikyti proporcijas"
 
-#: data/ui/projectsettings.ui:330 data/ui/renderingdialog.ui:734
+#: data/ui/projectsettings.ui:330 data/ui/renderingdialog.ui:732
 msgid "Frame rate:"
 msgstr "Kadrų dažnis:"
 
 #. The title of the section with the video settings
-#: data/ui/projectsettings.ui:383 data/ui/renderingdialog.ui:752
-#: pitivi/clipproperties.py:1285 pitivi/effects.py:246
+#: data/ui/projectsettings.ui:383 data/ui/renderingdialog.ui:750
+#: pitivi/clip_properties/markers.py:45 pitivi/effects.py:249
 msgid "Video"
 msgstr "Vaizdo įrašas"
 
@@ -576,20 +615,20 @@ msgstr "Piešti"
 msgid "Quality:"
 msgstr "Kokybė:"
 
-#: data/ui/renderingdialog.ui:179 pitivi/clipproperties.py:1288
+#: data/ui/renderingdialog.ui:177 pitivi/clip_properties/markers.py:48
 #: pitivi/render.py:74
 msgid "Custom"
 msgstr "Pasirinktinis"
 
-#: data/ui/renderingdialog.ui:246
+#: data/ui/renderingdialog.ui:244
 msgid "Container format:"
 msgstr "Konteinerio formatas:"
 
-#: data/ui/renderingdialog.ui:313
+#: data/ui/renderingdialog.ui:311
 msgid "Automatically render from proxy files"
 msgstr "Automatiškai piešti iš tarpinių failų"
 
-#: data/ui/renderingdialog.ui:317
+#: data/ui/renderingdialog.ui:315
 msgid ""
 "Use proxy files if they are available and the source asset media format is "
 "not officially supported.\n"
@@ -603,11 +642,11 @@ msgstr ""
 "Šis parametras yra geras pasirinkimas tarp piešiamo vaizdo įrašo kokybės ir "
 "stabilumo."
 
-#: data/ui/renderingdialog.ui:332
+#: data/ui/renderingdialog.ui:330
 msgid "Always render from proxy files"
 msgstr "Visada piešti iš tarpinių failų"
 
-#: data/ui/renderingdialog.ui:336
+#: data/ui/renderingdialog.ui:334
 msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
@@ -615,11 +654,11 @@ msgstr ""
 "Piešti visus tarpinius klipus iš tarpinių failų. Piešimo procese gali būti "
 "kokybės praradimų."
 
-#: data/ui/renderingdialog.ui:349
+#: data/ui/renderingdialog.ui:347
 msgid "Never render from proxy files"
 msgstr "Niekada nepiešti iš tarpinių failų"
 
-#: data/ui/renderingdialog.ui:353
+#: data/ui/renderingdialog.ui:351
 msgid ""
 "Always use source assets for rendering. It is the best choice for the "
 "quality of the rendered video, but you might hit some bugs because of the "
@@ -631,56 +670,56 @@ msgstr ""
 "naudojami oficialiai nepalaikomi daugialypės terpės formatai.\n"
 "<i>Naudokite savo rizika!</i>"
 
-#: data/ui/renderingdialog.ui:400
+#: data/ui/renderingdialog.ui:398
 msgid "Channels:"
 msgstr "Kanalai:"
 
-#: data/ui/renderingdialog.ui:432 data/ui/renderingdialog.ui:653
+#: data/ui/renderingdialog.ui:430 data/ui/renderingdialog.ui:651
 msgid "Advanced..."
 msgstr "Sudėtingesnį..."
 
-#: data/ui/renderingdialog.ui:472 data/ui/renderingdialog.ui:692
+#: data/ui/renderingdialog.ui:470 data/ui/renderingdialog.ui:690
 msgid "Codec:"
 msgstr "Kodekas:"
 
-#: data/ui/renderingdialog.ui:509
+#: data/ui/renderingdialog.ui:507
 msgid "Sample rate:"
 msgstr "Mėginių dažnis:"
 
-#: data/ui/renderingdialog.ui:527 pitivi/clipproperties.py:1286
-#: pitivi/effects.py:122 pitivi/effects.py:246
+#: data/ui/renderingdialog.ui:525 pitivi/clip_properties/markers.py:46
+#: pitivi/effects.py:126 pitivi/effects.py:249
 msgid "Audio"
 msgstr "Garsas"
 
-#: data/ui/renderingdialog.ui:566
+#: data/ui/renderingdialog.ui:564
 msgid "Scale:"
 msgstr "Skalė:"
 
-#: data/ui/renderingdialog.ui:599
+#: data/ui/renderingdialog.ui:597
 msgid "Scale"
 msgstr "Skalė"
 
-#: data/ui/renderingdialog.ui:619
+#: data/ui/renderingdialog.ui:617
 msgid "Height"
 msgstr "Aukštis"
 
-#: data/ui/renderingdialog.ui:638
+#: data/ui/renderingdialog.ui:636
 msgid "Project Settings..."
 msgstr "Projekto nustatymai..."
 
-#: data/ui/renderingdialog.ui:718
+#: data/ui/renderingdialog.ui:716
 msgid "Framerate"
 msgstr "Kadrų dažnis"
 
-#: data/ui/renderingdialog.ui:781
+#: data/ui/renderingdialog.ui:779
 msgid "Advanced"
 msgstr "Sudėtingesnį"
 
-#: data/ui/renderingdialog.ui:792
+#: data/ui/renderingdialog.ui:790
 msgid "Select file"
 msgstr "Pasirinkite failą"
 
-#: data/ui/renderingdialog.ui:809
+#: data/ui/renderingdialog.ui:807
 msgid "File path:"
 msgstr "Failo kelias:"
 
@@ -688,12 +727,13 @@ msgstr "Failo kelias:"
 msgid "Rendering"
 msgstr "Piešimas"
 
-#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:774
+#: data/ui/renderingprogress.ui:27 data/ui/trackerperspective.ui:19
+#: pitivi/viewer/viewer.py:844
 msgid "Pause"
 msgstr "Pristabdyti"
 
-#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:766
-#: pitivi/timeline/timeline.py:1894
+#: data/ui/renderingprogress.ui:55 data/ui/trackerperspective.ui:25
+#: pitivi/timeline/timeline.py:1921 pitivi/viewer/viewer.py:836
 msgid "Play"
 msgstr "Groti"
 
@@ -752,30 +792,38 @@ msgid "Ungroup"
 msgstr "Išgrupuoti"
 
 #: data/ui/timelinetoolbar.ui:76
+msgid "Cut clips"
+msgstr "Kirpti klipus"
+
+#: data/ui/timelinetoolbar.ui:78
+msgid "Cut"
+msgstr "Kirpti"
+
+#: data/ui/timelinetoolbar.ui:91
 msgid "Copy clips"
 msgstr "Kopijuoti klipus"
 
-#: data/ui/timelinetoolbar.ui:78
+#: data/ui/timelinetoolbar.ui:93
 msgid "Copy"
 msgstr "Kopijuoti"
 
-#: data/ui/timelinetoolbar.ui:91
+#: data/ui/timelinetoolbar.ui:106
 msgid "Paste clips"
 msgstr "Įdėti klipus"
 
-#: data/ui/timelinetoolbar.ui:93
+#: data/ui/timelinetoolbar.ui:108
 msgid "Paste"
 msgstr "Įdėti"
 
-#: data/ui/timelinetoolbar.ui:106
+#: data/ui/timelinetoolbar.ui:121
 msgid "Align clips based on their soundtracks"
 msgstr "Lygiuoti klipus pagal jų garso takelius"
 
-#: data/ui/timelinetoolbar.ui:109
+#: data/ui/timelinetoolbar.ui:123
 msgid "Align"
 msgstr "Lygiuoti"
 
-#: data/ui/timelinetoolbar.ui:122
+#: data/ui/timelinetoolbar.ui:136
 msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
@@ -783,7 +831,7 @@ msgstr ""
 "Perjungti veikseną be tarpų\n"
 "Kai įjungta, gretimi klipai automatiškai pastumiami tarpams užpildyti."
 
-#: data/ui/timelinetoolbar.ui:125
+#: data/ui/timelinetoolbar.ui:139
 msgid "Gapless mode"
 msgstr "Be tarpų"
 
@@ -800,12 +848,10 @@ msgid "Pick a background color"
 msgstr "Pasirinkite fono spalvą"
 
 #: data/ui/titleeditor.ui:157
-#| msgid "Pick a text color"
 msgid "Pick an outline color"
 msgstr "Pasirinkite rėmelio spalvą"
 
 #: data/ui/titleeditor.ui:193
-#| msgid "Shadows"
 msgid "Drop Shadow"
 msgstr "Mesti šešėlį"
 
@@ -821,50 +867,74 @@ msgstr "Horizontali:"
 msgid "Vertical:"
 msgstr "Vertikali:"
 
+#: data/ui/trackerperspective.ui:66
+msgid "Tracked Objects:"
+msgstr "Sekami objektai:"
+
+#: data/ui/trackerperspective.ui:195
+msgid "Drag&drop on the video to delimit an object to be tracked."
+msgstr "Tempkite ir numeskite vaizdo įraše sekamam objektui apriboti."
+
+#: data/ui/trackerperspective.ui:288
+msgid "Go back one frame"
+msgstr "Grįžti atgal vieną kadrą"
+
+#: data/ui/trackerperspective.ui:318
+msgid "Go forward one frame"
+msgstr "Eiti pirmyn vieną kadrą"
+
+#: data/ui/trackerperspective.ui:374
+msgid "Tracking Algorithm"
+msgstr "Sekimo algoritmas"
+
+#: data/ui/trackerperspective.ui:401
+msgid "Track"
+msgstr "Sekti"
+
 #: pitivi/action_search_bar.py:46
 msgid "Search Action"
 msgstr "Ieškoti veiksmo"
 
-#: pitivi/application.py:158
+#: pitivi/application.py:160
 msgid "General"
 msgstr "Bendri"
 
-#: pitivi/application.py:165
+#: pitivi/application.py:167
 msgid "Undo the most recent action"
 msgstr "Atšaukti paskutinį veiksmą"
 
-#: pitivi/application.py:171
+#: pitivi/application.py:173
 msgid "Redo the most recent action"
 msgstr "Pakartoti paskutinį veiksmą"
 
-#: pitivi/application.py:176
+#: pitivi/application.py:178
 msgid "Quit"
 msgstr "Išeiti"
 
-#: pitivi/application.py:184
+#: pitivi/application.py:186
 msgid "Show the Shortcuts Window"
 msgstr "Rodyti trumpinių langą"
 
-#. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:113
+#. Translators: %s is a Python module name or another OS component
+#: pitivi/check.py:115
 #, python-format
 msgid "- %s not found on the system"
 msgstr "- %s nerastas sistemoje"
 
-#. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:116
+#. Translators: %s is a Python module name or another OS component
+#: pitivi/check.py:118
 #, python-format
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgstr "- %s versija %s įdiegta, bet Pitivi reikalauja bent %s versijos"
 
-#. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:191
+#. Translators: %s is a Python module name or another OS component
+#: pitivi/check.py:193
 #, python-format
 msgid "- %s GStreamer plug-in not found on the system"
 msgstr "- %s GStreamer įskiepis nerastas sistemoje"
 
-#. Translators: %s is a Python module name or another os component
-#: pitivi/check.py:194
+#. Translators: %s is a Python module name or another OS component
+#: pitivi/check.py:196
 #, python-format
 msgid ""
 "- %s Gstreamer plug-in version %s is installed but Pitivi requires at least "
@@ -873,15 +943,21 @@ msgstr ""
 "- %s GStreamer įskiepio versija %s įdiegta, bet Pitivi reikalauja bent %s "
 "versijos"
 
-#: pitivi/check.py:303
+#. Translators: %s is a Python module name or another OS component
+#: pitivi/check.py:224
+#, python-format
+msgid "- %s GStreamer element not found on the system"
+msgstr "- %s GStreamer elementas nerastas sistemoje"
+
+#: pitivi/check.py:332
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "KLAIDA - šios būtinos priklausomybės nepatenkintos:"
 
-#: pitivi/check.py:311
+#: pitivi/check.py:340
 msgid "Missing soft dependency:"
 msgstr "Trūkstama nebūtinos priklausomybės:"
 
-#: pitivi/check.py:318
+#: pitivi/check.py:347
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
@@ -889,7 +965,7 @@ msgstr ""
 "KLAIDA — Nepavyko sukurti Gst.Fraction — tai reiškia, kad gst-python nėra "
 "tvarkingai įdiegta."
 
-#: pitivi/check.py:323
+#: pitivi/check.py:352
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -897,36 +973,36 @@ msgstr ""
 "Nepavyko sukurti garso išvedimo. Įsitikinkite, kad turite teisingą "
 "(pulsesink, alsasink or osssink)."
 
-#: pitivi/check.py:328
+#: pitivi/check.py:357
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
 "Nepavyko sukurti vaizdo išvedimo. Įsitikinkite, kad turite prieinamą gtksink."
 
-#: pitivi/check.py:343
+#: pitivi/check.py:372
 #, python-format
 msgid "Could not import '%s'. Make sure you have it available."
 msgstr "Nepavyko importuoti „%s“. Įsitikinkite, kad jis prieinamas."
 
-#: pitivi/check.py:357
+#: pitivi/check.py:386
 msgid "Could not import 'gi'. Make sure you have pygobject available."
 msgstr ""
 "Nepavyko importuoti „gi“. Įsitikinkite, kad turite prieinamą pygobject."
 
-#: pitivi/check.py:456
+#: pitivi/check.py:485
 msgid "enables sound notifications when rendering is complete"
 msgstr "įjungia garsinius perspėjimus, kai baigiamas piešimas"
 
-#: pitivi/check.py:458
+#: pitivi/check.py:487
 msgid "enables visual notifications when rendering is complete"
 msgstr "įjungia vaizdinius pranešimus, kai baigiamas piešimas"
 
-#: pitivi/check.py:460
+#: pitivi/check.py:489
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr ""
 "papildomi daugialypės terpės kodekai naudojant GStreamer Libav biblioteką"
 
-#: pitivi/check.py:462
+#: pitivi/check.py:491
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -934,12 +1010,20 @@ msgstr ""
 "įjungia watchdog GStreamer konvejeryje. Naudojama GStreamer klaidų aptikimui "
 "ir atsistatymui po jų"
 
+#: pitivi/check.py:495
+msgid "enables object tracking"
+msgstr "įjungia objekto sekimą"
+
+#: pitivi/check.py:496
+msgid "enables beat detection functionality"
+msgstr "įjungia ritmo aptikimo funkcionalumą"
+
 #. Translators: This is the default text of a title clip.
-#: pitivi/clipproperties.py:65
+#: pitivi/clipproperties.py:69
 msgid "Title Clip"
 msgstr "Pavadinimo klipas"
 
-#: pitivi/clipproperties.py:152
+#: pitivi/clipproperties.py:162
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
@@ -947,37 +1031,37 @@ msgstr ""
 "Pasirinkite klipą laiko juostoje su juo susietiems efektams konfigūruoti "
 "arba sukurkite naują klipą:"
 
-#: pitivi/clipproperties.py:158
+#: pitivi/clipproperties.py:168
 msgid "Create a title clip"
 msgstr "Sukurti pavadinimo klipą"
 
-#: pitivi/clipproperties.py:163
+#: pitivi/clipproperties.py:173
 msgid "Create a color clip"
 msgstr "Sukurti spalvos klipą"
 
-#: pitivi/clipproperties.py:269 pitivi/effects.py:118
+#: pitivi/clipproperties.py:276 pitivi/effects.py:122
 msgid "Time"
 msgstr "Laikas"
 
-#: pitivi/clipproperties.py:312
+#: pitivi/clipproperties.py:319
 msgid "Speed"
 msgstr "Greitis"
 
-#: pitivi/clipproperties.py:327 pitivi/utils/widgets.py:800
+#: pitivi/clipproperties.py:334 pitivi/utils/widgets.py:800
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: pitivi/clipproperties.py:330 pitivi/dialogs/prefs.py:285
+#: pitivi/clipproperties.py:337 pitivi/dialogs/prefs.py:286
 #: pitivi/utils/widgets.py:976
 msgid "Reset to default value"
 msgstr "Atstatyti numatytąją vertę"
 
-#: pitivi/clipproperties.py:565
+#: pitivi/clipproperties.py:572
 msgid "Effects"
 msgstr "Efektai"
 
-#: pitivi/clipproperties.py:581
+#: pitivi/clipproperties.py:590
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
@@ -985,53 +1069,66 @@ msgstr ""
 "Jei norite klipe naudoti efektą, atitempkite jį iš efektų bibliotekos arba "
 "naudokite žemiau esantį mygtuką."
 
-#: pitivi/clipproperties.py:589
+#: pitivi/clipproperties.py:598
 msgid "Add Effect"
 msgstr "Pridėti efektą"
 
-#: pitivi/clipproperties.py:913
+#: pitivi/clipproperties.py:608
+msgid "Cover Object"
+msgstr "Uždengti objektą"
+
+#: pitivi/clipproperties.py:938
 msgid "Transformation"
 msgstr "Transformacija"
 
-#: pitivi/clipproperties.py:1042
+#: pitivi/clipproperties.py:1067
 msgid "Show keyframes"
 msgstr "Rodyti pagrindinius kadrus"
 
-#: pitivi/clipproperties.py:1045
+#: pitivi/clipproperties.py:1070
 msgid "Activate keyframes"
 msgstr "Aktyvinti pagrindinius kadrus"
 
-#: pitivi/clipproperties.py:1050
+#: pitivi/clipproperties.py:1075
 msgid "Hide keyframes"
 msgstr "Slėpti pagrindinius kadrus"
-
-#: pitivi/clipproperties.py:1287
-msgid "Text"
-msgstr "Tekstas"
-
-#: pitivi/clipproperties.py:1296
-#| msgid "Clip Properties"
-msgid "Clip markers"
-msgstr "Klipo žymelės"
-
-#: pitivi/clipproperties.py:1349
-msgid "Magnetic"
-msgstr "Magnetinės"
-
-#: pitivi/clipproperties.py:1383
-#| msgid "Markers"
-msgid "No markers"
-msgstr "Nėra žymelių"
 
 #: pitivi/clip_properties/color.py:53 plugins/console/console.py:125
 msgid "Color"
 msgstr "Spalva"
 
-#: pitivi/clip_properties/title.py:43
+#: pitivi/clip_properties/compositing.py:57 pitivi/effects.py:81
+msgid "Compositing"
+msgstr "Komponavimas"
+
+#. Translators: These are compositing operators.
+#. See https://www.cairographics.org/operators/ for explanation and
+#. visualizations.
+#: pitivi/clip_properties/compositing.py:80
+msgid "Source"
+msgstr "Šaltinis"
+
+#: pitivi/clip_properties/compositing.py:81
+msgid "Over"
+msgstr "Virš"
+
+#: pitivi/clip_properties/markers.py:47
+msgid "Text"
+msgstr "Tekstas"
+
+#: pitivi/clip_properties/markers.py:64
+msgid "Clip markers"
+msgstr "Klipo žymelės"
+
+#: pitivi/clip_properties/markers.py:125
+msgid "Magnetic"
+msgstr "Magnetinės"
+
+#: pitivi/clip_properties/title.py:47
 msgid "Title clip duration"
 msgstr "Klipo trukmė"
 
-#: pitivi/clip_properties/title.py:45
+#: pitivi/clip_properties/title.py:49
 msgid ""
 "Default clip length (in milliseconds) of titles when inserting on the "
 "timeline."
@@ -1039,39 +1136,238 @@ msgstr ""
 "Numatyta klipo trukmė (milisekundėmis) paveikslėlius įterpiant į laiko "
 "juostą."
 
-#: pitivi/clip_properties/title.py:59
+#: pitivi/clip_properties/title.py:63
 msgid "Title"
 msgstr "Pavadinimas"
 
-#: pitivi/clip_properties/title.py:111 pitivi/clip_properties/title.py:118
+#. TODO: Remove when we upgrade pylint https://github.com/PyCQA/pylint/issues/4962
+#. pylint: disable=superfluous-parens
+#: pitivi/clip_properties/title.py:122 pitivi/clip_properties/title.py:129
 msgid "Absolute"
 msgstr "Absoliutus"
 
-#: pitivi/clip_properties/title.py:112
+#: pitivi/clip_properties/title.py:123
 msgid "Top"
 msgstr "Viršus"
 
-#: pitivi/clip_properties/title.py:113 pitivi/clip_properties/title.py:120
+#: pitivi/clip_properties/title.py:124 pitivi/clip_properties/title.py:131
 msgid "Center"
 msgstr "Centras"
 
-#: pitivi/clip_properties/title.py:114
+#: pitivi/clip_properties/title.py:125
 msgid "Bottom"
 msgstr "Apačia"
 
-#: pitivi/clip_properties/title.py:115
+#: pitivi/clip_properties/title.py:126
 msgid "Baseline"
 msgstr "Kontrolinė linija"
 
-#: pitivi/clip_properties/title.py:119
+#: pitivi/clip_properties/title.py:130
 msgid "Left"
 msgstr "Kairė"
 
-#: pitivi/clip_properties/title.py:121
+#: pitivi/clip_properties/title.py:132
 msgid "Right"
 msgstr "Dešinė"
 
-#: pitivi/editorperspective.py:205 pitivi/medialibrary.py:621
+#: pitivi/dialogs/about.py:45
+#, python-format
+msgid "Version %s"
+msgstr "Versija %s"
+
+#: pitivi/dialogs/about.py:47
+#, python-format
+msgid "Version %(cur_ver)s — %(new_ver)s is available"
+msgstr "Yra prieinama versija %(cur_ver)s — %(new_ver)s"
+
+#: pitivi/dialogs/about.py:58
+msgid "Current maintainers:"
+msgstr "Dabartiniai kūrėjai:"
+
+#: pitivi/dialogs/about.py:63
+msgid "Past maintainers:"
+msgstr "Buvę kūrėjai:"
+
+#: pitivi/dialogs/about.py:69
+msgid "Contributors:"
+msgstr "Pagalbininkai:"
+
+#. Translators: See
+#. https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
+#. for details on how this is used.
+#: pitivi/dialogs/about.py:76
+msgid "translator-credits"
+msgstr ""
+"Išvertė:\n"
+"Aurimas Černius <aurisc4@gmail.com>"
+
+#: pitivi/dialogs/browseprojects.py:34
+msgid "Open Project…"
+msgstr "Atverti projektą…"
+
+#: pitivi/dialogs/browseprojects.py:39 pitivi/dialogs/missingasset.py:47
+msgid "Open"
+msgstr "Atverti"
+
+#: pitivi/dialogs/browseprojects.py:55
+msgid "All supported formats"
+msgstr "Visi palaikomi formatai"
+
+#: pitivi/dialogs/clipmediaprops.py:102
+msgid "Variable"
+msgstr "Kintamas"
+
+#: pitivi/dialogs/clipmediaprops.py:128
+msgid "Image:"
+msgstr "Paveikslėlis:"
+
+#: pitivi/dialogs/filelisterrordialog.py:52
+msgid "Unknown reason"
+msgstr "Nežinoma priežastis"
+
+#: pitivi/dialogs/filelisterrordialog.py:85
+msgid "Problem:"
+msgstr "Problema:"
+
+#: pitivi/dialogs/filelisterrordialog.py:93
+msgid "Extra information:"
+msgstr "Papildoma informacija:"
+
+#: pitivi/dialogs/missingasset.py:44
+msgid "Locate missing file..."
+msgstr "Surasti trūkstamą failą..."
+
+#: pitivi/dialogs/missingasset.py:58
+msgid "The following file could not be found:"
+msgstr "Šio failo nepavyko rasti:"
+
+#: pitivi/dialogs/missingasset.py:82
+msgid "Please specify its new location:"
+msgstr "Nurodykite jo naują vietą:"
+
+#. Translators: this is a format filter in a filechooser. Ex: "AVI files"
+#: pitivi/dialogs/missingasset.py:113
+#, python-format
+msgid "%s files"
+msgstr "%s failai"
+
+#: pitivi/dialogs/missingasset.py:117 pitivi/medialibrary.py:884
+msgid "All files"
+msgstr "Visi failai"
+
+#: pitivi/dialogs/prefs.py:61 pitivi/timeline/timeline.py:1749
+msgid "Timeline"
+msgstr "Laiko juosta"
+
+#: pitivi/dialogs/prefs.py:62
+msgid "Plugins"
+msgstr "Įskiepiai"
+
+#: pitivi/dialogs/prefs.py:63
+msgid "Shortcuts"
+msgstr "Klaviatūros trumpiniai"
+
+#: pitivi/dialogs/prefs.py:64
+msgid "Proxies"
+msgstr "Tarpininkai"
+
+#: pitivi/dialogs/prefs.py:65
+msgid "Other"
+msgstr "Kita"
+
+#: pitivi/dialogs/prefs.py:332
+msgid ""
+"This resolution will be used as the default target resolution for new "
+"projects and projects missing scaled proxy meta-data."
+msgstr ""
+"Ši raiška bus naudojama kaip numatytoji paskirties raiška naujiems "
+"projektams bei projektams, kuriems trūksta dydžio tarpininko metaduomenų."
+
+#: pitivi/dialogs/prefs.py:345
+msgid "Initial proxy size for new projects"
+msgstr "Pradinis tarpininko dydis naujiems projektams"
+
+#: pitivi/dialogs/prefs.py:380
+#, python-format
+msgid "Proxy resolution for the current project is %d×%d px"
+msgstr "Tarpininko dydis dabartiniam projektui yra %d×%d pikselių"
+
+#: pitivi/dialogs/prefs.py:459
+msgid "Reset the shortcut to the default accelerator"
+msgstr "Atstatyti trumpinį į jo numatytąją vertę"
+
+#: pitivi/dialogs/prefs.py:616
+msgid "Set Shortcut"
+msgstr "Nustatyti trumpinį"
+
+#. Setup the widgets used in the dialog.
+#: pitivi/dialogs/prefs.py:631
+msgid "Apply"
+msgstr "Pritaikyti"
+
+#: pitivi/dialogs/prefs.py:634
+msgid "Apply the accelerator to this shortcut."
+msgstr "Pritaikyti šio trumpinio akceleratorių"
+
+#: pitivi/dialogs/prefs.py:637
+msgid "Replace"
+msgstr "Pakeisti"
+
+#: pitivi/dialogs/prefs.py:640
+msgid ""
+"Remove this accelerator from where it was used previously and set it for "
+"this shortcut."
+msgstr ""
+"Pašalinti akceleratorių iš jo ankstesnės vietos ir nustatyti jį šiam "
+"trumpiniui."
+
+#: pitivi/dialogs/prefs.py:647
+#, python-format
+msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
+msgstr "Įveskite naują <b>%s</b> trumpinį arba spauskite Esc atsisakymui."
+
+#: pitivi/dialogs/prefs.py:656
+msgid ""
+"The accelerator you are trying to set might interfere with typing. Try using "
+"Control, Shift or Alt with some other key, please."
+msgstr ""
+"Akceleratorius, kurį bandote nustatyti, gali kirstis su spausdinimu. "
+"Bandykite Vald, Lyg2 arba Alt su kokiu nors klavišu."
+
+#: pitivi/dialogs/prefs.py:690
+#, python-format
+msgid ""
+"This key combination is already used by <b>%s</b>. Press Replace to use it "
+"for <b>%s</b> instead."
+msgstr ""
+"Ši klavišų kombinacija jau naudojama <b>%s</b>. Spauskite Pakeisti, jei "
+"norite ją naudoti <b>%s</b>."
+
+#: pitivi/dialogs/prefs.py:737
+msgid "No description available."
+msgstr "Nėra aprašymo."
+
+#: pitivi/dialogs/prefs.py:828
+#, python-brace-format
+msgid "Unable to load the plugin '{module_name}'"
+msgstr "Nepavyko įkelti įskiepio „{module_name}“"
+
+#. We could use Gtk.ListBox.set_placeholder, but it
+#. appears bad inside the list widget.
+#: pitivi/dialogs/prefs.py:912
+msgid "No plugins available"
+msgstr "Nėra prieinamų įskiepių."
+
+#: pitivi/dialogs/prefs.py:925
+#, python-brace-format
+msgid ""
+"You can create <a href='{doc_url}'>plugins</a> into your <a "
+"href='{dir_url}'>plugins directory</a>."
+msgstr ""
+"Galite sukurti <a href='{doc_url}'>įskiepius</a> savo <a "
+"href='{dir_url}'>įskiepių kataloge</a>."
+
+#: pitivi/editorperspective.py:205 pitivi/medialibrary.py:623
 msgid "Media Library"
 msgstr "Daugialypės terpės biblioteka"
 
@@ -1094,7 +1390,7 @@ msgstr "Atšaukti"
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/editorperspective.py:323 pitivi/editorperspective.py:536
 #: pitivi/editorperspective.py:680 pitivi/editorperspective.py:728
-#: pitivi/editorperspective.py:781 pitivi/preset.py:113 pitivi/project.py:194
+#: pitivi/editorperspective.py:781 pitivi/preset.py:113 pitivi/project.py:195
 #: pitivi/render.py:226
 msgid "Save"
 msgstr "Įrašyti"
@@ -1120,7 +1416,7 @@ msgstr "Greiti Pitivi pristatymai"
 msgid "Unable to save project \"%s\""
 msgstr "Nepavyksta įrašyti projekto „%s“"
 
-#: pitivi/editorperspective.py:538 pitivi/project.py:193
+#: pitivi/editorperspective.py:538 pitivi/project.py:194
 msgid "Save as..."
 msgstr "Įrašyti taip..."
 
@@ -1177,7 +1473,7 @@ msgid "Detect automatically"
 msgstr "Aptikti automatiškai"
 
 #: pitivi/editorperspective.py:737 pitivi/editorperspective.py:784
-#: pitivi/project.py:61 pitivi/render.py:821
+#: pitivi/project.py:62 pitivi/render.py:821
 msgid "Untitled"
 msgstr "Nepavadinta"
 
@@ -1193,44 +1489,51 @@ msgstr "JPEG paveikslėlis"
 msgid "Preview"
 msgstr "Peržiūra"
 
-#: pitivi/effects.py:61
+#: pitivi/effects.py:65
 msgid "Colors"
 msgstr "Spalvos"
 
-#: pitivi/effects.py:77
-msgid "Compositing"
-msgstr "Komponavimas"
-
-#: pitivi/effects.py:84
+#: pitivi/effects.py:88
 msgid "Noise & blur"
 msgstr "Triukšmas ir suliejimas"
 
-#: pitivi/effects.py:89
+#: pitivi/effects.py:93
 msgid "Analysis"
 msgstr "Analizė"
 
-#: pitivi/effects.py:96
+#: pitivi/effects.py:100
 msgid "Geometry"
 msgstr "Geometrija"
 
-#: pitivi/effects.py:107
+#: pitivi/effects.py:111
 msgid "Fancy"
 msgstr "Gudrūs"
 
-#: pitivi/effects.py:246
+#: pitivi/effects.py:249
 msgid "effect"
 msgstr "efektas"
 
+#. Translators: How the video effect which covers/hides a
+#. tracked object is listed. The {} is entered by the user
+#. and denotes the tracked object.
+#: pitivi/effects.py:330
+msgid "{} cover"
+msgstr "{} dengimas"
+
+#: pitivi/effects.py:331
+msgid "Object cover effect"
+msgstr "Objekto dengimo efektas"
+
 #. Add Uncategorized only if there are other categories defined.
-#: pitivi/effects.py:337 pitivi/effects.py:351
+#: pitivi/effects.py:354 pitivi/effects.py:368
 msgid "Uncategorized"
 msgstr "Nekatekorizuota"
 
-#: pitivi/effects.py:393 pitivi/effects.py:660
+#: pitivi/effects.py:410 pitivi/effects.py:677
 msgid "No effects"
 msgstr "Jokių efektų"
 
-#: pitivi/effects.py:481
+#: pitivi/effects.py:498
 msgid "Add to Favorites"
 msgstr "Pridėti prie mėgiamų"
 
@@ -1319,23 +1622,23 @@ msgstr "Tamsi tema"
 msgid "Whether or not to use a dark theme."
 msgstr "Ar naudoti tamsią temą."
 
-#: pitivi/mainwindow.py:188
+#: pitivi/mainwindow.py:189
 msgid "Project"
 msgstr "Projektas"
 
-#: pitivi/mainwindow.py:195
+#: pitivi/mainwindow.py:196
 msgid "Help"
 msgstr "Žinynas"
 
-#: pitivi/mainwindow.py:202
+#: pitivi/mainwindow.py:203
 msgid "About"
 msgstr "Apie"
 
-#: pitivi/mainwindow.py:209
+#: pitivi/mainwindow.py:210
 msgid "Show the menu button content"
 msgstr "Rodyti meniu mygtuko turinį"
 
-#: pitivi/mainwindow.py:261
+#: pitivi/mainwindow.py:262
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "Nepavyksta įkelti projekto „%s“"
@@ -1354,12 +1657,12 @@ msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Raiška</b>: %dx%d"
 
 #: pitivi/mediafilespreviewer.py:271 pitivi/mediafilespreviewer.py:288
-#: pitivi/utils/ui.py:566
+#: pitivi/utils/ui.py:568
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Trukmį</b>: %s"
 
-#: pitivi/mediafilespreviewer.py:461 pitivi/medialibrary.py:1205
+#: pitivi/mediafilespreviewer.py:461 pitivi/medialibrary.py:1207
 msgid "Error while analyzing a file"
 msgid_plural "Error while analyzing files"
 msgstr[0] "Klaida analizuojant failą"
@@ -1392,33 +1695,29 @@ msgstr "Viską"
 msgid "Scale assets larger than %s×%s px."
 msgstr "Keisti didesnių nei %s×%s pikselių elementų mastelį."
 
-#: pitivi/medialibrary.py:522 pitivi/medialibrary.py:1082
+#: pitivi/medialibrary.py:524 pitivi/medialibrary.py:1084
 msgid "Unknown"
 msgstr "Nežinoma"
 
-#: pitivi/medialibrary.py:628
+#: pitivi/medialibrary.py:630
 msgid "Remove the selected assets"
 msgstr "Pašalinti pasirinktus elementus"
 
-#: pitivi/medialibrary.py:635
+#: pitivi/medialibrary.py:637
 msgid "Insert selected assets at the end of the timeline"
 msgstr "Įterpti pasirinktus elementus laiko juostos pabaigoje"
 
-#: pitivi/medialibrary.py:851
+#: pitivi/medialibrary.py:853
 msgid "Select One or More Files"
 msgstr "Pasirinkite vieną ar daugiau failų"
 
-#: pitivi/medialibrary.py:855 pitivi/medialibrary.py:1279
+#: pitivi/medialibrary.py:857 pitivi/medialibrary.py:1281
 msgid "Add"
 msgstr "Pridėti"
 
-#: pitivi/medialibrary.py:870 pitivi/render.py:1491
+#: pitivi/medialibrary.py:872 pitivi/render.py:1491
 msgid "Supported file formats"
 msgstr "Palaikomi failų formatai"
-
-#: pitivi/medialibrary.py:882 pitivi/dialogs/missingasset.py:117
-msgid "All files"
-msgstr "Visi failai"
 
 #. Translators: this string indicates the estimated time
 #. remaining until an action (such as rendering) completes.
@@ -1426,7 +1725,7 @@ msgstr "Visi failai"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals)
-#: pitivi/medialibrary.py:988
+#: pitivi/medialibrary.py:990
 #, python-format
 msgid "Transcoding %d asset: %d%% (About %s left)"
 msgid_plural "Transcoding %d assets: %d%% (About %s left)"
@@ -1434,7 +1733,7 @@ msgstr[0] "Perkoduojamas %d elementas: %d%% (Liko apie %s)"
 msgstr[1] "Perkoduojami %d elementai: %d%% (Liko apie %s)"
 msgstr[2] "Perkoduojama %d elementų: %d%% (Liko apie %s)"
 
-#: pitivi/medialibrary.py:1094
+#: pitivi/medialibrary.py:1096
 msgid "View error"
 msgid_plural "View errors"
 msgstr[0] "Rodyti klaidą"
@@ -1442,7 +1741,7 @@ msgstr[1] "Rodyti klaidas"
 msgstr[2] "Rodyti klaidas"
 
 #. Translators: {0:d} is just like %d (integer number variable)
-#: pitivi/medialibrary.py:1096
+#: pitivi/medialibrary.py:1098
 #, python-brace-format
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
@@ -1450,71 +1749,71 @@ msgstr[0] "Importuojant kilo {0:d} klaida."
 msgstr[1] "Importuojant kilo {0:d} klaidos."
 msgstr[2] "Importuojant kilo {0:d} klaidų."
 
-#: pitivi/medialibrary.py:1112
+#: pitivi/medialibrary.py:1114
 #, python-format
 msgid "The project settings have been set to match file '%s'"
 msgstr "Projekto nustatymai buvo nustatyti taip, kad atitiktų failą „%s“"
 
-#: pitivi/medialibrary.py:1208
+#: pitivi/medialibrary.py:1210
 msgid "The following file can not be used with Pitivi."
 msgid_plural "The following files can not be used with Pitivi."
 msgstr[0] "Šie failai negali būti naudojami su Pitivi."
 msgstr[1] "Šie failai negali būti naudojami su Pitivi."
 msgstr[2] "Šie failai negali būti naudojami su Pitivi."
 
-#: pitivi/medialibrary.py:1238
+#: pitivi/medialibrary.py:1240
 msgid "Tag as:"
 msgstr "Žymėti kaip:"
 
-#: pitivi/medialibrary.py:1276
+#: pitivi/medialibrary.py:1278
 msgid "Enter tag"
 msgstr "Įveskite žymą"
 
-#: pitivi/medialibrary.py:1435
+#: pitivi/medialibrary.py:1438
 msgid "Open containing folder"
 msgstr "Atverti aplanką"
 
-#: pitivi/medialibrary.py:1442
+#: pitivi/medialibrary.py:1445
 msgid "Edit"
 msgstr "Redaguoti"
 
-#: pitivi/medialibrary.py:1471
+#: pitivi/medialibrary.py:1474
 msgid "Do not use Optimised Proxy for selected asset"
 msgid_plural "Do not use Optimised Proxies for selected assets"
 msgstr[0] "Nenaudoti optimizuoto tarpininko pasirinktam elementui"
 msgstr[1] "Nenaudoti optimizuotų tarpininkų pasirinktiems elementams"
 msgstr[2] "Nenaudoti optimizuotų tarpininkų pasirinktiems elementams"
 
-#: pitivi/medialibrary.py:1482 pitivi/medialibrary.py:1504
-#: pitivi/medialibrary.py:1526
+#: pitivi/medialibrary.py:1485 pitivi/medialibrary.py:1507
+#: pitivi/medialibrary.py:1529
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
 msgstr[0] "Ištrinti susijusį tarpinį failą"
 msgstr[1] "Ištrinti susijusius tarpinius failus"
 msgstr[2] "Ištrinti susijusius tarpinius failus"
 
-#: pitivi/medialibrary.py:1493
+#: pitivi/medialibrary.py:1496
 msgid "Do not use Proxy for selected asset"
 msgid_plural "Do not use Proxies for selected assets"
 msgstr[0] "Nenaudoti tarpininko pasirinktam elementui"
 msgstr[1] "Nenaudoti tarpininkų pasirinktiems elementams"
 msgstr[2] "Nenaudoti tarpininkų pasirinktiems elementams"
 
-#: pitivi/medialibrary.py:1515
+#: pitivi/medialibrary.py:1518
 msgid "Do not use Scaled Proxy for selected asset"
 msgid_plural "Do not use Scaled Proxies for selected assets"
 msgstr[0] "Nenaudoti dydžio tarpininko pasirinktam elementui"
 msgstr[1] "Nenaudoti dydžio tarpininkų pasirinktiems elementams"
 msgstr[2] "Nenaudoti dydžio tarpininkų pasirinktiems elementams"
 
-#: pitivi/medialibrary.py:1537
+#: pitivi/medialibrary.py:1540
 msgid "Use Optimised Proxy for selected asset"
 msgid_plural "Use Optimised Proxies for selected assets"
 msgstr[0] "Naudoti optimizuotą tarpininką pasirinktam elementui"
 msgstr[1] "Naudoti optimizuotus tarpininkus pasirinktiems elementams"
 msgstr[2] "Naudoti optimizuotus tarpininkus pasirinktiems elementams"
 
-#: pitivi/medialibrary.py:1547
+#: pitivi/medialibrary.py:1550
 msgid "Use Scaled Proxy for selected asset"
 msgid_plural "Use Scaled Proxies for selected assets"
 msgstr[0] "Naudoti dydžio tarpininką pasirinktam elementai"
@@ -1540,11 +1839,11 @@ msgstr "Naujas išankstinis įrašas %d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:177 pitivi/render.py:1320
+#: pitivi/project.py:178 pitivi/render.py:1320
 msgid "Sorry, something didn’t work right."
 msgstr "Atsiprašome, kažkas blogai suveikė."
 
-#: pitivi/project.py:180
+#: pitivi/project.py:181
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1570,11 +1869,11 @@ msgstr ""
 "Prieš užverdami Pitivi, galite įrašyti pakeitimus esamame projekto faile "
 "arba atskirame projekto faile."
 
-#: pitivi/project.py:195
+#: pitivi/project.py:196
 msgid "Close Pitivi"
 msgstr "Užverti Pitivi"
 
-#: pitivi/project.py:265
+#: pitivi/project.py:266
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1584,15 +1883,15 @@ msgstr ""
 "bandote pridėti daugialypės terpės failą į projektą, naudokite mygtuką "
 "„Importuoti“."
 
-#: pitivi/project.py:287
+#: pitivi/project.py:288
 msgid "Ignore backup"
 msgstr "Nepaisyti atsarginės kopijos"
 
-#: pitivi/project.py:289
+#: pitivi/project.py:290
 msgid "Restore from backup"
 msgstr "Atkurti iš atsarginės kopijos"
 
-#: pitivi/project.py:300
+#: pitivi/project.py:301
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1605,16 +1904,16 @@ msgstr ""
 "\n"
 "Ar norite jį įkelti?"
 
-#: pitivi/project.py:373
+#: pitivi/project.py:374
 msgid "You do not have permissions to write to this folder."
 msgstr "Neturite leidimų rašyti šį aplanką."
 
 #. Save the project to a temporary file.
-#: pitivi/project.py:406
+#: pitivi/project.py:407
 msgid "project"
 msgstr "projektas"
 
-#: pitivi/project.py:706
+#: pitivi/project.py:701
 msgid "Pitivi encoding profile"
 msgstr "Pitivi kodavimo profilis"
 
@@ -1734,126 +2033,10 @@ msgstr "Piešimas baigtas"
 msgid "\"%s\" has finished rendering."
 msgstr "„%s“ baigė piešti."
 
-#: pitivi/transitions.py:82
-msgid "Normal"
-msgstr "Įprastinis"
-
-#: pitivi/transitions.py:87
-msgid "Loop"
-msgstr "Ciklas"
-
-#: pitivi/transitions.py:94
-msgid "Reverse direction"
-msgstr "Atvirkštinė kryptis"
-
-#: pitivi/transitions.py:107
-msgid ""
-"Create a transition by overlapping two adjacent clips on the same layer. "
-"Click the transition on the timeline to change the transition type."
-msgstr ""
-"Sukurti perėjimą perdengiant du gretimus klipus tame pačiame sluoksnyje. "
-"Spauskite ant perėjimo laiko linijoje perėjimo tipui pakeisti."
-
-#: pitivi/transitions.py:229
-msgid "Slow"
-msgstr "Lėtas"
-
-#: pitivi/transitions.py:231
-msgid "Fast"
-msgstr "Greitas"
-
-#: pitivi/transitions.py:233
-msgid "Epileptic"
-msgstr "Epileptinis"
-
-#: pitivi/transitions.py:237
-msgid "Sharp"
-msgstr "Aštrus"
-
-#: pitivi/transitions.py:239
-msgid "Smooth"
-msgstr "Sklandus"
-
-#: pitivi/viewer/guidelines.py:59
-msgid "3 by 3"
-msgstr "3 iš 3"
-
-#: pitivi/viewer/guidelines.py:60
-msgid "Vertical/Horizontal"
-msgstr "Vertikalus/horizontalus"
-
-#: pitivi/viewer/guidelines.py:61
-msgid "Diagonals"
-msgstr "Išilginiai"
-
-#: pitivi/viewer/guidelines.py:92
-msgid "Composition Guidelines"
-msgstr "Komponavimo gidai"
-
-#: pitivi/viewer/viewer.py:77
-msgid "Currently playing"
-msgstr "Šiuo metu groja"
-
-#: pitivi/viewer/viewer.py:252
-msgid "Select composition guidelines"
-msgstr "Pasirinkite komponavimo gidus"
-
-#: pitivi/viewer/viewer.py:260
-msgid "Go to the beginning of the timeline"
-msgstr "Pereiti į laiko linijos pradžią"
-
-#: pitivi/viewer/viewer.py:269
-msgid "Go back one second"
-msgstr "Atgal vieną sekundę"
-
-#: pitivi/viewer/viewer.py:282
-msgid "Go forward one second"
-msgstr "Pirmyn vieną sekundę"
-
-#: pitivi/viewer/viewer.py:291
-msgid "Go to the end of the timeline"
-msgstr "Pereiti į laiko juostos pabaigą"
-
-#: pitivi/viewer/viewer.py:298
-msgid ""
-"Enter a timecode or frame number\n"
-"and press \"Enter\" to go to that position"
-msgstr ""
-"Įveskite laiko kodą arba kadro numerį\n"
-"ir spauskite „Enter“ perėjimui į tą padėtį"
-
-#: pitivi/viewer/viewer.py:309
-msgid ""
-"Detach the viewer\n"
-"You can re-attach it by closing the newly created window."
-msgstr ""
-"Atkabinti žiūryklę\n"
-"Ją galite vėl prikabinti užverdami naujai sukurtą langą."
-
-#: pitivi/viewer/viewer.py:336
-msgid "Viewer"
-msgstr "Žiūryklė"
-
-#: pitivi/viewer/viewer.py:344
-msgid "Toggle the currently selected composition guidelines"
-msgstr "Keisti dabartinius komponavimo gidus"
-
-#: pitivi/viewer/viewer.py:352
-msgid "Toggle safe areas on viewer"
-msgstr "Keisti žiūryklės saugias sritis"
-
-#: pitivi/viewer/viewer.py:478 pitivi/viewer/viewer.py:536
-msgid "Show this window in fullscreen"
-msgstr "Rodyti šį langą visame ekrane"
-
-#: pitivi/viewer/viewer.py:533
-msgid "Exit fullscreen mode"
-msgstr "Palikti viso ekrano veikseną"
-
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:444
+#: pitivi/timeline/elements.py:446
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1864,12 +2047,12 @@ msgstr ""
 "Laiko žyma: %s\n"
 "Vertė: %s"
 
-#: pitivi/timeline/elements.py:632
+#: pitivi/timeline/elements.py:634
 #, python-format
 msgid "Timestamp: %s"
 msgstr "Laiko žyma: %s"
 
-#: pitivi/timeline/elements.py:1592
+#: pitivi/timeline/elements.py:1603
 msgid "Audio crossfade"
 msgstr "Garso palaipsninis perėjimas"
 
@@ -1898,25 +2081,25 @@ msgstr "Ištrinti sluoksnį"
 msgid "Layer %d"
 msgstr "Sluoksnis %d"
 
-#: pitivi/timeline/ruler.py:233
+#: pitivi/timeline/ruler.py:241
 #, python-format
 msgid "Frame #%d"
 msgstr "Kadras #%d"
 
-#: pitivi/timeline/timeline.py:86
+#: pitivi/timeline/timeline.py:85
 msgid "Markers magnetic by default"
 msgstr "Žymelės yra numatytai magnetinės"
 
-#: pitivi/timeline/timeline.py:88
+#: pitivi/timeline/timeline.py:87
 msgid ""
 "Whether markers created on new clips will be snapping targets by default."
 msgstr "Ar naujuose klipuose sukurtos žymelės numatytai kibs prie paskirčių."
 
-#: pitivi/timeline/timeline.py:98
+#: pitivi/timeline/timeline.py:97
 msgid "Snap distance"
 msgstr "Sujungimo atstumas"
 
-#: pitivi/timeline/timeline.py:99
+#: pitivi/timeline/timeline.py:98
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1924,11 +2107,11 @@ msgstr ""
 "Slenkstis (pikseliais), kada du klipai bus sujungti kartu tempiant ar "
 "trumpinant."
 
-#: pitivi/timeline/timeline.py:111
+#: pitivi/timeline/timeline.py:110
 msgid "Image clip duration"
 msgstr "Paveikslėlio klipo trukmė"
 
-#: pitivi/timeline/timeline.py:113
+#: pitivi/timeline/timeline.py:112
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
@@ -1936,328 +2119,194 @@ msgstr ""
 "Numatyta klipo trukmė (milisekundėmis) paveikslėlius įterpiant į laiko "
 "juostą."
 
-#: pitivi/timeline/timeline.py:124
+#: pitivi/timeline/timeline.py:123
 msgid "Left click also seeks"
 msgstr "Kairysis paspaudimas taip pat pereina"
 
-#: pitivi/timeline/timeline.py:126
+#: pitivi/timeline/timeline.py:125
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
 "Ar kairysis paspaudimas taip pat ir pereina, ne tik žymi bei redaguoja."
 
-#: pitivi/timeline/timeline.py:356 pitivi/timeline/timeline.py:1790
+#: pitivi/timeline/timeline.py:356 pitivi/timeline/timeline.py:1813
 msgid "Add layer"
 msgstr "Pridėti sluoksnį"
 
-#: pitivi/timeline/timeline.py:1733 pitivi/dialogs/prefs.py:60
-msgid "Timeline"
-msgstr "Laiko juosta"
-
-#: pitivi/timeline/timeline.py:1740
+#: pitivi/timeline/timeline.py:1756
 msgid "Action Search"
 msgstr "Veiksmo paieška"
 
-#: pitivi/timeline/timeline.py:1748
+#: pitivi/timeline/timeline.py:1764
 msgid "Delete selected clips"
 msgstr "Ištrinti pasirinktus klipus"
 
-#: pitivi/timeline/timeline.py:1755
+#: pitivi/timeline/timeline.py:1771
 msgid "Delete selected clips and shift following ones"
 msgstr "Ištrinti pasirinktus klipus ir paslinkti likusius"
 
-#: pitivi/timeline/timeline.py:1762
+#: pitivi/timeline/timeline.py:1778
 msgid "Group selected clips together"
 msgstr "Sugrupuoti pasirinktus klipus"
 
-#: pitivi/timeline/timeline.py:1769
+#: pitivi/timeline/timeline.py:1785
 msgid "Ungroup selected clips"
 msgstr "Išgrupuoti pasirinktus klipus"
 
-#: pitivi/timeline/timeline.py:1776
+#: pitivi/timeline/timeline.py:1792
+msgid "Cut selected clips"
+msgstr "Kirpti pasirinktus klipus"
+
+#: pitivi/timeline/timeline.py:1799
 msgid "Copy selected clips"
 msgstr "Kopijuoti pasirinktus klipus"
 
-#: pitivi/timeline/timeline.py:1783
+#: pitivi/timeline/timeline.py:1806
 msgid "Paste selected clips"
 msgstr "Įdėti pasirinktus klipus"
 
-#: pitivi/timeline/timeline.py:1797
+#: pitivi/timeline/timeline.py:1820
 msgid "Seek to the first clip edge after the playhead"
 msgstr "Pereiti į pirmą klipo kraštą po grojimo galvutės"
 
-#: pitivi/timeline/timeline.py:1804
+#: pitivi/timeline/timeline.py:1827
 msgid "Seek to the first clip edge before the playhead"
 msgstr "Pereiti į pirmą klipo kraštą prieš grojimo galvutę"
 
-#: pitivi/timeline/timeline.py:1811
+#: pitivi/timeline/timeline.py:1834
 msgid "Shift selected clips one frame forward"
 msgstr "Pastumti pažymėtus klipus vieną kadrą pirmyn"
 
-#: pitivi/timeline/timeline.py:1818
+#: pitivi/timeline/timeline.py:1841
 msgid "Shift selected clips one frame backward"
 msgstr "Pastumti pažymėtus klipus vieną kadrą atgal"
 
-#: pitivi/timeline/timeline.py:1825
-#| msgid "Group selected clips together"
+#: pitivi/timeline/timeline.py:1848
 msgid "Snap selected clips to the next clip"
 msgstr "Prikabinti pasirinktus klipus prie kito klipo"
 
-#: pitivi/timeline/timeline.py:1832
-#| msgid "Remove selected clips from the project"
+#: pitivi/timeline/timeline.py:1855
 msgid "Snap selected clips to the previous clip"
 msgstr "Prikabinti pasirinktus klipus prie ankstesnio klipo"
 
-#: pitivi/timeline/timeline.py:1839
+#: pitivi/timeline/timeline.py:1862
 msgid "Add an effect to the selected clip"
 msgstr "Pridėti efektą į pasirinktą klipą"
 
-#: pitivi/timeline/timeline.py:1852
+#: pitivi/timeline/timeline.py:1879
 msgid "Split the clip at the position"
 msgstr "Padalinti klipą grojimo galvutės padėtyje"
 
-#: pitivi/timeline/timeline.py:1859
+#: pitivi/timeline/timeline.py:1886
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Pridėti raktinį kadrą į raktinių kadrų kreivę pasirinktame klipe"
 
-#: pitivi/timeline/timeline.py:1864
+#: pitivi/timeline/timeline.py:1891
 msgid "Timeline Navigation"
 msgstr "Judėjimas laiko juostoje"
 
-#: pitivi/timeline/timeline.py:1872
+#: pitivi/timeline/timeline.py:1899
 msgid "Zoom in"
 msgstr "Pritraukti"
 
-#: pitivi/timeline/timeline.py:1880
+#: pitivi/timeline/timeline.py:1907
 msgid "Zoom out"
 msgstr "Atitolinti"
 
-#: pitivi/timeline/timeline.py:1888
+#: pitivi/timeline/timeline.py:1915
 msgid "Adjust zoom to fit the project to the window"
 msgstr "priderinti mastelių kad projektas tilptų į langą"
 
-#: pitivi/timeline/timeline.py:1901
+#: pitivi/timeline/timeline.py:1928
 msgid "Seek backward one frame"
 msgstr "Grįžti atgal vieną kadrą"
 
-#: pitivi/timeline/timeline.py:1908
+#: pitivi/timeline/timeline.py:1935
 msgid "Seek forward one frame"
 msgstr "Eiti pirmyn vieną kadrą"
 
-#: pitivi/timeline/timeline.py:1916
+#: pitivi/timeline/timeline.py:1943
 msgid "Seek backward one second"
 msgstr "Grįžti atgal vieną sekundę"
 
-#: pitivi/timeline/timeline.py:1924
+#: pitivi/timeline/timeline.py:1951
 msgid "Seek forward one second"
 msgstr "Eiti pirmyn vieną sekundę"
 
-#: pitivi/timeline/timeline.py:1932
+#: pitivi/timeline/timeline.py:1959
 msgid "Add a marker"
 msgstr "Pridėti ženklinimą"
 
-#: pitivi/timeline/timeline.py:1939
+#: pitivi/timeline/timeline.py:1966
 msgid "Seek to the first marker before the playhead"
 msgstr "Pereiti į pirmą žymelę prieš grojimo galvutę"
 
-#: pitivi/timeline/timeline.py:1946
+#: pitivi/timeline/timeline.py:1973
 msgid "Seek to the first marker after the playhead"
 msgstr "Pereiti į pirmą žymelę po grojimo galvutės"
 
-#: pitivi/dialogs/about.py:45
-#, python-format
-msgid "Version %s"
-msgstr "Versija %s"
+#: pitivi/trackerperspective.py:403
+msgid "Object {}"
+msgstr "Objektas {}"
 
-#: pitivi/dialogs/about.py:47
-#, python-format
-msgid "Version %(cur_ver)s — %(new_ver)s is available"
-msgstr "Yra prieinama versija %(cur_ver)s — %(new_ver)s"
+#: pitivi/trackerperspective.py:665
+msgid "Go back"
+msgstr "Grįžti"
 
-#: pitivi/dialogs/about.py:58
-msgid "Current maintainers:"
-msgstr "Dabartiniai kūrėjai:"
+#: pitivi/trackerperspective.py:739
+msgid "Track objects"
+msgstr "Sekti objektus"
 
-#: pitivi/dialogs/about.py:63
-msgid "Past maintainers:"
-msgstr "Buvę kūrėjai:"
+#: pitivi/transitions.py:77
+msgid "Normal"
+msgstr "Įprastinis"
 
-#: pitivi/dialogs/about.py:69
-msgid "Contributors:"
-msgstr "Pagalbininkai:"
+#: pitivi/transitions.py:82
+msgid "Loop"
+msgstr "Ciklas"
 
-#. Translators: See
-#. https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
-#. for details on how this is used.
-#: pitivi/dialogs/about.py:76
-msgid "translator-credits"
-msgstr ""
-"Išvertė:\n"
-"Aurimas Černius <aurisc4@gmail.com>"
+#: pitivi/transitions.py:89
+msgid "Reverse direction"
+msgstr "Atvirkštinė kryptis"
 
-#: pitivi/dialogs/browseprojects.py:34
-msgid "Open Project…"
-msgstr "Atverti projektą…"
-
-#: pitivi/dialogs/browseprojects.py:39 pitivi/dialogs/missingasset.py:47
-msgid "Open"
-msgstr "Atverti"
-
-#: pitivi/dialogs/browseprojects.py:55
-msgid "All supported formats"
-msgstr "Visi palaikomi formatai"
-
-#: pitivi/dialogs/clipmediaprops.py:102
-msgid "Variable"
-msgstr "Kintamas"
-
-#: pitivi/dialogs/clipmediaprops.py:128
-msgid "Image:"
-msgstr "Paveikslėlis:"
-
-#: pitivi/dialogs/filelisterrordialog.py:52
-msgid "Unknown reason"
-msgstr "Nežinoma priežastis"
-
-#: pitivi/dialogs/filelisterrordialog.py:85
-msgid "Problem:"
-msgstr "Problema:"
-
-#: pitivi/dialogs/filelisterrordialog.py:93
-msgid "Extra information:"
-msgstr "Papildoma informacija:"
-
-#: pitivi/dialogs/missingasset.py:44
-msgid "Locate missing file..."
-msgstr "Surasti trūkstamą failą..."
-
-#: pitivi/dialogs/missingasset.py:58
-msgid "The following file could not be found:"
-msgstr "Šio failo nepavyko rasti:"
-
-#: pitivi/dialogs/missingasset.py:82
-msgid "Please specify its new location:"
-msgstr "Nurodykite jo naują vietą:"
-
-#. Translators: this is a format filter in a filechooser. Ex: "AVI files"
-#: pitivi/dialogs/missingasset.py:113
-#, python-format
-msgid "%s files"
-msgstr "%s failai"
-
-#: pitivi/dialogs/prefs.py:61
-msgid "Plugins"
-msgstr "Įskiepiai"
-
-#: pitivi/dialogs/prefs.py:62
-msgid "Shortcuts"
-msgstr "Klaviatūros trumpiniai"
-
-#: pitivi/dialogs/prefs.py:63
-msgid "Proxies"
-msgstr "Tarpininkai"
-
-#: pitivi/dialogs/prefs.py:64
-msgid "Other"
-msgstr "Kita"
-
-#: pitivi/dialogs/prefs.py:331
+#: pitivi/transitions.py:102
 msgid ""
-"This resolution will be used as the default target resolution for new "
-"projects and projects missing scaled proxy meta-data."
+"Create a transition by overlapping two adjacent clips on the same layer. "
+"Click the transition on the timeline to change the transition type."
 msgstr ""
-"Ši raiška bus naudojama kaip numatytoji paskirties raiška naujiems "
-"projektams bei projektams, kuriems trūksta dydžio tarpininko metaduomenų."
+"Sukurti perėjimą perdengiant du gretimus klipus tame pačiame sluoksnyje. "
+"Spauskite ant perėjimo laiko linijoje perėjimo tipui pakeisti."
 
-#: pitivi/dialogs/prefs.py:344
-msgid "Initial proxy size for new projects"
-msgstr "Pradinis tarpininko dydis naujiems projektams"
+#: pitivi/transitions.py:225
+msgid "Slow"
+msgstr "Lėtas"
 
-#: pitivi/dialogs/prefs.py:379
-#, python-format
-msgid "Proxy resolution for the current project is %d×%d px"
-msgstr "Tarpininko dydis dabartiniam projektui yra %d×%d pikselių"
+#: pitivi/transitions.py:227
+msgid "Fast"
+msgstr "Greitas"
 
-#: pitivi/dialogs/prefs.py:458
-msgid "Reset the shortcut to the default accelerator"
-msgstr "Atstatyti trumpinį į jo numatytąją vertę"
+#: pitivi/transitions.py:229
+msgid "Epileptic"
+msgstr "Epileptinis"
 
-#: pitivi/dialogs/prefs.py:615
-msgid "Set Shortcut"
-msgstr "Nustatyti trumpinį"
+#: pitivi/transitions.py:233
+msgid "Sharp"
+msgstr "Aštrus"
 
-#. Setup the widgets used in the dialog.
-#: pitivi/dialogs/prefs.py:630
-msgid "Apply"
-msgstr "Pritaikyti"
+#: pitivi/transitions.py:235
+msgid "Smooth"
+msgstr "Sklandus"
 
-#: pitivi/dialogs/prefs.py:633
-msgid "Apply the accelerator to this shortcut."
-msgstr "Pritaikyti šio trumpinio akceleratorių"
-
-#: pitivi/dialogs/prefs.py:636
-msgid "Replace"
-msgstr "Pakeisti"
-
-#: pitivi/dialogs/prefs.py:639
-msgid ""
-"Remove this accelerator from where it was used previously and set it for "
-"this shortcut."
-msgstr ""
-"Pašalinti akceleratorių iš jo ankstesnės vietos ir nustatyti jį šiam "
-"trumpiniui."
-
-#: pitivi/dialogs/prefs.py:646
-#, python-format
-msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
-msgstr "Įveskite naują <b>%s</b> trumpinį arba spauskite Esc atsisakymui."
-
-#: pitivi/dialogs/prefs.py:655
-msgid ""
-"The accelerator you are trying to set might interfere with typing. Try using "
-"Control, Shift or Alt with some other key, please."
-msgstr ""
-"Akceleratorius, kurį bandote nustatyti, gali kirstis su spausdinimu. "
-"Bandykite Vald, Lyg2 arba Alt su kokiu nors klavišu."
-
-#: pitivi/dialogs/prefs.py:689
-#, python-format
-msgid ""
-"This key combination is already used by <b>%s</b>. Press Replace to use it "
-"for <b>%s</b> instead."
-msgstr ""
-"Ši klavišų kombinacija jau naudojama <b>%s</b>. Spauskite Pakeisti, jei "
-"norite ją naudoti <b>%s</b>."
-
-#: pitivi/dialogs/prefs.py:736
-msgid "No description available."
-msgstr "Nėra aprašymo."
-
-#: pitivi/dialogs/prefs.py:827
-#, python-brace-format
-msgid "Unable to load the plugin '{module_name}'"
-msgstr "Nepavyko įkelti įskiepio „{module_name}“"
-
-#. We could use Gtk.ListBox.set_placeholder, but it
-#. appears bad inside the list widget.
-#: pitivi/dialogs/prefs.py:911
-msgid "No plugins available"
-msgstr "Nėra prieinamų įskiepių."
-
-#: pitivi/dialogs/prefs.py:924
-#, python-brace-format
-msgid ""
-"You can create <a href='{doc_url}'>plugins</a> into your <a "
-"href='{dir_url}'>plugins directory</a>."
-msgstr ""
-"Galite sukurti <a href='{doc_url}'>įskiepius</a> savo <a "
-"href='{dir_url}'>įskiepių kataloge</a>."
-
-#: pitivi/utils/markers.py:33
-#| msgid "Markers"
+#. Translators: The list of markers created by the user.
+#: pitivi/utils/markers.py:34
 msgid "User markers"
 msgstr "Naudoti žymeles"
 
-#: pitivi/utils/misc.py:278
+#. Translators: The list of markers representing detected audio beats.
+#: pitivi/utils/markers.py:36
+msgid "Beats"
+msgstr "Ritmas"
+
+#: pitivi/utils/misc.py:281
 msgid ""
 "Failed to open the user manual. Make sure to have either the `yelp` GNOME "
 "documentation viewer or a web browser installed"
@@ -2265,7 +2314,7 @@ msgstr ""
 "Nepavyko atverti naudotojo žinyno. Įsitikinkite, kad turite įdiegę arba "
 "GNOME dokumentacijos žiūryklę „yelp“ arba žiniatinklio naršyklę."
 
-#: pitivi/utils/misc.py:287
+#: pitivi/utils/misc.py:290
 msgid ""
 "The system's locale that you are using is not UTF-8 capable. Unicode support "
 "is required for Python3 software like Pitivi. Please correct your system "
@@ -2277,7 +2326,7 @@ msgstr ""
 "nustatymus; jei bandysite naudoti Pitivi su bloga lokale, gali kilti keistų "
 "klaidų."
 
-#: pitivi/utils/misc.py:297
+#: pitivi/utils/misc.py:300
 msgid "Error while decoding a string"
 msgstr "Klaida dekoduojant simbolių eilutę"
 
@@ -2290,52 +2339,52 @@ msgid "Max CPU usage dedicated to transcoding"
 msgstr "Didžiausias CPU naudojimas dedikuotam perkodavimui"
 
 #. Translators: 'fps' is for 'frames per second'
-#: pitivi/utils/ui.py:382
+#: pitivi/utils/ui.py:390
 msgid "{0:s} fps"
 msgstr "{0:s} kps"
 
-#: pitivi/utils/ui.py:402
+#: pitivi/utils/ui.py:410
 #, python-brace-format
 msgid "{0:n} kHz"
 msgstr "{0:n} kHz"
 
-#: pitivi/utils/ui.py:411
+#: pitivi/utils/ui.py:419
 msgid "Mono"
 msgstr "Mono"
 
-#: pitivi/utils/ui.py:412
+#: pitivi/utils/ui.py:420
 msgid "Stereo"
 msgstr "Stereo"
 
-#: pitivi/utils/ui.py:413
+#: pitivi/utils/ui.py:421
 msgid "6 (5.1)"
 msgstr "6 (5.1)"
 
-#: pitivi/utils/ui.py:414
+#: pitivi/utils/ui.py:422
 msgid "8 (7.1)"
 msgstr "8 (7.1)"
 
-#: pitivi/utils/ui.py:545
+#: pitivi/utils/ui.py:547
 #, python-format
 msgid "<b>Duration:</b> %s"
 msgstr "<b>Trukmė:</b>: %s"
 
-#: pitivi/utils/ui.py:548
+#: pitivi/utils/ui.py:550
 #, python-format
 msgid "<b>Proxy creation progress:</b> %d%%"
 msgstr "<b>Tarpinių failų kūrimo eiga:</b> %d%%"
 
-#: pitivi/utils/ui.py:562
+#: pitivi/utils/ui.py:564
 #, python-format
 msgid "<b>Path</b>: %s"
 msgstr "<b>Kelias</b>: %s"
 
-#: pitivi/utils/ui.py:572
+#: pitivi/utils/ui.py:574
 #, python-format
 msgid "<b>Size</b>: %s"
 msgstr "<b>Dydis</b>: %s"
 
-#: pitivi/utils/ui.py:608
+#: pitivi/utils/ui.py:610
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
@@ -2343,17 +2392,17 @@ msgstr[0] "<b>Garsas:</b> %d kanalas %d <i>Hz</i> (%d <i>bitų</i>)"
 msgstr[1] "<b>Garsas:</b> %d kanalai %d <i>Hz</i> (%d <i>bitai</i>)"
 msgstr[2] "<b>Garsas:</b> %d kanalų %d <i>Hz</i> (%d <i>bitai</i>)"
 
-#: pitivi/utils/ui.py:620
+#: pitivi/utils/ui.py:622
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
 msgstr "<b>Vaizdas:</b> %d×%d <i>pikseliai</i> %s <i>kps</i>"
 
-#: pitivi/utils/ui.py:623
+#: pitivi/utils/ui.py:625
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>Paveikslėlis:</b> %dx%d <i>pikseliai</i>"
 
-#: pitivi/utils/ui.py:677 pitivi/utils/ui.py:704 pitivi/utils/ui.py:728
+#: pitivi/utils/ui.py:679 pitivi/utils/ui.py:706 pitivi/utils/ui.py:730
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
@@ -2361,7 +2410,7 @@ msgstr[0] "%d valanda"
 msgstr[1] "%d valandos"
 msgstr[2] "%d valandų"
 
-#: pitivi/utils/ui.py:680 pitivi/utils/ui.py:707 pitivi/utils/ui.py:731
+#: pitivi/utils/ui.py:682 pitivi/utils/ui.py:709 pitivi/utils/ui.py:733
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -2369,7 +2418,7 @@ msgstr[0] "%d minutė"
 msgstr[1] "%d minutės"
 msgstr[2] "%d minučių"
 
-#: pitivi/utils/ui.py:683 pitivi/utils/ui.py:710 pitivi/utils/ui.py:734
+#: pitivi/utils/ui.py:685 pitivi/utils/ui.py:712 pitivi/utils/ui.py:736
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
@@ -2377,7 +2426,7 @@ msgstr[0] "%d sekundė"
 msgstr[1] "%d sekundės"
 msgstr[2] "%d sekundžių"
 
-#: pitivi/utils/ui.py:702
+#: pitivi/utils/ui.py:704
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
@@ -2385,27 +2434,27 @@ msgstr[0] "%d diena"
 msgstr[1] "%d dienos"
 msgstr[2] "%d dienų"
 
-#: pitivi/utils/ui.py:743
+#: pitivi/utils/ui.py:745
 msgid "Just now"
 msgstr "Ką tik"
 
-#: pitivi/utils/ui.py:746
+#: pitivi/utils/ui.py:748
 msgid "An hour ago"
 msgstr "Prieš valandą"
 
-#: pitivi/utils/ui.py:749
+#: pitivi/utils/ui.py:751
 msgid "Today"
 msgstr "Šiandien"
 
-#: pitivi/utils/ui.py:752
+#: pitivi/utils/ui.py:754
 msgid "Yesterday"
 msgstr "Vakar"
 
-#: pitivi/utils/ui.py:761
+#: pitivi/utils/ui.py:763
 msgid "About a year ago"
 msgstr "Maždaug prieš metus"
 
-#: pitivi/utils/ui.py:764
+#: pitivi/utils/ui.py:766
 #, python-format
 msgid "About %d year ago"
 msgid_plural "About %d years ago"
@@ -2450,6 +2499,82 @@ msgstr "rodoma %s"
 msgid "%d nanoseconds displayed, because we can"
 msgstr "rodoma %d nanosekundžių, nes mes tai galime"
 
+#: pitivi/viewer/guidelines.py:59
+msgid "3 by 3"
+msgstr "3 iš 3"
+
+#: pitivi/viewer/guidelines.py:60
+msgid "Vertical/Horizontal"
+msgstr "Vertikalus/horizontalus"
+
+#: pitivi/viewer/guidelines.py:61
+msgid "Diagonals"
+msgstr "Išilginiai"
+
+#: pitivi/viewer/guidelines.py:92
+msgid "Composition Guidelines"
+msgstr "Komponavimo gidai"
+
+#: pitivi/viewer/viewer.py:81
+msgid "Currently playing"
+msgstr "Šiuo metu groja"
+
+#: pitivi/viewer/viewer.py:304
+msgid "Select composition guidelines"
+msgstr "Pasirinkite komponavimo gidus"
+
+#: pitivi/viewer/viewer.py:312
+msgid "Go to the beginning of the timeline"
+msgstr "Pereiti į laiko linijos pradžią"
+
+#: pitivi/viewer/viewer.py:321
+msgid "Go back one second"
+msgstr "Atgal vieną sekundę"
+
+#: pitivi/viewer/viewer.py:334
+msgid "Go forward one second"
+msgstr "Pirmyn vieną sekundę"
+
+#: pitivi/viewer/viewer.py:343
+msgid "Go to the end of the timeline"
+msgstr "Pereiti į laiko juostos pabaigą"
+
+#: pitivi/viewer/viewer.py:350
+msgid ""
+"Enter a timecode or frame number\n"
+"and press \"Enter\" to go to that position"
+msgstr ""
+"Įveskite laiko kodą arba kadro numerį\n"
+"ir spauskite „Enter“ perėjimui į tą padėtį"
+
+#: pitivi/viewer/viewer.py:361
+msgid ""
+"Detach the viewer\n"
+"You can re-attach it by closing the newly created window."
+msgstr ""
+"Atkabinti žiūryklę\n"
+"Ją galite vėl prikabinti užverdami naujai sukurtą langą."
+
+#: pitivi/viewer/viewer.py:388
+msgid "Viewer"
+msgstr "Žiūryklė"
+
+#: pitivi/viewer/viewer.py:396
+msgid "Toggle the currently selected composition guidelines"
+msgstr "Keisti dabartinius komponavimo gidus"
+
+#: pitivi/viewer/viewer.py:404
+msgid "Toggle safe areas on viewer"
+msgstr "Keisti žiūryklės saugias sritis"
+
+#: pitivi/viewer/viewer.py:546 pitivi/viewer/viewer.py:605
+msgid "Show this window in fullscreen"
+msgstr "Rodyti šį langą visame ekrane"
+
+#: pitivi/viewer/viewer.py:602
+msgid "Exit fullscreen mode"
+msgstr "Palikti viso ekrano veikseną"
+
 #: plugins/console/console.py:123
 msgid "Console"
 msgstr "Terminalas"
@@ -2490,6 +2615,10 @@ msgstr "Rašykite „{help}(<komanda>“, jei norite daugiau informacijos."
 msgid ""
 "Not possible to override {key}, because shortcuts commands are read-only."
 msgstr "Negalima pakeisti {key}, nes trumpinių komandos yra tik skaitymui."
+
+#~| msgid "Markers"
+#~ msgid "No markers"
+#~ msgstr "Nėra žymelių"
 
 #~ msgid "Folder:"
 #~ msgstr "Aplankas:"
@@ -2571,9 +2700,6 @@ msgstr "Negalima pakeisti {key}, nes trumpinių komandos yra tik skaitymui."
 
 #~ msgid "Background color"
 #~ msgstr "Fono spalva"
-
-#~ msgid "Remove effect"
-#~ msgstr "Pašalinti efektą"
 
 #~ msgid "Active"
 #~ msgstr "Aktyvus"
