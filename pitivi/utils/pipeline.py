@@ -208,6 +208,8 @@ class SimplePipeline(GObject.Object, Loggable):
         if self.playing():
             self.pause()
         else:
+            if self._duration <= self._last_position:
+                self.simple_seek(0)
             self.play()
 
     # Position and Seeking methods
