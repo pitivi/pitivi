@@ -938,8 +938,7 @@ msgid ""
 "<media type=\"image\" width=\"48px\" height=\"48px\" src=\"figures/Pitivi."
 "svg\"/> Pitivi Video Editor"
 msgstr ""
-"<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\"><media"
-" type=\"image\" width=\"48px\" height=\"48px\" src=\"figures/Pitivi.svg\"/>"
+"<media type=\"image\" width=\"48px\" height=\"48px\" src=\"figures/Pitivi.svg\"/>"
 " Редактор відео Pitivi"
 
 #. (itstool) path: page/p
