@@ -3,20 +3,20 @@
 # This file is distributed under the same license as the pitivi package.
 #
 # lxlalexlxl <pilipchukap@rambler.ru>, 2011.
-# Yuri Chornoivan <yurchor@ukr.net>, 2020, 2021, 2022.
+# Yuri Chornoivan <yurchor@ukr.net>, 2020, 2021, 2022, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2022-04-02 00:16+0000\n"
-"PO-Revision-Date: 2022-04-03 12:27+0300\n"
+"POT-Creation-Date: 2023-02-27 21:51+0000\n"
+"PO-Revision-Date: 2023-02-28 09:39+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
-"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 20.12.0\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
@@ -29,7 +29,7 @@ msgstr ""
 #. (itstool) path: credit/name
 #: C/about.page:7 C/cheatsheet.page:8 C/codecscontainers.page:7
 #: C/effects.page:8 C/gstreamer.page:7 C/importingmpegts.page:8
-#: C/importing.page:7 C/index.page:8 C/keyframecurves.page:9 C/layers.page:7
+#: C/importing.page:7 C/index.page:9 C/keyframecurves.page:9 C/layers.page:7
 #: C/mainwindow.page:9 C/medialibrary.page:7 C/movearoundtimeline.page:7
 #: C/presets.page:9 C/rendering.page:7 C/savescreenshot.page:7
 #: C/selectiongrouping.page:11 C/splitting.page:7 C/sysreq.page:7
@@ -39,7 +39,7 @@ msgid "Jean-François Fortin Tam"
 msgstr "Jean-François Fortin Tam"
 
 #. (itstool) path: credit/name
-#: C/about.page:11 C/gstreamer.page:11 C/importing.page:11 C/index.page:12
+#: C/about.page:11 C/gstreamer.page:11 C/importing.page:11 C/index.page:13
 #: C/keyframecurves.page:13 C/layers.page:11 C/movearoundtimeline.page:11
 #: C/rendering.page:11 C/selectiongrouping.page:15 C/splitting.page:11
 #: C/sysreq.page:11 C/transitions.page:15 C/trimming.page:11
@@ -55,7 +55,7 @@ msgstr "Поточний стан цього підручника та закл�
 #. (itstool) path: license/p
 #: C/about.page:18 C/cheatsheet.page:12 C/codecscontainers.page:15
 #: C/effects.page:17 C/gstreamer.page:22 C/importingmpegts.page:15
-#: C/importing.page:22 C/index.page:16 C/keyframecurves.page:28
+#: C/importing.page:22 C/index.page:17 C/keyframecurves.page:28
 #: C/layers.page:22 C/mainwindow.page:20 C/medialibrary.page:22
 #: C/movearoundtimeline.page:26 C/presets.page:20 C/rendering.page:22
 #: C/savescreenshot.page:11 C/selectiongrouping.page:22 C/splitting.page:22
@@ -71,7 +71,8 @@ msgstr "Про цей підручник"
 
 #. (itstool) path: page/p
 #: C/about.page:22
-msgid "This user manual is written and maintained by Jean-François Fortin Tam."
+msgid ""
+"This user manual is written and maintained by Jean-François Fortin Tam."
 msgstr "Цей підручник створений Jean-François Fortin Tam."
 
 #. (itstool) path: section/title
@@ -154,7 +155,8 @@ msgstr "<keyseq><key>Ctrl</key><key>O</key></keyseq>: відкрити файл 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:27
 msgid "<keyseq><key>Ctrl</key><key>S</key></keyseq>: Save the current project"
-msgstr "<keyseq><key>Ctrl</key><key>S</key></keyseq>: зберегти поточний проєкт"
+msgstr ""
+"<keyseq><key>Ctrl</key><key>S</key></keyseq>: зберегти поточний проєкт"
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:30
@@ -707,10 +709,10 @@ msgstr ""
 #: C/importing.page:28
 msgid ""
 "When you create a new project and import the first video file, its "
-"properties are transposed to the <link xref="
-"\"workwithprojects#projectsettings\">project settings</link>, unless you "
-"changed them yourself already. An infobar appears when this happens. Click "
-"the <gui>Project Settings</gui> button in the infobar for details."
+"properties are transposed to the <link "
+"xref=\"workwithprojects#projectsettings\">project settings</link>, unless "
+"you changed them yourself already. An infobar appears when this happens. "
+"Click the <gui>Project Settings</gui> button in the infobar for details."
 msgstr ""
 "При створенні проєкту та імпортуванні першого файла відео властивості відео "
 "переносяться до <link xref=\"workwithprojects#projectsettings\">параметрів "
@@ -894,12 +896,20 @@ msgstr ""
 
 #. (itstool) path: info/title
 #: C/index.page:4
-msgctxt "link"
+#| msgctxt "link"
+#| msgid "Pitivi Quick Start Manual"
+msgctxt "link:trail"
 msgid "Pitivi Quick Start Manual"
 msgstr "Pitivi: підручник для початківця"
 
 #. (itstool) path: info/title
 #: C/index.page:5
+msgctxt "link"
+msgid "Pitivi Quick Start Manual"
+msgstr "Pitivi: підручник для початківця"
+
+#. (itstool) path: info/title
+#: C/index.page:6
 msgctxt "text"
 msgid "Pitivi Quick Start Manual"
 msgstr "Pitivi: підручник для початківця"
@@ -909,28 +919,37 @@ msgstr "Pitivi: підручник для початківця"
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/index.page:19
+#: C/index.page:21
+#| msgctxt "_"
+#| msgid ""
+#| "external ref='figures/logo.png' md5='fff855c13ab53690ef39bd41670bb519'"
 msgctxt "_"
-msgid "external ref='figures/logo.png' md5='fff855c13ab53690ef39bd41670bb519'"
-msgstr "external ref='figures/logo.png' md5='fff855c13ab53690ef39bd41670bb519'"
+msgid ""
+"external ref='figures/Pitivi.svg' md5='5dc3b90ebd6898d3d38c8df4c0eb0ead'"
+msgstr ""
+"external ref='figures/Pitivi.svg' md5='5dc3b90ebd6898d3d38c8df4c0eb0ead'"
 
 #. (itstool) path: page/title
-#: C/index.page:19
+#: C/index.page:20
+#| msgid ""
+#| "<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">Pitivi "
+#| "logo</media> Pitivi Video Editor"
 msgid ""
-"<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">Pitivi "
-"logo</media> Pitivi Video Editor"
+"<media type=\"image\" width=\"48px\" height=\"48px\" src=\"figures/Pitivi."
+"svg\"/> Pitivi Video Editor"
 msgstr ""
-"<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">Емблема "
-"Pitivi</media> Редактор відео Pitivi"
+"<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\"><media"
+" type=\"image\" width=\"48px\" height=\"48px\" src=\"figures/Pitivi.svg\"/>"
+" Редактор відео Pitivi"
 
 #. (itstool) path: page/p
-#: C/index.page:22
+#: C/index.page:24
 msgid ""
-"Built upon the <link href=\"http://en.wikipedia.org/wiki/GStreamer"
-"\"><app>GStreamer</app></link> multimedia framework, <app>Pitivi</app> aims "
-"to be an intuitive and flexible video editor that integrates well with <link "
-"href=\"http://gnome.org\"><app>GNOME</app></link> and can appeal to newbies "
-"and professionals alike."
+"Built upon the <link href=\"http://en.wikipedia.org/wiki/"
+"GStreamer\"><app>GStreamer</app></link> multimedia framework, <app>Pitivi</"
+"app> aims to be an intuitive and flexible video editor that integrates well "
+"with <link href=\"http://gnome.org\"><app>GNOME</app></link> and can appeal "
+"to newbies and professionals alike."
 msgstr ""
 "Побудований з використанням мультимедійної бібліотеки <link href=\"http://en."
 "wikipedia.org/wiki/GStreamer\"><app>GStreamer</app></link>, <app>Pitivi</"
@@ -939,34 +958,34 @@ msgstr ""
 "і буде привабливим як для новачків, так і для фахівців."
 
 #. (itstool) path: page/p
-#: C/index.page:23
+#: C/index.page:25
 msgid ""
 "This guide is intended to help you grasp the concepts behind its design and "
 "get productive quickly."
 msgstr "Цей посібник допоможе вам зрозуміти основи і швидко розпочати роботу."
 
 #. (itstool) path: section/title
-#: C/index.page:25
+#: C/index.page:27
 msgid "Introduction"
 msgstr "Вступ"
 
 #. (itstool) path: section/title
-#: C/index.page:28
+#: C/index.page:30
 msgid "Getting Started"
 msgstr "Перші кроки"
 
 #. (itstool) path: section/title
-#: C/index.page:31
+#: C/index.page:33
 msgid "Basic Editing with the Timeline"
 msgstr "Основи редагування на монтажному столі"
 
 #. (itstool) path: section/title
-#: C/index.page:34
+#: C/index.page:36
 msgid "Effects and Transitions"
 msgstr "Ефекти і переходи"
 
 #. (itstool) path: section/title
-#: C/index.page:37
+#: C/index.page:39
 msgid "Exporting Your Finished Movie"
 msgstr "Експортування завершеного фільму"
 
@@ -1041,10 +1060,10 @@ msgstr ""
 msgid ""
 "By default, the keyframe curves on an audio clip control the volume (on a "
 "scale from 0 to 200%) and the keyframe curves on a video clip control the "
-"alpha (opacity) of the video (on a scale from 0 to 100%). See the <link xref="
-"\"layers\">Understanding layers</link> page for more details on opacity. The "
-"default alpha or volume keyframe curves are an intrinsic property of clips "
-"and cannot be removed."
+"alpha (opacity) of the video (on a scale from 0 to 100%). See the <link "
+"xref=\"layers\">Understanding layers</link> page for more details on "
+"opacity. The default alpha or volume keyframe curves are an intrinsic "
+"property of clips and cannot be removed."
 msgstr ""
 "Типово, криві ключових кадрів на засобі керування звуком кліпу відповідають "
 "гучності (у шкалі від 0 до 200%), а криві ключових кадрів на засобі "
@@ -1061,8 +1080,8 @@ msgid ""
 "link> page."
 msgstr ""
 "Ви можете створювати переходи із розчиненням та появою зображення керуючи "
-"непрозорістю та гучністю. Див. приклад на сторінці <link xref="
-"\"transitions#fades\">переходи</link>."
+"непрозорістю та гучністю. Див. приклад на сторінці <link "
+"xref=\"transitions#fades\">переходи</link>."
 
 #. (itstool) path: page/p
 #: C/keyframecurves.page:50
@@ -1072,8 +1091,8 @@ msgid ""
 "link> page for details."
 msgstr ""
 "Окрім гучності і прозорості, ви можете скористатися ключовими кадрами для "
-"керування властивостями ефектів. Див. сторінку щодо <link xref="
-"\"usingeffects#keyframes\">користування ефектами</link>, щоб дізнатися "
+"керування властивостями ефектів. Див. сторінку щодо <link "
+"xref=\"usingeffects#keyframes\">користування ефектами</link>, щоб дізнатися "
 "більше."
 
 #. (itstool) path: section/title
@@ -1617,7 +1636,8 @@ msgstr "Поточна позиція відтворення вказуєтьс�
 #. whatever you like once you have updated your copy of the file.
 #: C/mainwindow.page:70
 msgctxt "_"
-msgid "external ref='figures/ruler.png' md5='2d2f2261c4bdb034be332fbcea37f273'"
+msgid ""
+"external ref='figures/ruler.png' md5='2d2f2261c4bdb034be332fbcea37f273'"
 msgstr ""
 "external ref='figures/ruler.png' md5='2d2f2261c4bdb034be332fbcea37f273'"
 
@@ -1657,13 +1677,13 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/mainwindow.page:79
 msgid ""
-"See the <link xref=\"layers\">Understanding layers</link> and <link xref="
-"\"movearoundtimeline\">Moving around the timeline</link> pages for more "
+"See the <link xref=\"layers\">Understanding layers</link> and <link "
+"xref=\"movearoundtimeline\">Moving around the timeline</link> pages for more "
 "information on how to work with the timeline."
 msgstr ""
-"Див. <link xref=\"layers\">сторінку щодо шарів</link> та <link xref="
-"\"movearoundtimeline\">сторінку щодо пересування монтажним столом</link>, "
-"щоб дізнатися більше про те, як працює монтажний стіл."
+"Див. <link xref=\"layers\">сторінку щодо шарів</link> та <link "
+"xref=\"movearoundtimeline\">сторінку щодо пересування монтажним столом</"
+"link>, щоб дізнатися більше про те, як працює монтажний стіл."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:82
@@ -1772,8 +1792,8 @@ msgstr "Перейти до початку запису на монтажном�
 #: C/mainwindow.page:132
 msgid ""
 "For more information on how to move on the timeline, see the <em>Moving the "
-"playhead</em> and <em>Scrubbing</em> sections on the <link xref="
-"\"movearoundtimeline\">Moving around the timeline</link> page."
+"playhead</em> and <em>Scrubbing</em> sections on the <link "
+"xref=\"movearoundtimeline\">Moving around the timeline</link> page."
 msgstr ""
 "Щоб дізнатися більше про те, як пересуватися монтажним столом, див. розділи "
 "<em>Пересування позиції відтворення</em> та <em>Протягування</em> на "
@@ -2311,12 +2331,12 @@ msgstr "Перехід до точної позиції"
 #: C/movearoundtimeline.page:86
 msgid ""
 "You can jump to an exact position in the timeline by editing the time value "
-"shown in the playback toolbar (see description of <link xref=\"mainwindow"
-"\">The main window</link>). To edit it, simply click on the widget, "
-"overwrite the value and hit <key>enter</key>. The value can represent either "
-"timecode or a frame number. Timecode has the following form: <em>hh:mm:ss."
-"milisec</em> where hours are optional. To insert a frame number, overwrite "
-"the timecode with a plain number of the desired frame."
+"shown in the playback toolbar (see description of <link "
+"xref=\"mainwindow\">The main window</link>). To edit it, simply click on the "
+"widget, overwrite the value and hit <key>enter</key>. The value can "
+"represent either timecode or a frame number. Timecode has the following "
+"form: <em>hh:mm:ss.milisec</em> where hours are optional. To insert a frame "
+"number, overwrite the timecode with a plain number of the desired frame."
 msgstr ""
 "Ви можете перейти до точної позиції на монтажному столі редагуванням "
 "значення часу, яке показано на панелі інструментів відтворення (див. опис "
@@ -2529,8 +2549,8 @@ msgid ""
 "Choose a container. See the <link xref=\"codecscontainers\">codecs and "
 "containers</link> page for details."
 msgstr ""
-"Виберіть контейнер. Докладніший опис можна знайти на сторінці <link xref="
-"\"codecscontainers\">кодеки і контейнери</link>."
+"Виберіть контейнер. Докладніший опис можна знайти на сторінці <link "
+"xref=\"codecscontainers\">кодеки і контейнери</link>."
 
 #. (itstool) path: item/p
 #: C/rendering.page:41
@@ -2718,8 +2738,8 @@ msgid ""
 "selection and the playhead position won't be lost when you make selections. "
 "This can be specified at <guiseq><gui>Menu button</gui><gui>Preferences</"
 "gui><gui>Left click also seeks</gui></guiseq>. You can still use right-click "
-"to move the playhead, as before, see <link xref="
-"\"movearoundtimeline#movingplayhead\"/> for details."
+"to move the playhead, as before, see <link "
+"xref=\"movearoundtimeline#movingplayhead\"/> for details."
 msgstr ""
 "Типово, клацання на монтажному столі змінює позначення, а також пересуває "
 "позицію відтворення. Щоб мати змогу точніше керувати позицією відтворення, "
@@ -2729,8 +2749,8 @@ msgstr ""
 "цей режим можна за допомогою пункту <guiseq><gui>Кнопка меню</"
 "gui><gui>Налаштування</gui><gui>Клацання лівою також позиціювання</gui></"
 "guiseq>. Ви також можете скористатися клацанням правою кнопкою миші для "
-"пересування позиції відтворення. Як і раніше, див. <link xref="
-"\"movearoundtimeline#movingplayhead\"/>, щоб дізнатися більше."
+"пересування позиції відтворення. Як і раніше, див. <link "
+"xref=\"movearoundtimeline#movingplayhead\"/>, щоб дізнатися більше."
 
 #. (itstool) path: section/title
 #: C/selectiongrouping.page:56
@@ -2848,9 +2868,9 @@ msgid ""
 msgstr ""
 "У <app>Pitivi</app> розділення кліпу є немодальною операцією; це означає, що "
 "для розділення не потрібно активувати відповідний інструмент. Розділення "
-"відбувається у поточній позиції відтворення (див. також <link xref="
-"\"movearoundtimeline\">Переміщення позиції відтворення</link>). У поєднанні "
-"з масштабуванням, покадровим пошуком з використанням клавіатури та "
+"відбувається у поточній позиції відтворення (див. також <link "
+"xref=\"movearoundtimeline\">Переміщення позиції відтворення</link>). У "
+"поєднанні з масштабуванням, покадровим пошуком з використанням клавіатури та "
 "протягуванням немодальне розділення є не тільки швидким і ефективним, але й "
 "дуже точним."
 
@@ -2906,11 +2926,11 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/splitting.page:49
 msgid ""
-"See how to select clips in <link xref=\"selectiongrouping#selection"
-"\">Selection and grouping</link>."
+"See how to select clips in <link "
+"xref=\"selectiongrouping#selection\">Selection and grouping</link>."
 msgstr ""
-"Відомості щодо позначення кліпів можна знайти у розділі щодо <link xref="
-"\"selectiongrouping#selection\">позначення і групування</link>."
+"Відомості щодо позначення кліпів можна знайти у розділі щодо <link "
+"xref=\"selectiongrouping#selection\">позначення і групування</link>."
 
 #. (itstool) path: note/title
 #: C/splitting.page:51
@@ -3026,9 +3046,9 @@ msgid ""
 "compatibility</link> and <link xref=\"effects\">Introduction to effects</"
 "link>."
 msgstr ""
-"Вимоги щодо програмного забезпечення описано у розділах <link xref="
-"\"gstreamer\">Gstreamer і сумісність</link> та <link xref=\"effects\">Вступ "
-"до ефектів</link>."
+"Вимоги щодо програмного забезпечення описано у розділах <link "
+"xref=\"gstreamer\">Gstreamer і сумісність</link> та <link "
+"xref=\"effects\">Вступ до ефектів</link>."
 
 #. (itstool) path: info/desc
 #: C/transitions.page:18
@@ -3167,29 +3187,23 @@ msgstr "Зникнення та поява"
 
 #. (itstool) path: section/p
 #: C/transitions.page:65
-#| msgid ""
-#| "You can create fade-in and fade-out transitions in single clips by using "
-#| "keyframes controlling the clip's opacity. For more information on "
-#| "keyframes, see <link xref=\"keyframecurves\">Keyframe curves</link>. To "
-#| "understand opacity, see <link xref=\"layers\">Understanding layers</"
-#| "link>. The following images illustrate how to fade a clip to black:"
 msgid ""
 "You can create fade-in and fade-out transitions in single clips by "
 "specifying their duration in the <gui>Compositing</gui> section of the "
 "<gui>Clip Properties</gui> panel. These can be fine-tuned by interacting "
 "with the <link xref=\"keyframecurves\">Keyframe curve</link> controlling the "
-"clip's opacity. To understand opacity, see <link xref=\"layers"
-"\">Understanding layers</link>. The following images illustrate how to fade "
-"a clip to black by editing the clip's keyframes:"
+"clip's opacity. To understand opacity, see <link "
+"xref=\"layers\">Understanding layers</link>. The following images illustrate "
+"how to fade a clip to black by editing the clip's keyframes:"
 msgstr ""
-"Ви можете створити переходи зі згасанням або появою у окремих кліпах,"
-" зазначивши їхню тривалість у розділі <gui>Композиція</gui> на панелі <gui"
-">Властивості кліпу</gui>. Скоригувати значення можна за допомогою <link"
-" xref=\"keyframecurves\">Кривої ключових кадрів</link>, яка керує"
-" непрозорістю кліпу. Докладніший опис непрозорості наведено у <link"
-" xref=\"layers\">розділів щодо шарів</link>. На наступних зображеннях"
-" проілюстровано перехід зображення кліпу у чорний колір редагуванням ключових"
-" кадрів кліпу:"
+"Ви можете створити переходи зі згасанням або появою у окремих кліпах, "
+"зазначивши їхню тривалість у розділі <gui>Композиція</gui> на панелі "
+"<gui>Властивості кліпу</gui>. Скоригувати значення можна за допомогою <link "
+"xref=\"keyframecurves\">Кривої ключових кадрів</link>, яка керує "
+"непрозорістю кліпу. Докладніший опис непрозорості наведено у <link "
+"xref=\"layers\">розділів щодо шарів</link>. На наступних зображеннях "
+"проілюстровано перехід зображення кліпу у чорний колір редагуванням ключових "
+"кадрів кліпу:"
 
 #. (itstool) path: figure/title
 #: C/transitions.page:67
@@ -3352,9 +3366,9 @@ msgstr ""
 "Кліпи, які згруповано, зокрема, відповідні звукові кліпи із відеокліпами, "
 "буде обрізано одночасно при пересуванні елемента керування обрізанням. Щоб "
 "обрізати лише звукові дані або лише відеодані, вам слід спочатку "
-"розгрупувати кліпи (див. сторінку <link xref=\"selectiongrouping"
-"\">позначення і групування</link>, щоб дізнатися більше про те, як це "
-"зробити)."
+"розгрупувати кліпи (див. сторінку <link "
+"xref=\"selectiongrouping\">позначення і групування</link>, щоб дізнатися "
+"більше про те, як це зробити)."
 
 #. (itstool) path: section/title
 #: C/trimming.page:34
@@ -3464,8 +3478,8 @@ msgstr "Перетягніть смужку підгонки."
 #: C/trimming.page:66
 msgid ""
 "Ripple editing can also be used when moving clips around in the timeline. "
-"For detailed explanations on how to do this, see the section <link xref="
-"\"usingclips#ripple\">Using ripple editing while moving clips</link>."
+"For detailed explanations on how to do this, see the section <link "
+"xref=\"usingclips#ripple\">Using ripple editing while moving clips</link>."
 msgstr ""
 "Монтаж зі зсувом може також використовуватись при переміщенні кліпів "
 "монтажним столом. Для детального пояснення як це зробити, подивіться розділ "
@@ -3538,7 +3552,8 @@ msgstr "Щоб виконати монтаж із суміщенням:"
 
 #. (itstool) path: item/p
 #: C/trimming.page:88
-msgid "Place the mouse cursor on a trimming handle between two adjacent clips."
+msgid ""
+"Place the mouse cursor on a trimming handle between two adjacent clips."
 msgstr ""
 "Наведіть вказівник мишки на смужку підгонки між двома сусідніми кліпами."
 
@@ -3669,8 +3684,8 @@ msgstr ""
 msgid ""
 "Click and drag a single clip to move it, and release the mouse button to "
 "place it. Dragging horizontally keeps the clip on the same layer, but "
-"dragging it vertically moves the clip to a different layer (see <link xref="
-"\"layers\">Understanding layers</link> for more information)."
+"dragging it vertically moves the clip to a different layer (see <link "
+"xref=\"layers\">Understanding layers</link> for more information)."
 msgstr ""
 "Перетягніть окремий кліп, щоб пересунути його, і відпустіть кнопку миші у "
 "потрібному місці. При перетягуванні по горизонталі кліп залишається на тому "
@@ -3694,15 +3709,15 @@ msgstr ""
 #: C/usingclips.page:59
 msgid ""
 "To move multiple clips at the same time, use the <key>Ctrl</key> or "
-"<key>Shift</key> keys to select multiple clips (see <link xref="
-"\"selectiongrouping\">Selection and grouping</link> for more details). "
+"<key>Shift</key> keys to select multiple clips (see <link "
+"xref=\"selectiongrouping\">Selection and grouping</link> for more details). "
 "Selected clips do not need to be on the same layer. Then, drag the clips "
 "just as you would do for a single clip; their position relative to each "
 "other will be preserved."
 msgstr ""
 "Щоб пересунути одночасно багато кліпів, використовуйте клавіші <key>Ctrl</"
-"key> or <key>Shift</key> під час позначання (див. <link xref="
-"\"selectiongrouping\">вибір і групування</link>, щоб дізнатися більше). "
+"key> or <key>Shift</key> під час позначання (див. <link "
+"xref=\"selectiongrouping\">вибір і групування</link>, щоб дізнатися більше). "
 "Можна позначити кліпи, що знаходяться у різних шарах. Після цього "
 "перемістіть кліпи так, як це робилось з одним кліпом; їхнє відносне "
 "розміщення буде збережене."
@@ -3715,10 +3730,10 @@ msgstr "Використання монтажу із зсувом при пер�
 #. (itstool) path: section/p
 #: C/usingclips.page:62
 msgid ""
-"While dragging clips around in the timeline, you can use the <link xref="
-"\"trimming#ripple\">ripple technique</link> to move the <em>following</em> "
-"clips (the clips that start after the one you're directly editing) in sync "
-"with the moved clip."
+"While dragging clips around in the timeline, you can use the <link "
+"xref=\"trimming#ripple\">ripple technique</link> to move the <em>following</"
+"em> clips (the clips that start after the one you're directly editing) in "
+"sync with the moved clip."
 msgstr ""
 "При перетягуванні кліпів вздовж монтажного столу, ви можете застосовувати "
 "<link xref=\"trimming#ripple\">монтаж зі зсувом</link>, щоб перемістити "
@@ -3766,8 +3781,8 @@ msgstr "Використання кольорових кліпів"
 msgid ""
 "You can create custom color clips using the <gui>Create a color clip</gui> "
 "button located in the <guiseq><gui>middle pane</gui><gui>Clip</gui></guiseq> "
-"tab. The button is available when no clip is <link xref="
-"\"selectiongrouping#selection\">selected</link>."
+"tab. The button is available when no clip is <link "
+"xref=\"selectiongrouping#selection\">selected</link>."
 msgstr ""
 "Ви можете створювати нетипові кольорові кліпи за допомогою кнопки "
 "<gui>Створити кольоровий кліп</gui>, яку розташовано на вкладці "
@@ -4048,21 +4063,23 @@ msgstr ""
 msgid ""
 "The safe areas are displayed on the <gui>viewer</gui> as an overlay and will "
 "not affect the video of a project. The size of the action-safe area and the "
-"title-safe area can be specified in the <link xref=\"#projectsettings"
-"\">Project Settings</link>. For example, a size of 90% vertical × 80% "
-"horizontal corresponds to a 5% margin at the top and bottom and a 10% "
-"horizontal margin at the left and right of the video. Producers use their "
-"own guidelines since no television standard defines the <link href=\"https://"
-"en.wikipedia.org/wiki/Safe_area_(television)\">safe areas</link>."
+"title-safe area can be specified in the <link "
+"xref=\"#projectsettings\">Project Settings</link>. For example, a size of "
+"90% vertical × 80% horizontal corresponds to a 5% margin at the top and "
+"bottom and a 10% horizontal margin at the left and right of the video. "
+"Producers use their own guidelines since no television standard defines the "
+"<link href=\"https://en.wikipedia.org/wiki/Safe_area_(television)\">safe "
+"areas</link>."
 msgstr ""
 "Безпечні області буде показано на <gui>панелі перегляду</gui> як накладку, "
 "яка не впливатиме на вигляд остаточних кадрів відео проєкту. Розмір "
-"безпечної області зображення та титрів можна визначити у <link xref="
-"\"#projectsettings\">параметрах проєкту</link>. Наприклад, розмір 90% за "
-"вертикаллю × 80% за горизонталлю відповідає полю у 5% згори і знизу і полю у "
-"10% праворуч і ліворуч у кадрі відео. У продюсерів є власні настанови, "
-"оскільки жоден із телевізійних стандартів не визначає <link href=\"https://"
-"en.wikipedia.org/wiki/Safe_area_(television)\">безпечних областей</link>."
+"безпечної області зображення та титрів можна визначити у <link "
+"xref=\"#projectsettings\">параметрах проєкту</link>. Наприклад, розмір 90% "
+"за вертикаллю × 80% за горизонталлю відповідає полю у 5% згори і знизу і "
+"полю у 10% праворуч і ліворуч у кадрі відео. У продюсерів є власні "
+"настанови, оскільки жоден із телевізійних стандартів не визначає <link "
+"href=\"https://en.wikipedia.org/wiki/Safe_area_(television)\">безпечних "
+"областей</link>."
 
 #. (itstool) path: note/p
 #: C/workwithprojects.page:52
