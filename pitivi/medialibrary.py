@@ -26,6 +26,7 @@ from enum import IntEnum
 from gettext import gettext as _
 from gettext import ngettext
 from hashlib import md5
+from typing import Any
 from typing import Set
 
 import cairo
@@ -112,6 +113,14 @@ class AssetStoreItem(GObject.GObject):
             self.asset.register_meta(GES.MetaFlag.READWRITE, "pitivi::tags", "")
         else:
             self.tags = set(tags.split(","))
+
+    def compare_alphabetical(self, other: "AssetStoreItem", _data: Any):
+        if self.uri < other.uri:
+            return -1
+        elif self.uri == other.uri:
+            return 0
+        else:
+            return 1
 
 
 class TagState(IntEnum):
@@ -919,7 +928,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
             asset.connect("notify-meta", self.asset_meta_changed_cb)
             self.witnessed_tags.update(item.tags)
-            self.store.append(item)
+            self.store.insert_sorted(item, AssetStoreItem.compare_alphabetical, None)
 
             thumb_decorator.connect("thumb-updated", self.__thumb_updated_cb, asset)
 
