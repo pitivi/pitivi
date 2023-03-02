@@ -1,14 +1,14 @@
 # Swedish translation for pitivi documentation.
-# Copyright © 2015-2022 pitivi's COPYRIGHT HOLDER
+# Copyright © 2015-2023 pitivi's COPYRIGHT HOLDER
 # This file is distributed under the same license as the pitivi package.
 # Josef Andersson <josef.andersson@fripost.org>, 2015, 2016.
-# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2019, 2020, 2021, 2022.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2019, 2020, 2021, 2022, 2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2022-04-02 00:16+0000\n"
-"PO-Revision-Date: 2022-05-01 19:46+0200\n"
+"POT-Creation-Date: 2023-02-27 21:51+0000\n"
+"PO-Revision-Date: 2023-03-02 23:53+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
@@ -28,7 +28,7 @@ msgstr ""
 #. (itstool) path: credit/name
 #: C/about.page:7 C/cheatsheet.page:8 C/codecscontainers.page:7
 #: C/effects.page:8 C/gstreamer.page:7 C/importingmpegts.page:8
-#: C/importing.page:7 C/index.page:8 C/keyframecurves.page:9 C/layers.page:7
+#: C/importing.page:7 C/index.page:9 C/keyframecurves.page:9 C/layers.page:7
 #: C/mainwindow.page:9 C/medialibrary.page:7 C/movearoundtimeline.page:7
 #: C/presets.page:9 C/rendering.page:7 C/savescreenshot.page:7
 #: C/selectiongrouping.page:11 C/splitting.page:7 C/sysreq.page:7
@@ -38,7 +38,7 @@ msgid "Jean-François Fortin Tam"
 msgstr "Jean-François Fortin Tam"
 
 #. (itstool) path: credit/name
-#: C/about.page:11 C/gstreamer.page:11 C/importing.page:11 C/index.page:12
+#: C/about.page:11 C/gstreamer.page:11 C/importing.page:11 C/index.page:13
 #: C/keyframecurves.page:13 C/layers.page:11 C/movearoundtimeline.page:11
 #: C/rendering.page:11 C/selectiongrouping.page:15 C/splitting.page:11
 #: C/sysreq.page:11 C/transitions.page:15 C/trimming.page:11
@@ -54,7 +54,7 @@ msgstr "Aktuellt tillstånd för användarguiden och upprop för medverkan."
 #. (itstool) path: license/p
 #: C/about.page:18 C/cheatsheet.page:12 C/codecscontainers.page:15
 #: C/effects.page:17 C/gstreamer.page:22 C/importingmpegts.page:15
-#: C/importing.page:22 C/index.page:16 C/keyframecurves.page:28
+#: C/importing.page:22 C/index.page:17 C/keyframecurves.page:28
 #: C/layers.page:22 C/mainwindow.page:20 C/medialibrary.page:22
 #: C/movearoundtimeline.page:26 C/presets.page:20 C/rendering.page:22
 #: C/savescreenshot.page:11 C/selectiongrouping.page:22 C/splitting.page:22
@@ -882,37 +882,48 @@ msgstr ""
 
 #. (itstool) path: info/title
 #: C/index.page:4
-msgctxt "link"
+msgctxt "link:trail"
 msgid "Pitivi Quick Start Manual"
-msgstr "Pitivi snabbstartshandbok"
+msgstr "Snabbstartshandbok för Pitivi"
 
 #. (itstool) path: info/title
 #: C/index.page:5
+msgctxt "link"
+msgid "Pitivi Quick Start Manual"
+msgstr "Snabbstartshandbok för Pitivi"
+
+#. (itstool) path: info/title
+#: C/index.page:6
 msgctxt "text"
 msgid "Pitivi Quick Start Manual"
-msgstr "Pitivi snabbstartshandbok"
+msgstr "Snabbstartshandbok för Pitivi"
 
 #. (itstool) path: title/media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/index.page:19
+#: C/index.page:21
+#| msgctxt "_"
+#| msgid ""
+#| "external ref='figures/logo.png' md5='fff855c13ab53690ef39bd41670bb519'"
 msgctxt "_"
-msgid "external ref='figures/logo.png' md5='fff855c13ab53690ef39bd41670bb519'"
-msgstr "external ref='figures/logo.png' md5='fff855c13ab53690ef39bd41670bb519'"
+msgid ""
+"external ref='figures/Pitivi.svg' md5='5dc3b90ebd6898d3d38c8df4c0eb0ead'"
+msgstr ""
+"external ref='figures/Pitivi.svg' md5='5dc3b90ebd6898d3d38c8df4c0eb0ead'"
 
 #. (itstool) path: page/title
-#: C/index.page:19
+#: C/index.page:20
 msgid ""
-"<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">Pitivi "
-"logo</media> Pitivi Video Editor"
+"<media type=\"image\" width=\"48px\" height=\"48px\" src=\"figures/Pitivi."
+"svg\"/> Pitivi Video Editor"
 msgstr ""
-"<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">Pitivi "
-"logo</media> Pitivi videoredigerare"
+"<media type=\"image\" width=\"48px\" height=\"48px\" src=\"figures/Pitivi."
+"svg\"/> Pitivi videoredigerare"
 
 #. (itstool) path: page/p
-#: C/index.page:22
+#: C/index.page:24
 msgid ""
 "Built upon the <link href=\"http://en.wikipedia.org/wiki/"
 "GStreamer\"><app>GStreamer</app></link> multimedia framework, <app>Pitivi</"
@@ -927,7 +938,7 @@ msgstr ""
 "amatörer och professionella."
 
 #. (itstool) path: page/p
-#: C/index.page:23
+#: C/index.page:25
 msgid ""
 "This guide is intended to help you grasp the concepts behind its design and "
 "get productive quickly."
@@ -936,27 +947,27 @@ msgstr ""
 "design samt att få dig produktiv snabbt."
 
 #. (itstool) path: section/title
-#: C/index.page:25
+#: C/index.page:27
 msgid "Introduction"
 msgstr "Introduktion"
 
 #. (itstool) path: section/title
-#: C/index.page:28
+#: C/index.page:30
 msgid "Getting Started"
 msgstr "Komma igång"
 
 #. (itstool) path: section/title
-#: C/index.page:31
+#: C/index.page:33
 msgid "Basic Editing with the Timeline"
 msgstr "Grundläggande redigering med tidslinjen"
 
 #. (itstool) path: section/title
-#: C/index.page:34
+#: C/index.page:36
 msgid "Effects and Transitions"
 msgstr "Effekter och övergångar"
 
 #. (itstool) path: section/title
-#: C/index.page:37
+#: C/index.page:39
 msgid "Exporting Your Finished Movie"
 msgstr "Export av din färdiga film"
 
