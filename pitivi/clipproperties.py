@@ -874,7 +874,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             # Drop happened inside the lisbox
             drop_index = widget.get_index()
         else:
-            drop_index = len(self.effects_listbox.get_children()) - 1
+            drop_index = len(self.effects_listbox.get_children())
 
         if drag_context.get_suggested_action() == Gdk.DragAction.COPY:
             # An effect dragged probably from the effects list.
