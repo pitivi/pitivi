@@ -94,4 +94,6 @@ def get_plugins_dir():
 def get_user_plugins_dir():
     """Returns our default directory to store non-official plugins."""
     user_data_dir = GLib.get_user_data_dir()
-    return os.path.join(user_data_dir, 'pitivi', 'plugins')
+    user_plugin_dir = os.path.join(user_data_dir, 'pitivi', 'plugins')
+    os.makedirs(user_plugin_dir, exist_ok=True)
+    return user_plugin_dir
