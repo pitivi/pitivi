@@ -83,6 +83,8 @@ CURSORS = {
 NORMAL_CURSOR = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
 DRAG_CURSOR = Gdk.Cursor.new(Gdk.CursorType.HAND1)
 
+SCHEMA_SETTINGS_SOURCE = Gio.SettingsSchemaSource.get_default()
+
 
 def get_month_format_string():
     """Returns the appropriate format string for month name in time.strftime() function."""
@@ -98,17 +100,25 @@ def get_month_format_string():
 MONTH_FORMAT_STRING = get_month_format_string()
 
 
-def _get_settings(schema):
-    if schema not in Gio.Settings.list_schemas():
+def _get_settings(schema_id: str) -> Optional[Gio.Settings]:
+    if SCHEMA_SETTINGS_SOURCE is None:
         return None
-    try:
-        return Gio.Settings(schema_id=schema)
-    except TypeError:
-        # Gtk 3.10
-        return Gio.Settings(schema=schema)
+    schema = SCHEMA_SETTINGS_SOURCE.lookup(schema_id, recursive=False)
+    if not schema:
+        return None
+    return Gio.Settings.new_full(schema, backend=None, path=None)
 
 
-def _get_font(font_spec, default):
+def _get_font_scaling_factor() -> float:
+    scaling_factor = 1.0
+    settings = _get_settings("org.gnome.desktop.interface")
+    if settings:
+        if "text-scaling-factor" in settings.list_keys():
+            scaling_factor = settings.get_double("text-scaling-factor")
+    return scaling_factor
+
+
+def _get_font(font_spec: str, default: str) -> str:
     raw_font = default
     settings = _get_settings("org.gnome.desktop.interface")
     if settings:
@@ -121,6 +131,8 @@ def _get_font(font_spec, default):
 NORMAL_FONT = _get_font("font-name", "Cantarell")
 DOCUMENT_FONT = _get_font("document-font-name", "Sans")
 MONOSPACE_FONT = _get_font("monospace-font-name", "Monospace")
+FONT_SCALING_FACTOR = _get_font_scaling_factor()
+
 
 GREETER_PERSPECTIVE_CSS = """
     #empty_greeter_msg_title {

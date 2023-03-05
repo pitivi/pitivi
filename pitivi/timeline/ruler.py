@@ -25,6 +25,7 @@ from gi.repository import Gtk
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import beautify_length
+from pitivi.utils.ui import FONT_SCALING_FACTOR
 from pitivi.utils.ui import gtk_style_context_get_color
 from pitivi.utils.ui import NORMAL_FONT
 from pitivi.utils.ui import PLAYHEAD_COLOR
@@ -76,8 +77,8 @@ FRAME_MIN_WIDTH_PIXELS = 5
 # How short it should be.
 FRAME_HEIGHT_PIXELS = 5
 
-NORMAL_FONT_SIZE = 13
-SMALL_FONT_SIZE = 11
+NORMAL_FONT_SIZE = FONT_SCALING_FACTOR * 13
+SMALL_FONT_SIZE = FONT_SCALING_FACTOR * 11
 
 
 class ScaleRuler(Gtk.DrawingArea, Loggable):
