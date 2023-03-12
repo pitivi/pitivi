@@ -91,25 +91,24 @@ class BaseTestMediaLibrary(common.TestCase):
                              len(self.samples))
             self.mainloop.quit()
 
-    def _create_assets(self, samples):
-        self.samples = samples
+    def check_import(self, samples, proxying_strategy=ProxyingStrategy.ALL,
+                     check_no_transcoding=False, auto_scaling_enabled=False, setup=True):
+        """Simulates the user importing an asset."""
+        if setup:
+            self._custom_set_up(proxying_strategy=proxying_strategy,
+                                num_transcoding_jobs=4,
+                                last_clip_view=ViewType.LIST,
+                                auto_scaling_enabled=auto_scaling_enabled)
+            self.samples = samples
+        else:
+            self.samples.extend(samples)
+
+        self.check_no_transcoding = check_no_transcoding
+        self.medialibrary._progressbar.connect(
+            "notify::fraction", self._progress_bar_cb)
         for sample_name in samples:
             self.app.project_manager.current_project.create_asset(
                 common.get_sample_uri(sample_name), GES.UriClip)
-
-    def check_import(self, samples, proxying_strategy=ProxyingStrategy.ALL,
-                     check_no_transcoding=False, auto_scaling_enabled=False):
-        """Simulates the user importing an asset."""
-        self._custom_set_up(proxying_strategy=proxying_strategy,
-                            num_transcoding_jobs=4,
-                            last_clip_view=ViewType.LIST,
-                            auto_scaling_enabled=auto_scaling_enabled)
-        self.check_no_transcoding = check_no_transcoding
-
-        self.medialibrary._progressbar.connect(
-            "notify::fraction", self._progress_bar_cb)
-
-        self._create_assets(samples)
         self.mainloop.run(timeout_seconds=25)
         self.assertFalse(self.medialibrary._progressbar.props.visible)
 
@@ -497,6 +496,13 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         with common.cloned_sample(sample):
             self.check_import([sample], check_no_transcoding=True,
                               proxying_strategy=ProxyingStrategy.AUTOMATIC)
+
+    def test_flowbox_items_order(self):
+        samples = ["tears_of_steel.webm", "1sec_simpsons_trailer.mp4"]
+        self.check_import([samples[0]], proxying_strategy=ProxyingStrategy.NOTHING)
+        self.check_import([samples[1]], proxying_strategy=ProxyingStrategy.NOTHING, setup=False)
+        asset_names = [item.uri.split("/")[-1] for item in self.medialibrary.store]
+        self.assertEqual(asset_names, sorted(samples))
 
     @skip("times out")
     def test_import_supported_forced_scaled_audio(self):
