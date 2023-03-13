@@ -246,7 +246,7 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
     def __update_scaled_proxy_check(self):
         target_width = self.app.project_manager.current_project.scaled_proxy_width
         target_height = self.app.project_manager.current_project.scaled_proxy_height
-        self.scaled_proxy_check.set_label(_("Scale assets larger than %s×%s px.") % (target_width, target_height))
+        self.scaled_proxy_check.set_label(_("Scale down assets larger than %s×%s px.") % (target_width, target_height))
 
     def save_values(self):
         self.app.settings.closeImportDialog = not self.__keep_open_check.get_active()
