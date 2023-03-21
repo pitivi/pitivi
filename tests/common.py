@@ -79,6 +79,21 @@ os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp(suffix="pitiviTestsuite")
 locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 
 
+# Disk access can take very long on the CI runners.
+GITLAB_CI_TIMEOUT_FACTOR = 10
+
+
+def factor_timeout(obj, attr_name):
+    if not os.environ.get("GITLAB_CI", False):
+        return
+
+    attr_backup = "{}_original_timeout_value".format(attr_name)
+    if not hasattr(obj, attr_backup):
+        original_value = getattr(obj, attr_name)
+        setattr(obj, attr_backup, original_value)
+        setattr(obj, attr_name, original_value * GITLAB_CI_TIMEOUT_FACTOR)
+
+
 def __create_settings(proxying_strategy=ProxyingStrategy.NOTHING,
                       num_transcoding_jobs=4,
                       **additional_settings):
@@ -159,7 +174,7 @@ def create_main_loop():
         if not debugging:
             if os.environ.get("GITLAB_CI", False):
                 # Disk access can take very long on the CI runners.
-                timeout_seconds *= 10
+                timeout_seconds *= GITLAB_CI_TIMEOUT_FACTOR
             source = GLib.timeout_source_new_seconds(timeout_seconds)
             source.set_callback(timeout_cb)
             source.attach()
@@ -403,6 +418,11 @@ class TestCase(unittest.TestCase, Loggable):
         # TODO: Get rid of Previewer.manager.
         assert hasattr(Previewer, "manager")
         Previewer.manager = PreviewGeneratorManager()
+
+        from pitivi.utils import pipeline
+        factor_timeout(pipeline, "WATCHDOG_TIMEOUT")
+        factor_timeout(pipeline, "MAX_BRINGING_TO_PAUSED_DURATION")
+        factor_timeout(pipeline, "MAX_SET_STATE_DURATION")
 
     def tearDown(self):
         # don't barf gc info all over the console if we have already failed a
