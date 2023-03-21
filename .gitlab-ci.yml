@@ -2,7 +2,6 @@
 stages:
   - docker_image
   - build
-  - deploy
 
 variables:
   MANIFEST: /build/pitivi/build/flatpak/org.pitivi.Pitivi.json
@@ -85,13 +84,6 @@ build:
 
     # Run the unit tests.
     - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher /build/pitivi/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 10 --xunit-file ${XUNIT_PATH} --logs-dir ${CI_PROJECT_DIR}/tests-logs
-
-    # Create a flatpak repo.
-    - flatpak build-export ${CI_PROJECT_DIR}/flatpak_repo /build/flatpak-build-dir --subject="Rolling update for Pitivi master" --body="See ${CI_JOB_URL}"
-    # GitLab fails to upload directories with many files.
-    # Workaround https://gitlab.com/gitlab-org/gitlab-runner/-/issues/26869
-    - cd ${CI_PROJECT_DIR}/
-    - tar cf flatpak_repo.tar flatpak_repo/
   cache:
     paths:
       - flatpak-cache
@@ -99,19 +91,7 @@ build:
     expire_in: 30 days
     paths:
       - xunit.xml
-      - flatpak_repo.tar
       - tests-logs/
     reports:
       junit:
         - ${XUNIT_PATH}
-
-
-deploy:
-  tags:
-    - PitiviBuildMachine
-  stage: deploy
-  script:
-    - tar xf flatpak_repo.tar
-    - flatpak build-commit-from --src-repo=flatpak_repo /srv/http --timestamp=NOW --gpg-sign=739E841A
-  only:
-    - master@GNOME/pitivi
