@@ -197,6 +197,8 @@ class OperationTimeout(Exception):
 class CheckedOperationDuration:
 
     def __init__(self, seconds, error_message=None):
+        if os.environ.get("GITLAB_CI", False):
+            seconds *= GITLAB_CI_TIMEOUT_FACTOR
         if error_message is None:
             error_message = "operation timed out after %s seconds" % seconds
         self.seconds = seconds
