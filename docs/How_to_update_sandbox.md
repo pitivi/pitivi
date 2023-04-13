@@ -20,7 +20,7 @@ To update the flatpak runtime version, look in `org.pitivi.Pitivi.json` for the
 current version:
 
 ```
-    "runtime-version": "43",
+    "runtime-version": "44",
 ```
 
 Check out what is the latest flatpak runtime version. For example:
@@ -28,8 +28,8 @@ Check out what is the latest flatpak runtime version. For example:
 ```
 $ flatpak remote-ls flathub --system | grep org.gnome.Platform
 GNOME Application Platform version 3.38	org.gnome.Platform		3.38
-GNOME Application Platform version 42	org.gnome.Platform		42
 GNOME Application Platform version 43	org.gnome.Platform		43
+GNOME Application Platform version 44	org.gnome.Platform		44
 ```
 
 Check out in the git history how we updated the runtime version in the past and

@@ -29,25 +29,25 @@ upstream makes it easier to use source packages we should switch.
 
 ```
 $ cd build/flatpak
-$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/43 librosa
-$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/43 matplotlib
+$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/44 librosa
+$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/44 matplotlib
 ```
 
 ## Updating the development tools
 
 ```
 $ cd build/flatpak
-$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/43 nose setuptools_git setuptools_pep8 sphinx hotdoc
+$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/44 nose setuptools_git setuptools_pep8 sphinx hotdoc
 $ mv python3-modules.json python3-hotdoc.json
-$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/43 ipdb
+$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/44 ipdb
 ```
 
 ## Updating the pre-commit framework
 
 ```
 $ cd build/flatpak
-$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/43 pre-commit
-$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/43 setuptools-scm 'pylint<=2.13.5'
+$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/44 pre-commit
+$ python3 flatpak-pip-generator --runtime org.gnome.Sdk/x86_64/44 setuptools-scm 'pylint<=2.13.5'
 ```
 
 ## Updating your local sandbox
@@ -64,7 +64,7 @@ If errors happen, you can inspect the SDK by launching `bash` in a sandbox, for
 example:
 
 ```
-$ flatpak run --user --command=bash --devel org.gnome.Sdk/x86_64/43
-[📦 org.gnome.Sdk ~]$ which python3
-/usr/bin/python3
+$ flatpak run --user --command=bash --devel org.gnome.Sdk/x86_64/44
+[📦 org.gnome.Sdk ~]$ python3 --version
+Python 3.10.6
 ```
