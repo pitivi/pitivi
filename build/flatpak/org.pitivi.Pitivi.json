@@ -2,17 +2,14 @@
     "app-id": "org.pitivi.Pitivi",
     "branch": "master",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "43",
+    "runtime-version": "46",
     "command": "pitivi",
     "finish-args": [
         "--socket=fallback-x11",
         "--share=ipc",
         "--socket=pulseaudio",
         "--socket=wayland",
-        "--filesystem=xdg-run/dconf",
-        "--filesystem=~/.config/dconf:ro",
-        "--talk-name=ca.desrt.dconf",
-        "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
+        "--metadata=X-DConf=migrate-path=/org/pitivi/Pitivi/",
         "--talk-name=org.freedesktop.Notifications",
         "--filesystem=host",
         "--device=dri"
@@ -44,7 +41,12 @@
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/gsound.git",
                     "tag": "1.0.3",
-                    "commit": "95d36d60cf53e0e7c5d5325e0f1f4fc765a611ae"
+                    "commit": "95d36d60cf53e0e7c5d5325e0f1f4fc765a611ae",
+                    "x-checker-data": {
+                        "type": "gnome",
+                        "name": "gsound",
+                        "stable-only": true
+                    }
                 }
             ]
         },
@@ -61,7 +63,7 @@
                     "type": "git",
                     "url": "https://code.videolan.org/videolan/x264.git",
                     "//": "Just get the latest from https://code.videolan.org/videolan/x264/-/commits/stable/ they don't do tags/snapshots/releases anymore",
-                    "commit": "baee400fa9ced6f5481a728138fed6e867b0ff7f"
+                    "commit": "31e19f92f00c7003fa115047ce50978bc98c3a0d"
                 }
             ]
         },
@@ -176,13 +178,13 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/opencv/opencv/archive/refs/tags/3.4.18.tar.gz",
-                    "sha256": "d6a69aa4a775a074662685b9bc2b07b88fb867f19d939b03ad281571b62f2620"
+                    "url": "https://github.com/opencv/opencv/archive/refs/tags/3.4.19.tar.gz",
+                    "sha256": "9b913e74299ce4416a5c94000da577c592bf670fd53bad16220eb115a0821529"
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/opencv/opencv_contrib/archive/3.4.18.tar.gz",
-                    "sha256": "599bb4d3800a9523a91cecedb7f6d4316890275a39b8f9d66f73263f29ea1f61",
+                    "url": "https://github.com/opencv/opencv_contrib/archive/3.4.19.tar.gz",
+                    "sha256": "4e7426f1d0f8dffafa5fe70b72ab33997d0055c7804d7d2760c7ff0a153efb38",
                     "dest": "contrib"
                 }
             ]
@@ -196,14 +198,14 @@
             ],
             "sources": [
                 {
-                    "type": "git",
-                    "url": "https://github.com/dyne/frei0r.git",
-                    "tag": "v1.8.0",
+                    "type": "archive",
+                    "url": "https://github.com/dyne/frei0r/archive/v2.3.3.tar.gz",
+                    "sha256": "aeeefe3a9b44761b2cf110017d2b1dfa2ceeb873da96d283ba5157380c5d0ce5",
                     "x-checker-data": {
-                        "type": "html",
-                        "url": "https://files.dyne.org/frei0r/",
-                        "version-pattern": "frei0r-plugins-([\\d\\.-]*).tar.gz",
-                        "url-template": "https://files.dyne.org/frei0r/frei0r-plugins-$version.tar.gz"
+                        "type": "anitya",
+                        "project-id": 10670,
+                        "stable-only": true,
+                        "url-template": "https://github.com/dyne/frei0r/archive/v$version.tar.gz"
                     }
                 }
             ]
@@ -214,8 +216,8 @@
                 {
                     "type": "git",
                     "url": "https://codeberg.org/soundtouch/soundtouch",
-                    "tag": "2.3.2",
-                    "commit": "29fba832a7920a04eab956b3990c50e13d8c93f9",
+                    "tag": "2.3.3",
+                    "commit": "e83424d5928ab8513d2d082779c275765dee31b9",
                     "x-checker-data": {
                         "type": "git",
                         "tag-pattern": "^([\\d.]+)$"
@@ -252,8 +254,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://bitbucket.org/multicoreware/x265_git/downloads/x265_3.5.tar.gz",
-                    "sha256": "e70a3335cacacbba0b3a20ec6fecd6783932288ebc8163ad74bcc9606477cae8",
+                    "url": "https://bitbucket.org/multicoreware/x265_git/downloads/x265_3.6.tar.gz",
+                    "sha256": "663531f341c5389f460d730e62e10a4fcca3428ca2ca109693867bc5fe2e2807",
                     "x-checker-data": {
                         "type": "html",
                         "url": "https://bitbucket.org/multicoreware/x265_git/raw/stable/x265Version.txt",
@@ -291,7 +293,6 @@
                 "--disable-audiotoolbox",
                 "--disable-videotoolbox",
                 "--disable-vaapi",
-                "--disable-crystalhd",
                 "--disable-mediacodec",
                 "--disable-nvenc",
                 "--disable-mmal",
@@ -310,8 +311,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n5.1.2.tar.gz",
-                    "sha256": "ea84f1f7f72d0d7c4c2cbb6b4f2170b908a090448fc1834353a9f5fbf7c31fb4",
+                    "url": "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n7.0.2.tar.gz",
+                    "sha256": "5eb46d18d664a0ccadf7b0adee03bd3b7fa72893d667f36c69e202a807e6d533",
                     "x-checker-data": {
                         "type": "html",
                         "url": "https://git.ffmpeg.org/gitweb/ffmpeg.git/tags",
@@ -331,8 +332,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.2.tar.gz",
-                    "sha256": "7812b4f0cf66acda0d0fe4302545339517e702af7674dd04e5fe22a5ade16a90"
+                    "url": "https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.3.tar.gz",
+                    "sha256": "e25671cd96b10bad896aa42ab91a695a9e573395262baed4e4a2ff178d6a3a78"
                 }
             ]
         },
@@ -342,7 +343,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "tag": "0.4.32",
+                    "tag": "0.4.39",
                     "url": "https://gitlab.freedesktop.org/gstreamer/orc.git"
                 }
             ]
@@ -374,7 +375,7 @@
                 "-Dgpl=enabled",
                 "-Dgst-devtools:doc=disabled",
                 "-Dgst-editing-services:doc=disabled",
-                "-Dgst-editing-services:pygi-overrides-dir=/app/lib/python3.10/site-packages/gi/overrides/",
+                "-Dgst-editing-services:pygi-overrides-dir=/app/lib/python3.11/site-packages/gi/overrides/",
                 "-Dgst-libav:doc=disabled",
                 "-Dgst-plugins-bad:aom=disabled",
                 "-Dgst-plugins-bad:doc=disabled",
@@ -388,7 +389,7 @@
                 "-Dgst-plugins-good:dv=enabled",
                 "-Dgst-plugins-ugly:doc=disabled",
                 "-Dgst-plugins-ugly:x264=enabled",
-                "-Dgst-python:pygi-overrides-dir=/app/lib/python3.10/site-packages/gi/overrides/",
+                "-Dgst-python:pygi-overrides-dir=/app/lib/python3.11/site-packages/gi/overrides/",
                 "-Dgstreamer-vaapi:doc=disabled",
                 "-Dintrospection=enabled",
                 "-Dlibav=enabled",
@@ -415,7 +416,12 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/libpeas.git",
-                    "tag": "libpeas-1.32.0"
+                    "tag": "libpeas-1.36.0",
+                    "x-checker-data": {
+                        "type": "gnome",
+                        "name": "libpeas",
+                        "stable-only": true
+                    }
                 }
             ]
         },

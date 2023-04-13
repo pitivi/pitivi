@@ -6,8 +6,8 @@ index bf54882..e816db5 100644
 
  # Compiler flags. Apply -Ofast (implies -O3 -ffast-math) to allow gcc autovectorization
  # generate effective SIMD code.
--CXXFLAGS+=" -Ofast"
-+CXXFLAGS+=" -O3"
+-CXXFLAGS="${CXXFLAGS} -Ofast -Wall -Wextra -Wzero-as-null-pointer-constant -Wno-unknown-pragmas"
++CXXFLAGS="${CXXFLAGS} -O3 -Wall -Wextra -Wzero-as-null-pointer-constant -Wno-unknown-pragmas"
 
  # Set AR_FLAGS to avoid build warning "ar: `u' modifier ignored since `D' is the default (see `U')"
  AR_FLAGS='cr'

@@ -28,8 +28,14 @@ Check out what is the latest flatpak runtime version. For example:
 ```
 $ flatpak remote-ls flathub --system | grep org.gnome.Platform
 GNOME Application Platform version 3.38	org.gnome.Platform		3.38
-GNOME Application Platform version 42	org.gnome.Platform		42
-GNOME Application Platform version 43	org.gnome.Platform		43
+GNOME Application Platform version 45	org.gnome.Platform		45
+GNOME Application Platform version 46	org.gnome.Platform		46
+```
+
+Download the latest:
+
+```
+$ flatpak install org.gnome.Sdk/x86_64/46
 ```
 
 Check out in the git history how we updated the runtime version in the past and
@@ -42,22 +48,28 @@ Some of them can be updated automatically with
 [flatpak-external-data-checker](https://github.com/flathub/flatpak-external-data-checker):
 
 ```
-$ flatpak run --filesystem=$HOME/dev/pitivi/pitivi org.flathub.flatpak-external-data-checker build/flatpak/org.pitivi.Pitivi.json --update
+$ flatpak run --filesystem=$HOME/dev/pitivi/pitivi org.flathub.flatpak-external-data-checker build/flatpak/org.pitivi.Pitivi.json --update --edit-only
 ```
 
-Others have to be checked and updated manually.
+Create a commit with the automatically changed deps.
+
+```
+$ git commit -a -m "build: Update deps with flatpak-external-data-checker"
+```
+
+Other deps have to be checked and updated manually.
 
 ## Check the Python version
 
-Check the Python version in the sandbox. Last time it was:
+Check the Python version in the sandbox. For example, last time it was:
 
 ```
-$ flatpak run --user --command=bash --devel org.gnome.Sdk/x86_64/43
+$ flatpak run --user --command=bash --devel org.gnome.Sdk/x86_64/46
 [📦 org.gnome.Sdk ~]$ python --version
-Python 3.10
+Python 3.11.9
 ```
 
-When the Python version changes, update the `/app/lib/python3.10` occurrences
+When the Python version changes, update the `/app/lib/python3.11` occurrences
 in the [flatpak
 manifest](https://gitlab.gnome.org/GNOME/pitivi/blob/master/build/flatpak/org.pitivi.Pitivi.json)
 and also update the [Python dependencies](Updating_Python_dependencies.md).

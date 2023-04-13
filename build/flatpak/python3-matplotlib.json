@@ -7,53 +7,53 @@
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/d6/be/996d629efd03aa305472a17183fcdfe2dd8529acea767d0ba2242d90cbfa/Pillow-9.3.0-cp310-cp310-manylinux_2_28_x86_64.whl",
-            "sha256": "801ec82e4188e935c7f5e22e006d01611d6b41661bba9fe45b60e7ac1a8f84de"
+            "url": "https://files.pythonhosted.org/packages/ee/c0/9bd123d676eb61750e116a2cd915b06483fc406143cfc36c7f263f0f5368/contourpy-1.2.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "sha256": "d4492d82b3bc7fbb7e3610747b159869468079fe149ec5c4d771fa1f614a14df"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/1c/11/0c1e2179d085dae1392de1c7ee4ad47dd5537b1bd16c31411dee03f2cbf5/contourpy-1.0.6-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-            "sha256": "1c0e1308307a75e07d1f1b5f0f56b5af84538a5e9027109a7bcf6cb47c434e72"
+            "url": "https://files.pythonhosted.org/packages/e7/05/c19819d5e3d95294a6f5947fb9b9629efb316b96de511b418c53d245aae6/cycler-0.12.1-py3-none-any.whl",
+            "sha256": "85cef7cff222d8644161529808465972e51340599459b8ac3ccbac5a854e0d30"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/5c/f9/695d6bedebd747e5eb0fe8fad57b72fdf25411273a39791cde838d5a8f51/cycler-0.11.0-py3-none-any.whl",
-            "sha256": "3a27e95f763a428a739d2add979fa7494c912a32c17c4c38c4d5f082cad165a3"
+            "url": "https://files.pythonhosted.org/packages/a4/22/0a0ad59d9367997fd74a00ad2e88d10559122e09f105e94d34c155aecc0a/fonttools-4.53.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "sha256": "bee32ea8765e859670c4447b0817514ca79054463b6b79784b08a8df3a4d78e3"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/e3/d9/e9bae85e84737e76ebbcbea13607236da0c0699baed0ae4f1151b728a608/fonttools-4.38.0-py3-none-any.whl",
-            "sha256": "820466f43c8be8c3009aef8b87e785014133508f0de64ec469e4efb643ae54fb"
+            "url": "https://files.pythonhosted.org/packages/17/ba/17a706b232308e65f57deeccae503c268292e6a091313f6ce833a23093ea/kiwisolver-1.4.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "sha256": "040c1aebeda72197ef477a906782b5ab0d387642e93bda547336b8957c61022e"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/79/0f/5cc4ca3df66c49817944b9a1c7343ba70aefffc868ddf651d7839cc5dffd/kiwisolver-1.4.4-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.whl",
-            "sha256": "7577c1987baa3adc4b3c62c33bd1118c3ef5c8ddef36f0f2c950ae0b199e100d"
+            "url": "https://files.pythonhosted.org/packages/41/f1/115e7c79b4506b4f0533acba742babd9718ff92eeca6d4205843173b6173/matplotlib-3.9.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "sha256": "76cce0f31b351e3551d1f3779420cf8f6ec0d4a8cf9c0237a3b549fd28eb4abb"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/83/71/5ff2ef1ddb8e12cf50b741d68de649731684779ab9cc7f5d15bbf335481a/matplotlib-3.6.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-            "sha256": "9347cc6822f38db2b1d1ce992f375289670e595a2d1c15961aacbe0977407dfc"
+            "url": "https://files.pythonhosted.org/packages/ef/27/39622993e8688a1f05898a3c3b2836b856f79c06637ebd4b71cb35cc9b18/numpy-2.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "sha256": "15eb4eca47d36ec3f78cde0a3a2ee24cf05ca7396ef808dda2c0ddad7c2bde67"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/0c/83/78ae18fffc185d0d57097610d5a97473ef11dbdca95f16739ee96b158087/numpy-1.23.4-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-            "sha256": "a8365b942f9c1a7d0f0dc974747d99dd0a0cdfc5949a33119caf05cb314682d3"
+            "url": "https://files.pythonhosted.org/packages/08/aa/cc0199a5f0ad350994d660967a8efb233fe0416e4639146c089643407ce6/packaging-24.1-py3-none-any.whl",
+            "sha256": "5b8f2217dbdbd2f7f384c41c628544e6d52f2d0f53c6d0c3ea61aa5d1d7ff124"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/05/8e/8de486cbd03baba4deef4142bd643a3e7bbe954a784dc1bb17142572d127/packaging-21.3-py3-none-any.whl",
-            "sha256": "ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522"
+            "url": "https://files.pythonhosted.org/packages/ba/e5/8c68ff608a4203085158cff5cc2a3c534ec384536d9438c405ed6370d080/pillow-10.4.0-cp311-cp311-manylinux_2_28_x86_64.whl",
+            "sha256": "76a911dfe51a36041f2e756b00f96ed84677cdeb75d25c767f296c1c1eda1319"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/6c/10/a7d0fa5baea8fe7b50f448ab742f26f52b80bfca85ac2be9d35cdd9a3246/pyparsing-3.0.9-py3-none-any.whl",
-            "sha256": "5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc"
+            "url": "https://files.pythonhosted.org/packages/9d/ea/6d76df31432a0e6fdf81681a895f009a4bb47b3c39036db3e1b528191d52/pyparsing-3.1.2-py3-none-any.whl",
+            "sha256": "f9db75911801ed778fe61bb643079ff86601aca99fcae6345aa67292038fb742"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/36/7a/87837f39d0296e723bb9b62bbb257d0355c7f6128853c78955f57342a56d/python_dateutil-2.8.2-py2.py3-none-any.whl",
-            "sha256": "961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"
+            "url": "https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+            "sha256": "a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427"
         }
     ]
 }
