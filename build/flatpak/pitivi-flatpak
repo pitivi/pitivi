@@ -35,7 +35,7 @@ PITIVI_BRANCH = "master"
 MANIFEST_NAME = "org.pitivi.Pitivi.json"
 FLATPAK_REQ = [
     ("flatpak", "0.10.0"),
-    ("flatpak-builder", "0.10.0"),
+    ("flatpak-builder", "1.2.2"),
 ]
 FLATPAK_VERSION = {}
 DEFAULT_GST_BRANCH = 'main'
