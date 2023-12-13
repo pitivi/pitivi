@@ -24,8 +24,8 @@ $ source bin/pitivi-env
 ```
 
 0. Freeze the strings
-    * Send an email to [gnome-i18n](https://mail.gnome.org/archives/gnome-i18n/)
-    @gnome.org to inform the translators the strings have been frozen and that
+    * Post to [gnome-i18n](https://discourse.gnome.org/tag/i18n)
+    to inform the translators the strings have been frozen and that
     in **one week** the release will be cut.
     * It would be good to start preparing a blogpost already.
 
@@ -112,7 +112,7 @@ If there are new maintainers.
 
 8. Spread the word about the release
     * Send an [email](https://lists.freedesktop.org/archives/gstreamer-devel/2017-September/065566.html) to gstreamer-devel@lists.freedesktop.org
-    * Send an [email](https://mail.gnome.org/archives/gnome-i18n/2017-September/msg00136.html) to gnome-i18n@gnome.org thanking translators.
+    * Reply to the connected string freeze [post](https://discourse.gnome.org/tag/i18n), expressing gratitude to the translators.
     * [Archlinux](https://www.archlinux.org/packages/community/x86_64/pitivi/), click "Flag Package Out-of-Date".
     * [Debian](https://packages.debian.org/pitivi), click the "unstable" Debian version and look for "maintainer".
     * [Fedora](https://packages.fedoraproject.org/pkgs/pitivi/pitivi/), look for "You can contact the maintainers of this package via email at".
