@@ -19,5 +19,5 @@ For the list of dependencies, look at [pitivi/check.py](pitivi/check.py)
 You can [hack on Pitivi](https://developer.pitivi.org/HACKING.html) in a local
 flatpak sandbox which is easy to set up.
 
-To get get the most out of your time and effort, come [talk to
+To get the most out of your time and effort, come [talk to
 us](https://www.pitivi.org/contact/) so we coordinate.
