@@ -6,6 +6,16 @@ short-description: What the GSoC students did in the previous years
 
 See [Google Summer of Code](Google_Summer_of_Code.md) for how to get involved.
 
+## 2023
+
+-   [Jainil Patel](https://jainl28patel.github.io/posts/Pitivi_Gsoc_finalReport/) continued the monumental task of porting the app to GTK4. Great progress.
+-   [Rhythm Narula](https://medium.com/@rhythm.narula26/gsoc-pitivi-project-crafting-closing-credits-clip-generator-5454088a570d) researched how to integrate a Closing Credits Clip Generator, working on top of the GTK4 branch.
+
+## 2022
+
+-   [Thejas Kiran P S](https://thejaskiranps.github.io/blog/posts/final/) did great enhancements to the timeline.
+-   [Aryan Kaushik](https://aryank.in/posts/2022-09-11-pitivi-gsoc-final-report/) paved the way to porting of the UI codebase from GTK3 to GTK4. Great progress.
+
 ## 2021
 
 -   [Piotrek Brzeziński](https://thewildtree.github.io/) integrated
