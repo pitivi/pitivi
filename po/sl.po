@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2023-06-19 14:34+0000\n"
+"POT-Creation-Date: 2023-12-05 14:49+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -126,14 +126,12 @@ msgid "Estimating..."
 msgstr "Poteka ocenjevanje ..."
 
 #: data/ui/beatdetection.ui:18
-#, fuzzy
 msgid "Detect beats"
-msgstr "Zaznaj udarce"
+msgstr "Zaznaj dobe"
 
 #: data/ui/beatdetection.ui:35
-#, fuzzy
 msgid "Clear detected beats"
-msgstr "Počisti zaznane udarce"
+msgstr "Počisti zaznane dobe"
 
 #: data/ui/beatdetection.ui:66
 msgid "Detecting..."
@@ -217,7 +215,6 @@ msgid "Height:"
 msgstr "Višina:"
 
 #: data/ui/cliptransformation.ui:141
-#, fuzzy
 msgid "Constrain Proportions"
 msgstr "Omeji razmerja"
 
@@ -250,12 +247,10 @@ msgid "Noise level:"
 msgstr "Raven šuma:"
 
 #: data/ui/customwidgets/alpha.ui:167
-#, fuzzy
 msgid "White sensitivity:"
 msgstr "Občutljivost na belo barvo:"
 
 #: data/ui/customwidgets/alpha.ui:179
-#, fuzzy
 msgid "Black sensitivity:"
 msgstr "Črna občutljivost:"
 
@@ -264,7 +259,6 @@ msgid "Alpha:"
 msgstr "Alfa:"
 
 #: data/ui/customwidgets/alpha.ui:350
-#, fuzzy
 msgid "Target chroma key:"
 msgstr "Ciljni kromatični ključ:"
 
@@ -562,9 +556,8 @@ msgstr "točke"
 
 #. When checked, changing the width or height affects also the other so that the aspect ratio value (width / height) does not change.
 #: data/ui/projectsettings.ui:295 data/ui/projectsettings.ui:623
-#, fuzzy
 msgid "Constrain proportions"
-msgstr "Omeji razmerja"
+msgstr "Omeji mere oz. razmerja"
 
 #: data/ui/projectsettings.ui:299
 msgid "Maintain aspect ratio"
@@ -594,18 +587,16 @@ msgid "Info"
 msgstr "Podrobnosti"
 
 #: data/ui/projectsettings.ui:542
-#, fuzzy
 msgid "Scaled proxies resolution:"
-msgstr "Lestvica za približke z zmanjšano ločljivostjo:"
+msgstr "Zmanjšana ločljivost posrednih posnetkov:"
 
 #: data/ui/projectsettings.ui:563 data/ui/projectsettings.ui:591
 msgid "1"
 msgstr "1"
 
 #: data/ui/projectsettings.ui:641
-#, fuzzy
 msgid "<a href='#'>Proxy Preferences</a>"
-msgstr "<a href='#'>Nastavitve pooblaščenca</a>"
+msgstr "<a href='#'>Nastavitve posrednih posnetkov</a>"
 
 #: data/ui/projectsettings.ui:675
 msgid "Proxy"
@@ -646,7 +637,6 @@ msgid "Automatically render from proxy files"
 msgstr "Ali naj bodo stare datoteke iz koša odstranjene samodejno."
 
 #: data/ui/renderingdialog.ui:315
-#, fuzzy
 msgid ""
 "Use proxy files if they are available and the source asset media format is "
 "not officially supported.\n"
@@ -654,8 +644,8 @@ msgid ""
 "This option is a good trade-off between quality of the rendered video and "
 "stability."
 msgstr ""
-"Če so na voljo in medijski format izvornega sredstva ni uradno podprt, "
-"uporabite proxy datoteke.\n"
+"Če so na voljo in če medijski format izvornega sredstva ni uradno podprt, "
+"uporabite datoteke posrednih posnetkov.\n"
 "\n"
 "Ta možnost je dober kompromis med kakovostjo izrisanega videoposnetka in "
 "stabilnostjo."
@@ -665,13 +655,12 @@ msgid "Always render from proxy files"
 msgstr "Vedno upodabljaj iz datotek posrednih posnetkov"
 
 #: data/ui/renderingdialog.ui:334
-#, fuzzy
 msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
 msgstr ""
-"Prikazovanje vseh posredovanih posnetkov iz sredstev posrednika. Med "
-"postopkom upodabljanja lahko pride do izgube kakovosti."
+"Izris vseh posrednih posnetkov iz sredstev posrednih posnetkov. Med "
+"postopkom izrisovanja lahko pride do izgube kakovosti."
 
 #: data/ui/renderingdialog.ui:347
 msgid "Never render from proxy files"
@@ -915,7 +904,6 @@ msgid "Track"
 msgstr "Sledi"
 
 #: pitivi/action_search_bar.py:46
-#, fuzzy
 msgid "Search Action"
 msgstr "Dejanje iskanja"
 
@@ -983,16 +971,14 @@ msgid "Missing soft dependency:"
 msgstr "Manjkajoče odvisnosti:"
 
 #: pitivi/check.py:347
-#, fuzzy
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
 msgstr ""
-"ERROR - Ni bilo mogoče ustvariti Gst.Fraction - to pomeni, da gst-python ni "
+"NAPAKA - Ni bilo mogoče ustvariti Gst.Fraction - to pomeni, da gst-python ni "
 "pravilno nameščen."
 
 #: pitivi/check.py:352
-#, fuzzy
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -1001,7 +987,6 @@ msgstr ""
 "veljavnega (pulsesink, alsasink ali osssink)."
 
 #: pitivi/check.py:357
-#, fuzzy
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
@@ -1014,10 +999,9 @@ msgid "Could not import '%s'. Make sure you have it available."
 msgstr "Ni bilo mogoče uvoziti »%s«. Prepričajte se, da je na voljo."
 
 #: pitivi/check.py:386
-#, fuzzy
 msgid "Could not import 'gi'. Make sure you have pygobject available."
 msgstr ""
-"Ni bilo mogoče uvoziti 'gi'. Prepričajte se, da imate na voljo pygobject."
+"Ni bilo mogoče uvoziti »gi«. Prepričajte se, da imate na voljo pygobject."
 
 #: pitivi/check.py:485
 msgid "enables sound notifications when rendering is complete"
@@ -1032,22 +1016,20 @@ msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "dodatni kodeki predstavnosti prek knjižnice Libav"
 
 #: pitivi/check.py:491
-#, fuzzy
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
 msgstr ""
-"omogoči nadzorno uro v cevovodu GStreamer. Uporablja se za odkrivanje napak "
-"v GStreamerju in okrevanje po njih"
+"Omogoči nadzorovanje v cevovodu GStreamer. Uporablja se za odkrivanje napak "
+"v GStreamerju in obnovitev po njih"
 
 #: pitivi/check.py:495
 msgid "enables object tracking"
 msgstr "Omogoča sledenje predmetom"
 
 #: pitivi/check.py:496
-#, fuzzy
 msgid "enables beat detection functionality"
-msgstr "Omogoča funkcijo zaznavanja udarcev"
+msgstr "Omogoči funkcijo zaznavanja dob"
 
 #. Translators: This is the default text of a title clip.
 #: pitivi/clipproperties.py:69
@@ -1306,22 +1288,21 @@ msgid "Other"
 msgstr "Drugi"
 
 #: pitivi/dialogs/prefs.py:332
-#, fuzzy
 msgid ""
 "This resolution will be used as the default target resolution for new "
 "projects and projects missing scaled proxy meta-data."
 msgstr ""
 "Ta ločljivost bo uporabljena kot privzeta ciljna ločljivost za nove projekte "
-"in projekte, katerim manjkajo metapodatki preumerjenih nadomestnih posnetkov."
+"in projekte, katerim manjkajo metapodatki prilagojenih nadomestnih posnetkov."
 
 #: pitivi/dialogs/prefs.py:345
 msgid "Initial proxy size for new projects"
-msgstr ""
+msgstr "Začetna velikost posrednih posnetkov za nove projekte"
 
 #: pitivi/dialogs/prefs.py:380
 #, python-format
 msgid "Proxy resolution for the current project is %d×%d px"
-msgstr ""
+msgstr "Ločljivost posrednih posnetkov za trenutni projekt znaša %d×%d sl. t."
 
 #: pitivi/dialogs/prefs.py:459
 msgid "Reset the shortcut to the default accelerator"
@@ -1338,7 +1319,7 @@ msgstr "Uveljavi"
 
 #: pitivi/dialogs/prefs.py:634
 msgid "Apply the accelerator to this shortcut."
-msgstr ""
+msgstr "Uveljavi kombinacijo tipk za to tipkovno bližnjico."
 
 #: pitivi/dialogs/prefs.py:637
 msgid "Replace"
@@ -1349,6 +1330,8 @@ msgid ""
 "Remove this accelerator from where it was used previously and set it for "
 "this shortcut."
 msgstr ""
+"Odstranite to kombinacijo tipk z mesta, kjer je bila prej uporabljena, in jo "
+"nastavite za to tipkovno bližnjico."
 
 #: pitivi/dialogs/prefs.py:647
 #, python-format
@@ -1548,7 +1531,7 @@ msgstr "učinek"
 #. and denotes the tracked object.
 #: pitivi/effects.py:330
 msgid "{} cover"
-msgstr ""
+msgstr "{} ovitek"
 
 #: pitivi/effects.py:331
 msgid "Object cover effect"
@@ -1614,7 +1597,6 @@ msgstr ""
 
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/interactiveintro.py:154
-#, fuzzy
 msgid "Start Overview"
 msgstr "Začni pregled"
 
@@ -1792,14 +1774,12 @@ msgid "The project settings have been set to match file '%s'"
 msgstr "Nastavitve projekta so nastavljene tako, da se ujemajo z datoteko »%s«"
 
 #: pitivi/medialibrary.py:1219
-#, fuzzy
-#| msgid "The following file can not be used with Pitivi."
 msgid "The following file can not be used with Pitivi."
 msgid_plural "The following files can not be used with Pitivi."
-msgstr[0] "Pitivi ne more uporabiti naslednje datoteke."
+msgstr[0] "Pitivi ne more uporabiti naslednjih datotek."
 msgstr[1] "Pitivi ne more uporabiti naslednje datoteke."
-msgstr[2] "Pitivi ne more uporabiti naslednje datoteke."
-msgstr[3] "Pitivi ne more uporabiti naslednje datoteke."
+msgstr[2] "Pitivi ne more uporabiti naslednjih datotek."
+msgstr[3] "Pitivi ne more uporabiti naslednjih datotek."
 
 #: pitivi/medialibrary.py:1249
 msgid "Tag as:"
@@ -2038,6 +2018,9 @@ msgid ""
 "render otherwise.</b>\n"
 "\n"
 msgstr ""
+"<b>Prepričajte se, da je velikost izrisovanja soda, x264enc sicer morda ne "
+"bo mogel izrisovati.</b>\n"
+"\n"
 
 #: pitivi/render.py:1322
 msgid "An error occurred while trying to render your project."
@@ -2159,8 +2142,9 @@ msgid "Add layer"
 msgstr "Dodaj stezo"
 
 #: pitivi/timeline/timeline.py:1924
+#, fuzzy
 msgid "Action Search"
-msgstr ""
+msgstr "Iskanje dejanj"
 
 #: pitivi/timeline/timeline.py:1931
 msgid "Action Cut Mode"
@@ -2337,9 +2321,8 @@ msgstr "Uporabniške oznake"
 
 #. Translators: The list of markers representing detected audio beats.
 #: pitivi/utils/markers.py:36
-#, fuzzy
 msgid "Beats"
-msgstr "Udarci"
+msgstr "Dobe"
 
 #: pitivi/utils/misc.py:281
 msgid ""
@@ -2403,7 +2386,7 @@ msgstr "<b>Trajanje</b>: %s"
 #: pitivi/utils/ui.py:564
 #, python-format
 msgid "<b>Proxy creation progress:</b> %d%%"
-msgstr ""
+msgstr "<b>Napredek pri izdelavi posrednih posnetkov:</b> %d %%"
 
 #: pitivi/utils/ui.py:578
 #, python-format
