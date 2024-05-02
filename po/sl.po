@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/-/issues\n"
-"POT-Creation-Date: 2024-04-27 07:14+0000\n"
+"POT-Creation-Date: 2024-05-02 16:11+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -60,11 +60,11 @@ msgid ""
 "review your scenes. Pitivi's ripple and roll editing features allow spending "
 "more time on storytelling and less time on \"pushing clips around\"."
 msgstr ""
-"Z nemodalnim delovnim postopkom urejanja, ki je neodvisen od okvirja in "
-"osredotočen na predvajalno glavo, vam Pitivi omogoča hitro in natančno "
-"obrezovanje, delitev in pregledovanje prizorov. Pitivijeve funkcije "
-"valovitega in preklopnega urejanja omogočajo, da več časa porabite za "
-"pripovedovanje zgodbe in manj časa za \"premikanje posnetkov\"."
+"Z nemodalnim delovnim postopkom montaže, ki je neodvisen od hitrosti sličic "
+"in osredotočen na predvajalno glavo, vam Pitivi omogoča hitro in natančno "
+"obrezovanje, delitev in pregledovanje prizorov. Pitivijeve funkcije valovite "
+"in preklopne montaže omogočajo, da več časa porabite za pripovedovanje "
+"zgodbe in manj časa za »premikanje posnetkov«."
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:13
 msgid "Some other features include:"
@@ -76,13 +76,12 @@ msgid ""
 msgstr "Sprejme poljuben zapis, podprt v večpredstavnostnem okolju GStreamer"
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:16
-#, fuzzy
 msgid ""
 "Can animate hundreds of special effects and filters with keyframable "
 "properties"
 msgstr ""
 "Animirate lahko na stotine posebnih učinkov in filtrov z lastnostmi, ki jih "
-"je mogoče spreminjati s ključem"
+"je mogoče spreminjati s ključnimi sličicami"
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:17
 msgid "Ability to set custom aspect ratios, framerates and rendering presets"
@@ -95,9 +94,9 @@ msgid "Easy to use crossfades and SMPTE transitions"
 msgstr "Za uporabo enostavni prelivi in prehodi SMPTE"
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:19
-#, fuzzy
 msgid "Multihead-friendly with detachable user interface components"
-msgstr "Priročno za več glav s snemljivimi komponentami uporabniškega vmesnika"
+msgstr ""
+"Večnitnemu delu prijazno s snemljivimi komponentami uporabniškega vmesnika"
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:42
 msgid "The Pitivi Team"
@@ -879,7 +878,6 @@ msgid "Tracked Objects:"
 msgstr "Sledeni predmeti:"
 
 #: data/ui/trackerperspective.ui:195
-#, fuzzy
 msgid "Drag&drop on the video to delimit an object to be tracked."
 msgstr ""
 "Z vlečenjem in spuščanjem po videoposnetku omejite predmet, ki mu želite "
@@ -1808,10 +1806,10 @@ msgstr[3] ""
 #: pitivi/medialibrary.py:1538
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Izbriši ustrezne posredniške datoteke"
+msgstr[1] "Izbriši ustrezno posredniško datoteko"
+msgstr[2] "Izbriši ustrezni posredniški datoteki"
+msgstr[3] "Izbriši ustrezne posredniške datoteke"
 
 #: pitivi/medialibrary.py:1505
 msgid "Do not use Proxy for selected asset"
@@ -2116,7 +2114,6 @@ msgid "Markers magnetic by default"
 msgstr "Označevalniki naj bodo privzeto magnetni"
 
 #: pitivi/timeline/timeline.py:89
-#, fuzzy
 msgid ""
 "Whether markers created on new clips will be snapping targets by default."
 msgstr ""
@@ -2150,9 +2147,9 @@ msgid "Left click also seeks"
 msgstr "Klik levega gumba miške začne iskanje"
 
 #: pitivi/timeline/timeline.py:127
-#, fuzzy
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
-msgstr "Ali naj levi klik poleg izbiranja in montaže posnetkov tudi išče."
+msgstr ""
+"Ali naj z levim klikom poleg izbiranja in montaže posnetkov tudi iščete."
 
 #: pitivi/timeline/timeline.py:419 pitivi/timeline/timeline.py:1995
 msgid "Add layer"
@@ -2358,10 +2355,10 @@ msgid ""
 "settings; if you try to use Pitivi with a broken locale, weird bugs will "
 "happen."
 msgstr ""
-"Območne nastavitve sistema, ki jih uporabljate, ne omogočajo UTF-8. Podpora "
+"Območne nastavitve sistema, ki jih uporabljate, ne podpirajo UTF-8. Podpora "
 "za Unicode je potrebna za programsko opremo Python3, kot je Pitivi. "
-"Popravite sistemske nastavitve; če poskušate uporabiti Pitivi z zlomljeno "
-"lokacijo, se bodo zgodile čudne napake."
+"Popravite sistemske nastavitve; če poskušate uporabiti Pitivi z okvarjeno "
+"območno nastavitvijo, se bodo dogajale čudne napake."
 
 #: pitivi/utils/misc.py:300
 msgid "Error while decoding a string"
@@ -2654,7 +2651,7 @@ msgid "Type \"{help}(<command>)\" for more information."
 msgstr "Vnesite »{help}(<ukaz>)« za več informacij."
 
 #: plugins/console/utils.py:81
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "Not possible to override {key}, because shortcuts commands are read-only."
 msgstr "{key} ni mogoče preglasiti, ker so ukazi bližnjic samo za branje."
