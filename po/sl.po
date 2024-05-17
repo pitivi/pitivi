@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/-/issues\n"
-"POT-Creation-Date: 2024-05-02 16:11+0000\n"
+"POT-Creation-Date: 2024-05-02 20:47+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -53,7 +53,6 @@ msgstr ""
 "kljub vsej funkcionalnosti enostaven za učenje."
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:12
-#, fuzzy
 msgid ""
 "With a non-modal editing workflow, a framerate-independent and playhead-"
 "centric timeline, Pitivi allows you quickly and accurately trim, split and "
@@ -61,10 +60,10 @@ msgid ""
 "more time on storytelling and less time on \"pushing clips around\"."
 msgstr ""
 "Z nemodalnim delovnim postopkom montaže, ki je neodvisen od hitrosti sličic "
-"in osredotočen na predvajalno glavo, vam Pitivi omogoča hitro in natančno "
-"obrezovanje, delitev in pregledovanje prizorov. Pitivijeve funkcije valovite "
-"in preklopne montaže omogočajo, da več časa porabite za pripovedovanje "
-"zgodbe in manj časa za »premikanje posnetkov«."
+"in osredotočen na časovnico s predvajalno glavo, vam Pitivi omogoča hitro in "
+"natančno obrezovanje, delitev in pregledovanje prizorov. Pitivijeve funkcije "
+"montaže zamikanja in previjanja omogočajo, da več časa porabite za "
+"pripovedovanje zgodbe in manj časa za »prekladanje posnetkov«."
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:13
 msgid "Some other features include:"
@@ -1867,7 +1866,6 @@ msgid "Sorry, something didn’t work right."
 msgstr "Ops, prišlo je do napake."
 
 #: pitivi/project.py:181
-#, fuzzy
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -2160,12 +2158,10 @@ msgid "Action Search"
 msgstr "Iskanje dejanj"
 
 #: pitivi/timeline/timeline.py:1931
-#, fuzzy
 msgid "Action Cut Mode"
 msgstr "Način reza z dejanjem"
 
 #: pitivi/timeline/timeline.py:1938
-#, fuzzy
 msgid "Action Locked Playhead Mode"
 msgstr "Način zaklepa predvajalne glave z dejanjem"
 
@@ -2348,7 +2344,6 @@ msgstr ""
 "pregledovalnik dokumentacije GNOME »yelp« ali spletni brskalnik"
 
 #: pitivi/utils/misc.py:290
-#, fuzzy
 msgid ""
 "The system's locale that you are using is not UTF-8 capable. Unicode support "
 "is required for Python3 software like Pitivi. Please correct your system "
