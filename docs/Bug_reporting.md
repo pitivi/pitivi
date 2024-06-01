@@ -10,7 +10,7 @@ requests](https://gitlab.gnome.org/GNOME/pitivi/issues) to see if
 your problem has already been reported.
 
 To report a bug/problem in the software, [create an
-issue](https://gitlab.gnome.org/GNOME/pitivi/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=).
+issue](https://gitlab.gnome.org/GNOME/pitivi/-/issues/).
 Ideally you can describe exactly the steps *anyone* can follow to
 reproduce the bug. The more details, the better.
 
