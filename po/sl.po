@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/-/issues\n"
-"POT-Creation-Date: 2024-05-02 20:47+0000\n"
+"POT-Creation-Date: 2024-05-17 18:03+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -25,7 +25,7 @@ msgstr ""
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
 msgid "Pitivi video project (legacy)"
-msgstr "Video projekt Pitivi"
+msgstr "Video projekt Pitivi (opuščeno)"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:12
 msgid "Pitivi/GES video project"
@@ -1796,10 +1796,10 @@ msgstr "Uredi"
 #: pitivi/medialibrary.py:1483
 msgid "Do not use Optimised Proxy for selected asset"
 msgid_plural "Do not use Optimised Proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Ne uporabljaj optimiziranih posrednih posnetkov za izbrana sredstva"
+msgstr[1] "Ne uporabljaj optimiziranih posrednih posnetkov za izbrano sredstvo"
+msgstr[2] "Ne uporabljaj optimiziranih posrednih posnetkov za izbrani sredstvi"
+msgstr[3] "Ne uporabljaj optimiziranih posrednih posnetkov za izbrana sredstva"
 
 #: pitivi/medialibrary.py:1494 pitivi/medialibrary.py:1516
 #: pitivi/medialibrary.py:1538
@@ -1813,34 +1813,34 @@ msgstr[3] "Izbriši ustrezne posredniške datoteke"
 #: pitivi/medialibrary.py:1505
 msgid "Do not use Proxy for selected asset"
 msgid_plural "Do not use Proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Ne uporabljaj posrednih posnetkov za izbrana sredstva"
+msgstr[1] "Ne uporabljaj posrednih posnetkov za izbrano sredstvo"
+msgstr[2] "Ne uporabljaj posrednih posnetkov za izbrani sredstvi"
+msgstr[3] "Ne uporabljaj posrednih posnetkov za izbrana sredstva"
 
 #: pitivi/medialibrary.py:1527
 msgid "Do not use Scaled Proxy for selected asset"
 msgid_plural "Do not use Scaled Proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Ne uporabljaj skaliranih posrednih posnetkov za izbrana sredstva"
+msgstr[1] "Ne uporabljaj skaliranih posrednih posnetkov za izbrano sredstvo"
+msgstr[2] "Ne uporabljaj skaliranih posrednih posnetkov za izbrani sredstvi"
+msgstr[3] "Ne uporabljaj skaliranih posrednih posnetkov za izbrana sredstva"
 
 #: pitivi/medialibrary.py:1549
 msgid "Use Optimised Proxy for selected asset"
 msgid_plural "Use Optimised Proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Uporabljaj optimizirane posredne posnetke za izbrana sredstva"
+msgstr[1] "Uporabljaj optimizirane posredne posnetke za izbrano sredstvo"
+msgstr[2] "Uporabljaj optimizirane posredne posnetke za izbrani sredstvi"
+msgstr[3] "Uporabljaj optimizirane posredne posnetke za izbrana sredstva"
 
 #: pitivi/medialibrary.py:1559
 msgid "Use Scaled Proxy for selected asset"
 msgid_plural "Use Scaled Proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Uporabljaj skalirane posredne posnetke za izbrana sredstva"
+msgstr[1] "Uporabljaj skalirane posredne posnetke za izbrano sredstvo"
+msgstr[2] "Uporabljaj skalirane posredne posnetke za izbrani sredstvi"
+msgstr[3] "Uporabljaj skalirane posredne posnetke za izbrana sredstva"
 
 #: pitivi/pluginmanager.py:54
 msgid "User plugins"
