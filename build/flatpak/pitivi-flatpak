@@ -161,7 +161,8 @@ def check_flatpak(verbose=True):
         def comparable_version(version):
             return tuple(map(int, (version.split("."))))
 
-        version = output.decode("utf-8").split(" ")[1].strip("\n")
+        # For example: "Flatpak 1.15.9", "flatpak-builder-1.4.4"
+        version = output.decode("utf-8").replace("-", " ").split(" ")[-1].strip("\n")
         current = comparable_version(version)
         FLATPAK_VERSION[app] = current
         if current < comparable_version(required_version):
