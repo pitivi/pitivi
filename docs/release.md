@@ -55,8 +55,7 @@ same as the name of the GitLab milestone you just archived.
 Compose the exec summary of changes, at the top. This ends up in the `.news`
 file at [download.gnome.org/sources/pitivi](https://download.gnome.org/sources/pitivi/).
      * [data/org.pitivi.Pitivi.appdata.xml.in](https://gitlab.gnome.org/GNOME/pitivi/blob/master/data/org.pitivi.Pitivi.appdata.xml.in):
-Run `appstream-util news-to-appdata NEWS` and copy the generated content into
-the appdata template.
+Run `appstreamcli news-to-metainfo NEWS data/org.pitivi.Pitivi.appdata.xml.in`.
      * [AUTHORS](https://gitlab.gnome.org/GNOME/pitivi/blob/master/AUTHORS):
 If there are new maintainers.
 
