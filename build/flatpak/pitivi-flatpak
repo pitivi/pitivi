@@ -19,6 +19,7 @@ import argparse
 import configparser
 import json
 import os
+import platform
 import re
 import shlex
 import shutil
@@ -39,6 +40,7 @@ FLATPAK_REQ = [
 ]
 FLATPAK_VERSION = {}
 DEFAULT_GST_BRANCH = 'main'
+ARCH = platform.machine()
 
 
 class Colors:
@@ -118,6 +120,10 @@ def expand_manifest(manifest_path, outfile, basedir, gst_version, branchname):
     for module in template["modules"]:
         if isinstance(module, str):
             # This is the name of a file to be included containing modules.
+            if (module.split("/")[0] == "aarch64" and ARCH != "aarch64") or \
+                    (module.split("/")[0] == "x86_64" and ARCH != "x86_64"):
+                # Delete arch-specific modules if they don't match the current arch.
+                template["modules"].remove(module)
             continue
 
         if module["sources"][0]["type"] != "git":
@@ -162,7 +168,7 @@ def check_flatpak(verbose=True):
             return tuple(map(int, (version.split("."))))
 
         # For example: "Flatpak 1.15.9", "flatpak-builder-1.4.4"
-        version = output.decode("utf-8").replace("-", " ").split(" ")[-1].strip("\n")
+        version = output.decode("utf-8").replace("-", " ").rsplit(" ", maxsplit=1)[-1]
         current = comparable_version(version)
         FLATPAK_VERSION[app] = current
         if current < comparable_version(required_version):
@@ -472,11 +478,11 @@ class PitiviFlatpak:
 
         sdk_branch = manifest["runtime-version"]
         self.runtime = FlatpakPackage(
-            "org.gnome.Platform", sdk_branch, self.sdk_repo, "x86_64")
+            "org.gnome.Platform", sdk_branch, self.sdk_repo, ARCH)
         self.locale = FlatpakPackage(
-            "org.gnome.Platform.Locale", sdk_branch, self.sdk_repo, "x86_64")
+            "org.gnome.Platform.Locale", sdk_branch, self.sdk_repo, ARCH)
         self.sdk = FlatpakPackage(
-            "org.gnome.Sdk", sdk_branch, self.sdk_repo, "x86_64")
+            "org.gnome.Sdk", sdk_branch, self.sdk_repo, ARCH)
         self.packs = [self.runtime, self.locale, self.sdk]
 
         if self.coredumpgdb is None and "--coredumpgdb" in sys.argv or "-gdb" in sys.argv:
