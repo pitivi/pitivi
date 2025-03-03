@@ -563,10 +563,6 @@ class Pipeline(GES.Pipeline, SimplePipeline):
                 watchdog.props.timeout = WATCHDOG_TIMEOUT * 1000
                 self.props.audio_filter = watchdog
 
-    def create_sink(self):
-        video_sink, sink_widget = SimplePipeline.create_sink(self)
-        self._pipeline.preview_set_video_sink(video_sink)
-        return video_sink, sink_widget
 
     def set_mode(self, mode):
         self._next_seek = None
