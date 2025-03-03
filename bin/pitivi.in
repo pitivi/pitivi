@@ -109,10 +109,13 @@ def _add_pitivi_path():
         print("Couldn't set the gettext domain. Translations will not work.", localedir, e)
 
     if CONFIGURED_LD_LIBRARY_PATH or CONFIGURED_GST_PLUGIN_PATH:
-        _prepend_env_path("LD_LIBRARY_PATH", [CONFIGURED_LD_LIBRARY_PATH])
+        if sys.platform == 'darwin':
+            _prepend_env_path("DYLD_LIBRARY_PATH", [CONFIGURED_LD_LIBRARY_PATH])
+        else:
+            _prepend_env_path("LD_LIBRARY_PATH", [CONFIGURED_LD_LIBRARY_PATH])
         _prepend_env_path("GST_PLUGIN_PATH", [CONFIGURED_GST_PLUGIN_PATH])
 
-        if "JUMP_THROUGH_HOOPS" not in os.environ:
+        if sys.platform != 'darwin' and "JUMP_THROUGH_HOOPS" not in os.environ:
             # ld caches LD_LIBRARY_PATH at startup so we need to execv() here. LALA.
             jump_through_hoops()
 

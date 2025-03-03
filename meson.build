@@ -41,12 +41,17 @@ cdata.set('CONFIGURED_PYTHONPATH',
           run_command(geteenvvar, 'PYTHONPATH').stdout().strip())
 cdata.set('CONFIGURED_GI_TYPELIB_PATH',
           run_command(geteenvvar, 'GI_TYPELIB_PATH').stdout().strip())
+ld_library_path = 'LD_LIBRARY_PATH'
+if host_system == 'darwin'
+    ld_library_path = 'DYLD_LIBRARY_PATH'
+endif
+
 cdata.set('CONFIGURED_LD_LIBRARY_PATH',
-          run_command(geteenvvar, 'LD_LIBRARY_PATH').stdout().strip())
+          run_command(python, geteenvvar, ld_library_path).stdout().strip())
 cdata.set('CONFIGURED_GST_PLUGIN_PATH',
-          run_command(geteenvvar, 'GST_PLUGIN_PATH').stdout().strip())
+          run_command(python, geteenvvar, 'GST_PLUGIN_PATH').stdout().strip())
 cdata.set('CONFIGURED_GST_PLUGIN_SYSTEM_PATH',
-          run_command(geteenvvar, 'GST_PLUGIN_SYSTEM_PATH').stdout().strip())
+          run_command(python, geteenvvar, 'GST_PLUGIN_SYSTEM_PATH').stdout().strip())
 cdata.set('LIBDIR', join_paths(get_option('prefix'), get_option('libdir')))
 cdata.set('DATADIR', join_paths(get_option('prefix'), get_option('datadir')))
 cdata.set('PACKAGE_NAME', 'Pitivi')
