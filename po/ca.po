@@ -24,7 +24,7 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
 "POT-Creation-Date: 2022-07-24 04:44+0000\n"
-"PO-Revision-Date: 2022-09-15 15:58+0200\n"
+"PO-Revision-Date: 2025-03-03 15:58+0200\n"
 "Last-Translator: Jordi Mas i Hernàndez <jmas@softcatala.org>\n"
 "Language-Team: Catalan <info@softcatala.org>\n"
 "Language: ca\n"
@@ -1028,7 +1028,7 @@ msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening"
 " in GStreamer and recover from them"
 msgstr ""
-"babilita un vigilant a la canonada GStreamer. Useu-lo per a detectar errors "
+"habilita un vigilant a la canonada GStreamer. Useu-lo per a detectar errors "
 "que ocorrin en GStreamer i recupereu-los des d'ell"
 
 #: pitivi/check.py:495
@@ -1104,7 +1104,7 @@ msgstr "Transformació"
 
 #: pitivi/clipproperties.py:1067
 msgid "Show keyframes"
-msgstr "Mostra els fotogrames clau per aquest valor"
+msgstr "Mostra fotogrames clau"
 
 #: pitivi/clipproperties.py:1070
 msgid "Activate keyframes"
@@ -1539,7 +1539,7 @@ msgstr "Geometria"
 
 #: pitivi/effects.py:111
 msgid "Fancy"
-msgstr "Fantasia"
+msgstr "Sofisticat"
 
 #: pitivi/effects.py:249
 msgid "effect"
@@ -2384,7 +2384,7 @@ msgstr "8 (7.1)"
 #: pitivi/utils/ui.py:547
 #, python-format
 msgid "<b>Duration:</b> %s"
-msgstr "<b>Durada:</b>: %s"
+msgstr "<b>Durada:</b> %s"
 
 #: pitivi/utils/ui.py:550
 #, python-format
