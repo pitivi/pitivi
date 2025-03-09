@@ -11,6 +11,7 @@ VENV_PATH = "/tmp/venv1"
 BUILDER_REPO_URL = "https://github.com/aleb/flatpak-builder-tools.git"
 REPO_CLONE_DIR = "flatpak-builder-tools"
 BUILD_DIR = "build/flatpak"
+SDK = "47"
 
 
 class Arch(Enum):
@@ -59,22 +60,24 @@ def clone_flatpak_builder_tools():
 def update_runtime_dependencies(venv_python, flatpak_pip_generator, arch):
     """Update runtime dependencies."""
     print("Updating runtime dependencies...")
-    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/46 librosa", cwd=f"{os.getcwd()}/{arch}")
-    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/46 matplotlib", cwd=f"{os.getcwd()}/{arch}")
+    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/{SDK} librosa", cwd=f"{os.getcwd()}/{arch}")
+    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/{SDK} matplotlib", cwd=f"{os.getcwd()}/{arch}")
 
 
 def update_development_tools(venv_python, flatpak_pip_generator, arch):
     """Update development tools."""
     print("Updating development tools...")
-    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/46 'wheezy.template<=3.1.0' nose setuptools_git setuptools_pep8 sphinx hotdoc", cwd=f"{os.getcwd()}/{arch}")
-    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/46 ipdb", cwd=f"{os.getcwd()}/{arch}")
+    # Note: wheezy.template 3.2.2 produces an error when running `hotdoc` in
+    # the dev env, that's why we avoid it.
+    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/{SDK} 'wheezy.template<=3.1.0' nose setuptools_git setuptools_pep8 sphinx hotdoc", cwd=f"{os.getcwd()}/{arch}")
+    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/{SDK} ipdb", cwd=f"{os.getcwd()}/{arch}")
 
 
 def update_pre_commit_framework(venv_python, flatpak_pip_generator, arch):
     """Update the pre-commit framework."""
     print("Updating pre-commit framework...")
-    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/46 pre-commit", cwd=f"{os.getcwd()}/{arch}")
-    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/46 setuptools-scm 'pylint<=2.13.5'", cwd=f"{os.getcwd()}/{arch}")
+    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/{SDK} pre-commit", cwd=f"{os.getcwd()}/{arch}")
+    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/{SDK} setuptools-scm 'pylint<=2.13.5'", cwd=f"{os.getcwd()}/{arch}")
 
 
 def get_system_arch():

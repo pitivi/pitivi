@@ -17,8 +17,8 @@
                 },
                 {
                     "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/a0/b9/1906bfeb30f2fc13bb39bf7ddb8749784c05faadbd18a21cf141ba37bff2/setuptools_scm-8.1.0-py3-none-any.whl",
-                    "sha256": "897a3226a6fd4a6eb2f068745e49733261a21f70b1bb28fce0339feb978d9af3"
+                    "url": "https://files.pythonhosted.org/packages/10/7c/5a9799042320242c383c4485a2771a37d49e8ce2312ca647653d2fd1a7a4/setuptools_scm-8.2.0-py3-none-any.whl",
+                    "sha256": "136e2b1d393d709d2bcf26f275b8dec06c48b811154167b0fd6bb002aad17d6d"
                 }
             ]
         },
@@ -46,8 +46,8 @@
                 },
                 {
                     "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/1e/5d/eaa12126e8989c9bdd21d864cbba2b258cb9ee2f574ada1462a0004cfad8/lazy_object_proxy-1.10.0-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-                    "sha256": "009e6bb1f1935a62889ddc8541514b6a9e1fcf302667dcb049a0be5c8f613e56"
+                    "url": "https://files.pythonhosted.org/packages/44/46/3771e0a4315044aa7b67da892b2fb1f59dfcf0eaff2c8967b2a0a85d5896/lazy_object_proxy-1.10.0-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+                    "sha256": "80b39d3a151309efc8cc48675918891b865bdf742a8616a337cb0090791a0de9"
                 },
                 {
                     "type": "file",
@@ -66,8 +66,8 @@
                 },
                 {
                     "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/55/b5/698bd0bf9fbb3ddb3a2feefbb7ad0dea1205f5d7d05b9cbab54f5db731aa/wrapt-1.17.0-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-                    "sha256": "9f2939cd4a2a52ca32bc0b359015718472d7f6de870760342e7ba295be9ebaf9"
+                    "url": "https://files.pythonhosted.org/packages/2a/5a/04cde32b07a7431d4ed0553a76fdb7a61270e78c5fd5a603e190ac389f14/wrapt-1.17.2-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+                    "sha256": "bc570b5f14a79734437cb7b0500376b6b791153314986074486e0b0fa8d71d98"
                 }
             ]
         }

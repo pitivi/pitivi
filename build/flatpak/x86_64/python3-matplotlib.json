@@ -7,8 +7,8 @@
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/85/fc/7fa5d17daf77306840a4e84668a48ddff09e6bc09ba4e37e85ffc8e4faa3/contourpy-1.3.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-            "sha256": "3a04ecd68acbd77fa2d39723ceca4c3197cb2969633836ced1bea14e219d077c"
+            "url": "https://files.pythonhosted.org/packages/ba/99/6794142b90b853a9155316c8f470d2e4821fe6f086b03e372aca848227dd/contourpy-1.3.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "sha256": "efa874e87e4a647fd2e4f514d5e91c7d493697127beb95e77d2f7561f6905bd9"
         },
         {
             "type": "file",
@@ -17,23 +17,23 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/5d/52/c0b9857fa075da1b8806c5dc2d8342918a8cc2065fd14fbddb3303282693/fonttools-4.55.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-            "sha256": "da9da6d65cd7aa6b0f806556f4985bcbf603bf0c5c590e61b43aa3e5a0f822d0"
+            "url": "https://files.pythonhosted.org/packages/95/70/2a781bedc1c45a0c61d29c56425609b22ed7f971da5d7e5df2679488741b/fonttools-4.56.0-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "sha256": "661a8995d11e6e4914a44ca7d52d1286e2d9b154f685a4d1f69add8418961563"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/3a/97/5edbed69a9d0caa2e4aa616ae7df8127e10f6586940aa683a496c2c280b9/kiwisolver-1.4.8-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-            "sha256": "3a96c0e790ee875d65e340ab383700e2b4891677b7fcd30a699146f9384a2bb0"
+            "url": "https://files.pythonhosted.org/packages/bc/b3/9458adb9472e61a998c8c4d95cfdfec91c73c53a375b30b1428310f923e4/kiwisolver-1.4.8-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "sha256": "cc978a80a0db3a66d25767b03688f1147a69e6237175c0f4ffffaaedf744055a"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/b2/7d/2d873209536b9ee17340754118a2a17988bc18981b5b56e6715ee07373ac/matplotlib-3.10.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-            "sha256": "5439f4c5a3e2e8eab18e2f8c3ef929772fd5641876db71f08127eed95ab64683"
+            "url": "https://files.pythonhosted.org/packages/63/23/c0615001f67ce7c96b3051d856baedc0c818a2ed84570b9bf9bde200f85d/matplotlib-3.10.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "sha256": "c96f2c2f825d1257e437a1482c5a2cf4fee15db4261bd6fc0750f81ba2b4ba3d"
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/f2/d4/f999444e86986f3533e7151c272bd8186c55dda554284def18557e013a2a/numpy-2.2.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-            "sha256": "38efc1e56b73cc9b182fe55e56e63b044dd26a72128fd2fbd502f75555d92591"
+            "url": "https://files.pythonhosted.org/packages/39/04/78d2e7402fb479d893953fb78fa7045f7deb635ec095b6b4f0260223091a/numpy-2.2.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "sha256": "3b787adbf04b0db1967798dba8da1af07e387908ed1553a0d6e74c084d1ceafe"
         },
         {
             "type": "file",
@@ -42,8 +42,8 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/48/a4/fbfe9d5581d7b111b28f1d8c2762dee92e9821bb209af9fa83c940e507a0/pillow-11.1.0-cp311-cp311-manylinux_2_28_x86_64.whl",
-            "sha256": "837060a8599b8f5d402e97197d4924f05a2e0d68756998345c829c33186217b1"
+            "url": "https://files.pythonhosted.org/packages/38/0d/84200ed6a871ce386ddc82904bfadc0c6b28b0c0ec78176871a4679e40b3/pillow-11.1.0-cp312-cp312-manylinux_2_28_x86_64.whl",
+            "sha256": "9aa9aeddeed452b2f616ff5507459e7bab436916ccb10961c4a382cd3e03f47f"
         },
         {
             "type": "file",

@@ -1,0 +1,32 @@
+commit 46259a520918f4b7160d4eba9041564d1259ffca
+Author: Alexandru Băluț <alexandru.balut@gmail.com>
+Date:   Sun Mar 9 23:23:51 2025 +0100
+
+    Fix error on Flatpak GNOME SDK 47
+    
+    fill_test.c: In function ‘main’:
+    fill_test.c:128:3: error: implicit declaration of function ‘memset’ [-Wimplicit-function-declaration]
+      128 |   memset(&frame_format,   0, sizeof(frame_format));
+          |   ^~~~~~
+    fill_test.c:26:1: note: include ‘<string.h>’ or provide a declaration of ‘memset’
+       25 | #include <png.h>
+      +++ |+#include <string.h>
+       26 |
+    fill_test.c:128:3: warning: incompatible implicit declaration of built-in function ‘memset’ [-Wbuiltin-declaration-mismatch]
+      128 |   memset(&frame_format,   0, sizeof(frame_format));
+          |   ^~~~~~
+    fill_test.c:128:3: note: include ‘<string.h>’ or provide a declaration of ‘memset’
+    make[1]: *** [Makefile:569: fill_test.o] Error 1
+
+diff --git a/src/fill_test.c b/src/fill_test.c
+index 1d362be..6fd97da 100644
+--- a/src/fill_test.c
++++ b/src/fill_test.c
+@@ -23,6 +23,7 @@
+ //#include "colorspace.h" // Common routines
+ #include <stdio.h>
+ #include <png.h>
++#include <string.h>
+ 
+ static void
+ write_png(char * filename, gavl_video_format_t * format, gavl_video_frame_t * frame)

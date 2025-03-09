@@ -2,7 +2,7 @@
     "app-id": "org.pitivi.Pitivi",
     "branch": "master",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "46",
+    "runtime-version": "47",
     "command": "pitivi",
     "finish-args": [
         "--socket=fallback-x11",
@@ -86,7 +86,8 @@
             "config-opts": [
                 "--without-doxygen",
                 "--disable-static",
-                "--enable-shared"
+                "--enable-shared",
+                "--with-cpuflags=none"
             ],
             "sources": [
                 {
@@ -103,10 +104,14 @@
                     "path": "gavl/gavl-armel-ftbfs.patch"
                 },
                 {
+                    "type": "patch",
+                    "path": "gavl/gavl-implicit-declaration-of-memset.patch"
+                },
+                {
                     "type": "shell",
                     "commands": [
                         "pwd",
-                        "cp -p /usr/share/automake-*/config.{sub,guess} ."
+                        "cp -p -v /usr/share/automake-*/config.{sub,guess} ."
                     ]
                 },
                 {
@@ -387,7 +392,7 @@
                 "-Dgpl=enabled",
                 "-Dgst-devtools:doc=disabled",
                 "-Dgst-editing-services:doc=disabled",
-                "-Dgst-editing-services:pygi-overrides-dir=/app/lib/python3.11/site-packages/gi/overrides/",
+                "-Dgst-editing-services:pygi-overrides-dir=/app/lib/python3.12/site-packages/gi/overrides/",
                 "-Dgst-libav:doc=disabled",
                 "-Dgst-plugins-bad:aom=disabled",
                 "-Dgst-plugins-bad:doc=disabled",
@@ -401,7 +406,7 @@
                 "-Dgst-plugins-good:dv=enabled",
                 "-Dgst-plugins-ugly:doc=disabled",
                 "-Dgst-plugins-ugly:x264=enabled",
-                "-Dgst-python:pygi-overrides-dir=/app/lib/python3.11/site-packages/gi/overrides/",
+                "-Dgst-python:pygi-overrides-dir=/app/lib/python3.12/site-packages/gi/overrides/",
                 "-Dgstreamer-vaapi:doc=disabled",
                 "-Dintrospection=enabled",
                 "-Dlibav=enabled",
