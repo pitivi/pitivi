@@ -67,9 +67,7 @@ def update_runtime_dependencies(venv_python, flatpak_pip_generator, arch):
 def update_development_tools(venv_python, flatpak_pip_generator, arch):
     """Update development tools."""
     print("Updating development tools...")
-    # Note: wheezy.template 3.2.2 produces an error when running `hotdoc` in
-    # the dev env, that's why we avoid it.
-    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/{SDK} 'wheezy.template<=3.1.0' nose setuptools_git setuptools_pep8 sphinx hotdoc", cwd=f"{os.getcwd()}/{arch}")
+    run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/{SDK} wheezy.template nose setuptools_git setuptools_pep8 sphinx hotdoc", cwd=f"{os.getcwd()}/{arch}")
     run_command(f"{venv_python} ../{flatpak_pip_generator} --runtime org.gnome.Sdk/{arch}/{SDK} ipdb", cwd=f"{os.getcwd()}/{arch}")
 
 

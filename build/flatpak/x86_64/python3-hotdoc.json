@@ -7,13 +7,13 @@
             "name": "python3-wheezy.template",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"wheezy.template<=3.1.0\""
+                "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"wheezy.template\""
             ],
             "sources": [
                 {
                     "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/9f/81/659038f48d53bb1a9f4ff97b8b2c53f2cb7ff60003b22d57b4dd22d8da0c/wheezy.template-3.1.0.tar.gz",
-                    "sha256": "e11007cac73368dce12998e34b66c476016bb461471ffc1e4d56e84002ec960f"
+                    "url": "https://files.pythonhosted.org/packages/f9/0a/1324391b1cf7af8bbe87c5c7159f3ac7e9b88d88a31a69560ab9a926d935/wheezy_template-3.2.3.tar.gz",
+                    "sha256": "a494fa2cd83b25d81af270d9ee62b533f7ccf85e7f8cfbad3ed762992ba268f6"
                 }
             ]
         },
@@ -239,6 +239,11 @@
                     "type": "file",
                     "url": "https://files.pythonhosted.org/packages/f6/17/57b444fd314d5e1593350b9a31d000e7411ba8e17ce12dc7ad54ca76b810/toposort-1.10-py3-none-any.whl",
                     "sha256": "cbdbc0d0bee4d2695ab2ceec97fe0679e9c10eab4b2a87a9372b929e70563a87"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/f9/0a/1324391b1cf7af8bbe87c5c7159f3ac7e9b88d88a31a69560ab9a926d935/wheezy_template-3.2.3.tar.gz",
+                    "sha256": "a494fa2cd83b25d81af270d9ee62b533f7ccf85e7f8cfbad3ed762992ba268f6"
                 }
             ]
         }

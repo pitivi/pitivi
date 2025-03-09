@@ -28,7 +28,7 @@ makes it easier to use source packages we should switch back.
 To update the Python deps, all you have to do is to run:
 ```
 $ . bin/pitivi-env
-$ build/flatpak/update_deps.py
+(ptv-flatpak) $ build/flatpak/update_deps.py
 ```
 
 ## Updating your local sandbox
