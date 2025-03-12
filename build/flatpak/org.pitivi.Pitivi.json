@@ -93,6 +93,7 @@
                 {
                     "type": "archive",
                     "//": "Last updated in 2012: https://sourceforge.net/projects/gmerlin/files/gavl/",
+                    "//": "If you need to touch this again, see how an unreleased snapshot is used here: https://github.com/flathub/org.kde.kdenlive/blob/master/org.kde.kdenlive.json",
                     "url": "https://downloads.sourceforge.net/project/gmerlin/gavl/1.4.0/gavl-1.4.0.tar.gz",
                     "mirror-urls": [
                         "http://http.debian.net/debian/pool/main/g/gavl/gavl_1.4.0.orig.tar.gz"
