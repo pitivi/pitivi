@@ -272,100 +272,86 @@ msgid "Green"
 msgstr "Πράσινο"
 
 #: data/ui/customwidgets/alpha.ui:395
-#, fuzzy
-#| msgid "Text color"
 msgid "Select a color"
-msgstr "Χρώμα κειμένου"
+msgstr "Επιλογή χρώματος"
 
 #: data/ui/customwidgets/alpha.ui:407
 msgid "Blue"
-msgstr ""
+msgstr "Μπλε"
 
 #: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:225
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:238
 msgid "G"
-msgstr ""
+msgstr "G"
 
 #: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:251
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:420
 msgid "Shadows"
-msgstr ""
+msgstr "Σκιές"
 
 #: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:431
 msgid "Midtones"
-msgstr ""
+msgstr "Ενδιάμεσοι τόνοι"
 
 #: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:442
-#, fuzzy
-#| msgid "Height"
 msgid "Highlights"
-msgstr "Ύψος"
+msgstr "Φωτεινά σημεία"
 
 #: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:481
-#, fuzzy
-#| msgid "Preview"
 msgid "Split preview"
-msgstr "Προεπισκόπηση"
+msgstr "Διαίρεση προεπισκόπησης"
 
 #: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:494
 msgid "Source image on left"
-msgstr ""
+msgstr "Εικόνα πηγής στα αριστερά"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:303
 msgid "Shape:"
-msgstr ""
+msgstr "Σχήμα:"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:336
-#, fuzzy
-#| msgid "Width:"
 msgid "width"
-msgstr "Πλάτος:"
+msgstr "πλάτος"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:347
-#, fuzzy
-#| msgid "Height"
 msgid "height"
-msgstr "Ύψος"
+msgstr "ύψος"
 
-# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
+# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
 #
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:358
-#, fuzzy
-#| msgid "Duration:"
 msgid "Operation:"
-msgstr "Διάρκεια:"
+msgstr "Λειτουργία:"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:380
 msgid "tilt"
-msgstr ""
+msgstr "κλίση"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:391
 msgid "trans. width"
-msgstr ""
+msgstr "πλάτος μετάβασης"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:402
 msgid "min alpha"
-msgstr ""
+msgstr "ελάχιστο άλφα"
 
 #: data/ui/customwidgets/frei0r-filter-alphaspot.ui:413
 msgid "max alpha"
-msgstr ""
+msgstr "μέγιστο άλφα"
 
 #: data/ui/customwidgets/pitivi:object_effect.ui:19
-#, fuzzy
-#| msgid "Colors"
 msgid "Color:"
-msgstr "Χρώματα"
+msgstr "Χρώμα:"
 
 #: data/ui/effectslibrary.ui:16
 msgid "Favorites"
-msgstr ""
+msgstr "Αγαπημένα"
 
 #: data/ui/effectslibrary.ui:43 data/ui/medialibrary.ui:165
 #: pitivi/transitions.py:69
@@ -378,31 +364,27 @@ msgstr "Επαναφορά όλων"
 
 #: data/ui/elementsettingsdialog.ui:39 data/ui/projectsettings.ui:91
 msgid "OK"
-msgstr "Eντάξει"
+msgstr "Εντάξει"
 
 #: data/ui/greeter.ui:40
-#, fuzzy
-#| msgid "Projects"
 msgid "Recent Projects"
-msgstr "Έργα"
+msgstr "Πρόσφατα έργα"
 
 #: data/ui/greeter.ui:55
 msgid "Updated"
-msgstr ""
+msgstr "Ενημερώθηκε"
 
 #: data/ui/greeter.ui:190 pitivi/preset.py:107 pitivi/render.py:220
 msgid "Remove"
 msgstr "Αφαίρεση"
 
 #: data/ui/greeter.ui:230
-#, fuzzy
-#| msgid "Close Pitivi"
 msgid "Welcome to Pitivi"
-msgstr "Κλείσιμο Pitivi"
+msgstr "Καλώς ήρθατε στο Pitivi"
 
 #: data/ui/greeter.ui:244
 msgid "Beautiful, powerful and intuitive movie editor"
-msgstr ""
+msgstr "Όμορφος, ισχυρός και διαισθητικός επεξεργαστής ταινιών"
 
 #: data/ui/mainmenubutton.ui:21
 msgid "Save the current project under a new name or a different location"
@@ -457,32 +439,28 @@ msgid "Preferences"
 msgstr "Προτιμήσεις"
 
 #: data/ui/mainmenubutton.ui:164
-#, fuzzy
-#| msgid "Keyboard shortcuts"
 msgid "Keyboard Shortcuts"
 msgstr "Συντομεύσεις πληκτρολογίου"
 
 #: data/ui/mainmenubutton.ui:180
 msgid "User Manual"
-msgstr "Εχγειρίδιο χρήστη"
+msgstr "Εγχειρίδιο χρήστη"
 
 #: data/ui/mainmenubutton.ui:193
 msgid "Start the intro to Pitivi for new users"
-msgstr ""
+msgstr "Έναρξη της εισαγωγής στο Pitivi για νέους χρήστες"
 
 #: data/ui/mainmenubutton.ui:197
 msgid "Interactive Intro"
-msgstr ""
+msgstr "Διαδραστική εισαγωγή"
 
 #: data/ui/mainmenubutton.ui:213
-#, fuzzy
-#| msgid "Close Pitivi"
 msgid "About Pitivi"
-msgstr "Κλείσιμο Pitivi"
+msgstr "Περί του Pitivi"
 
 #: data/ui/medialibrary.ui:20
 msgid "Remove selected clips from the project"
-msgstr "Αφαίρεση επιλεγμένων κομματιών από το έργο"
+msgstr "Αφαίρεση επιλεγμένων αποσπασμάτων από το έργο"
 
 #: data/ui/medialibrary.ui:22
 msgid "_Remove from Project"
@@ -490,19 +468,19 @@ msgstr "_Αφαίρεση από το έργο"
 
 #: data/ui/medialibrary.ui:40
 msgid "Clip properties..."
-msgstr "Ιδιότητες κομματιού..."
+msgstr "Ιδιότητες αποσπάσματος..."
 
 #: data/ui/medialibrary.ui:59
 msgid "Show tags associated with selected clips"
-msgstr ""
+msgstr "Εμφάνιση ετικετών που σχετίζονται με επιλεγμένα αποσπάσματα"
 
 #: data/ui/medialibrary.ui:78
 msgid "Insert the selected clips at the end of the timeline"
-msgstr "Εισάγετε τα επιλεγμένα κομμάτια στο τέλος της γραμμής χρόνου"
+msgstr "Εισάγετε τα επιλεγμένα αποσπάσματα στο τέλος της λωρίδας χρόνου"
 
 #: data/ui/medialibrary.ui:80
 msgid "Insert at _End of Timeline"
-msgstr "Εισάγετε στο _τέλος της γραμμής χρόνου"
+msgstr "Εισάγετε στο _τέλος της λωρίδας χρόνου"
 
 #: data/ui/medialibrary.ui:114 pitivi/editorperspective.py:407
 msgid "Add media files to your project"
@@ -514,16 +492,16 @@ msgstr "Εισαγωγή"
 
 #: data/ui/medialibrary.ui:135
 msgid "Show clips as a detailed list"
-msgstr "Εμφάνιση κομματιών ως λεπτομερή λίστα"
+msgstr "Εμφάνιση αποσπασμάτων ως λεπτομερή λίστα"
 
 #. This is used as a toolbar button tooltip. Here, "select" means "find" rather than "choose". It is not the user who selects, but rather the user requesting the application to select the relevant items.
 #: data/ui/medialibrary.ui:163
 msgid "Select clips that have not been used in the project"
-msgstr "Επιλέξτε κομμάτια που δεν έχουν χρησιμοποιηθεί στο έργο"
+msgstr "Επιλέξτε αποσπάσματα που δεν έχουν χρησιμοποιηθεί στο έργο"
 
 #: data/ui/medialibrary.ui:164
 msgid "Show all clips"
-msgstr "Εμφάνιση όλων των κομματιών"
+msgstr "Εμφάνιση όλων των αποσπασμάτων"
 
 #: data/ui/medialibrary.ui:278
 msgid ""
@@ -584,13 +562,11 @@ msgstr "εικονοστοιχεία"
 #. When checked, changing the width or height affects also the other so that the aspect ratio value (width / height) does not change.
 #: data/ui/projectsettings.ui:295 data/ui/projectsettings.ui:623
 msgid "Constrain proportions"
-msgstr ""
+msgstr "Περιορισμός αναλογιών"
 
 #: data/ui/projectsettings.ui:299
-#, fuzzy
-#| msgid "Display aspect ratio"
 msgid "Maintain aspect ratio"
-msgstr "Εμφάνιση αναλογίας διαστάσεων"
+msgstr "Διατήρηση αναλογίας διαστάσεων"
 
 #: data/ui/projectsettings.ui:330 data/ui/renderingdialog.ui:732
 msgid "Frame rate:"
@@ -617,37 +593,33 @@ msgstr "Πληροφορίες"
 
 #: data/ui/projectsettings.ui:542
 msgid "Scaled proxies resolution:"
-msgstr ""
+msgstr "Ανάλυση κλιμακωτών proxies:"
 
 #: data/ui/projectsettings.ui:563 data/ui/projectsettings.ui:591
 msgid "1"
-msgstr ""
+msgstr "1"
 
 #: data/ui/projectsettings.ui:641
 msgid "<a href='#'>Proxy Preferences</a>"
-msgstr ""
+msgstr "<a href='#'>Προτιμήσεις proxy</a>"
 
 #: data/ui/projectsettings.ui:675
 msgid "Proxy"
-msgstr ""
+msgstr "Proxy"
 
 #: data/ui/projectsettings.ui:709
-#, fuzzy
-#| msgid "Title"
 msgid "Title:"
-msgstr "Τίτλος"
+msgstr "Τίτλος:"
 
-# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
+# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
 #
 #: data/ui/projectsettings.ui:726
-#, fuzzy
-#| msgid "Section"
 msgid "Action:"
-msgstr "Ενότητα"
+msgstr "Ενέργεια:"
 
 #: data/ui/projectsettings.ui:851
 msgid "Safe Areas"
-msgstr ""
+msgstr "Ασφαλείς περιοχές"
 
 #: data/ui/renderingdialog.ui:40 data/ui/renderingdialog.ui:59
 #: pitivi/editorperspective.py:337
@@ -655,10 +627,8 @@ msgid "Render"
 msgstr "Απόδοση"
 
 #: data/ui/renderingdialog.ui:116
-#, fuzzy
-#| msgid "Opacity:"
 msgid "Quality:"
-msgstr "Αδιαφάνεια:"
+msgstr "Ποιότητα:"
 
 #: data/ui/renderingdialog.ui:177 pitivi/clip_properties/markers.py:48
 #: pitivi/render.py:74
@@ -671,7 +641,7 @@ msgstr "Μορφή περιεχομένου:"
 
 #: data/ui/renderingdialog.ui:311
 msgid "Automatically render from proxy files"
-msgstr ""
+msgstr "Αυτόματη απόδοση από αρχεία proxy"
 
 #: data/ui/renderingdialog.ui:315
 msgid ""
@@ -681,20 +651,27 @@ msgid ""
 "This option is a good trade-off between quality of the rendered video and "
 "stability."
 msgstr ""
+"Χρήση αρχείων proxy αν είναι διαθέσιμα και η μορφή του μέσου προέλευσης δεν "
+"υποστηρίζεται επίσημα.\n"
+"\n"
+"Αυτή η επιλογή είναι ένας καλός συμβιβασμός μεταξύ της ποιότητας του "
+"αποδιδόμενου βίντεο και της σταθερότητας."
 
 #: data/ui/renderingdialog.ui:330
 msgid "Always render from proxy files"
-msgstr ""
+msgstr "Πάντα απόδοση από αρχεία proxy"
 
 #: data/ui/renderingdialog.ui:334
 msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
 msgstr ""
+"Απόδοση όλων των αποσπασμάτων με proxy από τα μέσα proxy. Μπορεί να υπάρξει "
+"κάποια απώλεια ποιότητας κατά τη διαδικασία απόδοσης."
 
 #: data/ui/renderingdialog.ui:347
 msgid "Never render from proxy files"
-msgstr ""
+msgstr "Ποτέ απόδοση από αρχεία proxy"
 
 #: data/ui/renderingdialog.ui:351
 msgid ""
@@ -703,6 +680,10 @@ msgid ""
 "use of not officially supported media formats.\n"
 "<i>Use at your own risk!</i>"
 msgstr ""
+"Χρήση πάντα των μέσων προέλευσης για απόδοση. Είναι η καλύτερη επιλογή για "
+"την ποιότητα του αποδιδόμενου βίντεο, αλλά μπορεί να συναντήσετε κάποια "
+"σφάλματα λόγω της χρήσης μη επίσημα υποστηριζόμενων μορφών μέσων.\n"
+"<i>Χρησιμοποιήστε με δική σας ευθύνη!</i>"
 
 #: data/ui/renderingdialog.ui:398
 msgid "Channels:"
@@ -746,22 +727,16 @@ msgid "Framerate"
 msgstr "Ρυθμός καρέ"
 
 #: data/ui/renderingdialog.ui:779
-#, fuzzy
-#| msgid "Advanced..."
 msgid "Advanced"
-msgstr "Προχωρημένα..."
+msgstr "Προχωρημένα"
 
 #: data/ui/renderingdialog.ui:790
-#, fuzzy
-#| msgid "All files"
 msgid "Select file"
-msgstr "Όλα τα αρχεία"
+msgstr "Επιλογή αρχείου"
 
 #: data/ui/renderingdialog.ui:807
-#, fuzzy
-#| msgid "File name:"
 msgid "File path:"
-msgstr "Όνομα αρχείου:"
+msgstr "Διαδρομή αρχείου:"
 
 #: data/ui/renderingprogress.ui:8
 msgid "Rendering"
@@ -778,10 +753,8 @@ msgid "Play"
 msgstr "Αναπαραγωγή"
 
 #: data/ui/renderingprogress.ui:70
-#, fuzzy
-#| msgid "Folder"
 msgid "Open Folder"
-msgstr "Φάκελος"
+msgstr "Άνοιγμα φακέλου"
 
 #: data/ui/renderingprogress.ui:110
 msgid ""
@@ -791,7 +764,7 @@ msgid ""
 msgstr ""
 "<small>Αυτή η διεργασία μπορεί να πάρει πολύ χρόνο ανάλογα με τους "
 "επιλεγμένους κωδικοποιητές, την ανάλυση εικόνας, την επεξεργαστική ισχύ του "
-"υπολογιστή σας, τα εφαρμοζόμενα εφέ και το μήκος της ταινίας σας.</small>"
+"υπολογιστή σας, τα εφαρμοζόμενα εφέ και τη διάρκεια της ταινίας σας.</small>"
 
 #: data/ui/renderingprogress.ui:126
 msgid "Initializing..."
@@ -803,7 +776,7 @@ msgstr "Εκτιμώμενο μέγεθος αρχείου:"
 
 #: data/ui/timelinetoolbar.ui:16
 msgid "Split clips at playhead position"
-msgstr "Διαχωρισμός κομματιών στη θέση της κεφαλής αναπαραγωγής"
+msgstr "Διαχωρισμός αποσπασμάτων στη θέση της κεφαλής αναπαραγωγής"
 
 #: data/ui/timelinetoolbar.ui:18
 msgid "Split"
@@ -811,7 +784,7 @@ msgstr "Διαχωρισμός"
 
 #: data/ui/timelinetoolbar.ui:31
 msgid "Delete clips"
-msgstr "Διαγραφή κομματιών"
+msgstr "Διαγραφή αποσπασμάτων"
 
 #: data/ui/timelinetoolbar.ui:33
 msgid "Delete"
@@ -819,7 +792,7 @@ msgstr "Διαγραφή"
 
 #: data/ui/timelinetoolbar.ui:46
 msgid "Group clips"
-msgstr "Ομαδοποίηση κομματιών"
+msgstr "Ομαδοποίηση αποσπασμάτων"
 
 #: data/ui/timelinetoolbar.ui:48
 msgid "Group"
@@ -827,45 +800,39 @@ msgstr "Ομαδοποίηση"
 
 #: data/ui/timelinetoolbar.ui:61
 msgid "Ungroup clips"
-msgstr "Απομαδοποίηση κομματιών"
+msgstr "Απομαδοποίηση αποσπασμάτων"
 
 #: data/ui/timelinetoolbar.ui:63
 msgid "Ungroup"
 msgstr "Απομαδοποίηση"
 
 #: data/ui/timelinetoolbar.ui:76
-#, fuzzy
-#| msgid "Copy clips"
 msgid "Cut clips"
-msgstr "Αντιγραφή κομματιών"
+msgstr "Αποκοπή αποσπασμάτων"
 
 #: data/ui/timelinetoolbar.ui:78
-#, fuzzy
-#| msgid "Custom"
 msgid "Cut"
-msgstr "Προσαρμοσμένο"
+msgstr "Αποκοπή"
 
 #: data/ui/timelinetoolbar.ui:91
 msgid "Copy clips"
-msgstr "Αντιγραφή κομματιών"
+msgstr "Αντιγραφή αποσπασμάτων"
 
 #: data/ui/timelinetoolbar.ui:93
 msgid "Copy"
-msgstr ""
+msgstr "Αντιγραφή"
 
 #: data/ui/timelinetoolbar.ui:106
 msgid "Paste clips"
-msgstr "Επικόλληση κομματιών"
+msgstr "Επικόλληση αποσπασμάτων"
 
 #: data/ui/timelinetoolbar.ui:108
-#, fuzzy
-#| msgid "Paste clips"
 msgid "Paste"
-msgstr "Επικόλληση κομματιών"
+msgstr "Επικόλληση"
 
 #: data/ui/timelinetoolbar.ui:121
 msgid "Align clips based on their soundtracks"
-msgstr "Στοίχιση κομματιών με βάση τη δικιά τους μουσική"
+msgstr "Στοίχιση αποσπασμάτων με βάση τη δικιά τους μουσική"
 
 #: data/ui/timelinetoolbar.ui:123
 msgid "Align"
@@ -876,13 +843,13 @@ msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
 msgstr ""
-"Εναλλαγή κατάστασης χωρίς κενό\n"
-"Όταν ενεργοποιηθεί, τα γειτονικά κομμάτια μετακινούνται αυτόματα για το "
+"Εναλλαγή λειτουργίας χωρίς κενό\n"
+"Όταν ενεργοποιηθεί, τα γειτονικά αποσπάσματα μετακινούνται αυτόματα για το "
 "γέμισμα κενών."
 
 #: data/ui/timelinetoolbar.ui:139
 msgid "Gapless mode"
-msgstr "Κατάσταση χωρίς κενό"
+msgstr "Λειτουργία χωρίς κενό"
 
 #: data/ui/titleeditor.ui:71
 msgid "Choose a font"
@@ -897,93 +864,76 @@ msgid "Pick a background color"
 msgstr "Επιλέξτε χρώμα παρασκηνίου"
 
 #: data/ui/titleeditor.ui:157
-#, fuzzy
-#| msgid "Pick a text color"
 msgid "Pick an outline color"
-msgstr "Επιλέξτε χρώμα κειμένου"
+msgstr "Επιλέξτε χρώμα περιγράμματος"
 
 #: data/ui/titleeditor.ui:193
 msgid "Drop Shadow"
-msgstr ""
+msgstr "Ρίψη σκιάς"
 
 #: data/ui/titleeditor.ui:215
-#, fuzzy
-#| msgid "Align"
 msgid "Alignment"
 msgstr "Στοίχιση"
 
 #: data/ui/titleeditor.ui:251
-#, fuzzy
-#| msgid "Horizontal alignment:"
 msgid "Horizontal:"
-msgstr "Οριζόντια στοίχιση:"
+msgstr "Οριζόντια:"
 
 #: data/ui/titleeditor.ui:275
-#, fuzzy
-#| msgid "Vertical alignment:"
 msgid "Vertical:"
-msgstr "Κάθετη στοίχιση:"
+msgstr "Κάθετη:"
 
 #: data/ui/trackerperspective.ui:66
 msgid "Tracked Objects:"
-msgstr ""
+msgstr "Παρακολουθούμενα αντικείμενα:"
 
 #: data/ui/trackerperspective.ui:195
 msgid "Drag&drop on the video to delimit an object to be tracked."
 msgstr ""
+"Σύρετε και αφήστε στο βίντεο για να οριοθετήσετε ένα αντικείμενο προς "
+"παρακολούθηση."
 
 #: data/ui/trackerperspective.ui:288
-#, fuzzy
-#| msgid "Go back one second"
 msgid "Go back one frame"
-msgstr "Οπισθοχώρηση ένα δευτερόλεπτο"
+msgstr "Μετάβαση πίσω ένα καρέ"
 
 #: data/ui/trackerperspective.ui:318
-#, fuzzy
-#| msgid "Go forward one second"
 msgid "Go forward one frame"
-msgstr "Προώθηση ένα δευτερόλεπτο"
+msgstr "Μετάβαση μπροστά ένα καρέ"
 
 #: data/ui/trackerperspective.ui:374
 msgid "Tracking Algorithm"
-msgstr ""
+msgstr "Αλγόριθμος εντοπισμού"
 
 #: data/ui/trackerperspective.ui:401
-#, fuzzy
 msgid "Track"
-msgstr "Κόντεκ ήχου"
+msgstr "Παρακολούθηση"
 
-# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
+# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
 #
 #: pitivi/action_search_bar.py:46
-#, fuzzy
-#| msgid "Section"
 msgid "Search Action"
-msgstr "Ενότητα"
+msgstr "Αναζήτηση ενέργειας"
 
 #: pitivi/application.py:160
 msgid "General"
 msgstr "Γενικά"
 
 #: pitivi/application.py:167
-#, fuzzy
-#| msgid "Undo the last operation"
 msgid "Undo the most recent action"
-msgstr "Αναίρεση της τελευταίας ενέργειας"
+msgstr "Αναίρεση της πιο πρόσφατης ενέργειας"
 
 #: pitivi/application.py:173
-#, fuzzy
-#| msgid "Undo the last operation"
 msgid "Redo the most recent action"
-msgstr "Αναίρεση της τελευταίας ενέργειας"
+msgstr "Επανάληψη της πιο πρόσφατης ενέργειας"
 
 #: pitivi/application.py:178
 msgid "Quit"
-msgstr ""
+msgstr "Έξοδος"
 
 #: pitivi/application.py:186
 msgid "Show the Shortcuts Window"
-msgstr ""
+msgstr "Εμφάνιση παραθύρου συντομεύσεων"
 
 #. Translators: %s is a Python module name or another OS component
 #: pitivi/check.py:115
@@ -1001,43 +951,40 @@ msgstr ""
 
 #. Translators: %s is a Python module name or another OS component
 #: pitivi/check.py:193
-#, fuzzy, python-format
-#| msgid "- %s not found on the system"
+#, python-format
 msgid "- %s GStreamer plug-in not found on the system"
-msgstr "Το %s δεν βρέθηκε στο σύστημα"
+msgstr "Το πρόσθετο GStreamer %s δεν βρέθηκε στο σύστημα"
 
 #. Translators: %s is a Python module name or another OS component
 #: pitivi/check.py:196
-#, fuzzy, python-format
-#| msgid "- %s version %s is installed but Pitivi requires at least version %s"
+#, python-format
 msgid ""
 "- %s Gstreamer plug-in version %s is installed but Pitivi requires at least "
 "version %s"
 msgstr ""
-"- %s έκδοση %s είναι εγκατεστημένη αλλά το Pitivi απαιτεί τουλάχιστον την "
-"έκδοση %s"
+"- %s έκδοση πρόσθετου Gstreamer %s είναι εγκατεστημένη αλλά το Pitivi "
+"απαιτεί τουλάχιστον την έκδοση %s"
 
 #. Translators: %s is a Python module name or another OS component
 #: pitivi/check.py:224
-#, fuzzy, python-format
-#| msgid "- %s not found on the system"
+#, python-format
 msgid "- %s GStreamer element not found on the system"
-msgstr "Το %s δεν βρέθηκε στο σύστημα"
+msgstr "Το στοιχείο GStreamer %s δεν βρέθηκε στο σύστημα"
 
 #: pitivi/check.py:332
 msgid "ERROR - The following hard dependencies are unmet:"
-msgstr "ΣΦΑΛΜΑ - Οι παρακάτω έντονες εξαρτήσεις δεν υπάρχουν:"
+msgstr "ΣΦΑΛΜΑ - Οι παρακάτω απαραίτητες εξαρτήσεις δεν πληρούνται:"
 
 #: pitivi/check.py:340
 msgid "Missing soft dependency:"
-msgstr "Λείπει χαλαρή εξάρτηση:"
+msgstr "Λείπει προαιρετική εξάρτηση:"
 
 #: pitivi/check.py:347
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
 msgstr ""
-"Σφάλμα - Αδύνατη η δημιουργία του Gst.Fraction - αυτό σημαίνει  ότι το GST-"
+"Σφάλμα — Αδύνατη η δημιουργία του Gst.Fraction — αυτό σημαίνει ότι το GST-"
 "Python δεν έχει εγκατασταθεί σωστά."
 
 #: pitivi/check.py:352
@@ -1052,8 +999,8 @@ msgstr ""
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
-"Αδύνατη η δημιουργία δέκτη εξόδου ήχου. Βεβαιωθείτε ότι έχετε διαθέσιμο ένα "
-"gtksink."
+"Αδύνατη η δημιουργία δέκτη εξόδου βίντεο. Βεβαιωθείτε ότι έχετε διαθέσιμο "
+"ένα gtksink."
 
 #: pitivi/check.py:372
 #, python-format
@@ -1067,11 +1014,11 @@ msgstr ""
 
 #: pitivi/check.py:485
 msgid "enables sound notifications when rendering is complete"
-msgstr "ενεργοποιεί τις ειδοποιήσεις ήχου, όταν η απόδοση είναι πλήρης"
+msgstr "ενεργοποιεί τις ειδοποιήσεις ήχου, όταν η απόδοση ολοκληρωθεί"
 
 #: pitivi/check.py:487
 msgid "enables visual notifications when rendering is complete"
-msgstr "ενεργοποιεί τις οπτικές ειδοποιήσεις, όταν η απόδοση είναι πλήρης"
+msgstr "ενεργοποιεί τις οπτικές ειδοποιήσεις, όταν η απόδοση ολοκληρωθεί"
 
 #: pitivi/check.py:489
 msgid "additional multimedia codecs through the GStreamer Libav library"
@@ -1085,42 +1032,36 @@ msgid ""
 "in GStreamer and recover from them"
 msgstr ""
 "ενεργοποιεί ένα φύλακα στη διοχέτευση του GStreamer. Χρησιμοποιήστε το για "
-"εντοπισμό σφαλμάτων που συμβαίνουν στο GStreamer και για τα ανακτήστε από "
-"αυτά"
+"εντοπισμό σφαλμάτων που συμβαίνουν στο GStreamer και για ανάκαμψη από αυτά"
 
 #: pitivi/check.py:495
 msgid "enables object tracking"
-msgstr ""
+msgstr "ενεργοποιεί την παρακολούθηση αντικειμένων"
 
 #: pitivi/check.py:496
 msgid "enables beat detection functionality"
-msgstr ""
+msgstr "ενεργοποιεί τη λειτουργία ανίχνευσης ρυθμού"
 
 #. Translators: This is the default text of a title clip.
 #: pitivi/clipproperties.py:69
-#, fuzzy
-#| msgid "Title"
 msgid "Title Clip"
-msgstr "Τίτλος"
+msgstr "Απόσπασμα τίτλου"
 
 #: pitivi/clipproperties.py:162
-#, fuzzy
-#| msgid "Select a clip on the timeline to configure its associated effects"
 msgid ""
 "Select a clip on the timeline to configure its properties and effects or "
 "create a new clip:"
 msgstr ""
-"Επιλέξτε ένα κομμάτι στη γραμμή χρόνου για να ρυθμίσετε τα σχετικά εφέ του"
+"Επιλέξτε ένα απόσπασμα στη λωρίδα χρόνου για να ρυθμίσετε τις ιδιότητες και "
+"τα εφέ του ή δημιουργήστε ένα νέο απόσπασμα:"
 
 #: pitivi/clipproperties.py:168
-#, fuzzy
-#| msgid "Create a new preset"
 msgid "Create a title clip"
-msgstr "Δημιουργία ενός νέου έργου"
+msgstr "Δημιουργία αποσπάσματος τίτλου"
 
 #: pitivi/clipproperties.py:173
 msgid "Create a color clip"
-msgstr ""
+msgstr "Δημιουργία αποσπάσματος χρώματος"
 
 #: pitivi/clipproperties.py:276 pitivi/effects.py:122
 msgid "Time"
@@ -1128,7 +1069,7 @@ msgstr "Χρόνος"
 
 #: pitivi/clipproperties.py:319
 msgid "Speed"
-msgstr ""
+msgstr "Ταχύτητα"
 
 #: pitivi/clipproperties.py:334 pitivi/utils/widgets.py:800
 #, python-format
@@ -1142,53 +1083,45 @@ msgstr "Επαναφορά στην προεπιλεγμένη τιμή"
 
 #: pitivi/clipproperties.py:572
 msgid "Effects"
-msgstr "Επιδράσεις"
+msgstr "Εφέ"
 
 #: pitivi/clipproperties.py:590
 msgid ""
 "To apply an effect to the clip, drag it from the Effect Library or use the "
 "button below."
 msgstr ""
+"Για να εφαρμόσετε ένα εφέ στο απόσπασμα, σύρετέ το από τη Βιβλιοθήκη εφέ ή "
+"χρησιμοποιήστε το κουμπί παρακάτω."
 
 #: pitivi/clipproperties.py:598
-#, fuzzy
-#| msgid "Effects"
 msgid "Add Effect"
-msgstr "Επιδράσεις"
+msgstr "Προσθήκη εφέ"
 
 #: pitivi/clipproperties.py:608
 msgid "Cover Object"
-msgstr ""
+msgstr "Κάλυψη αντικειμένου"
 
 #: pitivi/clipproperties.py:938
 msgid "Transformation"
 msgstr "Μετασχηματισμός"
 
 #: pitivi/clipproperties.py:1067
-#, fuzzy
-#| msgid "Show keyframes for this value"
 msgid "Show keyframes"
-msgstr "Εμφάνιση βασικών καρέ για αυτήν τη τιμή"
+msgstr "Εμφάνιση keyframes"
 
 #: pitivi/clipproperties.py:1070
-#, fuzzy
-#| msgid "Add a keyframe"
 msgid "Activate keyframes"
-msgstr "Προσθήκη λήψης-κλειδιού"
+msgstr "Ενεργοποίηση keyframes"
 
 #: pitivi/clipproperties.py:1075
-#, fuzzy
-#| msgid "Add a keyframe"
 msgid "Hide keyframes"
-msgstr "Προσθήκη λήψης-κλειδιού"
+msgstr "Απόκρυψη keyframes"
 
 #: pitivi/clip_properties/color.py:53 plugins/console/console.py:125
-#, fuzzy
-#| msgid "Colors"
 msgid "Color"
-msgstr "Χρώματα"
+msgstr "Χρώμα"
 
-# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
+# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
 #: pitivi/clip_properties/compositing.py:57 pitivi/effects.py:81
 msgid "Compositing"
 msgstr "Σύνθεση"
@@ -1198,45 +1131,35 @@ msgstr "Σύνθεση"
 #. visualizations.
 #: pitivi/clip_properties/compositing.py:80
 msgid "Source"
-msgstr ""
+msgstr "Πηγή"
 
 #: pitivi/clip_properties/compositing.py:81
 msgid "Over"
-msgstr ""
+msgstr "Από πάνω"
 
 #: pitivi/clip_properties/markers.py:47
-#, fuzzy
-#| msgid "Text:"
 msgid "Text"
-msgstr "Κείμενο:"
+msgstr "Κείμενο"
 
 #: pitivi/clip_properties/markers.py:64
-#, fuzzy
-#| msgid "Clip Properties"
 msgid "Clip markers"
-msgstr "Ιδιότητες κομματιού"
+msgstr "Δείκτες αποσπάσματος"
 
 #: pitivi/clip_properties/markers.py:125
 msgid "Magnetic"
-msgstr ""
+msgstr "Μαγνητικός"
 
 #: pitivi/clip_properties/title.py:47
-#, fuzzy
-#| msgid "Image clip duration"
 msgid "Title clip duration"
-msgstr "Διάρκεια κομματιού εικόνας"
+msgstr "Διάρκεια αποσπάσματος τίτλου"
 
 #: pitivi/clip_properties/title.py:49
-#, fuzzy
-#| msgid ""
-#| "Default clip length (in milliseconds) of images when inserting on the "
-#| "timeline."
 msgid ""
 "Default clip length (in milliseconds) of titles when inserting on the "
 "timeline."
 msgstr ""
-"Προεπιλεγμένο μήκος κομματιού (σε χιλιοστά δευτερολέπτου) των εικόνων όταν "
-"εισάγονται στη γραμμή χρόνου."
+"Προεπιλεγμένο μήκος αποσπάσματος (σε χιλιοστά δευτερολέπτου) των τίτλων όταν "
+"εισάγονται στη λωρίδα χρόνου."
 
 #: pitivi/clip_properties/title.py:63
 msgid "Title"
@@ -1246,7 +1169,7 @@ msgstr "Τίτλος"
 #. pylint: disable=superfluous-parens
 #: pitivi/clip_properties/title.py:122 pitivi/clip_properties/title.py:129
 msgid "Absolute"
-msgstr ""
+msgstr "Απόλυτο"
 
 #: pitivi/clip_properties/title.py:123
 msgid "Top"
@@ -1291,10 +1214,8 @@ msgid "Past maintainers:"
 msgstr "Προηγούμενοι συντηρητές:"
 
 #: pitivi/dialogs/about.py:69
-#, fuzzy
-#| msgid "Contributors:\n"
 msgid "Contributors:"
-msgstr "Συντελεστές:\n"
+msgstr "Συντελεστές:"
 
 #. Translators: See
 #. https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
@@ -1310,14 +1231,12 @@ msgstr ""
 "http://gnome.gr"
 
 #: pitivi/dialogs/browseprojects.py:34
-#, fuzzy
-#| msgid "Open project..."
 msgid "Open Project…"
-msgstr "Άνοιγμα έργου..."
+msgstr "Άνοιγμα έργου…"
 
 #: pitivi/dialogs/browseprojects.py:39 pitivi/dialogs/missingasset.py:47
 msgid "Open"
-msgstr "Άνοιγμα..."
+msgstr "Άνοιγμα"
 
 #: pitivi/dialogs/browseprojects.py:55
 msgid "All supported formats"
@@ -1325,7 +1244,7 @@ msgstr "Όλες οι υποστηριζόμενες μορφές"
 
 #: pitivi/dialogs/clipmediaprops.py:102
 msgid "Variable"
-msgstr ""
+msgstr "Μεταβλητό"
 
 #: pitivi/dialogs/clipmediaprops.py:128
 msgid "Image:"
@@ -1348,20 +1267,12 @@ msgid "Locate missing file..."
 msgstr "Εντοπισμός αρχείου που λείπει..."
 
 #: pitivi/dialogs/missingasset.py:58
-#, fuzzy
-#| msgid "The following file can not be used with Pitivi."
 msgid "The following file could not be found:"
-msgstr "Το παρακάτω αρχείο δε μπορεί να χρησιμοποιηθεί με το Pitivi."
+msgstr "Δεν ήταν δυνατή η εύρεση του παρακάτω αρχείου:"
 
 #: pitivi/dialogs/missingasset.py:82
-#, fuzzy
-#| msgid ""
-#| "The following file has moved: \"<b>%s</b>\"\n"
-#| "Please specify its new location:"
 msgid "Please specify its new location:"
-msgstr ""
-"Το ακόλουθο αρχείο έχει μετακινηθεί: \"<b>%s</b>\"\n"
-"Παρακαλούμε καθορίστε την καινούργια του τοποθεσία:"
+msgstr "Παρακαλούμε καθορίστε την καινούργια του τοποθεσία:"
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI files"
 #: pitivi/dialogs/missingasset.py:113
@@ -1374,85 +1285,84 @@ msgid "All files"
 msgstr "Όλα τα αρχεία"
 
 #: pitivi/dialogs/prefs.py:61 pitivi/timeline/timeline.py:1917
-#, fuzzy
-#| msgid "_Timeline"
 msgid "Timeline"
-msgstr "_Γραμμή χρόνου"
+msgstr "Λωρίδα χρόνου"
 
 #: pitivi/dialogs/prefs.py:62
-#, fuzzy
-#| msgid "Plugin"
 msgid "Plugins"
-msgstr "Πρόσθετο"
+msgstr "Πρόσθετα"
 
 #: pitivi/dialogs/prefs.py:63
 msgid "Shortcuts"
-msgstr ""
+msgstr "Συντομεύσεις"
 
 #: pitivi/dialogs/prefs.py:64
 msgid "Proxies"
-msgstr ""
+msgstr "Proxies"
 
 #: pitivi/dialogs/prefs.py:65
 msgid "Other"
-msgstr ""
+msgstr "Άλλα"
 
 #: pitivi/dialogs/prefs.py:332
 msgid ""
 "This resolution will be used as the default target resolution for new "
 "projects and projects missing scaled proxy meta-data."
 msgstr ""
+"Αυτή η ανάλυση θα χρησιμοποιηθεί ως η προεπιλεγμένη ανάλυση στόχου για νέα "
+"έργα και έργα που λείπουν τα μεταδεδομένα κλιμακωτού proxy."
 
 #: pitivi/dialogs/prefs.py:345
 msgid "Initial proxy size for new projects"
-msgstr ""
+msgstr "Αρχικό μέγεθος proxy για νέα έργα"
 
 #: pitivi/dialogs/prefs.py:380
 #, python-format
 msgid "Proxy resolution for the current project is %d×%d px"
-msgstr ""
+msgstr "Η ανάλυση proxy για το τρέχον έργο είναι %d×%d px"
 
 #: pitivi/dialogs/prefs.py:459
-#, fuzzy
-#| msgid "Reset all settings to their default values"
 msgid "Reset the shortcut to the default accelerator"
-msgstr "Επαναφορά όλων των ρυθμίσεων στις προεπιλεγμένες τιμές"
+msgstr "Επαναφορά της συντόμευσης στον προεπιλεγμένο επιταχυντή"
 
 #: pitivi/dialogs/prefs.py:616
-#, fuzzy
-#| msgid "Keyboard shortcuts"
 msgid "Set Shortcut"
-msgstr "Συντομεύσεις πληκτρολογίου"
+msgstr "Ορισμός συντόμευσης"
 
 #. Setup the widgets used in the dialog.
 #: pitivi/dialogs/prefs.py:631
 msgid "Apply"
-msgstr ""
+msgstr "Εφαρμογή"
 
 #: pitivi/dialogs/prefs.py:634
 msgid "Apply the accelerator to this shortcut."
-msgstr ""
+msgstr "Εφαρμογή του επιταχυντή σε αυτήν τη συντόμευση."
 
 #: pitivi/dialogs/prefs.py:637
 msgid "Replace"
-msgstr ""
+msgstr "Αντικατάσταση"
 
 #: pitivi/dialogs/prefs.py:640
 msgid ""
 "Remove this accelerator from where it was used previously and set it for "
 "this shortcut."
 msgstr ""
+"Αφαίρεση αυτού του επιταχυντή από εκεί που χρησιμοποιούνταν προηγουμένως και "
+"ορισμός του για αυτήν τη συντόμευση."
 
 #: pitivi/dialogs/prefs.py:647
 #, python-format
 msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
-msgstr ""
+msgstr "Εισάγετε νέα συντόμευση για το <b>%s</b>, ή πατήστε Esc για ακύρωση."
 
 #: pitivi/dialogs/prefs.py:656
 msgid ""
 "The accelerator you are trying to set might interfere with typing. Try using "
 "Control, Shift or Alt with some other key, please."
 msgstr ""
+"Ο επιταχυντής που προσπαθείτε να ορίσετε ενδέχεται να παρεμβαίνει στην "
+"πληκτρολόγηση. Δοκιμάστε να χρησιμοποιήσετε το Control, Shift ή Alt με κάποιο "
+"άλλο πλήκτρο, παρακαλώ."
 
 #: pitivi/dialogs/prefs.py:690
 #, python-format
@@ -1460,25 +1370,23 @@ msgid ""
 "This key combination is already used by <b>%s</b>. Press Replace to use it "
 "for <b>%s</b> instead."
 msgstr ""
+"Αυτός ο συνδυασμός πλήκτρων χρησιμοποιείται ήδη από το <b>%s</b>. Πατήστε "
+"Αντικατάσταση για να το χρησιμοποιήσετε για το <b>%s</b> αντ' αυτού."
 
 #: pitivi/dialogs/prefs.py:737
-#, fuzzy
-#| msgid "No device available"
 msgid "No description available."
-msgstr "Δεν υπάρχει διαθέσιμη συσκευή"
+msgstr "Δεν υπάρχει διαθέσιμη περιγραφή."
 
 #: pitivi/dialogs/prefs.py:828
 #, python-brace-format
 msgid "Unable to load the plugin '{module_name}'"
-msgstr ""
+msgstr "Αδυναμία φόρτωσης του πρόσθετου '{module_name}'"
 
 #. We could use Gtk.ListBox.set_placeholder, but it
 #. appears bad inside the list widget.
 #: pitivi/dialogs/prefs.py:912
-#, fuzzy
-#| msgid "No device available"
 msgid "No plugins available"
-msgstr "Δεν υπάρχει διαθέσιμη συσκευή"
+msgstr "Δεν υπάρχουν διαθέσιμα πρόσθετα"
 
 #: pitivi/dialogs/prefs.py:925
 #, python-brace-format
@@ -1486,6 +1394,8 @@ msgid ""
 "You can create <a href='{doc_url}'>plugins</a> into your <a "
 "href='{dir_url}'>plugins directory</a>."
 msgstr ""
+"Μπορείτε να δημιουργήσετε <a href='{doc_url}'>πρόσθετα</a> στον <a "
+"href='{dir_url}'>κατάλογο πρόσθετων</a> σας."
 
 #: pitivi/editorperspective.py:205 pitivi/medialibrary.py:632
 msgid "Media Library"
@@ -1497,7 +1407,7 @@ msgstr "Βιβλιοθήκη εφέ"
 
 #: pitivi/editorperspective.py:217
 msgid "Clip"
-msgstr "Κομμάτι"
+msgstr "Απόσπασμα"
 
 #: pitivi/editorperspective.py:219
 msgid "Transition"
@@ -1517,21 +1427,19 @@ msgstr "Αποθήκευση"
 
 #: pitivi/editorperspective.py:339
 msgid "Export your project as a finished movie"
-msgstr "Εξάγετε το έργο σας ως μια ολοκληρωμένη ταινία"
+msgstr "Εξαγωγή του έργου σας ως ολοκληρωμένης ταινίας"
 
 #: pitivi/editorperspective.py:372
 msgid "Save the current project"
 msgstr "Αποθήκευση του τρέχοντος έργου"
 
 #: pitivi/editorperspective.py:380
-#, fuzzy
-#| msgid "Save the current project"
 msgid "Save the current project as"
-msgstr "Αποθήκευση του τρέχοντος έργου"
+msgstr "Αποθήκευση του τρέχοντος έργου ως"
 
 #: pitivi/editorperspective.py:400
 msgid "Quick intros to Pitivi"
-msgstr ""
+msgstr "Γρήγορες εισαγωγές στο Pitivi"
 
 #: pitivi/editorperspective.py:516
 #, python-format
@@ -1540,7 +1448,7 @@ msgstr "Αδύνατη η αποθήκευση του έργου \"%s\""
 
 #: pitivi/editorperspective.py:546 pitivi/project.py:194
 msgid "Save as..."
-msgstr "Αποθήκευση ως... "
+msgstr "Αποθήκευση ως..."
 
 #: pitivi/editorperspective.py:549
 msgid "Close without saving"
@@ -1566,7 +1474,7 @@ msgstr "Επαναφορά στην αποθηκευμένη έκδοση του
 #: pitivi/editorperspective.py:624
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
-"Αυτό θα επαναφορτώσει το τρέχον έργο. Όλες οι αναποθήκευτες αλλαγές θα "
+"Αυτό θα επαναφορτώσει το τρέχον έργο. Όλες οι μη αποθηκευμένες αλλαγές θα "
 "χαθούν."
 
 #. Signal the project loading failure.
@@ -1579,13 +1487,13 @@ msgid ""
 "\n"
 "Pitivi does not currently support partial projects."
 msgstr ""
-"Δεν δόθηκε αρχείο αντικατάστασης για \"<i>%s</i>\".\n"
+"Δεν δόθηκε αρχείο αντικατάστασης για το \"<i>%s</i>\".\n"
 "\n"
 "Το Pitivi δεν υποστηρίζει προς το παρόν μερικά έργα."
 
 #: pitivi/editorperspective.py:684
 msgid "Export To..."
-msgstr "Εξαξωγή σε..."
+msgstr "Εξαγωγή σε..."
 
 #: pitivi/editorperspective.py:701
 msgid "Tar archive"
@@ -1598,7 +1506,7 @@ msgstr "Αυτόματη αναγνώριση"
 #: pitivi/editorperspective.py:745 pitivi/editorperspective.py:792
 #: pitivi/project.py:62 pitivi/render.py:821
 msgid "Untitled"
-msgstr "Χωρίς τίτλο"
+msgstr "Ανώνυμο"
 
 #: pitivi/editorperspective.py:794
 msgid "PNG image"
@@ -1634,20 +1542,18 @@ msgstr "Φαντασία"
 
 #: pitivi/effects.py:249
 msgid "effect"
-msgstr "Εφέ"
+msgstr "εφέ"
 
 #. Translators: How the video effect which covers/hides a
 #. tracked object is listed. The {} is entered by the user
 #. and denotes the tracked object.
 #: pitivi/effects.py:330
 msgid "{} cover"
-msgstr ""
+msgstr "Κάλυψη {}"
 
 #: pitivi/effects.py:331
-#, fuzzy
-#| msgid "Remove effect"
 msgid "Object cover effect"
-msgstr "Αφαίρεση εφέ"
+msgstr "Εφέ κάλυψης αντικειμένου"
 
 #. Add Uncategorized only if there are other categories defined.
 #: pitivi/effects.py:354 pitivi/effects.py:368
@@ -1655,14 +1561,12 @@ msgid "Uncategorized"
 msgstr "Χωρίς κατηγορία"
 
 #: pitivi/effects.py:410 pitivi/effects.py:677
-#, fuzzy
-#| msgid "All effects"
 msgid "No effects"
-msgstr "Όλα τα εφέ"
+msgstr "Χωρίς εφέ"
 
 #: pitivi/effects.py:498
 msgid "Add to Favorites"
-msgstr ""
+msgstr "Προσθήκη στα αγαπημένα"
 
 #: pitivi/greeterperspective.py:228 pitivi/preset.py:101 pitivi/render.py:214
 msgid "New"
@@ -1670,39 +1574,31 @@ msgstr "Νέο"
 
 #: pitivi/greeterperspective.py:229 pitivi/greeterperspective.py:290
 msgid "Create a new project"
-msgstr "Δημιουργία ενός νέου έργου"
+msgstr "Δημιουργία νέου έργου"
 
 #: pitivi/greeterperspective.py:232
-#, fuzzy
-#| msgid "Open"
 msgid "Open…"
-msgstr "Άνοιγμα..."
+msgstr "Άνοιγμα…"
 
 #: pitivi/greeterperspective.py:233
 msgid "Open an existing project"
-msgstr "Άνοιγμα ενός υπάρχοντος έργου"
+msgstr "Άνοιγμα υπάρχοντος έργου"
 
 #: pitivi/greeterperspective.py:238
-#, fuzzy
-#| msgid "Select One or More Folders"
 msgid "Select projects for removal"
-msgstr "Επιλέξτε έναν ή περισσότερους φακέλους"
+msgstr "Επιλέξτε έργα για αφαίρεση"
 
 #: pitivi/greeterperspective.py:272
 msgid "Click an item to select"
-msgstr ""
+msgstr "Κάντε κλικ σε ένα αντικείμενο για να το επιλέξετε"
 
 #: pitivi/greeterperspective.py:276
-#, fuzzy
-#| msgid "New Project"
 msgid "Select a Project"
-msgstr "Νέο έργο"
+msgstr "Επιλογή ενός έργου"
 
 #: pitivi/greeterperspective.py:297
-#, fuzzy
-#| msgid "Open project..."
 msgid "Open a project"
-msgstr "Άνοιγμα έργου..."
+msgstr "Άνοιγμα ενός έργου"
 
 #: pitivi/greeterperspective.py:365
 #, python-format
@@ -1720,55 +1616,47 @@ msgstr ""
 #. pylint: disable=attribute-defined-outside-init
 #: pitivi/interactiveintro.py:154
 msgid "Start Overview"
-msgstr ""
+msgstr "Έναρξη επισκόπησης"
 
 #: pitivi/interactiveintro.py:212
-#, fuzzy
-#| msgid "Close Pitivi"
 msgid "Welcome to Pitivi!"
-msgstr "Κλείσιμο Pitivi"
+msgstr "Καλώς ήρθατε στο Pitivi!"
 
 #: pitivi/interactiveintro.py:214
 msgid "Drag files here to import them"
-msgstr ""
+msgstr "Σύρετε αρχεία εδώ για να τα εισάγετε"
 
 #: pitivi/interactiveintro.py:216
 msgid "Drag clips in the timeline to arrange them"
-msgstr ""
+msgstr "Σύρετε αποσπάσματα στη λωρίδα χρόνου για να τα τακτοποιήσετε"
 
 #: pitivi/interactiveintro.py:218
 msgid "Right-click anywhere to move the playhead"
-msgstr ""
+msgstr "Δεξί κλικ οπουδήποτε για να μετακινήσετε την κεφαλή αναπαραγωγής"
 
 #: pitivi/interactiveintro.py:220
 msgid "Preview with the play button"
-msgstr ""
+msgstr "Προεπισκόπηση με το κουμπί αναπαραγωγής"
 
 #: pitivi/interactiveintro.py:222
-#, fuzzy
-#| msgid "Export your project as a finished movie"
 msgid "Export your project to share it"
-msgstr "Εξάγετε το έργο σας ως μια ολοκληρωμένη ταινία"
+msgstr "Εξάγετε το έργο σας για να το μοιραστείτε"
 
 #: pitivi/interactiveintro.py:224
-#, fuzzy
-#| msgid "Keyboard shortcuts"
 msgid "See all the keyboard shortcuts"
-msgstr "Συντομεύσεις πληκτρολογίου"
+msgstr "Δείτε όλες τις συντομεύσεις πληκτρολογίου"
 
 #: pitivi/mainwindow.py:74
 msgid "Dark Theme"
-msgstr ""
+msgstr "Σκούρο θέμα"
 
 #: pitivi/mainwindow.py:75
 msgid "Whether or not to use a dark theme."
-msgstr ""
+msgstr "Αν θα χρησιμοποιηθεί σκούρο θέμα ή όχι."
 
 #: pitivi/mainwindow.py:189
-#, fuzzy
-#| msgid "Projects"
 msgid "Project"
-msgstr "Έργα"
+msgstr "Έργο"
 
 #: pitivi/mainwindow.py:196
 msgid "Help"
@@ -1780,7 +1668,7 @@ msgstr "Περί"
 
 #: pitivi/mainwindow.py:210
 msgid "Show the menu button content"
-msgstr ""
+msgstr "Εμφάνιση περιεχομένου κουμπιού μενού"
 
 #: pitivi/mainwindow.py:262
 #, python-format
@@ -1789,7 +1677,7 @@ msgstr "Αδύνατη η φόρτωση του έργου \"%s\""
 
 #: pitivi/mediafilespreviewer.py:158
 msgid "Pitivi can not preview this file."
-msgstr "Το Pitivi δε μπορεί να προεπισκοπήσει αυτό το αρχείο."
+msgstr "Το Pitivi δεν μπορεί να προεπισκοπήσει αυτό το αρχείο."
 
 #: pitivi/mediafilespreviewer.py:159
 msgid "More info"
@@ -1800,7 +1688,7 @@ msgstr "Περισσότερες πληροφορίες"
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Ανάλυση</b>: %d×%d"
 
-# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
+# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
 #: pitivi/mediafilespreviewer.py:271 pitivi/mediafilespreviewer.py:288
 #: pitivi/utils/ui.py:582
 #, python-format
@@ -1808,58 +1696,48 @@ msgid "<b>Duration</b>: %s"
 msgstr "<b>Διάρκεια</b>: %s"
 
 #: pitivi/mediafilespreviewer.py:461 pitivi/medialibrary.py:1216
-#, fuzzy
-#| msgid "Error while analyzing a file"
 msgid "Error while analyzing a file"
 msgid_plural "Error while analyzing files"
 msgstr[0] "Σφάλμα κατά την ανάλυση ενός αρχείου"
-msgstr[1] "Σφάλμα κατά την ανάλυση ενός αρχείου"
+msgstr[1] "Σφάλμα κατά την ανάλυση αρχείων"
 
 #: pitivi/medialibrary.py:155
 msgid "Keep dialog open"
-msgstr ""
+msgstr "Διατήρηση διαλόγου ανοιχτού"
 
 #: pitivi/medialibrary.py:157
 msgid "When importing files keep the dialog open"
-msgstr ""
+msgstr "Κατά την εισαγωγή αρχείων διατήρηση του διαλόγου ανοιχτού"
 
 #. Translators: Create optimized media for unsupported files.
 #: pitivi/medialibrary.py:163
-#, fuzzy
-#| msgid "Customize:"
 msgid "Optimize:"
-msgstr "Προσαρμογή:"
+msgstr "Βελτιστοποίηση:"
 
 #: pitivi/medialibrary.py:167
-#, fuzzy
-#| msgid "All supported formats"
 msgid "Unsupported assets"
-msgstr "Όλες οι υποστηριζόμενες μορφές"
+msgstr "Μη υποστηριζόμενα μέσα"
 
 #: pitivi/medialibrary.py:168
 msgid "All"
-msgstr ""
+msgstr "Όλα"
 
 #: pitivi/medialibrary.py:249
 #, python-format
 msgid "Scale down assets larger than %s×%s px."
-msgstr ""
+msgstr "Σμίκρυνση μέσων μεγαλύτερων από %s×%s px."
 
 #: pitivi/medialibrary.py:533 pitivi/medialibrary.py:1093
 msgid "Unknown"
 msgstr "Άγνωστο"
 
 #: pitivi/medialibrary.py:639
-#, fuzzy
-#| msgid "Remove the selected preset"
 msgid "Remove the selected assets"
-msgstr "Αφαιρέστε την επιλεγμένη προρύθμιση"
+msgstr "Αφαίρεση των επιλεγμένων μέσων"
 
 #: pitivi/medialibrary.py:646
-#, fuzzy
-#| msgid "Insert the selected clips at the end of the timeline"
 msgid "Insert selected assets at the end of the timeline"
-msgstr "Εισάγετε τα επιλεγμένα κομμάτια στο τέλος της γραμμής χρόνου"
+msgstr "Εισαγωγή επιλεγμένων μέσων στο τέλος της λωρίδας χρόνου"
 
 #: pitivi/medialibrary.py:862
 msgid "Select One or More Files"
@@ -1883,8 +1761,8 @@ msgstr "Υποστηριζόμενες μορφές αρχείων"
 #, python-format
 msgid "Transcoding %d asset: %d%% (About %s left)"
 msgid_plural "Transcoding %d assets: %d%% (About %s left)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Μετατροπή %d μέσου: %d%% (Απομένουν περίπου %s)"
+msgstr[1] "Μετατροπή %d μέσων: %d%% (Απομένουν περίπου %s)"
 
 #: pitivi/medialibrary.py:1105
 msgid "View error"
@@ -1906,79 +1784,71 @@ msgid "The project settings have been set to match file '%s'"
 msgstr "Οι ρυθμίσεις του έργου έχουν οριστεί ώστε να ταιριάζουν το αρχείο '%s'"
 
 #: pitivi/medialibrary.py:1219
-#, fuzzy
-#| msgid "The following file can not be used with Pitivi."
 msgid "The following file can not be used with Pitivi."
 msgid_plural "The following files can not be used with Pitivi."
 msgstr[0] "Το παρακάτω αρχείο δε μπορεί να χρησιμοποιηθεί με το Pitivi."
-msgstr[1] "Το παρακάτω αρχείο δε μπορεί να χρησιμοποιηθεί με το Pitivi."
+msgstr[1] "Τα παρακάτω αρχεία δε μπορούν να χρησιμοποιηθούν με το Pitivi."
 
 #: pitivi/medialibrary.py:1249
 msgid "Tag as:"
-msgstr ""
+msgstr "Προσθήκη ετικέτας:"
 
 #: pitivi/medialibrary.py:1287
 msgid "Enter tag"
-msgstr ""
+msgstr "Εισαγωγή ετικέτας"
 
 #: pitivi/medialibrary.py:1447
 msgid "Open containing folder"
-msgstr ""
+msgstr "Άνοιγμα φακέλου που το περιέχει"
 
 #: pitivi/medialibrary.py:1454
-#, fuzzy
-#| msgid "_Edit"
 msgid "Edit"
-msgstr "_Επεξεργασία"
+msgstr "Επεξεργασία"
 
 #: pitivi/medialibrary.py:1483
 msgid "Do not use Optimised Proxy for selected asset"
 msgid_plural "Do not use Optimised Proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Να μην χρησιμοποιηθεί βελτιστοποιημένος Proxy για το επιλεγμένο μέσο"
+msgstr[1] "Να μην χρησιμοποιηθούν βελτιστοποιημένοι Proxy για τα επιλεγμένα μέσα"
 
 #: pitivi/medialibrary.py:1494 pitivi/medialibrary.py:1516
 #: pitivi/medialibrary.py:1538
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Διαγραφή αντίστοιχου αρχείου proxy"
+msgstr[1] "Διαγραφή αντίστοιχων αρχείων proxy"
 
 #: pitivi/medialibrary.py:1505
 msgid "Do not use Proxy for selected asset"
 msgid_plural "Do not use Proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Να μην χρησιμοποιηθεί Proxy για το επιλεγμένο μέσο"
+msgstr[1] "Να μην χρησιμοποιηθούν Proxy για τα επιλεγμένα μέσα"
 
 #: pitivi/medialibrary.py:1527
 msgid "Do not use Scaled Proxy for selected asset"
 msgid_plural "Do not use Scaled Proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Να μην χρησιμοποιηθεί κλιμακωτός Proxy για το επιλεγμένο μέσο"
+msgstr[1] "Να μην χρησιμοποιηθούν κλιμακωτοί Proxy για τα επιλεγμένα μέσα"
 
 #: pitivi/medialibrary.py:1549
 msgid "Use Optimised Proxy for selected asset"
 msgid_plural "Use Optimised Proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Χρήση βελτιστοποιημένου Proxy για το επιλεγμένο μέσο"
+msgstr[1] "Χρήση βελτιστοποιημένων Proxy για τα επιλεγμένα μέσα"
 
 #: pitivi/medialibrary.py:1559
 msgid "Use Scaled Proxy for selected asset"
 msgid_plural "Use Scaled Proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Χρήση κλιμακωτού Proxy για το επιλεγμένο μέσο"
+msgstr[1] "Χρήση κλιμακωτών Proxy για τα επιλεγμένα μέσα"
 
 #: pitivi/pluginmanager.py:54
-#, fuzzy
-#| msgid "Manage plugins"
 msgid "User plugins"
-msgstr "Διαχείριση πρόσθετων"
+msgstr "Πρόσθετα χρήστη"
 
 #: pitivi/pluginmanager.py:56
-#, fuzzy
-#| msgid "Manage plugins"
 msgid "System plugins"
-msgstr "Διαχείριση πρόσθετων"
+msgstr "Πρόσθετα συστήματος"
 
 #: pitivi/preset.py:228
 msgid "New preset"
@@ -2009,6 +1879,19 @@ msgid ""
 "Before closing Pitivi, you can save changes to the existing project file or "
 "as a separate project file."
 msgstr ""
+"Το Pitivi εντόπισε ένα σοβαρό πρόβλημα στο σύστημα υποστήριξης (backend) και "
+"δεν μπόρεσε να ανακάμψει από αυτό, ακόμα και μετά από πολλές προσπάθειες. Το "
+"μόνο που μπορεί να γίνει σε αυτό το σημείο είναι <b>επανεκκίνηση του "
+"Pitivi</b>.\n"
+"\n"
+"Πρόκειται για ένα σπάνιο και σοβαρό είδος σφάλματος. Παρακαλούμε δείτε τον "
+"<a href=\"http://developer.pitivi.org/Bug_reporting.html\">οδηγό αναφοράς "
+"σφαλμάτων</a> και αφιερώστε λίγο χρόνο για να το αναφέρετε! Θα χαρούμε πολύ "
+"να διορθώσουμε αυτό το σφάλμα και να διασφαλίσουμε ότι δεν θα εμφανιστεί "
+"ξανά σε μελλοντικές εκδόσεις.\n"
+"\n"
+"Πριν κλείσετε το Pitivi, μπορείτε να αποθηκεύσετε τις αλλαγές στο υπάρχον "
+"αρχείο έργου ή ως ξεχωριστό αρχείο έργου."
 
 #: pitivi/project.py:196
 msgid "Close Pitivi"
@@ -2020,9 +1903,9 @@ msgid ""
 "were trying to add a media file to your project, use the \"Import\" button "
 "instead."
 msgstr ""
-"Αυτό μπορεί να συμβαίνει λόγω ενός σφάλματος ή μιας ανυποστήρικτης μορφής "
-"αρχείου έργου. Αν προσπαθείτε να προσθέσετε ένα αρχείο μέσων στο έργο σας, "
-"χρησιμοποιήστε το κουμπί \"Εισαγωγή\" στη θέση του."
+"Αυτό μπορεί να οφείλεται σε σφάλμα ή σε μη υποστηριζόμενη μορφή αρχείου "
+"έργου. Αν προσπαθείτε να προσθέσετε ένα αρχείο μέσων στο έργο σας, "
+"χρησιμοποιήστε το κουμπί \"Εισαγωγή\" αντί αυτού."
 
 #: pitivi/project.py:288
 msgid "Ignore backup"
@@ -2040,14 +1923,14 @@ msgid ""
 "\n"
 "Would you like to load it instead?"
 msgstr ""
-"Μια αυτόματα αποθηκευμένη έκδοση του αρχείου έργου σας βρέθηκε. Είναι %s πιο "
+"Βρέθηκε μια αυτόματα αποθηκευμένη έκδοση του αρχείου έργου σας. Είναι %s πιο "
 "νέα από το αποθηκευμένο έργο.\n"
 "\n"
-"Θα θέλατε να την φορτώσετε στη θέση της;"
+"Θα θέλατε να την φορτώσετε αντί για αυτό;"
 
 #: pitivi/project.py:374
 msgid "You do not have permissions to write to this folder."
-msgstr "Δεν έχετε δικαιώματα να γράψετε σε αυτόν τον φάκελο."
+msgstr "Δεν έχετε δικαιώματα εγγραφής σε αυτόν τον φάκελο."
 
 #. Save the project to a temporary file.
 #: pitivi/project.py:407
@@ -2056,26 +1939,26 @@ msgstr "έργο"
 
 #: pitivi/project.py:701
 msgid "Pitivi encoding profile"
-msgstr "Κατατομή κωδικοποίησης Pitivi"
+msgstr "Προφίλ κωδικοποίησης Pitivi"
 
 #: pitivi/render.py:115
 msgid "YouTube"
-msgstr ""
+msgstr "YouTube"
 
 #: pitivi/render.py:116
 msgid "DVD"
-msgstr ""
+msgstr "DVD"
 
 #. Translators: This must contain exclusively low case alphanum and '-'
 #: pitivi/render.py:317
 msgid "new-profile"
-msgstr ""
+msgstr "νέο-προφίλ"
 
 #. Translators: This must contain exclusively low case alphanum and '-'
 #: pitivi/render.py:321
 #, python-format
 msgid "new-profile-%d"
-msgstr ""
+msgstr "νέο-προφίλ-%d"
 
 #: pitivi/render.py:724
 #, python-format
@@ -2099,18 +1982,18 @@ msgstr "Τρέχουσα απόδοση"
 
 #: pitivi/render.py:964
 msgid "medium"
-msgstr ""
+msgstr "μεσαία"
 
 #: pitivi/render.py:965
 msgid "high"
-msgstr ""
+msgstr "υψηλή"
 
 #. Translators: This item appears in a combobox's popup and
 #. contains as children the unsupported (but still available)
 #. muxers and encoders.
 #: pitivi/render.py:1066
 msgid "Unsupported"
-msgstr ""
+msgstr "Μη υποστηριζόμενα"
 
 #: pitivi/render.py:1127 pitivi/render.py:1132
 msgid "A file name is required."
@@ -2123,11 +2006,11 @@ msgid ""
 msgstr ""
 "Το αρχείο υπάρχει ήδη.\n"
 "Εάν δεν θέλετε να το αντικαταστήσετε, επιλέξτε ένα διαφορετικό όνομα αρχείου "
-"ή φακέλου."
+"ή φάκελο."
 
 #: pitivi/render.py:1140
 msgid "Invalid file path"
-msgstr ""
+msgstr "Άκυρη διαδρομή αρχείου"
 
 #: pitivi/render.py:1171
 #, python-format
@@ -2146,33 +2029,25 @@ msgid ""
 "render otherwise.</b>\n"
 "\n"
 msgstr ""
+"<b>Βεβαιωθείτε ότι το μέγεθος απόδοσής σας είναι άρτιο, αλλιώς το x264enc "
+"ενδέχεται να μην μπορεί να αποδώσει.</b>\n"
+"\n"
 
 #: pitivi/render.py:1322
-#, fuzzy
-#| msgid "An error occurred while importing."
-#| msgid_plural "{0:d} errors occurred while importing."
 msgid "An error occurred while trying to render your project."
-msgstr "Προέκυψε ένα σφάλμα κατά την εισαγωγή."
+msgstr "Προέκυψε σφάλμα κατά την προσπάθεια απόδοσης του έργου σας."
 
 #: pitivi/render.py:1324
-#, fuzzy
-#| msgid ""
-#| "An error occurred while trying to render your project. You might want to "
-#| "check our troubleshooting guide or file a bug report. The GStreamer error "
-#| "was:"
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
 msgstr ""
-"Ένα σφάλμα συνέβη κατά την προσπάθεια απόδοσης του έργου σας. Μπορεί να "
-"θέλετε να ελέγξετε τον οδηγό αντιμετώπισης προβλημάτων ή να στείλετε μια "
-"αναφορά σφάλματος. Το σφάλμα GStreamer ήταν:"
+"Μπορεί να θέλετε να ελέγξετε τον οδηγό αντιμετώπισης προβλημάτων ή να "
+"υποβάλετε αναφορά σφάλματος. Το σφάλμα GStreamer ήταν:"
 
 #: pitivi/render.py:1485
-#, fuzzy
-#| msgid "Choose file to render to"
 msgid "Select file path to render"
-msgstr "Επιλέξτε το αρχείο για να γίνει αποτύπωση"
+msgstr "Επιλέξτε διαδρομή αρχείου για απόδοση"
 
 #: pitivi/render.py:1595 pitivi/render.py:1596 pitivi/render.py:1602
 msgid "Render complete"
@@ -2200,7 +2075,7 @@ msgstr ""
 #: pitivi/timeline/elements.py:635
 #, python-format
 msgid "Timestamp: %s"
-msgstr ""
+msgstr "Χρονική σήμανση: %s"
 
 #: pitivi/timeline/elements.py:1719
 msgid "Audio crossfade"
@@ -2216,7 +2091,7 @@ msgstr "Μετακίνηση στρώσης προς τα πάνω"
 
 #: pitivi/timeline/layer.py:209
 msgid "Move layer down"
-msgstr "Μετακίνηση στρώσης προς τα πάνω"
+msgstr "Μετακίνηση στρώσης προς τα κάτω"
 
 #: pitivi/timeline/layer.py:215
 msgid "Move layer to bottom"
@@ -2238,12 +2113,14 @@ msgstr "Καρέ #%d"
 
 #: pitivi/timeline/timeline.py:87
 msgid "Markers magnetic by default"
-msgstr ""
+msgstr "Μαγνητικοί δείκτες από προεπιλογή"
 
 #: pitivi/timeline/timeline.py:89
 msgid ""
 "Whether markers created on new clips will be snapping targets by default."
 msgstr ""
+"Εάν οι δείκτες που δημιουργούνται σε νέα αποσπάσματα θα είναι στόχοι "
+"προσκόλλησης από προεπιλογή."
 
 #: pitivi/timeline/timeline.py:99
 msgid "Snap distance"
@@ -2254,206 +2131,168 @@ msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
 msgstr ""
-"Κατώφλι (σε εικονοστοιχεία) στο οποίο δυο κομμάτια θα προσκολληθούν μαζί "
-"όταν τα σύρετε ή τα αποκόψετε."
+"Κατώφλι (σε εικονοστοιχεία) στο οποίο δύο αποσπάσματα θα προσκολληθούν μαζί "
+"κατά τη μεταφορά ή την περικοπή."
 
 #: pitivi/timeline/timeline.py:112
 msgid "Image clip duration"
-msgstr "Διάρκεια κομματιού εικόνας"
+msgstr "Διάρκεια αποσπάσματος εικόνας"
 
 #: pitivi/timeline/timeline.py:114
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
 msgstr ""
-"Προεπιλεγμένο μήκος κομματιού (σε χιλιοστά δευτερολέπτου) των εικόνων όταν "
-"εισάγονται στη γραμμή χρόνου."
+"Προεπιλεγμένο μήκος αποσπάσματος (σε χιλιοστά δευτερολέπτου) των εικόνων "
+"όταν εισάγονται στη λωρίδα χρόνου."
 
 #: pitivi/timeline/timeline.py:125
 msgid "Left click also seeks"
-msgstr ""
+msgstr "Το αριστερό κλικ κάνει και αναζήτηση"
 
 #: pitivi/timeline/timeline.py:127
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
-"Αν με αριστερό κλικ μπορεί να γίνει αναζήση μεταξύ των επιλεγμένων κλικ και "
-"αυτών που επεξεργάζονται."
+"Εάν το αριστερό κλικ κάνει και αναζήτηση εκτός από επιλογή και επεξεργασία "
+"αποσπασμάτων."
 
 #: pitivi/timeline/timeline.py:419 pitivi/timeline/timeline.py:1995
-#, fuzzy
-#| msgid "Add a Keyframe"
 msgid "Add layer"
-msgstr "Προσθήκη λήψης-κλειδιού"
+msgstr "Προσθήκη στρώσης"
 
 #: pitivi/timeline/timeline.py:1924
 msgid "Action Search"
-msgstr ""
+msgstr "Αναζήτηση ενέργειας"
 
 #: pitivi/timeline/timeline.py:1931
 msgid "Action Cut Mode"
-msgstr ""
+msgstr "Λειτουργία αποκοπής ενέργειας"
 
 #: pitivi/timeline/timeline.py:1938
 msgid "Action Locked Playhead Mode"
-msgstr ""
+msgstr "Λειτουργία κλειδωμένης κεφαλής αναπαραγωγής"
 
 #: pitivi/timeline/timeline.py:1946
-#, fuzzy
-#| msgid "Delete Selected"
 msgid "Delete selected clips"
-msgstr "Διαγραφή επιλεγμένων"
+msgstr "Διαγραφή επιλεγμένων αποσπασμάτων"
 
 #: pitivi/timeline/timeline.py:1953
-#, fuzzy
-#| msgid "Insert the selected clips at the end of the timeline"
 msgid "Delete selected clips and shift following ones"
-msgstr "Εισάγετε τα επιλεγμένα κομμάτια στο τέλος της γραμμής χρόνου"
+msgstr "Διαγραφή επιλεγμένων αποσπασμάτων και μετατόπιση των επόμενων"
 
 #: pitivi/timeline/timeline.py:1960
-#, fuzzy
-#| msgid "Remove selected clips from the project"
 msgid "Group selected clips together"
-msgstr "Αφαίρεση επιλεγμένων κομματιών από το έργο"
+msgstr "Ομαδοποίηση επιλεγμένων αποσπασμάτων"
 
 #: pitivi/timeline/timeline.py:1967
-#, fuzzy
-#| msgid "Ungroup clips"
 msgid "Ungroup selected clips"
-msgstr "Απομαδοποίηση κομματιών"
+msgstr "Απομαδοποίηση επιλεγμένων αποσπασμάτων"
 
 #: pitivi/timeline/timeline.py:1974
-#, fuzzy
-#| msgid "Delete clips"
 msgid "Cut selected clips"
-msgstr "Διαγραφή κομματιών"
+msgstr "Αποκοπή επιλεγμένων αποσπασμάτων"
 
 #: pitivi/timeline/timeline.py:1981
-#, fuzzy
-#| msgid "Delete clips"
 msgid "Copy selected clips"
-msgstr "Διαγραφή κομματιών"
+msgstr "Αντιγραφή επιλεγμένων αποσπασμάτων"
 
 #: pitivi/timeline/timeline.py:1988
-#, fuzzy
-#| msgid "Paste clips"
 msgid "Paste selected clips"
-msgstr "Επικόλληση κομματιών"
+msgstr "Επικόλληση επιλεγμένων αποσπασμάτων"
 
 #: pitivi/timeline/timeline.py:2002
 msgid "Seek to the first clip edge after the playhead"
-msgstr ""
+msgstr "Αναζήτηση στην άκρη του πρώτου αποσπάσματος μετά την κεφαλή αναπαραγωγής"
 
 #: pitivi/timeline/timeline.py:2009
 msgid "Seek to the first clip edge before the playhead"
 msgstr ""
+"Αναζήτηση στην άκρη του πρώτου αποσπάσματος πριν την κεφαλή αναπαραγωγής"
 
 #: pitivi/timeline/timeline.py:2016
 msgid "Shift selected clips one frame forward"
-msgstr ""
+msgstr "Μετατόπιση επιλεγμένων αποσπασμάτων κατά ένα καρέ μπροστά"
 
 #: pitivi/timeline/timeline.py:2023
 msgid "Shift selected clips one frame backward"
-msgstr ""
+msgstr "Μετατόπιση επιλεγμένων αποσπασμάτων κατά ένα καρέ πίσω"
 
 #: pitivi/timeline/timeline.py:2030
-#, fuzzy
-#| msgid "Remove selected clips from the project"
 msgid "Snap selected clips to the next clip"
-msgstr "Αφαίρεση επιλεγμένων κομματιών από το έργο"
+msgstr "Προσκόλληση επιλεγμένων αποσπασμάτων στο επόμενο απόσπασμα"
 
 #: pitivi/timeline/timeline.py:2037
-#, fuzzy
-#| msgid "Remove selected clips from the project"
 msgid "Snap selected clips to the previous clip"
-msgstr "Αφαίρεση επιλεγμένων κομματιών από το έργο"
+msgstr "Προσκόλληση επιλεγμένων αποσπασμάτων στο προηγούμενο απόσπασμα"
 
 #: pitivi/timeline/timeline.py:2044
-#, fuzzy
-#| msgid "Render only the selected clips"
 msgid "Add an effect to the selected clip"
-msgstr "Απόδοση μόνο των επιλεγμένων κομματιών"
+msgstr "Προσθήκη εφέ στο επιλεγμένο απόσπασμα"
 
 #: pitivi/timeline/timeline.py:2061
-#, fuzzy
-#| msgid "Split clips at playhead position"
 msgid "Split the clip at the position"
-msgstr "Διαχωρισμός κομματιών στη θέση της κεφαλής αναπαραγωγής"
+msgstr "Διαίρεση του αποσπάσματος στη θέση"
 
 #: pitivi/timeline/timeline.py:2068
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr ""
+"Προσθήκη keyframe στην καμπύλη keyframe του επιλεγμένου αποσπάσματος"
 
 #: pitivi/timeline/timeline.py:2073
 msgid "Timeline Navigation"
-msgstr ""
+msgstr "Πλοήγηση λωρίδας χρόνου"
 
 #: pitivi/timeline/timeline.py:2081
-#, fuzzy
-#| msgid "Zoom In"
 msgid "Zoom in"
 msgstr "Μεγέθυνση"
 
 #: pitivi/timeline/timeline.py:2089
-#, fuzzy
-#| msgid "Zoom Out"
 msgid "Zoom out"
 msgstr "Σμίκρυνση"
 
 #: pitivi/timeline/timeline.py:2097
 msgid "Adjust zoom to fit the project to the window"
-msgstr ""
+msgstr "Προσαρμογή εστίασης για προσαρμογή του έργου στο παράθυρο"
 
 #: pitivi/timeline/timeline.py:2110
 msgid "Seek backward one frame"
-msgstr ""
+msgstr "Αναζήτηση πίσω ένα καρέ"
 
 #: pitivi/timeline/timeline.py:2117
-#, fuzzy
-#| msgid "Go forward one second"
 msgid "Seek forward one frame"
-msgstr "Προώθηση ένα δευτερόλεπτο"
+msgstr "Αναζήτηση μπροστά ένα καρέ"
 
 #: pitivi/timeline/timeline.py:2125
-#, fuzzy
-#| msgid "Go back one second"
 msgid "Seek backward one second"
-msgstr "Οπισθοχώρηση ένα δευτερόλεπτο"
+msgstr "Αναζήτηση πίσω ένα δευτερόλεπτο"
 
 #: pitivi/timeline/timeline.py:2133
-#, fuzzy
-#| msgid "Go forward one second"
 msgid "Seek forward one second"
-msgstr "Προώθηση ένα δευτερόλεπτο"
+msgstr "Αναζήτηση μπροστά ένα δευτερόλεπτο"
 
 #: pitivi/timeline/timeline.py:2141
-#, fuzzy
-#| msgid "Add a keyframe"
 msgid "Add a marker"
-msgstr "Προσθήκη λήψης-κλειδιού"
+msgstr "Προσθήκη δείκτη"
 
 #: pitivi/timeline/timeline.py:2148
 msgid "Seek to the first marker before the playhead"
-msgstr ""
+msgstr "Αναζήτηση στον πρώτο δείκτη πριν την κεφαλή αναπαραγωγής"
 
 #: pitivi/timeline/timeline.py:2155
 msgid "Seek to the first marker after the playhead"
-msgstr ""
+msgstr "Αναζήτηση στον πρώτο δείκτη μετά την κεφαλή αναπαραγωγής"
 
 #: pitivi/trackerperspective.py:403
 msgid "Object {}"
-msgstr ""
+msgstr "Αντικείμενο {}"
 
 #: pitivi/trackerperspective.py:665
-#, fuzzy
-#| msgid "Ignore backup"
 msgid "Go back"
-msgstr "Παράβλεψη αντίγραφου ασφαλείας"
+msgstr "Μετάβαση πίσω"
 
 #: pitivi/trackerperspective.py:739
-#, fuzzy
-#| msgid "Projects"
 msgid "Track objects"
-msgstr "Έργα"
+msgstr "Παρακολούθηση αντικειμένων"
 
 #: pitivi/transitions.py:77
 msgid "Normal"
@@ -2461,7 +2300,7 @@ msgstr "Κανονικό"
 
 #: pitivi/transitions.py:82
 msgid "Loop"
-msgstr "Βρόγχος"
+msgstr "Βρόχος"
 
 #: pitivi/transitions.py:89
 msgid "Reverse direction"
@@ -2499,18 +2338,21 @@ msgstr "Ομαλό"
 #. Translators: The list of markers created by the user.
 #: pitivi/utils/markers.py:34
 msgid "User markers"
-msgstr ""
+msgstr "Δείκτες χρήστη"
 
 #. Translators: The list of markers representing detected audio beats.
 #: pitivi/utils/markers.py:36
 msgid "Beats"
-msgstr ""
+msgstr "Ρυθμοί"
 
 #: pitivi/utils/misc.py:281
 msgid ""
 "Failed to open the user manual. Make sure to have either the `yelp` GNOME "
 "documentation viewer or a web browser installed"
 msgstr ""
+"Αποτυχία ανοίγματος του εγχειριδίου χρήστη. Βεβαιωθείτε ότι έχετε "
+"εγκατεστημένο είτε την εφαρμογή προβολής τεκμηρίωσης `yelp` του GNOME είτε "
+"έναν περιηγητή ιστού"
 
 #: pitivi/utils/misc.py:290
 msgid ""
@@ -2519,6 +2361,11 @@ msgid ""
 "settings; if you try to use Pitivi with a broken locale, weird bugs will "
 "happen."
 msgstr ""
+"Οι τοπικές ρυθμίσεις του συστήματος που χρησιμοποιείτε δεν υποστηρίζουν UTF-"
+"8. Η υποστήριξη Unicode απαιτείται για λογισμικό Python3 όπως το Pitivi. "
+"Παρακαλούμε διορθώστε τις ρυθμίσεις του συστήματός σας· εάν προσπαθήσετε να "
+"χρησιμοποιήσετε το Pitivi με κατεστραμμένες τοπικές ρυθμίσεις, θα συμβούν "
+"περίεργα σφάλματα."
 
 #: pitivi/utils/misc.py:300
 msgid "Error while decoding a string"
@@ -2526,21 +2373,21 @@ msgstr "Σφάλμα κατά την αποκωδικοποίηση μιας σ�
 
 #: pitivi/utils/proxy.py:64
 msgid "Max number of parallel transcoding jobs"
-msgstr ""
+msgstr "Μέγιστος αριθμός παράλληλων εργασιών επανακωδικοποίησης"
 
 #: pitivi/utils/proxy.py:75
 msgid "Max CPU usage dedicated to transcoding"
-msgstr ""
+msgstr "Μέγιστη χρήση CPU αφιερωμένη στην επανακωδικοποίηση"
 
 #. Translators: 'fps' is for 'frames per second'
 #: pitivi/utils/ui.py:404
 msgid "{0:s} fps"
-msgstr ""
+msgstr "{0:s} fps"
 
 #: pitivi/utils/ui.py:424
 #, python-brace-format
 msgid "{0:n} kHz"
-msgstr ""
+msgstr "{0:n} kHz"
 
 #: pitivi/utils/ui.py:433
 msgid "Mono"
@@ -2551,54 +2398,46 @@ msgid "Stereo"
 msgstr "Στερεοφωνικό"
 
 #: pitivi/utils/ui.py:435
-#, fuzzy
-#| msgid "6 channels (5.1)"
 msgid "6 (5.1)"
-msgstr "6 κανάλια (5.1)"
+msgstr "6 (5.1)"
 
 #: pitivi/utils/ui.py:436
 msgid "8 (7.1)"
-msgstr ""
+msgstr "8 (7.1)"
 
-# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
+# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
 #: pitivi/utils/ui.py:561
-#, fuzzy, python-format
-#| msgid "<b>Duration</b>: %s"
+#, python-format
 msgid "<b>Duration:</b> %s"
-msgstr "<b>Διάρκεια</b>: %s"
+msgstr "<b>Διάρκεια:</b> %s"
 
 #: pitivi/utils/ui.py:564
 #, python-format
 msgid "<b>Proxy creation progress:</b> %d%%"
-msgstr ""
+msgstr "<b>Πρόοδος δημιουργίας proxy:</b> %d%%"
 
-# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
+# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
 #: pitivi/utils/ui.py:578
-#, fuzzy, python-format
-#| msgid "<b>Duration</b>: %s"
+#, python-format
 msgid "<b>Path</b>: %s"
-msgstr "<b>Διάρκεια</b>: %s"
+msgstr "<b>Διαδρομή</b>: %s"
 
 #: pitivi/utils/ui.py:588
-#, fuzzy, python-format
-#| msgid "<b>Size</b>"
+#, python-format
 msgid "<b>Size</b>: %s"
-msgstr "<b>Μέγεθος</b>"
+msgstr "<b>Μέγεθος</b>: %s"
 
 #: pitivi/utils/ui.py:624
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[0] "<b>Ήχος:</b> %d κανάλι στα %d <i>Hz</i> (%d <i>δυαδικά</i>)"
-msgstr[1] "<b>Ήχος:</b> %d κανάλια στα %d <i>Hz</i> (%d <i>δυαδικά</i>)"
+msgstr[0] "<b>Ήχος:</b> %d κανάλι στα %d <i>Hz</i> (%d <i>bit</i>)"
+msgstr[1] "<b>Ήχος:</b> %d κανάλια στα %d <i>Hz</i> (%d <i>bit</i>)"
 
 #: pitivi/utils/ui.py:636
-#, fuzzy, python-format
-#| msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
+#, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
-msgstr ""
-"<b>Βίντεο:</b> %d×%d <i>εικονοστοιχεία</i> στις %.3f <i>λήψεις ανά "
-"δευτερόλεπτο</i>"
+msgstr "<b>Βίντεο:</b> %d×%d <i>εικονοστοιχεία</i> στα %s <i>fps</i>"
 
 #: pitivi/utils/ui.py:639
 #, python-format
@@ -2635,31 +2474,30 @@ msgstr[1] "%d μέρες"
 
 #: pitivi/utils/ui.py:759
 msgid "Just now"
-msgstr ""
+msgstr "Μόλις τώρα"
 
 #: pitivi/utils/ui.py:762
 msgid "An hour ago"
-msgstr ""
+msgstr "Πριν μια ώρα"
 
 #: pitivi/utils/ui.py:765
 msgid "Today"
-msgstr ""
+msgstr "Σήμερα"
 
 #: pitivi/utils/ui.py:768
 msgid "Yesterday"
-msgstr ""
+msgstr "Χθες"
 
 #: pitivi/utils/ui.py:777
 msgid "About a year ago"
-msgstr ""
+msgstr "Περίπου ένα χρόνο πριν"
 
 #: pitivi/utils/ui.py:780
-#, fuzzy, python-format
-#| msgid "About %s left"
+#, python-format
 msgid "About %d year ago"
 msgid_plural "About %d years ago"
-msgstr[0] "Απομένουν περίπου %s"
-msgstr[1] "Απομένουν περίπου %s"
+msgstr[0] "Περίπου %d χρόνο πριν"
+msgstr[1] "Περίπου %d χρόνια πριν"
 
 #: pitivi/utils/widgets.py:74
 msgid "Implement Me"
@@ -2700,22 +2538,20 @@ msgstr "%d νανοδευτερόλεπτα εμφανίστηκαν, επειδ
 
 #: pitivi/viewer/guidelines.py:59
 msgid "3 by 3"
-msgstr ""
+msgstr "3 επί 3"
 
 #: pitivi/viewer/guidelines.py:60
 msgid "Vertical/Horizontal"
-msgstr ""
+msgstr "Κάθετα/Οριζόντια"
 
 #: pitivi/viewer/guidelines.py:61
 msgid "Diagonals"
-msgstr ""
+msgstr "Διαγώνιοι"
 
-# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
+# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
 #: pitivi/viewer/guidelines.py:92
-#, fuzzy
-#| msgid "Compositing"
 msgid "Composition Guidelines"
-msgstr "Σύνθεση"
+msgstr "Οδηγοί σύνθεσης"
 
 #: pitivi/viewer/viewer.py:81
 msgid "Currently playing"
@@ -2723,7 +2559,7 @@ msgstr "Τρέχουσα αναπαραγωγή"
 
 #: pitivi/viewer/viewer.py:306
 msgid "Select composition guidelines"
-msgstr ""
+msgstr "Επιλογή οδηγών σύνθεσης"
 
 #: pitivi/viewer/viewer.py:314
 msgid "Go to the beginning of the timeline"
@@ -2758,19 +2594,16 @@ msgstr ""
 "Μπορείτε να την ξαναβάλετε κλείνοντας το νέο δημιουργημένο παράθυρο."
 
 #: pitivi/viewer/viewer.py:390
-#, fuzzy
-#| msgid "View error"
-#| msgid_plural "View errors"
 msgid "Viewer"
-msgstr "Προβολή σφάλματος"
+msgstr "Προβολή"
 
 #: pitivi/viewer/viewer.py:398
 msgid "Toggle the currently selected composition guidelines"
-msgstr ""
+msgstr "Εναλλαγή των επιλεγμένων οδηγών σύνθεσης"
 
 #: pitivi/viewer/viewer.py:406
 msgid "Toggle safe areas on viewer"
-msgstr ""
+msgstr "Εναλλαγή ασφαλών περιοχών στην προβολή"
 
 #: pitivi/viewer/viewer.py:548 pitivi/viewer/viewer.py:607
 msgid "Show this window in fullscreen"
@@ -2782,48 +2615,46 @@ msgstr "Έξοδος από την κατάσταση πλήρους οθόνη�
 
 #: plugins/console/console.py:123
 msgid "Console"
-msgstr ""
+msgstr "Κονσόλα"
 
 #. Translators: The color of the content from stderr.
 #: plugins/console/console.py:130
 msgid "Standard error color"
-msgstr ""
+msgstr "Χρώμα τυπικού σφάλματος"
 
 #. Translators: The color of the content from stdout.
 #: plugins/console/console.py:135
 msgid "Standard output color"
-msgstr ""
+msgstr "Χρώμα τυπικής εξόδου"
 
 #: plugins/console/console.py:139
 msgid "Font"
-msgstr ""
+msgstr "Γραμματοσειρά"
 
 #: plugins/console/console.py:146 plugins/console/console.py:164
-#, fuzzy
-#| msgid "Development version"
 msgid "Developer Console"
-msgstr "Έκδοση ανάπτυξης"
+msgstr "Κονσόλα προγραμματιστή"
 
 #: plugins/console/console.py:188
-#, fuzzy
-#| msgid "Pitivi encoding profile"
 msgid "Pitivi Console"
-msgstr "Κατατομή κωδικοποίησης Pitivi"
+msgstr "Κονσόλα Pitivi"
 
 #: plugins/console/console.py:199
 msgid "You can use the following shortcuts:"
-msgstr ""
+msgstr "Μπορείτε να χρησιμοποιήσετε τις ακόλουθες συντομεύσεις:"
 
 #: plugins/console/console.py:204
 #, python-brace-format
 msgid "Type \"{help}(<command>)\" for more information."
-msgstr ""
+msgstr "Πληκτρολογήστε \"{help}(<command>)\" για περισσότερες πληροφορίες."
 
 #: plugins/console/utils.py:81
 #, python-brace-format
 msgid ""
 "Not possible to override {key}, because shortcuts commands are read-only."
 msgstr ""
+"Δεν είναι δυνατή η παράκαμψη του {key}, επειδή οι εντολές συντομεύσεων είναι "
+"μόνο για ανάγνωση."
 
 #~ msgid "Pixel aspect ratio:"
 #~ msgstr "Αναλογία διαστάσεων εικονοστοιχείου:"
