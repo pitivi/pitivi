@@ -111,7 +111,10 @@ if not check_requirements():
 # Pitivi crashes loading its own app icon. Wrap load_icon so that on
 # failure we look in the bundled hicolor scalable/apps for an SVG/PNG
 # with the same name and load it directly.
-gi.require_version("Gtk", "4.0")
+#
+# Don't call gi.require_version here: initialize_modules() above has
+# already locked Pitivi's Gtk major version (currently 3.0), and re-
+# requiring a different one raises ValueError.
 from gi.repository import GLib, Gtk  # noqa: E402
 
 _orig_load_icon = Gtk.IconTheme.load_icon
