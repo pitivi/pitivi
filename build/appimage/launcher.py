@@ -104,6 +104,34 @@ initialize_modules()
 if not check_requirements():
     sys.exit(2)
 
+
+# --- Gtk.IconTheme.load_icon fallback -----------------------------------
+# Some distros (notably Fedora with Adwaita) don't fall back to the
+# hicolor theme when an icon is missing from the active theme, so
+# Pitivi crashes loading its own app icon. Wrap load_icon so that on
+# failure we look in the bundled hicolor scalable/apps for an SVG/PNG
+# with the same name and load it directly.
+gi.require_version("Gtk", "4.0")
+from gi.repository import GLib, Gtk  # noqa: E402
+
+_orig_load_icon = Gtk.IconTheme.load_icon
+
+
+def _load_icon_with_hicolor_fallback(self, icon_name, size, flags):
+    try:
+        return _orig_load_icon(self, icon_name, size, flags)
+    except GLib.GError:
+        for ext in (".svg", ".png"):
+            cand = os.path.join(APP, "share", "icons", "hicolor",
+                                "scalable", "apps", f"{icon_name}{ext}")
+            if os.path.isfile(cand):
+                return _orig_new_from_file_at_size(cand, size, size)
+        raise
+
+
+Gtk.IconTheme.load_icon = _load_icon_with_hicolor_fallback
+
+
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 from pitivi import application  # noqa: E402
