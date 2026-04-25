@@ -1,0 +1,29 @@
+#!/bin/bash
+# Wrapper for bwrap, used by libglycin to sandbox image loaders.
+#
+# Glycin (used by GdkPixbuf in the GNOME 50 runtime) builds a bwrap command
+# that bind-mounts the host's /usr and execs /usr/libexec/glycin-loaders/...
+# That path is absent on a non-GNOME host. Our build.sh patches the loader
+# configs to point inside $APPDIR/runtime, and this wrapper bind-mounts
+# that directory into the sandbox so the binary is reachable from inside.
+#
+# With the host libgdk_pixbuf overlay (host-libs/) glycin is no longer in
+# the image-loading path, so this wrapper is currently a safety net for
+# any code still wired through libglycin directly.
+set -e
+
+REAL_BWRAP="${PITIVI_REAL_BWRAP:-/usr/bin/bwrap}"
+if [ ! -x "$REAL_BWRAP" ]; then
+    REAL_BWRAP="$(PATH="${PATH#*$(dirname "$0"):}" command -v bwrap || true)"
+fi
+if [ -z "$REAL_BWRAP" ]; then
+    echo "pitivi-appimage: bwrap not found on host; cannot sandbox glycin loader" >&2
+    exit 127
+fi
+
+# We expect $APPDIR to be present in the env when libglycin spawns us
+# (libglycin invokes us BEFORE the --clearenv inside the sandbox applies).
+if [ -n "${APPDIR:-}" ] && [ -d "$APPDIR/runtime" ]; then
+    exec "$REAL_BWRAP" --ro-bind "$APPDIR/runtime" "$APPDIR/runtime" "$@"
+fi
+exec "$REAL_BWRAP" "$@"
