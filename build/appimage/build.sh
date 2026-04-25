@@ -322,26 +322,39 @@ fi
 # librsvg2-common; if SVG loading fails at run time, launcher.py falls back
 # to a sibling .png that we render here once at build time.
 echo "[5/6] rendering PNG fallbacks for SVG pixmaps..."
-PIXMAPS="$APPDIR/app/share/pitivi/pixmaps"
 made=0; failed=0
 render_svg_to_png() {
     case "$SVG_RENDERER" in
-        rsvg-convert) rsvg-convert -w 128 -h 128 "$1" -o "$2" 2>/dev/null ;;
-        convert)      convert -background none -resize 128x128 "$1" "$2" 2>/dev/null ;;
+        rsvg-convert) rsvg-convert -w "$3" -h "$3" "$1" -o "$2" 2>/dev/null ;;
+        convert)      convert -background none -resize "${3}x${3}" "$1" "$2" 2>/dev/null ;;
         *)            return 1 ;;
     esac
 }
+# We render PNG siblings for two SVG locations:
+#   1. app/share/pitivi/pixmaps/  — Pitivi's bundled UI icons.
+#   2. app/share/icons/hicolor/scalable/apps/  — the app icon, which
+#      Pitivi loads via Gtk.IconTheme.load_icon. On hosts whose gdk-pixbuf
+#      can't find an SVG loader (Fedora/Arch path layout differs from
+#      Debian/Ubuntu, so our bundled loaders.cache misses), the launcher
+#      falls back to the PNG sibling.
 if [ -n "$SVG_RENDERER" ]; then
-    while IFS= read -r svg; do
-        png="${svg%.svg}.png"
-        if [ ! -e "$png" ]; then
-            if render_svg_to_png "$svg" "$png"; then
-                made=$((made+1))
-            else
-                failed=$((failed+1))
+    for src_pair in \
+        "$APPDIR/app/share/pitivi/pixmaps:128" \
+        "$APPDIR/app/share/icons/hicolor/scalable/apps:256"; do
+        dir="${src_pair%:*}"
+        size="${src_pair##*:}"
+        [ -d "$dir" ] || continue
+        while IFS= read -r svg; do
+            png="${svg%.svg}.png"
+            if [ ! -e "$png" ]; then
+                if render_svg_to_png "$svg" "$png" "$size"; then
+                    made=$((made+1))
+                else
+                    failed=$((failed+1))
+                fi
             fi
-        fi
-    done < <(find "$PIXMAPS" -name '*.svg')
+        done < <(find "$dir" -name '*.svg')
+    done
     echo "    rendered $made new PNGs, $failed failed (via $SVG_RENDERER)"
 else
     echo "    skipped: no SVG renderer available"

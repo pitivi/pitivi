@@ -123,13 +123,32 @@ _orig_load_icon = Gtk.IconTheme.load_icon
 def _load_icon_with_hicolor_fallback(self, icon_name, size, flags):
     try:
         return _orig_load_icon(self, icon_name, size, flags)
-    except GLib.GError:
-        for ext in (".svg", ".png"):
-            cand = os.path.join(APP, "share", "icons", "hicolor",
-                                "scalable", "apps", f"{icon_name}{ext}")
-            if os.path.isfile(cand):
+    except GLib.GError as orig_err:
+        # Build a candidate list ordered by reliability: PNG first
+        # (universally supported by gdk-pixbuf without external loaders),
+        # SVG only as a last resort (requires librsvg2 to be discoverable
+        # via the host's loaders.cache, which our bundle can't always
+        # arrange — Fedora's path layout differs from Debian's). Try
+        # multiple subdirs because some icons live under fixed sizes
+        # rather than scalable/.
+        candidates = []
+        subdirs = ("scalable", "256x256", "128x128", "96x96",
+                   "64x64", "48x48", "32x32", "24x24", "16x16")
+        for sub in subdirs:
+            for ext in (".png", ".svg"):
+                candidates.append(os.path.join(
+                    APP, "share", "icons", "hicolor", sub, "apps",
+                    f"{icon_name}{ext}"))
+        for cand in candidates:
+            if not os.path.isfile(cand):
+                continue
+            try:
                 return _orig_new_from_file_at_size(cand, size, size)
-        raise
+            except GLib.GError:
+                # Loader rejected this file (typically SVG without a
+                # registered loader); try the next candidate.
+                continue
+        raise orig_err
 
 
 Gtk.IconTheme.load_icon = _load_icon_with_hicolor_fallback
