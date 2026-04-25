@@ -188,22 +188,58 @@ Soft:
   step 5 of the build can render PNG fallbacks. Without it, the
   AppImage relies on `librsvg2-common` being present on the target.
 
-## Target host requirements
+## Target host compatibility
 
-The AppImage tries hard to be portable. Realistically, expect to need:
+**The desktop environment doesn't matter.** GNOME, XFCE, KDE, Cinnamon,
+MATE, LXQt, Sway, i3 — all work the same way, because the AppImage
+bundles its own GTK4 + Adwaita and uses the host's fonts / DBus /
+OpenGL drivers (interfaces stable across DEs). What matters is what
+the host system provides at the libc / system-library level.
 
-- A glibc-based Linux desktop (≥ 2.35 in practice).
-- X11 or XWayland, plus DBus and PulseAudio/PipeWire if you want sound.
-- `librsvg2-common` (any modern desktop has it; without it, SVG icons
-  fall back to pre-rendered PNGs but other SVG assets won't load).
-- `bubblewrap` (`bwrap`), present on most desktops as part of flatpak's
-  dependency chain. Optional in practice — the bundled
-  `libgdk_pixbuf` overlay avoids the only code path that needs it.
-- Working OpenGL drivers (system Mesa or the proprietary NVIDIA driver).
-  We deliberately don't bundle GL extensions; using the host's GL stack
-  produces ~500 MB savings and avoids driver mismatches.
-- FUSE 2 to run the AppImage directly. Without it,
-  `--appimage-extract-and-run` works as a fallback.
+### Hard requirements (AppImage won't start without these)
+
+| Requirement | Minimum | Why |
+|---|---|---|
+| **Architecture** | `x86_64` or `aarch64` | The only arches we build. |
+| **glibc** | 2.35+ (Ubuntu 22.04, Debian 12, Fedora 36+, RHEL 9) | Sub-processes (GStreamer helpers etc.) use the host's `ld-linux`, which then loads the bundled libc 2.42 via `LD_LIBRARY_PATH`. Mismatched versions segfault. |
+| **DBus session bus** | running | GTK4 / GIO require it. |
+| **X11 or Wayland session** | working | GTK4 needs a display server (XWayland is fine). |
+| **OpenGL drivers** | system Mesa or proprietary NVIDIA | We deliberately don't bundle GL extensions (saves ~500 MB and avoids driver mismatches). The video preview won't render without them. |
+
+### Soft requirements (AppImage runs but with degraded features)
+
+| Requirement | If missing |
+|---|---|
+| **`librsvg2-common`** | Host SVG loading is unavailable. Pitivi's bundled SVG pixmaps are covered by pre-rendered PNG siblings (rendered at build time); arbitrary SVG assets a user drops into a project would fail to load. |
+| **`bubblewrap` (`bwrap`)** | Only matters if anything still calls `libglycin` directly. The host `libgdk_pixbuf` overlay normally avoids glycin entirely. |
+| **PulseAudio or PipeWire** | No audio. |
+| **FUSE 2** | The AppImage can't mount itself; users have to invoke it with `--appimage-extract-and-run` (or extract once via `--appimage-extract`). |
+| **Active icon theme that contains `org.pitivi.Pitivi`** | The launcher's `Gtk.IconTheme.load_icon` wrapper falls back to the bundled hicolor icon, so this is purely cosmetic. |
+
+### Distros known to work
+
+| Distro | Status |
+|---|---|
+| Ubuntu 22.04, 24.04, 25.04 | ✅ tested (build + smoke test) |
+| Fedora 38+, including 43 | ✅ tested (after the icon-theme fallback fix) |
+| Debian 12 (Bookworm), 13 (Trixie) | ✅ very likely (glibc 2.36+) |
+| Linux Mint 21+, Pop!\_OS 22.04+, Manjaro, Arch, EndeavourOS | ✅ very likely |
+| openSUSE Tumbleweed, Leap 15.5+ | ✅ likely |
+| RHEL/CentOS/Rocky/Alma 9 | ⚠️ glibc 2.34 — at the edge, untested, may work |
+| RHEL 8, CentOS 8, Ubuntu 20.04 | ❌ glibc 2.28/2.31, too old |
+| Alpine, Void Linux | ❌ musl libc, not glibc |
+| Anything ARM-32 (`armhf`) | ❌ not built |
+
+### Self-check before downloading
+
+```
+ldd --version | head -1                # need >= 2.35
+uname -m                               # need x86_64 or aarch64
+ldconfig -p | grep -E 'librsvg|libfuse' | head
+```
+
+If glibc ≥ 2.35, arch is x86_64 or aarch64, and `librsvg` + `libfuse`
+appear in the output, the AppImage should run.
 
 ## How it works
 
