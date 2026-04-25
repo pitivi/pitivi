@@ -205,15 +205,46 @@ install -m 0644 "$SCRIPT_DIR/launcher.py" "$APPDIR/launcher.py"
 install -d                                  "$APPDIR/wrappers"
 install -m 0755 "$SCRIPT_DIR/wrappers/bwrap" "$APPDIR/wrappers/bwrap"
 
-# Drop GIO modules that are broken in the bundled GNOME 50 runtime: the
-# shipped libgvfsdbus.so references g_mount_spec_get_is_valid which the
-# co-shipped libgio-2.0 doesn't actually export, so loading it fails with
-# an undefined-symbol warning at every Pitivi launch. gvfs only matters
-# for accessing remote filesystems (smb://, sftp://, …) which Pitivi
-# doesn't normally use, so the cleanest fix is to remove the module.
+# Drop GIO modules that have unresolvable dependencies in our bundle.
+# The GNOME runtime ships gvfs-* modules that reference libgvfscommon.so
+# (and similar gvfs internals) which aren't bundled — at every load
+# attempt the user gets "Failed to load module: libgvfscommon.so: cannot
+# open shared object file". Pitivi doesn't need gvfs (remote filesystems
+# like smb://, sftp://) so we remove every broken module here.
+#
 # `rm` on a hardlink only unlinks our copy; the user's flatpak install
 # stays intact.
-rm -f "$APPDIR/runtime/lib/$ARCH_TRIPLE/gio/modules/libgvfsdbus.so"
+GIO_MODULES_DIR="$APPDIR/runtime/lib/$ARCH_TRIPLE/gio/modules"
+if [ -d "$GIO_MODULES_DIR" ]; then
+    removed=0
+    for mod in "$GIO_MODULES_DIR"/*.so; do
+        [ -f "$mod" ] || continue
+        broken_dep=""
+        for dep in $(objdump -p "$mod" 2>/dev/null \
+                     | awk '/NEEDED/ {print $2}'); do
+            # Already shipped by the bundled runtime?
+            for d in "$APPDIR/runtime/lib/$ARCH_TRIPLE" \
+                     "$APPDIR/runtime/lib" "$APPDIR/runtime/lib64" \
+                     "$APPDIR/host-libs"; do
+                [ -e "$d/$dep" ] && continue 2
+            done
+            # Glibc family — provided by every host loader.
+            case "$dep" in
+                libc.so.*|libm.so.*|libdl.so.*|libpthread.so.*|\
+                librt.so.*|libresolv.so.*|libgcc_s.so.*|ld-linux*) \
+                    continue ;;
+            esac
+            broken_dep="$dep"
+            break
+        done
+        if [ -n "$broken_dep" ]; then
+            echo "    drop GIO module $(basename "$mod")  (needs $broken_dep)"
+            rm -f "$mod"
+            removed=$((removed+1))
+        fi
+    done
+    [ "$removed" -gt 0 ] && echo "    dropped $removed broken GIO module(s)"
+fi
 
 # Required by appimagetool: top-level .desktop + matching icon.
 cp "$APPDIR/app/share/applications/${PITIVI_ID}.desktop" "$APPDIR/"

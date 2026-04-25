@@ -120,12 +120,20 @@ export XDG_DATA_DIRS="$APP/share:$RUNTIME/share:${XDG_DATA_DIRS:-/usr/local/shar
 export GSETTINGS_SCHEMA_DIR="$RUNTIME/share/glib-2.0/schemas"
 
 # GdkPixbuf loaders. We replaced the runtime's libgdk_pixbuf (glycin-based)
-# with the host's, so use the host's loaders.cache too — it includes a SVG
-# loader on virtually every Linux distro (librsvg2-common).
-HOST_PIXBUF_CACHE="/usr/lib/$ARCH_TRIPLE/gdk-pixbuf-2.0/2.10.0/loaders.cache"
-if [ -f "$HOST_PIXBUF_CACHE" ]; then
-    export GDK_PIXBUF_MODULE_FILE="$HOST_PIXBUF_CACHE"
-fi
+# with the host's, so use the host's loaders.cache too — it includes a
+# SVG loader on virtually every Linux distro (librsvg2-common). Path
+# layout varies: Debian/Ubuntu use /usr/lib/<arch-triple>/, Fedora/RHEL
+# use /usr/lib64/, Arch uses /usr/lib/. Probe each.
+for HOST_PIXBUF_CACHE in \
+    "/usr/lib/$ARCH_TRIPLE/gdk-pixbuf-2.0/2.10.0/loaders.cache" \
+    "/usr/lib64/gdk-pixbuf-2.0/2.10.0/loaders.cache" \
+    "/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"; do
+    if [ -f "$HOST_PIXBUF_CACHE" ]; then
+        export GDK_PIXBUF_MODULE_FILE="$HOST_PIXBUF_CACHE"
+        break
+    fi
+done
+unset HOST_PIXBUF_CACHE
 
 # GIO modules from the bundled runtime.
 export GIO_MODULE_DIR="$RUNTIME/lib/$ARCH_TRIPLE/gio/modules"
