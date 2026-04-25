@@ -243,7 +243,12 @@ if [ -d "$GIO_MODULES_DIR" ]; then
             removed=$((removed+1))
         fi
     done
-    [ "$removed" -gt 0 ] && echo "    dropped $removed broken GIO module(s)"
+    if [ "$removed" -gt 0 ]; then
+        echo "    dropped $removed broken GIO module(s)"
+        # giomodule.cache references the deleted modules; drop it so GIO
+        # regenerates the cache from the surviving .so files at startup.
+        rm -f "$GIO_MODULES_DIR/giomodule.cache"
+    fi
 fi
 
 # Required by appimagetool: top-level .desktop + matching icon.
