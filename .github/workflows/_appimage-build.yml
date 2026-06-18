@@ -1,0 +1,122 @@
+# Reusable workflow: build a single (arch, variant) AppImage and smoke-test
+# it. Called by ci-appimage.yml (on PR/push) and release-appimage.yml (on
+# tag). Outputs the artifact name so the caller can reference it.
+name: Build & smoke-test AppImage
+
+on:
+  workflow_call:
+    inputs:
+      arch:
+        type: string
+        required: true
+        description: x86_64 or aarch64
+      variant:
+        type: string
+        required: true
+        description: full or lean
+      retention-days:
+        type: number
+        required: false
+        default: 14
+        description: How long to keep the artifact (CI runs).
+    outputs:
+      artifact-name:
+        description: Name of the uploaded artifact (also the AppImage filename).
+        value: ${{ jobs.build.outputs.artifact-name }}
+
+jobs:
+  build:
+    name: ${{ inputs.arch }} / ${{ inputs.variant }}
+    # ubuntu-22.04-arm is the free aarch64 runner GitHub made GA in
+    # April 2025 for public repos.
+    runs-on: ${{ inputs.arch == 'aarch64' && 'ubuntu-22.04-arm' || 'ubuntu-latest' }}
+    outputs:
+      artifact-name: ${{ steps.build.outputs.artifact }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install build dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends \
+            flatpak bubblewrap \
+            imagemagick librsvg2-common librsvg2-bin \
+            wget binutils ca-certificates desktop-file-utils \
+            xvfb x11-utils \
+            >/dev/null
+
+      # Cache the flatpak deployment tree (~2 GB: Pitivi + GNOME runtime
+      # + codecs). Saves ~3-4 minutes per run after the first.
+      - name: Cache flatpak deployments
+        uses: actions/cache@v5
+        with:
+          path: ~/.local/share/flatpak
+          # Bust the cache when build.sh changes (it picks the flatpak
+          # ref and may install different things).
+          key: flatpak-${{ inputs.arch }}-${{ hashFiles('build/appimage/build.sh') }}
+          restore-keys: |
+            flatpak-${{ inputs.arch }}-
+
+      - name: Build AppImage
+        id: build
+        env:
+          ARCH: ${{ inputs.arch }}
+          VARIANT: ${{ inputs.variant }}
+        run: |
+          set -euo pipefail
+          extra_args=()
+          [ "$VARIANT" = "lean" ] && extra_args+=(--lean)
+          ./build/appimage/build.sh "${extra_args[@]}" --out .
+
+          # build.sh emits Pitivi-<version>-<arch>.AppImage. Rename to
+          # include the variant so the release page can carry both.
+          src="$(ls Pitivi-*-${ARCH}.AppImage)"
+          ver="$(echo "$src" | sed -E 's/Pitivi-(.+)-[^-]+\.AppImage/\1/')"
+          dst="Pitivi-${ver}-${VARIANT}-${ARCH}.AppImage"
+          mv "$src" "$dst"
+          sha256sum "$dst" > "${dst}.sha256"
+
+          echo "artifact=$dst" >> "$GITHUB_OUTPUT"
+          ls -lh "$dst" "${dst}.sha256"
+
+      # Smoke test: extract the AppImage (CI runners have no FUSE),
+      # spawn it under Xvfb, wait up to 30 s for a window titled
+      # "Pitivi" to appear. Failure aborts the workflow.
+      - name: Smoke test
+        env:
+          ARTIFACT: ${{ steps.build.outputs.artifact }}
+        run: |
+          set -euo pipefail
+          ./"$ARTIFACT" --appimage-extract >/dev/null
+          xvfb-run -a -s "-screen 0 1280x720x24" bash -c '
+            ./squashfs-root/AppRun >appimage.log 2>&1 &
+            APP_PID=$!
+            for i in $(seq 1 30); do
+              sleep 1
+              if xwininfo -tree -root 2>/dev/null \
+                 | grep -qE "\"Pitivi\""; then
+                echo "OK: Pitivi window appeared after ${i}s"
+                kill "$APP_PID" 2>/dev/null || true
+                exit 0
+              fi
+            done
+            echo "FAIL: no Pitivi window after 30s"
+            echo "--- AppImage stderr ---"
+            cat appimage.log || true
+            kill "$APP_PID" 2>/dev/null || true
+            exit 1
+          '
+          rm -rf squashfs-root
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.build.outputs.artifact }}
+          path: |
+            ${{ steps.build.outputs.artifact }}
+            ${{ steps.build.outputs.artifact }}.sha256
+          retention-days: ${{ inputs.retention-days }}
+          if-no-files-found: error
