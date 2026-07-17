@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=Pitivi Native (GPU)
+Comment=Pitivi with NVENC/NVDEC (native prefix)
+# Replace the Exec path with your install. Prefer the packaging launcher so
+# env.sh is always sourced (ranks, NVRTC, PROXY_FAST, Wayland, cgroup caps).
+# Example:
+#   Exec=/path/to/pitivi-native/packaging/pitivi-native.sh %U
+# Or with env:
+#   Exec=env PITIVI_NATIVE_PREFIX=/path/to/prefix /path/to/packaging/pitivi-native.sh %U
+Exec=pitivi-native.sh %U
+Icon=org.pitivi.Pitivi
+Terminal=false
+Type=Application
+Categories=AudioVideo;Video;AudioVideoEditing;
+StartupNotify=true
+Keywords=video;audio;editor;nvidia;nvenc;nvdec;gpu;

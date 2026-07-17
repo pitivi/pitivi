@@ -20,6 +20,7 @@ import hashlib
 import os
 import random
 import sqlite3
+from collections import OrderedDict
 from gettext import gettext as _
 
 import cairo
@@ -41,6 +42,7 @@ from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quantize
 from pitivi.utils.misc import quote_uri
 from pitivi.utils.pipeline import MAX_BRINGING_TO_PAUSED_DURATION
+from pitivi.utils.proxy import get_preview_source_asset
 from pitivi.utils.proxy import get_proxy_target
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.system import CPUUsageTracker
@@ -116,7 +118,7 @@ class TeedThumbnailBin(PreviewerBin):
     }
 
     def __init__(self, bin_desc="videoconvert ! videoflip method=automatic ! tee name=t ! queue  "
-                 "max-size-buffers=0 max-size-bytes=0 max-size-time=0  ! "
+                 "max-size-buffers=1 max-size-bytes=0 max-size-time=0 leaky=downstream  ! "
                  "videoconvert ! videorate ! videoscale method=lanczos ! "
                  "capsfilter caps=video/x-raw,format=(string)RGBA,height=(int)%d,"
                  "pixel-aspect-ratio=(fraction)1/1,"
@@ -320,6 +322,10 @@ class PreviewGeneratorManager(Loggable):
     @contextlib.contextmanager
     def paused(self, interrupt=False):
         """Pauses (and flushes if interrupt=True) managed previewers."""
+        # Gate new starts before stopping so "done" callbacks cannot start the
+        # next previewer mid-interrupt (BUG-003).
+        self._running = False
+
         if interrupt:
             for previewer in list(self._current_previewers.values()):
                 previewer.stop_generation()
@@ -336,15 +342,27 @@ class PreviewGeneratorManager(Loggable):
                     previewer.pause_generation()
 
         try:
-            self._running = False
             yield
         except:
             self.warning("An exception occurred while the previewer was paused")
             raise
         finally:
             self._running = True
-            for track_type in self._previewers:
-                self.__start_next_previewer(track_type)
+            if interrupt:
+                for track_type in self._previewers:
+                    self.__start_next_previewer(track_type)
+            else:
+                # Resume the paused current previewer instead of dropping it
+                # and starting a different queued one (BUG-002).
+                # If the current was destroyed mid-pause (release -> done ->
+                # pop while _running is False), drain the queue so remaining
+                # previewers are not stranded.
+                for track_type in self._previewers:
+                    current = self._current_previewers.get(track_type)
+                    if current is not None:
+                        current.start_generation()
+                    elif self._previewers[track_type]:
+                        self.__start_next_previewer(track_type)
 
     def __previewer_done_cb(self, previewer):
         self.__start_next_previewer(previewer.track_type)
@@ -563,6 +581,18 @@ class AssetPreviewer(Previewer, Loggable):
     # We could define them in Previewer, but for some reason they are ignored.
     __gsignals__ = PREVIEW_GENERATOR_SIGNALS
 
+    # NVDEC factories temporarily preferred for thumbnail pipelines only.
+    # Keep aligned with pitivi.check._NVDEC_FACTORY_NAMES. Rank mutations are
+    # process-global, so they are refcounted and always restored
+    # (see _push/_pop_nvdec_rank_boost).
+    _NVDEC_FACTORY_NAMES = (
+        "nvh264dec", "nvh265dec", "nvh264sldec", "nvh265sldec",
+        "nvvp8dec", "nvvp9dec", "nvav1dec", "nvjpegdec",
+        "nvmpeg2videodec", "nvmpeg4videodec", "nvmpegvideodec",
+    )
+    _nvdec_rank_boost_count = 0
+    _nvdec_saved_ranks = {}
+
     def __init__(self, asset, max_cpu_usage):
         Previewer.__init__(self, GES.TrackType.VIDEO, max_cpu_usage)
         Loggable.__init__(self)
@@ -590,6 +620,8 @@ class AssetPreviewer(Previewer, Loggable):
         self.thumb_width, unused_height = self.thumb_cache.image_size
         self.pipeline = None
         self.gdkpixbufsink = None
+        # True while this instance is holding a ref on the NVDEC rank boost.
+        self._nvdec_ranks_boosted = False
 
         self.cpu_usage_tracker = CPUUsageTracker()
         # Initial delay before generating the next thumbnail, in millis.
@@ -611,6 +643,47 @@ class AssetPreviewer(Previewer, Loggable):
         if position not in self.failures and position != self.position:
             self.queue = [position]
             self.become_controlled()
+
+    @classmethod
+    def _push_nvdec_rank_boost(cls):
+        """Temporarily prefer NVDEC for thumbnail autoplug only.
+
+        Factory ranks are process-global. Raise them only while a thumbnail
+        pipeline is autoplugging, and restore the previous ranks afterwards so
+        the user's hwdecoders setting for main playback is not overridden.
+        """
+        if cls._nvdec_rank_boost_count == 0:
+            cls._nvdec_saved_ranks = {}
+            for nvdec_name in cls._NVDEC_FACTORY_NAMES:
+                factory = Gst.ElementFactory.find(nvdec_name)
+                if not factory:
+                    continue
+                original_rank = factory.get_rank()
+                cls._nvdec_saved_ranks[nvdec_name] = original_rank
+                if original_rank == Gst.Rank.NONE:
+                    factory.set_rank(Gst.Rank.PRIMARY + 1)
+        cls._nvdec_rank_boost_count += 1
+
+    @classmethod
+    def _pop_nvdec_rank_boost(cls):
+        """Restore NVDEC factory ranks after the last thumbnail boost ends."""
+        if cls._nvdec_rank_boost_count <= 0:
+            return
+        cls._nvdec_rank_boost_count -= 1
+        if cls._nvdec_rank_boost_count != 0:
+            return
+        for nvdec_name, original_rank in cls._nvdec_saved_ranks.items():
+            factory = Gst.ElementFactory.find(nvdec_name)
+            if factory:
+                factory.set_rank(original_rank)
+        cls._nvdec_saved_ranks = {}
+
+    def _release_nvdec_rank_boost(self):
+        """Release this instance's hold on the temporary NVDEC rank boost."""
+        if not self._nvdec_ranks_boosted:
+            return
+        self._pop_nvdec_rank_boost()
+        self._nvdec_ranks_boosted = False
 
     def _setup_pipeline(self):
         """Creates the pipeline.
@@ -636,6 +709,12 @@ class AssetPreviewer(Previewer, Loggable):
                 uri=self.uri,
                 height=self.thumb_height,
                 thumbs_per_second=int(Gst.SECOND / THUMB_PERIOD)))
+
+        # Prefer NVDEC for this thumbnail pipeline only. Ranks are restored
+        # once autoplug finishes (PAUSED) or when generation stops, so the
+        # global hwdecoders gate for main playback is not permanently overridden.
+        self._push_nvdec_rank_boost()
+        self._nvdec_ranks_boosted = True
 
         # Get the gdkpixbufsink which contains the the sinkpad.
         self.gdkpixbufsink = pipeline.get_by_name("gdkpixbufsink")
@@ -755,6 +834,9 @@ class AssetPreviewer(Previewer, Loggable):
                     sinkpad = self.gdkpixbufsink.get_static_pad("sink")
                     neg_caps = sinkpad.get_current_caps()[0]
                     self.thumb_width = neg_caps["width"]
+                    # Autoplug has finished; restore global NVDEC ranks so
+                    # main playback still respects the hwdecoders setting.
+                    self._release_nvdec_rank_boost()
 
                 self._update_thumbnails()
         elif message.src == self.gdkpixbufsink and \
@@ -825,6 +907,10 @@ class AssetPreviewer(Previewer, Loggable):
             self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
             self.pipeline = None
 
+        # Always restore ranks if we still hold a boost (e.g. preroll timeout
+        # or stop before the first PAUSED message).
+        self._release_nvdec_rank_boost()
+
         self.emit("done")
 
     def pause_generation(self):
@@ -846,7 +932,11 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
     def __init__(self, ges_elem, max_cpu_usage):
         Gtk.Layout.__init__(self)
         Zoomable.__init__(self)
-        AssetPreviewer.__init__(self, get_proxy_target(ges_elem), max_cpu_usage)
+        # Decode the active media (proxy when ready) so thumbs use NVDEC on the
+        # lightweight NVENC proxy rather than the original camera file.
+        # ThumbnailCache still keys by the original via get_proxy_target.
+        AssetPreviewer.__init__(self, get_preview_source_asset(ges_elem),
+                                max_cpu_usage)
 
         self.get_style_context().add_class("VideoPreviewer")
 
@@ -869,9 +959,19 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
             thumb.props.opacity = opacity
 
     def refresh(self):
-        """Recreates the thumbnails cache."""
+        """Rebind to proxy if ready and resume missing thumbnails."""
         self.stop_generation()
-        self.thumb_cache = ThumbnailCache.get(self.uri)
+        source = get_preview_source_asset(self.ges_elem)
+        new_uri = quote_uri(source.props.id)
+        if new_uri != self.uri:
+            self.debug("Preview decode source -> %s", path_from_uri(new_uri))
+            self.asset = source
+            self.uri = new_uri
+            # Force pipeline rebuild with the new URI on next start.
+            self.failures = set()
+            self.position = -1
+        # Cache stays keyed by original (stable across proxy transitions).
+        self.thumb_cache = ThumbnailCache.get(self.asset)
         self._update_thumbnails()
 
     def _update_thumbnails(self):
@@ -902,7 +1002,11 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
             thumbs[position] = thumb
             if position in self.thumb_cache:
                 pixbuf = self.thumb_cache[position]
-                thumb.set_from_pixbuf(pixbuf)
+                # Skip re-setting when the widget already shows this pixbuf
+                # instance (ThumbnailCache keeps an in-memory LRU of decoded
+                # images so identity comparison is meaningful).
+                if thumb.get_pixbuf() is not pixbuf:
+                    thumb.set_from_pixbuf(pixbuf)
                 thumb.set_visible(True)
             else:
                 if position not in self.failures and position != self.position:
@@ -969,6 +1073,8 @@ class ThumbnailCache(Loggable):
 
     # The cache of caches.
     caches_by_uri = {}
+    # Max decoded pixbufs kept in memory per asset cache (BUG-004).
+    _PIXBUF_LRU_MAX = 256
 
     def __init__(self, uri):
         Loggable.__init__(self)
@@ -986,6 +1092,8 @@ class ThumbnailCache(Loggable):
         self.positions = self.__existing_positions()
         # The ID of the autosave event.
         self.__autosave_id = None
+        # In-memory LRU of decoded pixbufs keyed by (position, width, height).
+        self._pixbuf_lru = OrderedDict()
 
     def __existing_positions(self):
         self._cur.execute("SELECT Time FROM Thumbs")
@@ -1017,7 +1125,8 @@ class ThumbnailCache(Loggable):
             if cache.dbfile != dbfile:
                 changed_files_uris.append(uri)
         for uri in changed_files_uris:
-            del cls.caches_by_uri[uri]
+            cache = cls.caches_by_uri.pop(uri)
+            cache.close()
         return changed_files_uris
 
     @classmethod
@@ -1044,6 +1153,32 @@ class ThumbnailCache(Loggable):
         if uri not in cls.caches_by_uri:
             cls.caches_by_uri[uri] = ThumbnailCache(uri)
         return cls.caches_by_uri[uri]
+
+    @classmethod
+    def close_all(cls):
+        """Commits and closes every open cache, then clears the registry.
+
+        Call this when a project is released so sqlite connections and
+        decoded-pixbuf LRU entries do not leak across open/close cycles.
+        """
+        for cache in list(cls.caches_by_uri.values()):
+            cache.close()
+        cls.caches_by_uri.clear()
+
+    def close(self):
+        """Commits pending data and closes the sqlite connection."""
+        if self.__autosave_id is not None:
+            GLib.source_remove(self.__autosave_id)
+            self.__autosave_id = None
+        try:
+            self.commit()
+        except Exception as exc:  # pylint: disable=broad-except
+            self.warning("Failed to commit thumbnail cache on close: %s", exc)
+        try:
+            self._db.close()
+        except Exception as exc:  # pylint: disable=broad-except
+            self.warning("Failed to close thumbnail cache DB: %s", exc)
+        self._pixbuf_lru.clear()
 
     @property
     def image_size(self):
@@ -1079,17 +1214,42 @@ class ThumbnailCache(Loggable):
         pixbuf = loader.get_pixbuf()
         return pixbuf
 
+    def _lru_key(self, position, pixbuf=None):
+        """Builds an LRU key for (uri-scoped) position and image size."""
+        if pixbuf is not None:
+            size = (pixbuf.get_width(), pixbuf.get_height())
+        else:
+            size = self._image_size
+        return (self.uri, position, size[0], size[1])
+
+    def _remember_pixbuf(self, position, pixbuf):
+        """Records a decoded pixbuf in the in-memory LRU cache."""
+        key = self._lru_key(position, pixbuf)
+        self._pixbuf_lru[key] = pixbuf
+        self._pixbuf_lru.move_to_end(key)
+        while len(self._pixbuf_lru) > self._PIXBUF_LRU_MAX:
+            self._pixbuf_lru.popitem(last=False)
+        if self._image_size[0] == 0:
+            self._image_size = (pixbuf.get_width(), pixbuf.get_height())
+
     def __contains__(self, position):
         """Returns whether a row for the specified position exists in the DB."""
         return position in self.positions
 
     def __getitem__(self, position):
         """Gets the GdkPixbuf.Pixbuf for the specified position."""
+        key = self._lru_key(position)
+        if key in self._pixbuf_lru:
+            self._pixbuf_lru.move_to_end(key)
+            return self._pixbuf_lru[key]
+
         self._cur.execute("SELECT * FROM Thumbs WHERE Time = ?", (position,))
         row = self._cur.fetchone()
         if not row:
             raise KeyError(position)
-        return self.__pixbuf_from_row(row)
+        pixbuf = self.__pixbuf_from_row(row)
+        self._remember_pixbuf(position, pixbuf)
+        return pixbuf
 
     def __setitem__(self, position, pixbuf):
         """Sets a GdkPixbuf.Pixbuf for the specified position."""
@@ -1103,6 +1263,7 @@ class ThumbnailCache(Loggable):
         self._cur.execute("DELETE FROM Thumbs WHERE  time=?", (position,))
         self._cur.execute("INSERT INTO Thumbs VALUES (?,?)", (position, blob,))
         self.positions.add(position)
+        self._remember_pixbuf(position, pixbuf)
         self._schedule_commit()
 
     def _schedule_commit(self):
@@ -1191,9 +1352,10 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         # The playback rate from last time the surface was updated.
         self._rate = 1.0
 
-        # Guard against malformed URIs
+        # Guard against malformed URIs. Prefer proxy media when ready so level
+        # discovery decodes the lightweight file (audio remains CPU).
         self.wavefile = None
-        self._uri = quote_uri(get_proxy_target(ges_elem).props.id)
+        self._uri = quote_uri(get_preview_source_asset(ges_elem).props.id)
 
         self._num_failures = 0
         self.become_controlled()
@@ -1201,6 +1363,14 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
     def refresh(self):
         """Discards the audio samples so they are recreated."""
         self.stop_generation()
+
+        source = get_preview_source_asset(self.ges_elem)
+        new_uri = quote_uri(source.props.id)
+        if new_uri != self._uri:
+            self.debug("Waveform decode source -> %s", path_from_uri(new_uri))
+            self._uri = new_uri
+            self.wavefile = None
+            self._num_failures = 0
 
         self.samples = None
         self.surface = None

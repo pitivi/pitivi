@@ -53,6 +53,57 @@ from pitivi.utils.widgets import GstElementSettingsDialog
 # a GstPbutils.EncodingProfile used as a Pitivi render preset.
 PITIVI_ENCODING_TARGET_CATEGORY = "user-defined"
 
+# ETA / progress guards. The classic formula
+#   remaining = timediff * (length / position - 1)
+# explodes when position is still a few frames after preroll (multi-day ETAs).
+MIN_ETA_POSITION_NS = Gst.SECOND  # at least 1s of timeline progress
+MIN_ETA_FRACTION = 0.02  # or 2% of duration, whichever is larger
+MIN_ETA_WALL_SECONDS = 6  # and at least this much wall-clock time
+MAX_ETA_DISPLAY_SECONDS = 24 * 60 * 60  # never show more than 24h
+ETA_EMA_ALPHA = 0.3  # smooth successive estimates
+RENDER_STALL_SECONDS = 90  # warn if position is frozen this long
+
+
+def compute_render_eta(current_position, length, timediff, prev_ema=None,
+                       min_position_ns=MIN_ETA_POSITION_NS,
+                       min_fraction=MIN_ETA_FRACTION,
+                       min_wall_seconds=MIN_ETA_WALL_SECONDS,
+                       max_display_seconds=MAX_ETA_DISPLAY_SECONDS,
+                       ema_alpha=ETA_EMA_ALPHA):
+    """Compute a sane remaining-time estimate for a render.
+
+    Args:
+        current_position (int): Timeline position in nanoseconds.
+        length (int): Timeline duration in nanoseconds.
+        timediff (float): Active wall-clock seconds spent rendering (excl. pause).
+        prev_ema (float | None): Previous EMA of remaining seconds, if any.
+
+    Returns:
+        tuple: (display_remaining_seconds_or_None, new_ema_or_None, capped).
+            display is None while still estimating (insufficient samples).
+            capped is True when the raw estimate exceeded max_display_seconds.
+    """
+    if (not current_position or not length or length <= 0 or
+            timediff < min_wall_seconds):
+        return None, prev_ema, False
+
+    min_pos = max(int(min_position_ns), int(length * min_fraction))
+    if current_position < min_pos:
+        return None, prev_ema, False
+
+    # position and length share units (ns); timediff is seconds.
+    estimated_total = timediff * float(length) / float(current_position)
+    remaining = max(0.0, estimated_total - timediff)
+
+    if prev_ema is None:
+        ema = remaining
+    else:
+        ema = ema_alpha * remaining + (1.0 - ema_alpha) * prev_ema
+
+    capped = ema > max_display_seconds
+    display = min(ema, max_display_seconds)
+    return display, ema, capped
+
 
 def set_icon_and_title(icon, title, preset_item, icon_size=Gtk.IconSize.DND):
     """Adds icon for the respective preset.
@@ -404,8 +455,14 @@ class Encoders(Loggable):
     THEORA = "theoraenc"
     VP8 = "vp8enc"
     X264 = "x264enc"
+    NVH264 = "nvautogpuh264enc"   # was "nvh264enc" — autogpu accepts system memory (fix for stuck render)
+    NVH265 = "nvautogpuh265enc"   # was "nvh265enc" — same fix
 
     SUPPORTED_ENCODERS_COMBINATIONS = [
+        (MP4, AAC, NVH264),
+        (MKV, OPUS, NVH264),
+        (MKV, OPUS, NVH265),
+        (MP4, AAC, NVH265),
         (WEBM, VORBIS, VP8),
         (OGG, VORBIS, THEORA),
         (OGG, OPUS, THEORA),
@@ -672,6 +729,26 @@ quality_adapters = {
     Encoders.JPEG: QualityAdapter({
         # quality accepts values between 0..100, default is 85.
         "quality": (70, 85, 100)}),
+    # NVENC (nvautogpuh264enc / nvautogpuh265enc). Bitrate values inspired by
+    # GstNvAutoGpuH264Enc.prs "Proxy Fast" (4 Mbps) / "Proxy Quality" (8 Mbps);
+    # HIGH steps up further for final renders. preset p1/p4/p7 = fastest/medium/slowest.
+    Encoders.NVH264: QualityAdapter(
+        {
+            "bitrate": (4000, 8000, 16000),
+            "preset": ("p1", "p4", "p7"),
+            # Rate control mode: Constant Bit Rate (matches proxy presets)
+            "rc-mode": lambda unused_project: "cbr",
+            "gop-size": lambda unused_project: 60,
+        },
+        prop_name="bitrate"),
+    Encoders.NVH265: QualityAdapter(
+        {
+            "bitrate": (4000, 8000, 16000),
+            "preset": ("p1", "p4", "p7"),
+            "rc-mode": lambda unused_project: "cbr",
+            "gop-size": lambda unused_project: 60,
+        },
+        prop_name="bitrate"),
 }
 
 
@@ -801,6 +878,10 @@ class RenderDialog(Loggable):
         self.current_position = None
         self._time_started = 0
         self._time_spent_paused = 0  # Avoids the ETA being wrong on resume
+        self._eta_ema = None  # Smoothed remaining-seconds estimate
+        self._last_progress_position = None
+        self._last_progress_wall_time = 0
+        self._stall_notified = False
         self._is_filename_valid = True
 
         # Various gstreamer signal connection ID's
@@ -1161,8 +1242,15 @@ class RenderDialog(Loggable):
         if not self.current_position:
             return None
 
-        current_filesize = os.stat(path_from_uri(self.outfile)).st_size
         length = self.project.ges_timeline.props.duration
+        if not length or length <= 0:
+            return None
+        # Same min-progress guard as ETA: tiny positions produce absurd sizes.
+        min_pos = max(int(MIN_ETA_POSITION_NS), int(length * MIN_ETA_FRACTION))
+        if self.current_position < min_pos:
+            return None
+
+        current_filesize = os.stat(path_from_uri(self.outfile)).st_size
         estimated_size = current_filesize * length / self.current_position
         # Now let's make it human-readable (instead of octets).
         # If it's in the giga range (10⁹) instead of mega (10⁶), use 2 decimals
@@ -1343,23 +1431,51 @@ class RenderDialog(Loggable):
             "element-added", self.__element_added_cb)
         for element in encodebin.iterate_recurse():
             self.__set_properties(element)
+        duration = self.project.ges_timeline.props.duration
+        self.info(
+            "Render start: muxer=%s vencoder=%s aencoder=%s "
+            "outfile=%s duration_ns=%s profile=%s",
+            self.project.muxer, self.project.vencoder, self.project.aencoder,
+            self.outfile, duration, self.project.container_profile)
         self._pipeline.set_state(Gst.State.PLAYING)
         self._is_rendering = True
         self._time_started = time.time()
+        self._eta_ema = None
+        self._last_progress_position = None
+        self._last_progress_wall_time = self._time_started
+        self._stall_notified = False
+        self.current_position = None
 
     def _cancel_render(self, *unused_args):
         self.debug("Aborting render")
         self._shut_down()
         self._destroy_progress_window()
 
+    def _stop_estimate_timers(self):
+        """Stops ETA / filesize GLib timers if they are running."""
+        if self._time_estimate_timer is not None:
+            GLib.source_remove(self._time_estimate_timer)
+            self._time_estimate_timer = None
+        if self._filesize_estimate_timer is not None:
+            GLib.source_remove(self._filesize_estimate_timer)
+            self._filesize_estimate_timer = None
+
     def _shut_down(self):
         """Shuts down the pipeline and disconnects from its signals."""
         self._is_rendering = False
         self._rendering_is_paused = False
         self._time_spent_paused = 0
+        self._eta_ema = None
+        self._last_progress_position = None
+        self._stall_notified = False
+        self._stop_estimate_timers()
         self._pipeline.set_state(Gst.State.NULL)
         self.project.set_rendering(False)
         self._use_proxy_assets()
+        # Uninhibit sleep before disconnecting the bus handler. The STATE_CHANGED
+        # message that would normally trigger simple_uninhibit arrives after the
+        # handler is gone (async NULL change), so release the cookie here.
+        self.app.simple_uninhibit(RenderDialog.INHIBIT_REASON)
         self._disconnect_from_gst()
         self._pipeline.set_mode(GES.PipelineFlags.FULL_PREVIEW)
         self._pipeline.set_state(Gst.State.PAUSED)
@@ -1530,9 +1646,15 @@ class RenderDialog(Loggable):
         self.progress.connect("cancel", self._cancel_render)
         self.progress.connect("pause", self._pause_render)
         bus = self._pipeline.get_bus()
-        bus.add_signal_watch()
+        # SimplePipeline already owns a signal watch on this shared bus; do not
+        # call add_signal_watch() again (it is ref-counted and was never removed).
         self._gst_signal_handlers_ids[bus] = bus.connect("message", self._bus_message_cb)
         self.project.pipeline.connect("position", self._update_position_cb)
+        # Start ETA / stall monitor immediately (do not wait for first position).
+        # A true hang never emits position, so a delayed start would never fire.
+        if not self._time_estimate_timer:
+            self._time_estimate_timer = GLib.timeout_add_seconds(
+                3, self._update_time_estimate_cb)
         # Force writing the config now, or the path will be reset
         # if the user opens the rendering dialog again
         self.app.settings.store_settings()
@@ -1558,20 +1680,47 @@ class RenderDialog(Loggable):
             # Do nothing until we resume rendering
             return True
 
-        if self._is_rendering:
-            if self.current_position:
-                timediff = time.time() - self._time_started - self._time_spent_paused
-                length = self.project.ges_timeline.props.duration
-                estimated_time = timediff * length / self.current_position
-                remaining_time = estimated_time - timediff
-                estimate = beautify_eta(int(remaining_time * Gst.SECOND))
-                if estimate:
-                    self.progress.update_progressbar_eta(estimate)
+        if not self._is_rendering or not self.progress:
+            self._time_estimate_timer = None
+            self.debug("Stopping the ETA timer")
+            return False
+
+        now = time.time()
+        timediff = now - self._time_started - self._time_spent_paused
+
+        # Stall detection: position frozen for RENDER_STALL_SECONDS.
+        if (self._last_progress_wall_time and
+                (now - self._last_progress_wall_time) >= RENDER_STALL_SECONDS):
+            stalled_for = int(now - self._last_progress_wall_time)
+            if not self._stall_notified:
+                self.warning(
+                    "Render progress stalled for %d seconds "
+                    "(last position=%s, encoder=%s)",
+                    stalled_for, self.current_position, self.project.vencoder)
+                self._stall_notified = True
+            # Surface a clear message instead of an infinite silent hang UI.
+            self.progress.progressbar.set_text(
+                _("No progress for %d seconds — render may be stuck") %
+                stalled_for)
             return True
 
-        self._time_estimate_timer = None
-        self.debug("Stopping the ETA timer")
-        return False
+        length = self.project.ges_timeline.props.duration
+        display, self._eta_ema, capped = compute_render_eta(
+            self.current_position, length, timediff, self._eta_ema)
+
+        if display is None:
+            self.progress.progressbar.set_text(_("Estimating..."))
+            return True
+
+        estimate = beautify_eta(int(display * Gst.SECOND))
+        if estimate:
+            if capped:
+                # Raw math wanted multi-day; show a capped "more than …" instead.
+                self.progress.progressbar.set_text(
+                    _("About more than %s left") % estimate)
+            else:
+                self.progress.update_progressbar_eta(estimate)
+        return True
 
     def _update_filesize_estimate_cb(self):
         if self._rendering_is_paused:
@@ -1636,18 +1785,28 @@ class RenderDialog(Loggable):
         if not self.progress or not position:
             return
 
+        # Track forward progress for stall detection / ETA sample quality.
+        if (self._last_progress_position is None or
+                position > self._last_progress_position):
+            self._last_progress_position = position
+            self._last_progress_wall_time = time.time()
+            self._stall_notified = False
+
         length = self.project.ges_timeline.props.duration
+        if not length or length <= 0:
+            return
         fraction = float(min(position, length)) / float(length)
         self.progress.update_position(fraction)
 
-        # In order to have enough averaging, only display the ETA after 5s
-        timediff = time.time() - self._time_started
+        # ETA timer is started at render begin; keep "Estimating..." until
+        # compute_render_eta has enough samples (handled in the timer cb).
+        timediff = time.time() - self._time_started - self._time_spent_paused
         if not self._time_estimate_timer:
-            if timediff < 6:
-                self.progress.progressbar.set_text(_("Estimating..."))
-            else:
-                self._time_estimate_timer = GLib.timeout_add_seconds(
-                    3, self._update_time_estimate_cb)
+            # Safety net if start path did not install the timer.
+            self._time_estimate_timer = GLib.timeout_add_seconds(
+                3, self._update_time_estimate_cb)
+        elif timediff < MIN_ETA_WALL_SECONDS and not self._stall_notified:
+            self.progress.progressbar.set_text(_("Estimating..."))
 
         # Filesize is trickier and needs more time to be meaningful.
         if not self._filesize_estimate_timer and (fraction > 0.33 or timediff > 180):

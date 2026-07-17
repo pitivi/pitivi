@@ -125,4 +125,5 @@ class MissingAssetDialog(Gtk.Dialog, Loggable):
         response = self.run()
         if response == Gtk.ResponseType.OK:
             self.log("User chose a new URI for the missing file")
-        return self._chooser.get_uri()
+            return self._chooser.get_uri()
+        return None

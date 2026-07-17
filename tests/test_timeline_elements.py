@@ -26,6 +26,8 @@ from gi.repository import Gtk
 from matplotlib.backend_bases import MouseButton
 from matplotlib.backend_bases import MouseEvent
 
+from pitivi.effects import EffectInfo
+from pitivi.effects import VIDEO_EFFECT
 from pitivi.timeline.elements import GES_TYPE_UI_TYPE
 from pitivi.undo.undo import UndoableActionLog
 from pitivi.utils.timeline import SELECT
@@ -334,6 +336,106 @@ class TestKeyframeCurve(common.TestCase):
 
         self.assertListEqual([item.timestamp for item in control_source.get_all()], [0, 1000000000])
 
+    def test_release_disconnects_control_source_handlers(self):
+        """KeyframeCurve.release must drop control-source signal handlers (BUG-002)."""
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+        ges_clip = self.add_clip(ges_layer, 0, duration=Gst.SECOND)
+        timeline.selection.select([ges_clip])
+
+        ges_video_source = ges_clip.find_track_element(None, GES.VideoSource)
+        binding = ges_video_source.get_control_binding("alpha")
+        control_source = binding.props.control_source
+        keyframe_curve = ges_video_source.ui.keyframe_curve
+        self.assertIsNotNone(keyframe_curve)
+
+        # Handlers are connected: changing a keyframe value redraws the curve.
+        values = control_source.get_all()
+        timestamp = values[0].timestamp
+        with mock.patch.object(keyframe_curve, "_update_plots") as update_plots:
+            control_source.set(timestamp, 0.5)
+            update_plots.assert_called()
+
+        keyframe_curve.release()
+
+        # After release the control source must no longer notify the curve.
+        with mock.patch.object(keyframe_curve, "_update_plots") as update_plots:
+            control_source.set(timestamp, 0.25)
+            update_plots.assert_not_called()
+
+    def test_timeline_element_release_releases_keyframe_curve(self):
+        """TimelineElement.release must release its keyframe_curve (BUG-003)."""
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+        ges_clip = self.add_clip(ges_layer, 0, duration=Gst.SECOND)
+        timeline.selection.select([ges_clip])
+
+        element = ges_clip.find_track_element(None, GES.VideoSource).ui
+        keyframe_curve = element.keyframe_curve
+        self.assertIsNotNone(keyframe_curve)
+
+        with mock.patch.object(keyframe_curve, "release",
+                               wraps=keyframe_curve.release) as release_mock:
+            element.release()
+            release_mock.assert_called_once()
+
+        self.assertIsNone(element.keyframe_curve)
+
+    def test_multiple_keyframe_curve_release_disconnects_sources(self):
+        """MultipleKeyframeCurve.release must drop all control-source handlers."""
+        from gi.repository import GstController
+
+        from pitivi.timeline.elements import MultipleKeyframeCurve
+
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        ges_layer = timeline.ges_timeline.append_layer()
+        ges_clip = self.add_clip(ges_layer, 0, duration=Gst.SECOND)
+        timeline.selection.select([ges_clip])
+
+        ges_video_source = ges_clip.find_track_element(None, GES.VideoSource)
+        # MultipleKeyframeCurve requires len(bindings) > 1.
+        for prop_name in ("posx", "posy"):
+            if ges_video_source.get_control_binding(prop_name) is None:
+                source = GstController.InterpolationControlSource()
+                source.props.mode = GstController.InterpolationMode.LINEAR
+                source.set(0, 0.0)
+                source.set(Gst.SECOND, 1.0)
+                ges_video_source.set_control_source(
+                    source, prop_name, "direct-absolute")
+
+        bindings = [
+            ges_video_source.get_control_binding("posx"),
+            ges_video_source.get_control_binding("posy"),
+        ]
+        self.assertTrue(all(bindings))
+
+        element = ges_video_source.ui
+        element.show_multiple_keyframes(bindings)
+        keyframe_curve = element.keyframe_curve
+        self.assertIsInstance(keyframe_curve, MultipleKeyframeCurve)
+
+        control_sources = [b.props.control_source for b in bindings]
+        timestamp = control_sources[0].get_all()[0].timestamp
+
+        with mock.patch.object(keyframe_curve, "_update_plots") as update_plots:
+            control_sources[0].set(timestamp, 0.4)
+            update_plots.assert_called()
+
+        pipeline = timeline._project.pipeline
+        keyframe_curve.release()
+
+        with mock.patch.object(keyframe_curve, "_update_plots") as update_plots:
+            for control_source in control_sources:
+                control_source.set(timestamp, 0.2)
+            update_plots.assert_not_called()
+
+        # Pipeline "position" handler must be disconnected (raises if already gone).
+        with self.assertRaises(TypeError):
+            pipeline.disconnect_by_func(keyframe_curve._position_cb)
+
 
 class TestVideoSource(common.TestCase):
     """Tests for the VideoSource class."""
@@ -529,3 +631,34 @@ class TestClip(common.TestCase):
         timeline.selection.set_selection([clip1], UNSELECT)
         self.assertFalse(clip1.ui.get_state_flags() & Gtk.StateFlags.SELECTED)
         self.assertFalse(clip1.mini_ui.get_state_flags() & Gtk.StateFlags.SELECTED)
+
+    def test_add_effect_rejects_duplicate_videoflip(self):
+        """Duplicate only-once effects must return None (not the existing effect).
+
+        Regression for BUG-001: clipproperties._drag_data_received_cb treats a
+        truthy return as "new effect added" and calls set_top_effect_index,
+        which silently moved the existing videoflip when a second one was
+        dragged onto the effects list.
+        """
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        clip, = self.add_clips_simple(timeline, 1)
+
+        effect_info = EffectInfo("videoflip", VIDEO_EFFECT, [], "videoflip", "")
+
+        first = clip.ui.add_effect(effect_info)
+        self.assertIsNotNone(first, "first videoflip should be added")
+        effects_after_first = [
+            e for e in clip.get_children(True) if isinstance(e, GES.Effect)]
+        self.assertEqual(len(effects_after_first), 1)
+        original_index = clip.get_top_effect_index(first)
+
+        second = clip.ui.add_effect(effect_info)
+        self.assertIsNone(
+            second,
+            "duplicate videoflip must return None so callers do not re-order "
+            "the existing effect")
+        effects_after_second = [
+            e for e in clip.get_children(True) if isinstance(e, GES.Effect)]
+        self.assertEqual(len(effects_after_second), 1)
+        self.assertEqual(clip.get_top_effect_index(first), original_index)

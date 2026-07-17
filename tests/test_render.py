@@ -27,8 +27,13 @@ from gi.repository import Gst
 from gi.repository import GstPbutils
 from gi.repository import Gtk
 
+from pitivi.render import compute_render_eta
 from pitivi.render import Encoders
 from pitivi.render import extension_for_muxer
+from pitivi.render import MAX_ETA_DISPLAY_SECONDS
+from pitivi.render import MIN_ETA_FRACTION
+from pitivi.render import MIN_ETA_POSITION_NS
+from pitivi.render import MIN_ETA_WALL_SECONDS
 from pitivi.render import PresetsManager
 from pitivi.render import Quality
 from pitivi.render import quality_adapters
@@ -107,6 +112,95 @@ class TestPresetsManager(common.TestCase):
             self.assertIsNone(manager.initial_preset())
 
 
+class TestComputeRenderEta(common.TestCase):
+    """Tests for compute_render_eta — guards against multi-day nonsense ETAs."""
+
+    def test_insufficient_samples_return_none(self):
+        length = 3600 * Gst.SECOND  # 1 hour timeline
+        # No position yet.
+        display, ema, capped = compute_render_eta(0, length, 10.0)
+        self.assertIsNone(display)
+        self.assertIsNone(ema)
+        self.assertFalse(capped)
+
+        # Wall time too short.
+        display, ema, capped = compute_render_eta(
+            10 * Gst.SECOND, length, MIN_ETA_WALL_SECONDS - 1)
+        self.assertIsNone(display)
+
+        # Position below 1s absolute minimum.
+        tiny = MIN_ETA_POSITION_NS - 1
+        display, ema, capped = compute_render_eta(
+            tiny, length, MIN_ETA_WALL_SECONDS + 5)
+        self.assertIsNone(display)
+
+        # Position below 2% of duration (for a long timeline).
+        below_fraction = int(length * MIN_ETA_FRACTION) - 1
+        display, ema, capped = compute_render_eta(
+            below_fraction, length, MIN_ETA_WALL_SECONDS + 5)
+        self.assertIsNone(display)
+
+    def test_tiny_position_no_longer_blows_up(self):
+        """Regression: first frames after preroll used to show multi-day ETAs."""
+        length = 3600 * Gst.SECOND  # 1 hour
+        # 1 ms of progress after 6s wall → old formula: ~6 * 3600 / 0.001 = 6e6 s.
+        one_ms = int(0.001 * Gst.SECOND)
+        display, ema, capped = compute_render_eta(
+            one_ms, length, 6.0)
+        self.assertIsNone(display)
+        self.assertIsNone(ema)
+        self.assertFalse(capped)
+
+    def test_sane_estimate_after_enough_progress(self):
+        length = 100 * Gst.SECOND
+        # 10s of media in 5s wall after min wall wait — 2x realtime → ~45s left.
+        # Need min wall; use 10s wall, 20s progress on 100s clip → 40s remaining.
+        position = 20 * Gst.SECOND
+        timediff = 10.0
+        display, ema, capped = compute_render_eta(position, length, timediff)
+        self.assertIsNotNone(display)
+        self.assertAlmostEqual(display, 40.0, places=3)
+        self.assertAlmostEqual(ema, 40.0, places=3)
+        self.assertFalse(capped)
+
+    def test_ema_smooths_successive_samples(self):
+        length = 100 * Gst.SECOND
+        display1, ema1, _ = compute_render_eta(
+            20 * Gst.SECOND, length, 10.0, prev_ema=None)
+        self.assertAlmostEqual(display1, 40.0, places=3)
+        # Next sample would say 20s remaining; EMA blends toward it.
+        display2, ema2, _ = compute_render_eta(
+            40 * Gst.SECOND, length, 20.0, prev_ema=ema1)
+        # remaining raw = 20 * 100/40 - 20 = 30; with prev 40 and alpha 0.3:
+        # ema = 0.3*30 + 0.7*40 = 37
+        self.assertAlmostEqual(ema2, 37.0, places=3)
+        self.assertAlmostEqual(display2, 37.0, places=3)
+
+    def test_cap_at_max_display_seconds(self):
+        length = 3600 * Gst.SECOND  # 1 hour
+        # 2% progress after long wall → remaining ~ 49 * wall.
+        position = int(length * MIN_ETA_FRACTION)
+        timediff = 100.0
+        # estimated_total = 100 * 1/0.02 = 5000s; remaining = 4900s < 24h.
+        display, ema, capped = compute_render_eta(position, length, timediff)
+        self.assertFalse(capped)
+        self.assertLess(display, MAX_ETA_DISPLAY_SECONDS)
+
+        # Very slow progress: 2% in 2000s wall → remaining ~ 98000s > 24h.
+        timediff_slow = 2000.0
+        display, ema, capped = compute_render_eta(
+            position, length, timediff_slow)
+        self.assertTrue(capped)
+        self.assertEqual(display, MAX_ETA_DISPLAY_SECONDS)
+        self.assertGreater(ema, MAX_ETA_DISPLAY_SECONDS)
+
+    def test_zero_length_safe(self):
+        display, ema, capped = compute_render_eta(
+            Gst.SECOND, 0, 10.0)
+        self.assertIsNone(display)
+        self.assertFalse(capped)
+
+
 class TestQualityAdapter(common.TestCase):
     """Tests for the QualityAdapter class."""
 
@@ -132,6 +226,40 @@ class TestQualityAdapter(common.TestCase):
                            [Quality.LOW] * 48 + [Quality.MEDIUM] * 15 + [Quality.HIGH] * 1)
         self.check_adapter(quality_adapters[Encoders.JPEG],
                            [Quality.LOW] * 85 + [Quality.MEDIUM] * 15 + [Quality.HIGH] * 1)
+
+    def test_nvenc_quality_adapters(self):
+        """NVENC adapters map the quality slider to bitrate/preset/rc-mode."""
+        for encoder_name in (Encoders.NVH264, Encoders.NVH265):
+            self.assertIn(encoder_name, quality_adapters)
+            adapter = quality_adapters[encoder_name]
+            self.assertEqual(adapter.prop_name, "bitrate")
+
+            self.assertEqual(
+                adapter.calculate_quality({"bitrate": 4000}), Quality.LOW)
+            self.assertEqual(
+                adapter.calculate_quality({"bitrate": 8000}), Quality.MEDIUM)
+            self.assertEqual(
+                adapter.calculate_quality({"bitrate": 16000}), Quality.HIGH)
+            self.assertEqual(
+                adapter.calculate_quality({}), Quality.LOW)
+
+            project = mock.Mock()
+            project.vcodecsettings = {}
+            adapter.update_project_vcodecsettings(project, Quality.LOW)
+            self.assertEqual(project.vcodecsettings["bitrate"], 4000)
+            self.assertEqual(project.vcodecsettings["preset"], "p1")
+            self.assertEqual(project.vcodecsettings["rc-mode"], "cbr")
+            self.assertEqual(project.vcodecsettings["gop-size"], 60)
+
+            project.vcodecsettings = {}
+            adapter.update_project_vcodecsettings(project, Quality.MEDIUM)
+            self.assertEqual(project.vcodecsettings["bitrate"], 8000)
+            self.assertEqual(project.vcodecsettings["preset"], "p4")
+
+            project.vcodecsettings = {}
+            adapter.update_project_vcodecsettings(project, Quality.HIGH)
+            self.assertEqual(project.vcodecsettings["bitrate"], 16000)
+            self.assertEqual(project.vcodecsettings["preset"], "p7")
 
 
 class TestRender(BaseTestMediaLibrary):

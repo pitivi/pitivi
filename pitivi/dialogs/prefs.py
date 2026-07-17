@@ -70,7 +70,12 @@ class PreferencesDialog(Loggable):
 
         self.app = app
 
-        self.app.shortcuts.connect("accel-changed", self.__accel_changed_cb)
+        # Track signal handler IDs so we can disconnect on close and avoid
+        # leaking handlers on the long-lived shortcuts object each time the
+        # preferences dialog is opened.
+        self._accel_handlers = []
+        self._accel_handlers.append(
+            self.app.shortcuts.connect("accel-changed", self.__accel_changed_cb))
 
         self.settings = app.settings
         self.widgets = {}
@@ -99,11 +104,20 @@ class PreferencesDialog(Loggable):
         self.__setup_css()
         self.dialog.set_transient_for(app.gui)
 
+    def _disconnect_accel_handlers(self):
+        """Disconnect accel-changed handlers from the app shortcuts manager."""
+        for handler_id in self._accel_handlers:
+            self.app.shortcuts.disconnect(handler_id)
+        self._accel_handlers = []
+
     def run(self):
         """Runs the dialog."""
         PreferencesDialog._instance = self
-        self.dialog.run()
-        PreferencesDialog._instance = None
+        try:
+            self.dialog.run()
+        finally:
+            PreferencesDialog._instance = None
+            self._disconnect_accel_handlers()
 
     def __setup_css(self):
         css_provider = Gtk.CssProvider()

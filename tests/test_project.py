@@ -258,6 +258,158 @@ class TestProjectManager(common.TestCase):
         self.assertFalse(os.path.isfile(path_from_uri(backup_uri)),
                          "Backup file not deleted when project closed")
 
+    def test_export_project_preserves_dirty_flag(self):
+        """Export must not clear unsaved-modifications (BUG-002)."""
+        self.manager.new_blank_project()
+        project = self.manager.current_project
+        project.uri = "file:///tmp/export-dirty-test.xges"
+        project.set_modification_state(True)
+        self.assertTrue(project.has_unsaved_modifications())
+
+        def fake_save(uri=None, formatter_type=None, backup=False):
+            # Mimic save_project's non-backup success path: clear dirty + set URI.
+            self.manager.current_project.set_modification_state(False)
+            if uri is not None:
+                self.manager.current_project.uri = uri
+            return True
+
+        formatter = mock.Mock()
+        formatter.get_meta.return_value = "xges"
+        tar = mock.MagicMock()
+        tar_cm = mock.MagicMock()
+        tar_cm.__enter__.return_value = tar
+        tar_cm.__exit__.return_value = False
+
+        with mock.patch.object(self.manager, "save_project", side_effect=fake_save), \
+                mock.patch("pitivi.project.GES.Formatter") as formatter_cls, \
+                mock.patch("pitivi.project.tarfile.open", return_value=tar_cm), \
+                mock.patch.object(project, "list_sources", return_value=[]):
+            formatter_cls.get_default.return_value = formatter
+            with tempfile.NamedTemporaryFile(suffix=".tar") as tmp:
+                export_uri = Gst.filename_to_uri(tmp.name)
+                self.assertTrue(self.manager.export_project(project, export_uri))
+
+        self.assertTrue(project.has_unsaved_modifications(),
+                        "Export must restore the dirty flag when the project was dirty")
+        self.assertEqual(project.uri, "file:///tmp/export-dirty-test.xges")
+
+    def test_export_project_preserves_clean_flag(self):
+        """Export of a clean project must leave it clean (BUG-002)."""
+        self.manager.new_blank_project()
+        project = self.manager.current_project
+        project.uri = "file:///tmp/export-clean-test.xges"
+        project.set_modification_state(False)
+        self.assertFalse(project.has_unsaved_modifications())
+
+        def fake_save(uri=None, formatter_type=None, backup=False):
+            self.manager.current_project.set_modification_state(False)
+            if uri is not None:
+                self.manager.current_project.uri = uri
+            return True
+
+        formatter = mock.Mock()
+        formatter.get_meta.return_value = "xges"
+        tar = mock.MagicMock()
+        tar_cm = mock.MagicMock()
+        tar_cm.__enter__.return_value = tar
+        tar_cm.__exit__.return_value = False
+
+        with mock.patch.object(self.manager, "save_project", side_effect=fake_save), \
+                mock.patch("pitivi.project.GES.Formatter") as formatter_cls, \
+                mock.patch("pitivi.project.tarfile.open", return_value=tar_cm), \
+                mock.patch.object(project, "list_sources", return_value=[]):
+            formatter_cls.get_default.return_value = formatter
+            with tempfile.NamedTemporaryFile(suffix=".tar") as tmp:
+                export_uri = Gst.filename_to_uri(tmp.name)
+                self.assertTrue(self.manager.export_project(project, export_uri))
+
+        self.assertFalse(project.has_unsaved_modifications())
+        self.assertEqual(project.uri, "file:///tmp/export-clean-test.xges")
+
+    def test_relocated_assets_mark_dirty_after_load(self):
+        """Relocations during load must mark dirty once loaded (BUG-003)."""
+        self.manager.new_blank_project()
+        project = self.manager.current_project
+        # Simulate mid-load state: loaded is False, so set_modification_state no-ops.
+        project.loaded = False
+        project._dirty = False
+        project.relocated_assets = {"file:///old/clip.mp4": "file:///new/clip.mp4"}
+
+        # Direct call during load is a no-op (the original bug).
+        project.set_modification_state(True)
+        self.assertFalse(project.has_unsaved_modifications())
+
+        self.manager._project_loaded_cb(project, None)
+        self.assertTrue(project.loaded)
+        self.assertTrue(project.has_unsaved_modifications(),
+                        "Relocated assets must mark the project dirty after load")
+
+    def test_missing_assets_mark_dirty_after_load(self):
+        """Unresolved missing assets during load must mark dirty (BUG-003)."""
+        self.manager.new_blank_project()
+        project = self.manager.current_project
+        project.loaded = False
+        project._dirty = False
+        project.at_least_one_asset_missing = True
+        project.relocated_assets = {}
+
+        self.manager._project_loaded_cb(project, None)
+        self.assertTrue(project.has_unsaved_modifications())
+
+    def test_backup_forced_under_sustained_editing(self):
+        """Backup must fire after 6 polls even if lock stays high (BUG-004)."""
+        self.manager.new_blank_project()
+        project = self.manager.current_project
+        project.uri = "file:///tmp/backup-force-test.xges"
+
+        with mock.patch("pitivi.project.GLib.timeout_add_seconds", return_value=42) as add_timeout, \
+                mock.patch.object(self.manager, "save_project", return_value=True) as save:
+            # First change starts the timer.
+            self.manager._project_changed_cb(project)
+            self.assertEqual(self.manager._backup_lock, 10)
+            self.assertEqual(self.manager._backup_timeout_id, 42)
+            add_timeout.assert_called_once()
+
+            # Sustained editing keeps bumping the lock above 10.
+            for _ in range(20):
+                self.manager._project_changed_cb(project)
+            self.assertEqual(self.manager._backup_lock, 60)
+
+            # First 5 polls only debounce (lock still high).
+            for poll in range(1, 6):
+                keep_going = self.manager._save_backup_cb(project, project.uri)
+                self.assertTrue(keep_going, "poll %s should reschedule" % poll)
+                # Simulate another edit between polls so lock stays high.
+                self.manager._project_changed_cb(project)
+            save.assert_not_called()
+
+            # 6th poll forces the backup regardless of lock.
+            keep_going = self.manager._save_backup_cb(project, project.uri)
+            self.assertFalse(keep_going)
+            save.assert_called_once_with(backup=True)
+            self.assertEqual(self.manager._backup_lock, 0)
+            self.assertEqual(self.manager._backup_timeout_id, 0)
+            self.assertEqual(self.manager._backup_polls, 0)
+
+    def test_backup_timer_cancelled_on_close(self):
+        """Pending backup timer must be cancelled when project closes (BUG-004)."""
+        self.manager.new_blank_project()
+        project = self.manager.current_project
+        project.uri = "file:///tmp/backup-cancel-test.xges"
+
+        with mock.patch("pitivi.project.GLib.timeout_add_seconds", return_value=99), \
+                mock.patch("pitivi.project.GLib.source_remove") as source_remove, \
+                mock.patch.object(self.manager, "save_project", return_value=True):
+            self.manager._project_changed_cb(project)
+            self.assertEqual(self.manager._backup_timeout_id, 99)
+            self.assertEqual(self.manager._backup_lock, 10)
+
+            self.manager._cancel_backup_timer()
+            source_remove.assert_called_once_with(99)
+            self.assertEqual(self.manager._backup_timeout_id, 0)
+            self.assertEqual(self.manager._backup_lock, 0)
+            self.assertEqual(self.manager._backup_polls, 0)
+
 
 class TestProjectLoading(common.TestCase):
 

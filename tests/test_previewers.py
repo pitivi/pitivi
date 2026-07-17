@@ -18,6 +18,7 @@
 # pylint: disable=protected-access,unused-argument
 import functools
 import os
+import sqlite3
 import tempfile
 from unittest import mock
 
@@ -27,9 +28,11 @@ from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import Gst
 
+from pitivi.timeline.previewers import AssetPreviewer
 from pitivi.timeline.previewers import delete_all_files_in_dir
 from pitivi.timeline.previewers import get_wavefile_location_for_uri
 from pitivi.timeline.previewers import Previewer
+from pitivi.timeline.previewers import PreviewGeneratorManager
 from pitivi.timeline.previewers import THUMB_HEIGHT
 from pitivi.timeline.previewers import THUMB_PERIOD
 from pitivi.timeline.previewers import ThumbnailCache
@@ -257,6 +260,10 @@ class TestPreviewer(common.TestCase):
 class TestThumbnailCache(BaseTestMediaLibrary):
     """Tests for the ThumbnailCache class."""
 
+    def tearDown(self):
+        ThumbnailCache.close_all()
+        super().tearDown()
+
     def test_get(self):
         """Checks the `get` method returns the same thing for asset and URI."""
         with self.assertRaises(ValueError):
@@ -308,6 +315,187 @@ class TestThumbnailCache(BaseTestMediaLibrary):
                 thumb_cache = ThumbnailCache(sample_uri)
                 self.assertTrue(Gst.SECOND in thumb_cache)
                 self.assertIsNotNone(thumb_cache[Gst.SECOND])
+
+    def test_pixbuf_lru_returns_same_instance(self):
+        """Decoded pixbufs are served from the in-memory LRU cache."""
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            with mock.patch("pitivi.timeline.previewers.xdg_cache_home") as xdg_cache_home:
+                xdg_cache_home.return_value = tmpdirname
+                sample_uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
+                thumb_cache = ThumbnailCache(sample_uri)
+                pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
+                                              False, 8, 20, 10)
+                thumb_cache[Gst.SECOND] = pixbuf
+
+                first = thumb_cache[Gst.SECOND]
+                second = thumb_cache[Gst.SECOND]
+                self.assertIs(first, pixbuf)
+                self.assertIs(second, first)
+
+    def test_close_all_clears_registry_and_connections(self):
+        """close_all commits, closes DBs, and empties caches_by_uri."""
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            with mock.patch("pitivi.timeline.previewers.xdg_cache_home") as xdg_cache_home:
+                xdg_cache_home.return_value = tmpdirname
+                sample_uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
+                cache = ThumbnailCache.get(sample_uri)
+                pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
+                                              False, 8, 16, 8)
+                cache[0] = pixbuf
+                self.assertIn(sample_uri, ThumbnailCache.caches_by_uri)
+
+                ThumbnailCache.close_all()
+                self.assertEqual(ThumbnailCache.caches_by_uri, {})
+                # Connection must be closed; further execute should fail.
+                with self.assertRaises(sqlite3.ProgrammingError):
+                    cache._cur.execute("SELECT 1")
+
+
+class TestPreviewGeneratorManager(common.TestCase):
+    """Tests for PreviewGeneratorManager pause/resume behaviour."""
+
+    def _make_previewer(self, track_type):
+        previewer = mock.Mock()
+        previewer.track_type = track_type
+        # GObject connect/disconnect are no-ops for the manager under test.
+        previewer.connect = mock.Mock()
+        previewer.disconnect_by_func = mock.Mock()
+        return previewer
+
+    def test_paused_non_interrupt_resumes_current(self):
+        """Non-interrupt pause resumes the current previewer (BUG-002)."""
+        manager = PreviewGeneratorManager()
+        current = self._make_previewer(GES.TrackType.VIDEO)
+        queued = self._make_previewer(GES.TrackType.VIDEO)
+        manager._current_previewers[GES.TrackType.VIDEO] = current
+        manager._previewers[GES.TrackType.VIDEO] = [queued]
+
+        with manager.paused(interrupt=False):
+            current.pause_generation.assert_called_once_with()
+            queued.pause_generation.assert_called_once_with()
+            self.assertFalse(manager._running)
+
+        self.assertTrue(manager._running)
+        # Current is still current and was resumed.
+        self.assertIs(manager._current_previewers[GES.TrackType.VIDEO], current)
+        current.start_generation.assert_called_once_with()
+        # Queued previewer must not have been started in place of current.
+        queued.start_generation.assert_not_called()
+        self.assertEqual(manager._previewers[GES.TrackType.VIDEO], [queued])
+
+    def test_paused_non_interrupt_drains_queue_when_current_destroyed(self):
+        """If current is destroyed mid-pause, finally starts next queued."""
+        manager = PreviewGeneratorManager()
+        current = self._make_previewer(GES.TrackType.VIDEO)
+        queued = self._make_previewer(GES.TrackType.VIDEO)
+        manager._current_previewers[GES.TrackType.VIDEO] = current
+        manager._previewers[GES.TrackType.VIDEO] = [queued]
+
+        with manager.paused(interrupt=False):
+            # Simulate release() -> stop_generation() -> "done" while paused:
+            # current is popped, but _running is False so the queue is not drained.
+            manager._PreviewGeneratorManager__previewer_done_cb(current)
+            self.assertNotIn(GES.TrackType.VIDEO, manager._current_previewers)
+            self.assertEqual(manager._previewers[GES.TrackType.VIDEO], [queued])
+            self.assertFalse(manager._running)
+
+        self.assertTrue(manager._running)
+        # Queued previewer must become current and start generation.
+        self.assertIs(manager._current_previewers[GES.TrackType.VIDEO], queued)
+        queued.start_generation.assert_called_once_with()
+        self.assertEqual(manager._previewers[GES.TrackType.VIDEO], [])
+        # Destroyed current must not be resumed.
+        current.start_generation.assert_not_called()
+
+    def test_paused_interrupt_sets_running_false_before_stop(self):
+        """interrupt=True gates _running before stop_generation (BUG-003)."""
+        manager = PreviewGeneratorManager()
+        current = self._make_previewer(GES.TrackType.VIDEO)
+        queued = self._make_previewer(GES.TrackType.VIDEO)
+        seen_running_at_stop = []
+        starts_during_stop = []
+
+        original_start = manager._start_previewer
+
+        def tracking_start(previewer):
+            starts_during_stop.append(previewer)
+            return original_start(previewer)
+
+        manager._start_previewer = tracking_start
+
+        def stop_and_done():
+            seen_running_at_stop.append(manager._running)
+            # Emulate emit("done") while still inside the interrupt stop loop.
+            manager._PreviewGeneratorManager__previewer_done_cb(current)
+
+        current.stop_generation.side_effect = stop_and_done
+        manager._current_previewers[GES.TrackType.VIDEO] = current
+        manager._previewers[GES.TrackType.VIDEO] = [queued]
+
+        with manager.paused(interrupt=True):
+            # Mid-interrupt: done cascade must not have started the queued one.
+            self.assertEqual(starts_during_stop, [])
+            self.assertEqual(seen_running_at_stop, [False])
+
+        self.assertEqual(seen_running_at_stop, [False])
+
+
+class TestNvdecRankBoost(common.TestCase):
+    """Tests for temporary NVDEC factory rank boost scoping (BUG-001)."""
+
+    def tearDown(self):
+        # Reset class-level rank boost state between tests.
+        AssetPreviewer._nvdec_rank_boost_count = 0
+        AssetPreviewer._nvdec_saved_ranks = {}
+        super().tearDown()
+
+    def _patch_nvdec_factories(self):
+        """Patch ElementFactory.find so each NVDEC name has its own mock factory."""
+        factories = {}
+        for name in AssetPreviewer._NVDEC_FACTORY_NAMES:
+            factory = mock.Mock(name=name)
+            factory._rank = Gst.Rank.NONE
+            factory.get_rank.side_effect = lambda f=factory: f._rank
+            factory.set_rank.side_effect = lambda rank, f=factory: setattr(f, "_rank", rank)
+            factories[name] = factory
+
+        def find(name):
+            return factories.get(name)
+
+        return mock.patch.object(Gst.ElementFactory, "find", side_effect=find), factories
+
+    def test_push_pop_restores_original_ranks(self):
+        """NVDEC ranks are restored after the boost is fully released."""
+        patcher, factories = self._patch_nvdec_factories()
+        with patcher:
+            AssetPreviewer._push_nvdec_rank_boost()
+            self.assertEqual(AssetPreviewer._nvdec_rank_boost_count, 1)
+            for factory in factories.values():
+                self.assertEqual(factory._rank, Gst.Rank.PRIMARY + 1)
+
+            AssetPreviewer._pop_nvdec_rank_boost()
+            self.assertEqual(AssetPreviewer._nvdec_rank_boost_count, 0)
+            for factory in factories.values():
+                self.assertEqual(factory._rank, Gst.Rank.NONE)
+
+    def test_nested_boost_restores_only_on_last_pop(self):
+        """Refcounted boost only restores ranks when the last holder releases."""
+        patcher, factories = self._patch_nvdec_factories()
+        with patcher:
+            AssetPreviewer._push_nvdec_rank_boost()
+            AssetPreviewer._push_nvdec_rank_boost()
+            for factory in factories.values():
+                self.assertEqual(factory._rank, Gst.Rank.PRIMARY + 1)
+
+            AssetPreviewer._pop_nvdec_rank_boost()
+            for factory in factories.values():
+                self.assertEqual(factory._rank, Gst.Rank.PRIMARY + 1)
+            self.assertEqual(AssetPreviewer._nvdec_rank_boost_count, 1)
+
+            AssetPreviewer._pop_nvdec_rank_boost()
+            for factory in factories.values():
+                self.assertEqual(factory._rank, Gst.Rank.NONE)
+            self.assertEqual(AssetPreviewer._nvdec_rank_boost_count, 0)
 
 
 class TestFunctions(BaseTestMediaLibrary):

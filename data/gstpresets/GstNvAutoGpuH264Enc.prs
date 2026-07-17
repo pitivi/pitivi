@@ -1,0 +1,17 @@
+[_presets_]
+version=0.10
+element-name=GstNvAutoGpuH264Enc
+
+[Proxy Fast]
+_meta/comment=Fast NVENC proxy preset for Pitivi — 4 Mbps CBR, P1 fastest, ~5GB for 2h50m
+preset=p1
+rc-mode=cbr
+bitrate=4000
+gop-size=60
+
+[Proxy Quality]
+_meta/comment=Quality NVENC proxy preset for Pitivi — 8 Mbps CBR, P4 medium, ~10GB for 2h50m
+preset=p4
+rc-mode=cbr
+bitrate=8000
+gop-size=60

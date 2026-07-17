@@ -1,0 +1,25 @@
+[GStreamer Encoding Target]
+name=nvench264raw
+category=device
+description=NVENC H.264 proxy with raw audio in Matroska — GPU accelerated
+
+[profile-default]
+name=default
+type=container
+description[c]=Matroska muxer with NVENC H.264 and raw audio
+format=video/x-matroska
+
+[streamprofile-rawaudio]
+parent=default
+type=audio
+format=audio/x-raw
+presence=0
+
+[streamprofile-h264]
+parent=default
+type=video
+format=video/x-h264
+presence=0
+pass=0
+variableframerate=false
+preset=Proxy Fast

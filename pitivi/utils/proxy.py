@@ -45,18 +45,25 @@ class ProxyingStrategy:
     AUTOMATIC = "automatic"
     ALL = "all"
     NOTHING = "nothing"
+    ALL_NV = "all-nv"
+    AUTO_NV = "auto-nv"
 
 
 GlobalSettings.add_config_section("proxy")
 GlobalSettings.add_config_option('proxying_strategy',
                                  section='proxy',
                                  key='proxying-strategy',
-                                 default=ProxyingStrategy.AUTOMATIC)
+                                 # Prefer AUTO_NV so high-bandwidth/unsupported
+                                 # media get lightweight NVENC proxies by default
+                                 # (matches import UI "Smart (default)").
+                                 default=ProxyingStrategy.AUTO_NV)
 
 GlobalSettings.add_config_option('num_transcoding_jobs',
                                  section='proxy',
                                  key='num-proxying-jobs',
-                                 default=4,
+                                 # One concurrent NVENC job avoids thrashing a
+                                 # single consumer GPU (e.g. GTX 1060).
+                                 default=1,
                                  notify=True)
 PreferencesDialog.add_numeric_preference('num_transcoding_jobs',
                                          description="",
@@ -95,6 +102,8 @@ GlobalSettings.add_config_option("default_scaled_proxy_height",
 
 ENCODING_FORMAT_PRORES = "prores-raw-in-qt.gep"
 ENCODING_FORMAT_JPEG = "jpeg-raw-in-qt.gep"
+ENCODING_FORMAT_NVENC = "nvenc-h264-raw-in-mkv.gep"
+NVENC_PROXY_EXTENSION = "proxy.nv.mkv"
 
 
 def create_encoding_profile_simple(container_caps, audio_caps, video_caps):
@@ -143,6 +152,7 @@ class ProxyManager(GObject.Object, Loggable):
         WHITELIST_FORMATS.append(a)
 
     hq_proxy_extension = "proxy.mov"
+    nvenc_proxy_extension = "proxy.nv.mkv"
     scaled_proxy_extension = "scaledproxy.mov"
     # Suffix for filenames of proxies being created.
     part_suffix = ".part"
@@ -165,7 +175,16 @@ class ProxyManager(GObject.Object, Loggable):
 
         self.__encoding_target_file = None
         self.proxying_unsupported = False
-        for encoding_format in [ENCODING_FORMAT_JPEG, ENCODING_FORMAT_PRORES]:
+        # Always prefer NVENC for proxies when the encoder is available,
+        # regardless of proxying strategy. The strategy controls WHEN to
+        # auto-proxy, not WHAT encoder to use. So even with strategy=NOTHING,
+        # if the user right-clicks "Use Optimised Proxy", force_proxying=True
+        # bypasses the strategy check, and the encoding profile will be NVENC.
+        if Gst.ElementFactory.find("nvautogpuh264enc") or Gst.ElementFactory.find("nvh264enc"):
+            encoding_formats = [ENCODING_FORMAT_NVENC, ENCODING_FORMAT_JPEG, ENCODING_FORMAT_PRORES]
+        else:
+            encoding_formats = [ENCODING_FORMAT_JPEG, ENCODING_FORMAT_PRORES]
+        for encoding_format in encoding_formats:
             self.__encoding_profile = self.__get_encoding_profile(encoding_format)
             if self.__encoding_profile:
                 self.__encoding_target_file = encoding_format
@@ -248,7 +267,7 @@ class ProxyManager(GObject.Object, Loggable):
             # Do not verify we have an encoder/decoder for raw audio/video,
             # as they are not required.
             if profile_format.intersect(Gst.Caps("audio/x-raw(ANY)")) or \
-                    profile_format.intersect(Gst.Caps("audio/x-video(ANY)")):
+                    profile_format.intersect(Gst.Caps("video/x-raw(ANY)")):
                 continue
             if not Gst.ElementFactory.list_filter(
                     Gst.ElementFactory.list_get_elements(
@@ -305,7 +324,8 @@ class ProxyManager(GObject.Object, Loggable):
         else:
             uri = obj
 
-        return uri.endswith("." + cls.hq_proxy_extension)
+        return uri.endswith("." + cls.hq_proxy_extension) or \
+               uri.endswith("." + cls.nvenc_proxy_extension)
 
     def check_proxy_loading_succeeded(self, proxy):
         if self.is_proxy_asset(proxy):
@@ -325,6 +345,9 @@ class ProxyManager(GObject.Object, Loggable):
             return ".".join(uri.split(".")[:-4])
 
         if cls.is_proxy_asset(uri):
+            # proxy.mov has 2 parts (proxy.mov), proxy.nv.mkv has 3 parts (proxy.nv.mkv)
+            if uri.endswith("." + cls.nvenc_proxy_extension):
+                return ".".join(uri.split(".")[:-4])
             return ".".join(uri.split(".")[:-3])
 
         return uri
@@ -360,8 +383,15 @@ class ProxyManager(GObject.Object, Loggable):
             return "%s.%s.%s.%s" % (asset.get_id(), file_size, proxy_res,
                                     self.scaled_proxy_extension)
         else:
-            return "%s.%s.%s" % (asset.get_id(), file_size,
-                                 self.hq_proxy_extension)
+            # Match the filename extension to the selected encoding target
+            # container. When NVENC (Matroska) is the active target, always use
+            # .proxy.nv.mkv — including strategy=NOTHING + force_proxying, which
+            # still encodes with the NVENC profile selected in __init__.
+            if self.__encoding_target_file == ENCODING_FORMAT_NVENC:
+                ext = self.nvenc_proxy_extension
+            else:
+                ext = self.hq_proxy_extension
+            return "%s.%s.%s" % (asset.get_id(), file_size, ext)
 
     def is_asset_format_well_supported(self, asset):
         for encoding_format in self.WHITELIST_FORMATS:
@@ -393,6 +423,31 @@ class ProxyManager(GObject.Object, Loggable):
         if self.app.settings.proxying_strategy == ProxyingStrategy.NOTHING:
             self.debug("Not proxying anything. %s",
                        self.app.settings.proxying_strategy)
+            return False
+
+        # ALL_NV: always proxy everything with NVENC
+        if self.app.settings.proxying_strategy == ProxyingStrategy.ALL_NV:
+            if not self.is_hq_proxy(asset):
+                return True
+            return False
+
+        # AUTO_NV: proxy only high-bandwidth/unsupported assets
+        if self.app.settings.proxying_strategy == ProxyingStrategy.AUTO_NV:
+            if scaled and not self.asset_matches_target_res(asset):
+                return True
+            if not scaled and not self.is_hq_proxy(asset):
+                # Proxy if the asset is NOT well-supported (high bandwidth)
+                # OR if the asset's bitrate exceeds a threshold
+                if not self.is_asset_format_well_supported(asset):
+                    return True
+                # Check bitrate — proxy if > 50 Mbps (high bandwidth)
+                info = asset.get_info()
+                video_streams = info.get_video_streams()
+                if video_streams:
+                    bitrate = video_streams[0].get_bitrate()
+                    if bitrate and bitrate > 50000000:  # 50 Mbps
+                        return True
+                return False
             return False
 
         if self.app.settings.proxying_strategy == ProxyingStrategy.AUTOMATIC \
@@ -506,13 +561,89 @@ class ProxyManager(GObject.Object, Loggable):
             self.emit("proxy-ready", asset, proxy)
             self.__emit_progress(proxy, 100)
 
-    def __transcoder_error_cb(self, _, error, unused_details, asset, transcoder):
+    def __get_signals_emitter(self, transcoder):
+        """Returns the object that owns the transcoder signal connections."""
+        if HAS_GST_1_19:
+            return transcoder.get_signal_adapter(None)
+        return transcoder
+
+    def __disconnect_transcoder(self, transcoder):
+        """Disconnects all signal handlers for a transcoder (if still connected)."""
+        signals_emitter = self.__get_signals_emitter(transcoder)
+        for handler in (self.__proxying_position_changed_cb,
+                        self.__transcoder_done_cb,
+                        self.__transcoder_error_cb):
+            try:
+                signals_emitter.disconnect_by_func(handler)
+            except TypeError:
+                # Already disconnected (e.g. cancelled, or double error/done).
+                pass
+
+    def __delete_part_file(self, transcoder):
+        """Removes the abandoned .part file for a failed or cancelled job."""
+        try:
+            part_path = Gst.uri_get_location(transcoder.props.dest_uri)
+            if part_path and os.path.exists(part_path):
+                os.remove(part_path)
+                self.debug("Deleted part file %s", part_path)
+        except (TypeError, OSError) as exc:
+            self.warning("Could not delete part file for %s: %s",
+                         transcoder.props.dest_uri, exc)
+
+    def __stop_transcoder(self, transcoder):
+        """Disconnects signals and stops the GStreamer pipeline."""
+        self.__disconnect_transcoder(transcoder)
+        try:
+            pipeline = transcoder.props.pipeline
+            if pipeline is not None:
+                pipeline.set_state(Gst.State.NULL)
+        except (AttributeError, TypeError) as exc:
+            self.warning("Could not stop transcoder pipeline: %s", exc)
+
+    def __start_next_transcoder(self):
+        """Starts the next pending transcoder, or resets progress state."""
+        try:
+            self.__start_transcoder(self.__pending_transcoders.pop())
+        except IndexError:
+            if not self.__running_transcoders:
+                self._transcoded_durations = {}
+                self._total_time_to_transcode = 0
+                self._start_proxying_time = 0
+
+    def __transcoder_error_cb(self, emitter, error, unused_details, asset, transcoder):
+        # Free the parallelism slot and advance the queue so subsequent proxy
+        # jobs are not permanently blocked after N errors.
+        self.__disconnect_transcoder(transcoder)
+
+        if transcoder in self.__running_transcoders:
+            self.__running_transcoders.remove(transcoder)
+        if transcoder in self.__pending_transcoders:
+            self.__pending_transcoders.remove(transcoder)
+
+        self.__waiting_transcoders = [
+            pair for pair in self.__waiting_transcoders if pair[0] is not transcoder
+        ]
+
+        self.__delete_part_file(transcoder)
+        self._transcoded_durations.pop(asset, None)
+
         self.emit("error-preparing-asset", asset, None, error)
+        self.__start_next_transcoder()
 
     def __transcoder_done_cb(self, emitter, asset, transcoder):
-        emitter.disconnect_by_func(self.__proxying_position_changed_cb)
-        emitter.disconnect_by_func(self.__transcoder_done_cb)
-        emitter.disconnect_by_func(self.__transcoder_error_cb)
+        try:
+            emitter.disconnect_by_func(self.__proxying_position_changed_cb)
+            emitter.disconnect_by_func(self.__transcoder_done_cb)
+            emitter.disconnect_by_func(self.__transcoder_error_cb)
+        except TypeError:
+            # Already disconnected (e.g. cancelled).
+            pass
+
+        # If cancel_job already removed this transcoder, do not rename .part
+        # into a finished proxy or load it as ready.
+        if transcoder not in self.__running_transcoders:
+            self.debug("Ignoring done for cancelled transcoder %s", asset.get_id())
+            return
 
         self.debug("Transcoder done with %s", asset.get_id())
 
@@ -548,23 +679,18 @@ class ProxyManager(GObject.Object, Loggable):
                     self.__waiting_transcoders.remove(pair)
                     break
 
-        try:
-            self.__start_transcoder(self.__pending_transcoders.pop())
-        except IndexError:
-            if not self.__running_transcoders:
-                self._transcoded_durations = {}
-                self._total_time_to_transcode = 0
-                self._start_proxying_time = 0
+        self.__start_next_transcoder()
 
     def __emit_progress(self, asset, creation_progress):
         """Handles the transcoding progress of the specified asset."""
+        estimated_time = 0
         if self._transcoded_durations:
             time_spent = time.time() - self._start_proxying_time
             transcoded_seconds = sum(self._transcoded_durations.values())
-            remaining_seconds = max(0, self._total_time_to_transcode - transcoded_seconds)
-            estimated_time = remaining_seconds * time_spent / transcoded_seconds
-        else:
-            estimated_time = 0
+            # Guard against position-updated(0) before any real progress.
+            if transcoded_seconds > 0:
+                remaining_seconds = max(0, self._total_time_to_transcode - transcoded_seconds)
+                estimated_time = remaining_seconds * time_spent / transcoded_seconds
 
         asset.creation_progress = creation_progress
         self.emit("progress", asset, asset.creation_progress, estimated_time)
@@ -624,12 +750,14 @@ class ProxyManager(GObject.Object, Loggable):
             transcoder_uri = transcoder.props.dest_uri
             scaling_ext = "." + self.scaled_proxy_extension + ProxyManager.part_suffix
             optimisation_ext = "." + self.hq_proxy_extension + ProxyManager.part_suffix
+            nvenc_ext = "." + self.nvenc_proxy_extension + ProxyManager.part_suffix
 
             scaling_transcoder = transcoder_uri.endswith(scaling_ext)
             optimisation_transcoder = transcoder_uri.endswith(optimisation_ext)
+            nvenc_transcoder = transcoder_uri.endswith(nvenc_ext)
 
             if transcoder.props.src_uri == asset.props.id:
-                if optimisation and optimisation_transcoder:
+                if optimisation and (optimisation_transcoder or nvenc_transcoder):
                     is_queued = True
                     break
 
@@ -686,16 +814,34 @@ class ProxyManager(GObject.Object, Loggable):
             transcoder.props.position_update_interval = 1000
 
         info = asset.get_info()
-        if info.get_video_streams():
-            thumbnailbin = Gst.ElementFactory.make("teedthumbnailbin")
-            thumbnailbin.props.uri = asset.get_id()
-            transcoder.props.pipeline.props.video_filter = thumbnailbin
+        # teedthumbnailbin forces every frame through CPU videoconvert +
+        # videoscale(lanczos) + gdkpixbufsink while teeing to the encoder.
+        # That dominates CPU (~70%+) even when NVENC is active (dedicated ENC
+        # engine, often low "GPU-Util" in nvidia-smi). Skip during proxy so
+        # encodebin can keep a lean NVDEC→NVENC path; timeline previewers
+        # regenerate thumbs/waveforms from the lightweight proxy afterward.
+        # Set PITIVI_PROXY_FAST=0 to restore the old in-transcode preview path.
+        proxy_fast = os.environ.get("PITIVI_PROXY_FAST", "1") != "0"
+        if not proxy_fast:
+            if info.get_video_streams():
+                thumbnailbin = Gst.ElementFactory.make("teedthumbnailbin")
+                if thumbnailbin is not None:
+                    thumbnailbin.props.uri = asset.get_id()
+                    transcoder.props.pipeline.props.video_filter = thumbnailbin
+                else:
+                    self.warning("teedthumbnailbin unavailable; proxy without thumbs")
 
-        if info.get_audio_streams():
-            waveformbin = Gst.ElementFactory.make("waveformbin")
-            waveformbin.props.uri = asset.get_id()
-            waveformbin.props.duration = asset.get_duration()
-            transcoder.props.pipeline.props.audio_filter = waveformbin
+            if info.get_audio_streams():
+                waveformbin = Gst.ElementFactory.make("waveformbin")
+                if waveformbin is not None:
+                    waveformbin.props.uri = asset.get_id()
+                    waveformbin.props.duration = asset.get_duration()
+                    transcoder.props.pipeline.props.audio_filter = waveformbin
+                else:
+                    self.warning("waveformbin unavailable; proxy without waveforms")
+        else:
+            self.info("PITIVI_PROXY_FAST: skipping teedthumbnailbin/waveformbin "
+                      "on proxy transcoder for %s", asset.get_id())
 
         transcoder.set_cpu_usage(self.app.settings.max_cpu_usage)
         signals_emitter.connect("position-updated",
@@ -719,23 +865,42 @@ class ProxyManager(GObject.Object, Loggable):
         if not self.is_asset_queued(asset):
             return
 
-        for transcoder in self.__running_transcoders:
+        cancelled = False
+
+        # Iterate over copies so remove() does not skip siblings (e.g. scaled
+        # + shadow HQ both sharing the same src_uri).
+        for transcoder in list(self.__running_transcoders):
             if asset.props.id == transcoder.props.src_uri:
                 self.info("Cancelling running transcoder %s %s",
                           transcoder.props.src_uri,
                           transcoder.__grefcount__)
-                self.__running_transcoders.remove(transcoder)
-                self.emit("asset-preparing-cancelled", asset)
+                # Disconnect first so a late "done" cannot rename .part.
+                self.__stop_transcoder(transcoder)
+                if transcoder in self.__running_transcoders:
+                    self.__running_transcoders.remove(transcoder)
+                self.__delete_part_file(transcoder)
+                cancelled = True
 
-        for transcoder in self.__pending_transcoders:
+        for transcoder in list(self.__pending_transcoders):
             if asset.props.id == transcoder.props.src_uri:
                 self.info("Cancelling pending transcoder %s",
                           transcoder.props.src_uri)
-                # Removing the transcoder from the list
-                # will lead to its destruction (only reference)
-                # here, which means it will be stopped.
-                self.__pending_transcoders.remove(transcoder)
-                self.emit("asset-preparing-cancelled", asset)
+                self.__disconnect_transcoder(transcoder)
+                if transcoder in self.__pending_transcoders:
+                    self.__pending_transcoders.remove(transcoder)
+                self.__delete_part_file(transcoder)
+                cancelled = True
+
+        self.__waiting_transcoders = [
+            pair for pair in self.__waiting_transcoders
+            if pair[0].props.src_uri != asset.props.id
+        ]
+
+        self._transcoded_durations.pop(asset, None)
+
+        if cancelled:
+            self.emit("asset-preparing-cancelled", asset)
+            self.__start_next_transcoder()
 
     def add_job(self, asset, scaled=False, shadow=False):
         """Adds a transcoding job for the specified asset if needed.
@@ -782,6 +947,12 @@ class ProxyManager(GObject.Object, Loggable):
 
 
 def get_proxy_target(obj):
+    """Return the original (non-proxy) asset for cache keys / identity.
+
+    When *obj* is already a proxy, returns its target. Otherwise returns the
+    asset itself. This is intentionally *not* the media used for decode —
+    see :func:`get_preview_source_asset` for preview/thumbnail pipelines.
+    """
     if isinstance(obj, GES.UriClip):
         asset = obj.get_asset()
     elif isinstance(obj, GES.TrackElement):
@@ -793,5 +964,40 @@ def get_proxy_target(obj):
         target = asset.get_proxy_target()
         if target and target.get_error() is None:
             asset = target
+
+    return asset
+
+
+def get_preview_source_asset(obj):
+    """Return the asset best suited for preview / thumbnail decoding.
+
+    Prefers a ready proxy (lightweight NVENC ``.proxy.nv.mkv``) so scrubbing
+    and thumb generation decode the small file via NVDEC instead of the
+    original camera file. Falls back to the original when no proxy is ready.
+
+    ThumbnailCache still keys by the original via :func:`get_proxy_target`.
+    """
+    if isinstance(obj, GES.UriClip):
+        asset = obj.get_asset()
+    elif isinstance(obj, GES.TrackElement):
+        parent = obj.get_parent()
+        asset = parent.get_asset() if parent is not None else None
+    else:
+        asset = obj
+
+    if asset is None:
+        return asset
+
+    # Clip already switched onto the proxy asset (update_clips_asset).
+    if ProxyManager.is_proxy_asset(asset):
+        return asset
+
+    # Original still on the clip: use linked proxy if ready and healthy.
+    try:
+        proxy = asset.get_proxy()
+    except AttributeError:
+        proxy = None
+    if proxy is not None and proxy.get_error() is None:
+        return proxy
 
     return asset

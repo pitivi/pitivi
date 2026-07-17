@@ -140,9 +140,12 @@ class TagStoreItem(GObject.GObject):
         self.initial_state = initial_state
 
 
-class OptimizeOption(IntEnum):
-    UNSUPPORTED_ASSETS = 0
-    ALL = 1
+# Combo row indices map to these strategies (ALL_NV is not offered in the UI).
+COMBO_STRATEGIES = [
+    ProxyingStrategy.AUTOMATIC,  # 0: Unsupported only
+    ProxyingStrategy.ALL,        # 1: All
+    ProxyingStrategy.AUTO_NV,    # 2: Smart (default)
+]
 
 
 class FileChooserExtraWidget(Gtk.Box, Loggable):
@@ -164,9 +167,11 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
         self.hq_proxy_check.connect("toggled", self._hq_proxy_check_cb)
 
         self.hq_combo = Gtk.ComboBoxText.new()
-        self.hq_combo.insert_text(OptimizeOption.UNSUPPORTED_ASSETS, _("Unsupported assets"))
-        self.hq_combo.insert_text(OptimizeOption.ALL, _("All"))
-        self.hq_combo.props.active = OptimizeOption.UNSUPPORTED_ASSETS
+        self.hq_combo.insert_text(0, _("Unsupported only"))
+        self.hq_combo.insert_text(1, _("All"))
+        self.hq_combo.insert_text(2, _("Smart (default)"))
+        # Default selection before settings are applied.
+        self.hq_combo.props.active = COMBO_STRATEGIES.index(ProxyingStrategy.AUTO_NV)
         self.hq_combo.set_sensitive(False)
 
         self.help_button = Gtk.Button()
@@ -203,14 +208,14 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
         size_group.add_widget(self.__keep_open_check)
         size_group.add_widget(hq_proxy_row)
 
-        if self.app.settings.proxying_strategy == ProxyingStrategy.AUTOMATIC:
+        strategy = self.app.settings.proxying_strategy
+        # ALL_NV is not in the combo; map it to the "All" row.
+        if strategy == ProxyingStrategy.ALL_NV:
+            strategy = ProxyingStrategy.ALL
+        if strategy in COMBO_STRATEGIES:
             self.hq_proxy_check.set_active(True)
             self.hq_combo.set_sensitive(True)
-            self.hq_combo.props.active = OptimizeOption.UNSUPPORTED_ASSETS
-        elif self.app.settings.proxying_strategy == ProxyingStrategy.ALL:
-            self.hq_proxy_check.set_active(True)
-            self.hq_combo.set_sensitive(True)
-            self.hq_combo.props.active = OptimizeOption.ALL
+            self.hq_combo.props.active = COMBO_STRATEGIES.index(strategy)
 
         if self.app.settings.auto_scaling_enabled:
             self.scaled_proxy_check.set_active(True)
@@ -235,8 +240,9 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
         show_user_manual("importing")
 
     def _scaled_proxy_check_cb(self, unused_button):
+        # Enabling scaled proxy requires HQ proxying, but do not overwrite
+        # the user's Optimize combo selection.
         if self.scaled_proxy_check.get_active():
-            self.hq_combo.props.active = OptimizeOption.UNSUPPORTED_ASSETS
             self.hq_proxy_check.set_active(True)
 
     def _target_res_cb(self, label_widget, unused_uri):
@@ -252,10 +258,7 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
         self.app.settings.closeImportDialog = not self.__keep_open_check.get_active()
 
         if self.hq_proxy_check.get_active():
-            if self.hq_combo.props.active == OptimizeOption.UNSUPPORTED_ASSETS:
-                self.app.settings.proxying_strategy = ProxyingStrategy.AUTOMATIC
-            else:
-                self.app.settings.proxying_strategy = ProxyingStrategy.ALL
+            self.app.settings.proxying_strategy = COMBO_STRATEGIES[self.hq_combo.props.active]
         else:
             assert not self.scaled_proxy_check.get_active()
             self.app.settings.proxying_strategy = ProxyingStrategy.NOTHING
@@ -882,7 +885,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         file_filter.add_custom(Gtk.FileFilterFlags.URI | Gtk.FileFilterFlags.MIME_TYPE,
                                filter_unsupported_media_files)
         for formatter in GES.list_assets(GES.Formatter):
-            for extension in formatter.get_meta("extension").split(","):
+            ext = formatter.get_meta("extension")
+            if ext:
+                extensions = ext.split(",")
+            else:
+                extensions = []
+            for extension in extensions:
                 if not extension:
                     continue
                 file_filter.add_pattern("*.%s" % extension)
@@ -941,11 +949,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         tags = set(meta_value.split(",")) if meta_value != "" else set()
         for item in self.store:
             if item.asset == asset:
+                old_tags = item.tags
                 item.tags = tags
-                # Rebuild witnessed_tags
-                self.witnessed_tags = set()
-                for item_ in self.store:
-                    self.witnessed_tags.update(item_.tags)
+                # Incremental update: only add/remove changed tags
+                self.witnessed_tags.update(tags - old_tags)
+                for tag in old_tags - tags:
+                    if not any(tag in other.tags for other in self.store):
+                        self.witnessed_tags.discard(tag)
                 break
 
     def __thumb_updated_cb(self, asset_thumbnail, asset):
@@ -973,7 +983,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         proxying_files = []
         for item in self.store:
-            item.infotext = beautify_asset(item.asset)
+            # Only recompute infotext when ready/progress state changes
+            state = (item.asset.ready, item.asset.creation_progress)
+            if getattr(item, "_last_infotext_state", None) != state:
+                item._last_infotext_state = state
+                new_infotext = beautify_asset(item.asset)
+                if item.infotext != new_infotext:
+                    item.infotext = new_infotext
             if not item.asset.ready:
                 proxying_files.append(item.asset)
                 if item.thumb_decorator.state != AssetThumbnail.IN_PROGRESS:
@@ -1477,7 +1493,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                        if asset.creation_progress < 100]
 
         if hq_proxies:
-            action = Gio.SimpleAction.new("unproxy-asset", None)
+            action = Gio.SimpleAction.new("unproxy-asset-hq", None)
             action.connect("activate", self.__stop_using_proxy_cb)
             action_group.insert(action)
             text = ngettext("Do not use Optimised Proxy for selected asset",
@@ -1487,7 +1503,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             menu_model.append(text, "assets.%s" %
                               action.get_name().replace(" ", "."))
 
-            action = Gio.SimpleAction.new("delete-proxies", None)
+            action = Gio.SimpleAction.new("delete-proxies-hq", None)
             action.connect("activate", self.__delete_proxies_cb)
             action_group.insert(action)
 
@@ -1499,7 +1515,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                               action.get_name().replace(" ", "."))
 
         if in_progress:
-            action = Gio.SimpleAction.new("unproxy-asset", None)
+            action = Gio.SimpleAction.new("unproxy-asset-progress", None)
             action.connect("activate", self.__stop_using_proxy_cb)
             action_group.insert(action)
             text = ngettext("Do not use Proxy for selected asset",
@@ -1509,7 +1525,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             menu_model.append(text, "assets.%s" %
                               action.get_name().replace(" ", "."))
 
-            action = Gio.SimpleAction.new("delete-proxies", None)
+            action = Gio.SimpleAction.new("delete-proxies-progress", None)
             action.connect("activate", self.__delete_proxies_cb)
             action_group.insert(action)
 
@@ -1521,7 +1537,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                               action.get_name().replace(" ", "."))
 
         if scaled_proxies:
-            action = Gio.SimpleAction.new("unproxy-asset", None)
+            action = Gio.SimpleAction.new("unproxy-asset-scaled", None)
             action.connect("activate", self.__stop_using_proxy_cb)
             action_group.insert(action)
             text = ngettext("Do not use Scaled Proxy for selected asset",
@@ -1531,7 +1547,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             menu_model.append(text, "assets.%s" %
                               action.get_name().replace(" ", "."))
 
-            action = Gio.SimpleAction.new("delete-proxies", None)
+            action = Gio.SimpleAction.new("delete-proxies-scaled", None)
             action.connect("activate", self.__delete_proxies_cb)
             action_group.insert(action)
 
