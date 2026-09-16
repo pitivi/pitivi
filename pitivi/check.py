@@ -291,14 +291,75 @@ def _check_videosink():
 
 
 def _check_hardware_decoders():
+    # Always boost NVENC when factories exist. nvcodec ships
+    # nvautogpuh264enc at rank 0 (NONE); encodebin uses a MARGINAL floor
+    # and will not select rank-0 encoders. Without this, proxy falls back
+    # to CPU encode even when NVDEC is active → high CPU, low GPU.
+    _boost_nvenc_ranks()
+
     if "hwdecoders" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ""):
         print("Hardware decoders enabled.")
+        _boost_nvdec_ranks()
         return
 
     from gi.repository import Gst
     for e in Gst.ElementFactory.list_get_elements(Gst.ELEMENT_FACTORY_TYPE_DECODER, Gst.Rank.NONE):
         if "Hardware" in e.get_metadata("klass"):
             e.set_rank(Gst.Rank.NONE)
+
+
+# Known NVIDIA codec factories. Missing ones are skipped at runtime (not every
+# GPU/driver builds every codec). Rank 258 = PRIMARY+2 beats software defaults.
+_NVENC_FACTORY_NAMES = (
+    "nvautogpuh264enc",
+    "nvautogpuh265enc",
+    "nvh264enc",
+    "nvh265enc",
+    "nvjpegenc",
+)
+
+_NVDEC_FACTORY_NAMES = (
+    "nvh264dec",
+    "nvh265dec",
+    "nvh264sldec",
+    "nvh265sldec",
+    "nvvp8dec",
+    "nvvp9dec",
+    "nvav1dec",
+    "nvmpeg2videodec",
+    "nvmpeg4videodec",
+    "nvmpegvideodec",
+    "nvjpegdec",
+)
+
+
+def _boost_factory_ranks(names, label, rank=258):
+    """Raise ranks for the given factory names; skip missing quietly."""
+    from gi.repository import Gst
+    for name in names:
+        factory = Gst.ElementFactory.find(name)
+        if factory:
+            factory.set_rank(rank)
+            print(f"{label} rank boosted: {name} -> {rank}")
+
+
+def _boost_nvenc_ranks():
+    """Boost NVENC encoder ranks so encodebin/proxy can select them.
+
+    Always called at startup (not gated on hwdecoders). Missing factories
+    are skipped. Rank 258 is PRIMARY+2 so NVENC wins over software encoders.
+    """
+    _boost_factory_ranks(_NVENC_FACTORY_NAMES, "NVENC")
+
+
+def _boost_nvdec_ranks():
+    """Boost NVDEC decoder ranks so autoplugging prefers GPU decode.
+
+    Only called when PITIVI_UNSTABLE_FEATURES includes hwdecoders.
+    Missing factories (plugin/GPU not present) are skipped.
+    Rank 258 matches the NVENC boost (PRIMARY=256, so well above software).
+    """
+    _boost_factory_ranks(_NVDEC_FACTORY_NAMES, "NVDEC")
 
 
 def _check_gst_python():

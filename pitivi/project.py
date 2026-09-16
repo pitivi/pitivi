@@ -130,6 +130,11 @@ class ProjectManager(GObject.Object, Loggable):
         self.current_project = None
         self.disable_save = False
         self._backup_lock = 0
+        # GLib timeout source id for the pending autosave backup, or 0 if none.
+        self._backup_timeout_id = 0
+        # Number of 10s polls elapsed since the backup timer was started.
+        # Used to force a backup after ~60s even under sustained editing.
+        self._backup_polls = 0
         self.exitcode = 0
         self.__start_loading_time = 0
         self.time_loaded = 0
@@ -411,10 +416,14 @@ class ProjectManager(GObject.Object, Loggable):
 
         with tempfile.TemporaryDirectory() as tmp_dir:
             tmp_uri = Gst.filename_to_uri(os.path.join(tmp_dir, tmp_name))
-            # save_project updates the project URI... so we better back it up:
+            # save_project updates the project URI and clears the dirty flag
+            # (and emits project-saved). Export is not a real save of the
+            # user's project file, so restore both URI and modification state.
             _old_uri = self.current_project.uri
+            was_dirty = self.current_project.has_unsaved_modifications()
             self.save_project(tmp_uri)
             self.current_project.uri = _old_uri
+            self.current_project.set_modification_state(was_dirty)
             # create tar file
             try:
                 with tarfile.open(path_from_uri(uri), mode="w") as tar:
@@ -486,6 +495,7 @@ class ProjectManager(GObject.Object, Loggable):
             self.emit("project-closed", project)
             disconnect_all_by_func(project, self._project_changed_cb)
             disconnect_all_by_func(project.pipeline, self._project_pipeline_died_cb)
+            self._cancel_backup_timer()
             self._clean_backup(project.uri)
             self.exitcode = project.release()
 
@@ -537,30 +547,43 @@ class ProjectManager(GObject.Object, Loggable):
         return True
 
     def _project_changed_cb(self, project):
-        # _backup_lock is a timer, when a change in the project is done it is
-        # set to 10 seconds. If before those 10 secs pass another change occurs,
-        # 5 secs are added to the timeout callback instead of saving the backup
-        # file. The limit is 60 seconds.
+        # Debounce autosave backups: start a 10s poll timer on the first change.
+        # Further changes bump _backup_lock (up to 60) so idle editing delays the
+        # write. Under sustained editing the lock never decays on its own, so
+        # _save_backup_cb also forces a backup after 6 polls (~60s).
         uri = project.uri
         if uri is None:
             return
 
         if self._backup_lock == 0:
             self._backup_lock = 10
-            GLib.timeout_add_seconds(
-                self._backup_lock, self._save_backup_cb, project, uri)
+            self._backup_polls = 0
+            self._backup_timeout_id = GLib.timeout_add_seconds(
+                10, self._save_backup_cb, project, uri)
         else:
             if self._backup_lock < 60:
                 self._backup_lock += 5
 
     def _save_backup_cb(self, unused_project, unused_uri):
-        if self._backup_lock > 10:
+        self._backup_polls += 1
+        # Force a backup after 6 polls (~60s) even if edits keep bumping the lock.
+        if self._backup_lock > 10 and self._backup_polls < 6:
             self._backup_lock -= 5
             return True
-        else:
-            self.save_project(backup=True)
-            self._backup_lock = 0
+
+        self.save_project(backup=True)
+        self._backup_lock = 0
+        self._backup_polls = 0
+        self._backup_timeout_id = 0
         return False
+
+    def _cancel_backup_timer(self):
+        """Cancels any pending autosave backup timer."""
+        if self._backup_timeout_id:
+            GLib.source_remove(self._backup_timeout_id)
+            self._backup_timeout_id = 0
+        self._backup_lock = 0
+        self._backup_polls = 0
 
     def _clean_backup(self, uri):
         if uri is None:
@@ -591,6 +614,8 @@ class ProjectManager(GObject.Object, Loggable):
             project.at_least_one_asset_missing = True
         else:
             project.relocated_assets[asset.props.id] = new_uri
+        # set_modification_state early-returns while not loaded; the dirty
+        # flag is applied once loading completes in _project_loaded_cb.
         project.set_modification_state(True)
         return new_uri
 
@@ -601,6 +626,11 @@ class ProjectManager(GObject.Object, Loggable):
             return
         self.emit("new-project-loaded", project)
         project.loaded = True
+        # Relocations / missing assets during load could not mark dirty because
+        # set_modification_state ignores calls before loaded is True. Re-apply
+        # now so the user is prompted to save the updated asset paths.
+        if project.relocated_assets or project.at_least_one_asset_missing:
+            project.set_modification_state(True)
         self.time_loaded = time.time()
         self.info("Loaded in %s", self.time_loaded - self.__start_loading_time)
 
@@ -1893,6 +1923,10 @@ class Project(Loggable, GES.Project):
 
         self.pipeline = None
         self.ges_timeline = None
+
+        # Close open thumbnail sqlite connections so they do not leak across
+        # project open/close cycles (previewers BUG-005).
+        ThumbnailCache.close_all()
 
         return res
 

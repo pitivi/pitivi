@@ -16,10 +16,17 @@
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 """Tests for the utils.proxy module."""
 # pylint: disable=protected-access
+import os
+import tempfile
 from unittest import mock
 
 from gi.repository import GES
+from gi.repository import Gst
 
+from pitivi.utils.proxy import ENCODING_FORMAT_JPEG
+from pitivi.utils.proxy import ENCODING_FORMAT_NVENC
+from pitivi.utils.proxy import ProxyingStrategy
+from pitivi.utils.proxy import ProxyManager
 from tests import common
 
 
@@ -71,10 +78,16 @@ class TestProxyManager(common.TestCase):
                                    "file:///home/file.name.mp4")
         self._check_get_target_uri("file:///home/file.name.mp4.1927006.proxy.mov",
                                    "file:///home/file.name.mp4")
+        self._check_get_target_uri("file:///home/file.name.mp4.1927006.proxy.nv.mkv",
+                                   "file:///home/file.name.mp4")
 
-    def _check_get_proxy_uri(self, asset_uri, expected_uri, size=10, scaled=False, scaled_res=(1280, 720)):
+    def _check_get_proxy_uri(self, asset_uri, expected_uri, size=10, scaled=False,
+                             scaled_res=(1280, 720), encoding_target=ENCODING_FORMAT_JPEG):
         app = common.create_pitivi_mock()
         manager = app.proxy_manager
+        # Force encoding target so extension selection is deterministic regardless
+        # of whether NVENC is available on the test host.
+        manager._ProxyManager__encoding_target_file = encoding_target
 
         asset = mock.Mock()
         asset.get_id.return_value = asset_uri
@@ -94,6 +107,28 @@ class TestProxyManager(common.TestCase):
         self._check_get_proxy_uri("file:///home/file.name.mp4",
                                   "file:///home/file.name.mp4.10.1280x720.scaledproxy.mov",
                                   scaled=True)
+
+    def test_get_proxy_uri_nvenc_extension(self):
+        """BUG-003: NVENC encoding target always uses .proxy.nv.mkv."""
+        self._check_get_proxy_uri(
+            "file:///home/file.name.mp4",
+            "file:///home/file.name.mp4.10.proxy.nv.mkv",
+            encoding_target=ENCODING_FORMAT_NVENC)
+
+        # Even with strategy=NOTHING, force_proxying path must still get mkv ext
+        # when the encoding target is NVENC (container/extension match).
+        app = common.create_pitivi_mock(proxying_strategy=ProxyingStrategy.NOTHING)
+        manager = app.proxy_manager
+        manager._ProxyManager__encoding_target_file = ENCODING_FORMAT_NVENC
+        asset = mock.Mock()
+        asset.get_id.return_value = "file:///home/clip.mp4"
+        asset.force_proxying = True
+        with mock.patch("pitivi.utils.proxy.Gio.File") as gio:
+            gio.new_for_uri.return_value = gio
+            gio.query_info().get_size.return_value = 42
+            result = manager.get_proxy_uri(asset)
+        self.assertTrue(result.endswith("." + ProxyManager.nvenc_proxy_extension))
+        self.assertFalse(result.endswith("." + ProxyManager.hq_proxy_extension))
 
     def test_asset_matches_target_res(self):
         """Checks the asset_matches_target_res method."""
@@ -144,3 +179,136 @@ class TestProxyManager(common.TestCase):
                 matches.return_value = True
                 self.assertTrue(manager.asset_can_be_proxied(video, scaled=True))
                 self.assertTrue(manager.asset_can_be_proxied(video))
+
+    def _make_mock_transcoder(self, src_uri, dest_uri, part_path=None):
+        """Builds a mock GstTranscoder-like object for queue tests."""
+        # Use a plain object so __grefcount__ is a real attribute (Mock mangles
+        # dunder names and cancel_job logs transcoder.__grefcount__).
+        transcoder = mock.Mock()
+        transcoder.props.src_uri = src_uri
+        transcoder.props.dest_uri = dest_uri
+        transcoder.props.position_update_interval = 1000
+        transcoder.props.pipeline = mock.Mock()
+        transcoder.get_signal_adapter.return_value = transcoder
+        transcoder.__dict__["__grefcount__"] = 1
+        return transcoder
+
+    def test_transcoder_error_cb_cleans_up_and_advances_queue(self):
+        """BUG-001: error callback frees the slot and starts the next job."""
+        app = common.create_pitivi_mock()
+        manager = app.proxy_manager
+
+        asset = mock.Mock()
+        asset.props.id = "file:///a.mp4"
+        asset.get_id.return_value = asset.props.id
+
+        with tempfile.NamedTemporaryFile(
+                suffix=".proxy.mov.part", delete=False) as tmp:
+            part_path = tmp.name
+            tmp.write(b"partial")
+
+        failed = self._make_mock_transcoder(
+            asset.props.id, Gst.filename_to_uri(part_path))
+        next_job = self._make_mock_transcoder(
+            "file:///b.mp4", "file:///b.mp4.10.proxy.mov.part")
+
+        manager._ProxyManager__running_transcoders = [failed]
+        manager._ProxyManager__pending_transcoders = [next_job]
+        manager._transcoded_durations = {asset: 1.0}
+        manager._total_time_to_transcode = 10
+        manager._start_proxying_time = 1
+
+        errors = []
+        manager.connect("error-preparing-asset",
+                        lambda *args: errors.append(args))
+
+        with mock.patch.object(manager, "_ProxyManager__start_transcoder") as start:
+            manager._ProxyManager__transcoder_error_cb(
+                failed, RuntimeError("boom"), None, asset, failed)
+
+        self.assertEqual(manager._ProxyManager__running_transcoders, [])
+        self.assertNotIn(failed, manager._ProxyManager__pending_transcoders)
+        self.assertFalse(os.path.exists(part_path))
+        self.assertEqual(len(errors), 1)
+        start.assert_called_once_with(next_job)
+        self.assertNotIn(asset, manager._transcoded_durations)
+
+    def test_cancel_job_stops_pipeline_and_deletes_part(self):
+        """BUG-002: cancel stops the pipeline, disconnects, deletes .part."""
+        app = common.create_pitivi_mock()
+        manager = app.proxy_manager
+
+        asset = mock.Mock()
+        asset.props.id = "file:///clip.mp4"
+
+        with tempfile.NamedTemporaryFile(
+                suffix=".proxy.mov.part", delete=False) as tmp:
+            part_path = tmp.name
+            tmp.write(b"partial")
+
+        # dest_uri must end with optimisation/scaling/nvenc + .part so
+        # is_asset_queued recognizes the job.
+        dest_uri = Gst.filename_to_uri(part_path)
+        t1 = self._make_mock_transcoder(asset.props.id, dest_uri)
+        t1.props.position_update_interval = 1000
+
+        # Shadow HQ sibling — must also be cancelled (list-copy iteration).
+        # Use a second temp path so delete of one does not affect the other.
+        with tempfile.NamedTemporaryFile(
+                suffix=".proxy.mov.part", delete=False) as tmp2:
+            part_path2 = tmp2.name
+            tmp2.write(b"partial2")
+        dest_uri2 = Gst.filename_to_uri(part_path2)
+        t2 = self._make_mock_transcoder(asset.props.id, dest_uri2)
+        t2.props.position_update_interval = 1001
+        t2.props.pipeline = mock.Mock()
+        t2.get_signal_adapter.return_value = t2
+
+        manager._ProxyManager__running_transcoders = [t1, t2]
+        manager._ProxyManager__pending_transcoders = []
+        manager._transcoded_durations = {asset: 2.0}
+
+        cancelled = []
+        manager.connect("asset-preparing-cancelled",
+                        lambda *args: cancelled.append(args))
+
+        manager.cancel_job(asset)
+
+        self.assertEqual(manager._ProxyManager__running_transcoders, [])
+        self.assertEqual(len(cancelled), 1)
+        t1.props.pipeline.set_state.assert_called_with(Gst.State.NULL)
+        t2.props.pipeline.set_state.assert_called_with(Gst.State.NULL)
+        self.assertFalse(os.path.exists(part_path))
+        self.assertFalse(os.path.exists(part_path2))
+        self.assertNotIn(asset, manager._transcoded_durations)
+
+        # Late "done" after cancel must not raise or rename.
+        with mock.patch("pitivi.utils.proxy.os.rename") as rename:
+            manager._ProxyManager__transcoder_done_cb(t1, asset, t1)
+        rename.assert_not_called()
+
+    def test_emit_progress_zero_transcoded_seconds(self):
+        """BUG-005: ETA must not divide by zero when position is still 0."""
+        app = common.create_pitivi_mock()
+        manager = app.proxy_manager
+        asset = mock.Mock()
+        asset.creation_progress = 0
+
+        manager._start_proxying_time = 0
+        manager._total_time_to_transcode = 100
+        manager._transcoded_durations = {asset: 0}
+
+        progresses = []
+        manager.connect("progress", lambda _m, a, p, eta: progresses.append(eta))
+
+        # time.time() - 0 is large; divisor is 0 → must not raise.
+        manager._ProxyManager__emit_progress(asset, 0)
+        self.assertEqual(progresses, [0])
+
+    def test_raw_video_caps_typo_fixed(self):
+        """BUG-006: raw video caps short-circuit uses video/x-raw(ANY)."""
+        # Static source inspection — the typo string must be gone.
+        import inspect
+        source = inspect.getsource(ProxyManager._ProxyManager__get_encoding_profile)
+        self.assertNotIn("audio/x-video(ANY)", source)
+        self.assertIn("video/x-raw(ANY)", source)

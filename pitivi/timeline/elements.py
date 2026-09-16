@@ -185,7 +185,8 @@ class KeyframeCurve(FigureCanvasGTK3Cairo, Loggable):
         disconnect_all_by_func(self, self.__height_request_cb)
         disconnect_all_by_func(self, self.__motion_notify_event_cb)
         disconnect_all_by_func(self, self._button_release_event_cb)
-        disconnect_all_by_func(self, self._control_source_changed_cb)
+        # Handlers were connected on the control source, not on self.
+        disconnect_all_by_func(self.__source, self._control_source_changed_cb)
 
     def _connect_sources(self):
         self.__source.connect("value-added", self._control_source_changed_cb)
@@ -507,6 +508,10 @@ class MultipleKeyframeCurve(KeyframeCurve):
         self.__hovered_keyframe.set_visible(False)
 
     def release(self):
+        # Disconnect every binding's control source (parent only knows __source).
+        for binding in self.__bindings:
+            source = binding.props.control_source
+            disconnect_all_by_func(source, self._control_source_changed_cb)
         super().release()
         self._project.pipeline.disconnect_by_func(self._position_cb)
 
@@ -696,6 +701,9 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         if self.markers:
             self._ges_elem.markers_manager.set_markers_box(None)
             self.markers.release()
+
+        # Release keyframe curve so control-source / pipeline handlers do not leak.
+        self.__remove_keyframes()
 
     # Public API
     def set_size(self, width, height):
@@ -1259,7 +1267,10 @@ class Clip(Gtk.EventBox, Loggable):
                         self.error("Not adding %s as it would be duplicate"
                                    " and this is not allowed.", factory_name)
                         # TODO Let the user know about why it did not work.
-                        return effect
+                        # Return None so callers (e.g. clipproperties drag-drop)
+                        # do not treat the existing effect as newly added and
+                        # call set_top_effect_index on it.
+                        return None
 
         for track_element in self.ges_clip.get_children(False):
             if effect_info.good_for_track_element(track_element):

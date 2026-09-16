@@ -1670,6 +1670,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             proxy_uris = (self.app.proxy_manager.get_proxy_uri(asset),
                           self.app.proxy_manager.get_proxy_uri(asset, scaled=True))
 
+        updated_clips = []
         for clip in self.timeline.clips():
             if not isinstance(clip, GES.UriClip):
                 continue
@@ -1677,11 +1678,24 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             if not proxy:
                 if clip.get_asset().props.id in proxy_uris:
                     clip.set_asset(asset)
+                    updated_clips.append(clip)
             else:
                 if clip.get_asset() == asset:
                     clip.set_asset(proxy)
+                    updated_clips.append(clip)
 
         self._project.pipeline.commit_timeline()
+
+        # After switching to/from proxy media, rebind previewers so thumbs and
+        # waveforms decode the lightweight proxy (NVDEC) instead of originals.
+        for clip in updated_clips:
+            ui = getattr(clip, "ui", None)
+            if ui is None:
+                continue
+            if getattr(ui, "video_widget", None):
+                ui.video_widget.update_previewer()
+            if getattr(ui, "audio_widget", None):
+                ui.audio_widget.update_previewer()
 
     def insert_assets(self, assets, position=None):
         """Creates clips out of the specified assets on the longest layer."""
