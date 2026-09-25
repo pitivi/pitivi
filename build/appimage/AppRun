@@ -1,0 +1,174 @@
+#!/bin/bash
+# AppRun for the Pitivi AppImage.
+#
+# Sets up the runtime environment so the bundled GNOME platform + Pitivi
+# can run on a host that does NOT have GNOME installed (e.g. XFCE, KDE,
+# barebones server).
+#
+# Layout inside the AppDir:
+#   ./app        — flatpak `org.pitivi.Pitivi` /app tree (hardlinks)
+#   ./runtime    — flatpak `org.gnome.Platform//N` /usr tree (hardlinks)
+#   ./codecs     — flatpak `org.pitivi.Pitivi.Codecs` extension
+#   ./host-libs  — selected host libs that override the runtime's (e.g. a
+#                  glycin-free libgdk_pixbuf so SVG/PNG load works)
+#   ./wrappers   — small shell wrappers prepended to PATH (currently bwrap)
+#   ./launcher.py — actual Python entry point (does the monkey-patches)
+#
+# Most quirks live in launcher.py; this script only sets env vars.
+
+set -e
+
+SELF="$(readlink -f "$0")"
+HERE="$(dirname "$SELF")"
+export APPDIR="${APPDIR:-$HERE}"
+
+RUNTIME="$APPDIR/runtime"
+APP="$APPDIR/app"
+CODECS="$APPDIR/codecs"
+
+# IMPORTANT: do all host-side bookkeeping BEFORE exporting LD_LIBRARY_PATH.
+# The bundled glibc is not ABI-compatible with the host's coreutils, so any
+# subprocess we spawn after this point would segfault.
+APPCACHE="${XDG_CACHE_HOME:-$HOME/.cache}/pitivi-appimage"
+mkdir -p "$APPCACHE"
+
+# Generate per-AppDir glycin loader configs that point at the bundled
+# loader binaries. The original configs (in $RUNTIME/share/glycin-loaders/)
+# point at /usr/libexec/glycin-loaders/ which is absent on a non-GNOME host.
+# Note: with the host libgdk_pixbuf overlay (host-libs/) glycin is no longer
+# in the image-loading path at all, so this is mostly belt-and-suspenders.
+GLYCIN_DIR="$APPCACHE/glycin-data/glycin-loaders/2+/conf.d"
+if [ -d "$RUNTIME/share/glycin-loaders/2+/conf.d" ]; then
+    mkdir -p "$GLYCIN_DIR"
+    for cfg in "$RUNTIME/share/glycin-loaders/2+/conf.d/"*.conf; do
+        [ -f "$cfg" ] || continue
+        sed "s|^Exec=/usr/libexec/glycin-loaders|Exec=$RUNTIME/libexec/glycin-loaders|" \
+            "$cfg" > "$GLYCIN_DIR/$(basename "$cfg")"
+    done
+fi
+
+# Detect the architecture-specific lib dir at runtime so future arches don't
+# need a code change.
+case "$(uname -m)" in
+    x86_64)  ARCH_TRIPLE=x86_64-linux-gnu  ; LD_NAME=ld-linux-x86-64.so.2 ;;
+    aarch64) ARCH_TRIPLE=aarch64-linux-gnu ; LD_NAME=ld-linux-aarch64.so.1 ;;
+    *)       echo "pitivi-appimage: unsupported architecture $(uname -m)" >&2 ; exit 1 ;;
+esac
+
+# Detect the bundled python version (e.g. python3.13). Must be done BEFORE
+# we export LD_LIBRARY_PATH below — the bundled glibc is newer than the
+# host's, so any sub-shell spawned after the export would load the bundled
+# libc through the host loader and segfault.
+PYDIR="$(ls -d "$APP"/lib/python3.* 2>/dev/null | head -1)"
+PYVER="$(basename "$PYDIR" 2>/dev/null)"
+
+# Library search path. host-libs/ wins over the runtime so we can override
+# specific libs (e.g. libgdk_pixbuf without glycin, see host-libs/README).
+export LD_LIBRARY_PATH="\
+$APPDIR/host-libs:\
+$APP/lib:\
+$APP/lib/codecs/lib:\
+$APP/lib/$ARCH_TRIPLE:\
+$RUNTIME/lib:\
+$RUNTIME/lib/$ARCH_TRIPLE:\
+$RUNTIME/lib/$ARCH_TRIPLE/pulseaudio:\
+$RUNTIME/lib64:\
+$CODECS/lib:\
+${LD_LIBRARY_PATH:-}"
+
+# GObject-Introspection typelibs.
+export GI_TYPELIB_PATH="\
+$APP/lib/girepository-1.0:\
+$RUNTIME/lib/girepository-1.0:\
+$RUNTIME/lib/$ARCH_TRIPLE/girepository-1.0:\
+${GI_TYPELIB_PATH:-}"
+
+# GStreamer plugins (Pitivi + codecs + bundled runtime base set).
+export GST_PLUGIN_SYSTEM_PATH="\
+$APP/lib/gstreamer-1.0:\
+$APP/lib/codecs/lib/gstreamer-1.0:\
+$RUNTIME/lib/gstreamer-1.0:\
+$CODECS/lib/gstreamer-1.0"
+unset GST_PLUGIN_PATH
+
+# GStreamer's plugin scanner (separate binary it fork-execs to introspect
+# plugins) and PTP helper. The scanner is normally fork-exec'd by GStreamer
+# but the host's ld-linux can't load the bundled scanner (newer libc), and
+# a bash-based wrapper around the runtime ld-linux doesn't work either
+# because the host's bash itself segfaults under our LD_LIBRARY_PATH
+# (libtinfo from the runtime is ABI-incompatible with the host bash).
+# GST_REGISTRY_FORK=no is the standard escape hatch: scan plugins
+# in-process. Slightly riskier (a broken plugin would crash Pitivi instead
+# of just failing the scan), but the bundled runtime is stable.
+export GST_REGISTRY_FORK=no
+unset GST_PLUGIN_SCANNER
+
+export GST_PTP_HELPER="$APP/libexec/gstreamer-1.0/gst-ptp-helper"
+[ -x "$GST_PTP_HELPER" ] || \
+    export GST_PTP_HELPER="$RUNTIME/lib/$ARCH_TRIPLE/gstreamer-1.0/gst-ptp-helper"
+
+# Per-AppImage GStreamer registry, so we don't poison the host's
+# ~/.cache/gstreamer-1.0 with paths that disappear when the AppImage moves.
+export GST_REGISTRY="$APPCACHE/registry.bin"
+
+# Glycin (image loader) data dir, with our patched configs.
+export GLYCIN_DATA_DIR="$APPCACHE/glycin-data"
+
+# XDG dirs: bundled themes/icons/schemas first, host's last so the user's
+# customisations still win.
+export XDG_DATA_DIRS="$APP/share:$RUNTIME/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+export GSETTINGS_SCHEMA_DIR="$RUNTIME/share/glib-2.0/schemas"
+
+# GdkPixbuf loaders. We replaced the runtime's libgdk_pixbuf (glycin-based)
+# with the host's, so use the host's loaders.cache too — it includes a
+# SVG loader on virtually every Linux distro (librsvg2-common). Path
+# layout varies: Debian/Ubuntu use /usr/lib/<arch-triple>/, Fedora/RHEL
+# use /usr/lib64/, Arch uses /usr/lib/. Probe each.
+for HOST_PIXBUF_CACHE in \
+    "/usr/lib/$ARCH_TRIPLE/gdk-pixbuf-2.0/2.10.0/loaders.cache" \
+    "/usr/lib64/gdk-pixbuf-2.0/2.10.0/loaders.cache" \
+    "/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"; do
+    if [ -f "$HOST_PIXBUF_CACHE" ]; then
+        export GDK_PIXBUF_MODULE_FILE="$HOST_PIXBUF_CACHE"
+        break
+    fi
+done
+unset HOST_PIXBUF_CACHE
+
+# GIO modules from the bundled runtime.
+export GIO_MODULE_DIR="$RUNTIME/lib/$ARCH_TRIPLE/gio/modules"
+
+# Frei0r video effects (Pitivi-bundled).
+export FREI0R_PATH="$APP/lib/frei0r-1"
+
+# Python path. The runtime's site-packages must NOT be on PYTHONPATH:
+# it ships a newer PyGObject whose `gi.overrides` import a `gi.module`
+# API the app's older copy doesn't expose. We use the APP's `gi` and only
+# the runtime's stdlib (which lives in lib/python3.X/, not site-packages).
+# PYVER was detected above, before any LD_LIBRARY_PATH export.
+export PYTHONPATH="\
+$APP/lib/$PYVER/site-packages:\
+$APP/lib/pitivi/python:\
+$APP/lib/pitivi/python/pitivi/timeline:\
+${PYTHONPATH:-}"
+
+# PATH so bundled `gst-inspect-1.0` etc. resolve to the runtime/app, and
+# our shell wrappers (currently the bwrap shim) win over the host versions.
+export PATH="$APPDIR/wrappers:$APP/bin:$RUNTIME/bin:$PATH"
+
+# Pitivi's "I'm running uninstalled" flag must be off — this AppImage is
+# the installed copy from its own perspective.
+unset PITIVI_DEVELOPMENT
+
+# Use the bundled python (built against the runtime libs). The bundled glibc
+# may be newer than the host's, so we MUST invoke the runtime's ld-linux
+# instead of letting the host loader try to load a newer libc.
+LD="$RUNTIME/lib64/$LD_NAME"
+[ -e "$LD" ] || LD="$RUNTIME/lib/$LD_NAME"
+# Exported so wrappers/ scripts can re-exec sub-processes through the
+# same loader (currently used by wrappers/gst-plugin-scanner).
+export PITIVI_LD="$LD"
+
+SCRIPT="${PITIVI_APPIMAGE_SCRIPT:-$APPDIR/launcher.py}"
+exec "$LD" --library-path "$LD_LIBRARY_PATH" \
+    "$RUNTIME/bin/python3" "$SCRIPT" "$@"

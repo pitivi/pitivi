@@ -1,0 +1,102 @@
+# Release: pushed `appimage-v*` tag → build the full matrix, then create
+# (or update) a GitHub release attaching every AppImage + its sha256.
+name: Release / AppImage
+
+on:
+  push:
+    tags:
+      - 'appimage-v*'
+  # Useful for re-running a release after an artifact upload glitch
+  # without having to delete and re-push the tag.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to release (e.g. appimage-v2023.03.1)
+        required: true
+
+permissions:
+  contents: write   # required to create releases / upload assets
+
+jobs:
+  build:
+    name: Build
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, aarch64]
+        variant: [full, lean]
+    uses: ./.github/workflows/_appimage-build.yml
+    with:
+      arch: ${{ matrix.arch }}
+      variant: ${{ matrix.variant }}
+      # Releases keep the artifacts forever via the Release page; the
+      # per-run artifact only needs to live long enough for the release
+      # job to download it.
+      retention-days: 1
+
+  release:
+    name: Publish release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Resolve tag
+        id: tag
+        run: |
+          if [ "${GITHUB_REF}" = "refs/tags/${GITHUB_REF#refs/tags/}" ]; then
+            echo "name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download all built AppImages
+        uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+
+      # Each artifact comes back inside its own subdirectory; flatten so
+      # `gh release create` sees a single list of files.
+      - name: Flatten artifact tree
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          find artifacts -type f \( -name '*.AppImage' -o -name '*.sha256' \) \
+              -exec mv {} release/ \;
+          echo "--- release/ contents ---"
+          ls -lh release/
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.tag.outputs.name }}
+        run: |
+          set -euo pipefail
+          notes=$(cat <<EOF
+          Auto-built portable AppImages for Pitivi.
+
+          Each tag publishes 4 builds:
+
+          | Arch | Variant | Approx size | Notes |
+          |---|---|---|---|
+          | x86_64 / aarch64 | full | ~540 MB | Complete bundle, in-app help included. |
+          | x86_64 / aarch64 | lean | ~388 MB | WebKit + JS engines + \`__pycache__\` stripped. No in-app help viewer (online help on pitivi.org still works). |
+
+          Each AppImage ships with a \`.sha256\` checksum file alongside.
+          Build instructions and runtime requirements:
+          [\`build/appimage/README.md\`](https://github.com/${{ github.repository }}/blob/${TAG}/build/appimage/README.md).
+          EOF
+          )
+
+          # If the release already exists (manual re-run, retry…), upload
+          # extra assets to it instead of failing.
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; uploading assets."
+            gh release upload "$TAG" release/* --clobber
+          else
+            gh release create "$TAG" \
+              --title "$TAG" \
+              --notes "$notes" \
+              release/*
+          fi

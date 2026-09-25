@@ -1,0 +1,39 @@
+# CI: build & smoke-test the AppImage on every PR/push that touches the
+# packaging files. The full matrix (2 archs × 2 variants = 4 jobs) runs in
+# parallel; failures are independent so a broken --lean doesn't mask a
+# broken --full.
+name: CI / AppImage
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'build/appimage/**'
+      - '.github/workflows/ci-appimage.yml'
+      - '.github/workflows/_appimage-build.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'build/appimage/**'
+      - '.github/workflows/ci-appimage.yml'
+      - '.github/workflows/_appimage-build.yml'
+  # Allow manual runs from the Actions tab.
+  workflow_dispatch:
+
+# Cancel in-progress runs of the same PR/branch when a new push comes in.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & test
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, aarch64]
+        variant: [full, lean]
+    uses: ./.github/workflows/_appimage-build.yml
+    with:
+      arch: ${{ matrix.arch }}
+      variant: ${{ matrix.variant }}
