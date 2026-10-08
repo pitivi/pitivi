@@ -222,4 +222,4 @@ to create a visual representation of where the most time was spent and
 which functions were called the most often in the code. See also [Jeff's
 blog posts on profiling](http://jeff.ecchi.ca/blog/tag/profiling/).
 
-[Getting Stack Traces]: https://wiki.gnome.org/Community/GettingInTouch/Bugzilla/GettingTraces
+[Getting Stack Traces]: https://handbook.gnome.org/issues/stack-traces.html
